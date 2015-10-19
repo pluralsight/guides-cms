@@ -5,7 +5,7 @@ Developers learn new skills through writing and editing technical writing.
 
 ## Requirements
 
-- Programming lanuage: [Python](http://python.org) 2.7.3 - Python 2.7.9
+- Programming lanuage: [Python](http://python.org) 2.7.3 - Python 2.7.10
 - Web framework: [Flask](http://flask.pocoo.org)
 - HTTP server: [Gunicorn](http://gunicorn.org)
 
@@ -25,7 +25,7 @@ Developers learn new skills through writing and editing technical writing.
 
 ### Run application locally
 
-1. Run `python app.py`
+1. Run `./run.sh`
 2. Browse to URL mentioned at prompt
 
 ### Run application on heroku
@@ -46,6 +46,14 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
 2. Add git remote for your app
     - `git remote add heroku git@heroku.com:<name>.git where <name> is the name
       of your heroku app from step 1.
-3. Deploy changes
+3. Setup heroku config
+    - `heroku config:set APP_SETTINGS=config.ProductionConfig`
+    - Or something like the following if you have multiple remotes for heroku
+    - `heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`
+    - `heroku config:set APP_SETTINGS=config.ProductionConfig --remote stage`
+4. Deploy changes
     -`git push heroku master`
+    - Or something like the following if you have multiple remotes for heroku
+    - `git push stage master` where <stage> is remote name for heroku and
+      master is local branch you want to push.
     - **Make sure your changes are committed locally first!**
