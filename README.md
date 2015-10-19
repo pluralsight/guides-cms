@@ -8,6 +8,8 @@ Developers learn new skills through writing and editing technical writing.
 - Programming lanuage: [Python](http://python.org) 2.7.3 - Python 2.7.10
 - Web framework: [Flask](http://flask.pocoo.org)
 - HTTP server: [Gunicorn](http://gunicorn.org)
+- Database server: [Postgres](http://www.postgresql.org)
+- Python ORM: [SQLAlchemy](http://www.sqlalchemy.org)
 
 ## Install for development
 
@@ -57,3 +59,20 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
     - `git push stage master` where <stage> is remote name for heroku and
       master is local branch you want to push.
     - **Make sure your changes are committed locally first!**
+
+### Setting up database locally
+
+1. Make sure you have Postgres running
+2. Create a new database called 'pskb_dev'
+3. Initialize migration setup
+    - `./migrate.sh db init`
+4. Create first migration
+    - `./migrate.sh db migrate`
+5. Apply the first migration
+    - `./migrate.sh db upgrade`
+
+
+### Setting up database on heroku
+
+1. Add small (free) db to your app
+    - `heroku addons:create heroku-postgresql:hobby-dev --app <app_name>`
