@@ -2,7 +2,7 @@
 Models for PSKB
 """
 
-from app import db
+from . import db
 
 
 class Article(db.Model):

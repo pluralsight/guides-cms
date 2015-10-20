@@ -27,7 +27,7 @@ Developers learn new skills through writing and editing technical writing.
 
 ### Run application locally
 
-1. Run `./run.sh`
+1. Run `./run.py`
 2. Browse to URL mentioned at prompt
 
 ### Run application on heroku
@@ -65,14 +65,16 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
 1. Make sure you have Postgres running
 2. Create a new database called 'pskb_dev'
 3. Initialize migration setup
-    - `./migrate.sh db init`
+    - `./manage.py db init`
 4. Create first migration
-    - `./migrate.sh db migrate`
+    - `./manage.py db migrate`
 5. Apply the first migration
-    - `./migrate.sh db upgrade`
+    - `./manage.py db upgrade`
 
 
 ### Setting up database on heroku
 
 1. Add small (free) db to your app
     - `heroku addons:create heroku-postgresql:hobby-dev --app <app_name>`
+2. Run migration on heroku
+    - `heroku run python manage.py db upgrade --app <app_name>`
