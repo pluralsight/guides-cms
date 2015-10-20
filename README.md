@@ -49,6 +49,8 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
     - `git remote add heroku git@heroku.com:<name>.git where <name> is the name
       of your heroku app from step 1.
 3. Setup heroku config
+    - See example_config.py for an example. You should create a new file
+      similar to example_config.py named config.py.
     - `heroku config:set APP_SETTINGS=config.ProductionConfig`
     - Or something like the following if you have multiple remotes for heroku
     - `heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`
