@@ -4,3 +4,4 @@ Flask-SQLAlchemy==2.0
 SQLAlchemy==1.0.8
 psycopg2==2.6.1
 Flask-Migrate==1.6.0
+Flask-OAuthlib==0.9.1
