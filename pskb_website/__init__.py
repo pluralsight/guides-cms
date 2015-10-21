@@ -15,7 +15,7 @@ if 'HEROKU' in os.environ:
         app.config.setdefault(var, os.environ[var])
 
         if var == 'SECRET_KEY':
-            app.config.secret_key = os.environ[var]
+            app.secret_key = os.environ[var]
 
     if 'DEBUG' in os.environ:
         app.debug = True
