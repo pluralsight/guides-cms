@@ -4,7 +4,7 @@ Main views of PSKB app
 
 import os
 
-from flask import redirect, url_for, session, request, json
+from flask import redirect, url_for, session, request, json, render_template
 from flask_oauthlib.client import OAuth
 
 from . import app
@@ -30,7 +30,8 @@ def index():
     if 'github_token' in session:
         return redirect(url_for('user_profile'))
 
-    return 'How about you <a href="/login">Login?</a>'
+    return render_template('layout.html',
+                           body='How about you <a href="/login">Login?</a>')
 
 
 @app.route('/login')
