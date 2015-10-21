@@ -17,6 +17,10 @@ if 'HEROKU' in os.environ:
     if 'DEBUG' in os.environ:
         app.config.setdefault('debug', True)
 
+        print 'Config values'
+        for key, value in app.config.iteritems():
+            print key, value
+
 else:
     app.config.from_object(os.environ['APP_SETTINGS'])
     app.secret_key = app.config['SECRET_KEY']
