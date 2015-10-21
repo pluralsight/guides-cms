@@ -48,7 +48,7 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
     - You can specify a name but it must be unique. You can also leave it blank
       and Heroku will create a unique name for you.
 2. Add git remote for your app
-    - `git remote add heroku git@heroku.com:<name>.git where <name> is the name
+    - `git remote add heroku git@heroku.com:<name>.git` where <name> is the name
       of your heroku app from step 1.
 3. Setup heroku config
     - See example_config.py for a listing of the environment variables that
@@ -59,7 +59,7 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
         - `heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`
         - `heroku config:set APP_SETTINGS=config.StagingConfig --remote stage`
 4. Deploy changes
-    -`git push heroku master`
+    - `git push heroku master`
     - Or something like the following if you have multiple remotes for heroku
     - `git push stage master` where <stage> is remote name for heroku and
       master is local branch you want to push.
