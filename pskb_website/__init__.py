@@ -13,6 +13,10 @@ if 'HEROKU' in os.environ:
     # the environment and set in our app config.
     for var in HEROKU_ENV_REQUIREMENTS:
         app.config.setdefault(var, os.environ[var])
+
+    if 'DEBUG' in os.environ:
+        app.config.setdefault('debug', True)
+
 else:
     app.config.from_object(os.environ['APP_SETTINGS'])
     app.secret_key = app.config['SECRET_KEY']
