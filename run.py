@@ -2,13 +2,12 @@
 
 import os
 
-
-if 'APP_SETTINGS' not in os.environ:
-    os.environ['APP_SETTINGS'] = 'config.DevelopmentConfig'
-
-if 'DATABASE_URL' not in os.environ:
-    os.environ['DATABASE_URL'] = 'postgresql://localhost/pskb_dev'
-
+os.environ['APP_SETTINGS'] = 'config.DevelopmentConfig'
 
 from pskb_website import app
+
+# Uncomment to see the config you're running with
+#for key, value in app.config.iteritems():
+    #print key, value
+
 app.run()

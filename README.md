@@ -27,8 +27,10 @@ Developers learn new skills through writing and editing technical writing.
 
 ### Run application locally
 
-1. Run `./run.py`
-2. Browse to URL mentioned at prompt
+1. Copy example_config.py to config.py and populate config.DevelopmentConfig
+   with your own data.
+2. Run `./run.py`
+3. Browse to URL mentioned at prompt
 
 ### Run application on heroku
 
@@ -49,12 +51,13 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
     - `git remote add heroku git@heroku.com:<name>.git where <name> is the name
       of your heroku app from step 1.
 3. Setup heroku config
-    - See example_config.py for an example. You should create a new file
-      similar to example_config.py named config.py.
-    - `heroku config:set APP_SETTINGS=config.ProductionConfig`
-    - Or something like the following if you have multiple remotes for heroku
-    - `heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`
-    - `heroku config:set APP_SETTINGS=config.StagingConfig --remote stage`
+    - See example_config.py for a listing of the environment variables that
+      must be setup in your heroku config.
+    - You can set heroku config variables with the following syntax:
+        - `heroku config:set APP_SETTINGS=config.ProductionConfig`
+        - Or something like the following if you have multiple remotes for heroku
+        - `heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`
+        - `heroku config:set APP_SETTINGS=config.StagingConfig --remote stage`
 4. Deploy changes
     -`git push heroku master`
     - Or something like the following if you have multiple remotes for heroku
