@@ -4,7 +4,7 @@ Main views of PSKB app
 
 import os
 
-from flask import redirect, url_for, session, request, jsonify
+from flask import redirect, url_for, session, request, json
 from flask_oauthlib.client import OAuth
 
 from . import app
@@ -60,7 +60,8 @@ def authorized():
 def user_profile():
     if 'github_token' in session:
         me = github.get('user')
-        return jsonify(me.data)
+        logout = 'Awesome, github auth works. Now <a href="/logout">logout</a><br/><br/>'
+        return logout + json.dumps(me.data)
 
     return redirect(url_for('login'))
 
