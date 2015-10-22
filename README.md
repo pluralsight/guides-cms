@@ -76,7 +76,6 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
 5. Apply the first migration
     - `./manage.py db upgrade`
 
-
 ### Setting up database on heroku
 
 1. Add small (free) db to your app
