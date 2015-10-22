@@ -30,8 +30,7 @@ def index():
     if 'github_token' in session:
         return redirect(url_for('user_profile'))
 
-    return render_template('layout.html',
-                           body='How about you <a href="/login">Login?</a>')
+    return render_template('index.html')
 
 
 @app.route('/login')
@@ -60,9 +59,18 @@ def authorized():
 @app.route('/user/')
 def user_profile():
     if 'github_token' in session:
-        me = github.get('user')
-        logout = 'Awesome, github auth works. Now <a href="/logout">logout</a><br/><br/>'
-        return logout + json.dumps(me.data)
+        me = github.get('user').data
+
+        if me['name']:
+            session['name'] = me['name']
+        elif me['login']:
+            session['name'] = me['login']
+        else:
+            session['name'] = ''
+
+        logout = 'Awesome, github auth works. This is who you are:'
+        body = logout + json.dumps(me)
+        return render_template('index.html', body=body)
 
     return redirect(url_for('login'))
 
