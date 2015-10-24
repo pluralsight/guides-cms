@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div id="epiceditor"></div>
+
+<br />
+<button onclick="save()">Save</button>
+
+{% endblock %}
+
+{% block js %}
+
+    {{super()}}
+    <script src="/static/js/vendor/editor/epiceditor.min.js"></script>
+    <script type="text/javascript">
+        var editor = new EpicEditor({
+            basePath: '/static/css/vendor/editor/',
+            autogrow: true,
+            theme: {
+                base: '/themes/base/epiceditor.css',
+                preview: '/themes/preview/preview-dark.css',
+                editor: '/themes/editor/epic-dark.css'
+            },
+        }
+        ).load();
+        editor.importFile("{{path}}", "{{article_text}}");
+
+    function save() {
+        var form = document.createElement("form");
+        var data = document.createElement("input");
+
+        form.action = "/save/";
+        form.method = "POST";
+        data.name = "content";
+        data.value = editor.exportFile();
+        form.appendChild(data.cloneNode());
+        
+        // To be sent, the form needs to be attached to the main document.
+        form.style.display = "none";
+        document.body.appendChild(form);
+
+        form.submit();
+
+        // But once the form is sent, it's useless to keep it.
+        document.body.removeChild(form);
+    };
+
+    </script>
+{% endblock %}

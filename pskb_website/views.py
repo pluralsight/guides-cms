@@ -75,6 +75,17 @@ def user_profile():
     return redirect(url_for('login'))
 
 
+@app.route('/edit/')
+def edit():
+    return render_template('editor.html', path='tmp',
+                           article_text='Article text goes here')
+
+
+@app.route('/save/', methods=['POST'])
+def save():
+    return render_template('index.html', body=request.form['content'])
+
+
 @github.tokengetter
 def get_github_oauth_token():
     return session.get('github_token')
