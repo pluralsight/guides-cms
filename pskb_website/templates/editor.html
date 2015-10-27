@@ -28,14 +28,19 @@
 
     function save() {
         var form = document.createElement("form");
-        var data = document.createElement("input");
-
         form.action = "/save/";
         form.method = "POST";
-        data.name = "content";
-        data.value = editor.exportFile();
-        form.appendChild(data.cloneNode());
+
+        var content = document.createElement("input");
+        content.name = "content";
+        content.value = editor.exportFile();
+        form.appendChild(content.cloneNode());
         
+        var github_id = document.createElement("input");
+        github_id.name = "github_id";
+        github_id.value = "{{github_id}}"
+        form.appendChild(github_id.cloneNode());
+
         // To be sent, the form needs to be attached to the main document.
         form.style.display = "none";
         document.body.appendChild(form);

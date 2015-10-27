@@ -2,9 +2,7 @@
 Main views of PSKB app
 """
 
-import os
-
-from flask import redirect, url_for, session, request, json, render_template
+from flask import redirect, url_for, session, request, render_template, flash
 from flask_oauthlib.client import OAuth
 
 from . import app
@@ -16,7 +14,7 @@ github = oauth.remote_app(
     'github',
     consumer_key=app.config['GITHUB_CLIENT_ID'],
     consumer_secret=app.config['GITHUB_SECRET'],
-    request_token_params={'scope': 'user:email'},
+    request_token_params={'scope': ['gist', 'user:email']},
     base_url='https://api.github.com/',
     request_token_url=None,
     access_token_method='POST',
@@ -58,32 +56,64 @@ def authorized():
 
 @app.route('/user/')
 def user_profile():
-    if 'github_token' in session:
-        me = github.get('user').data
+    if 'github_token' not in session:
+        return redirect(url_for('login'))
 
-        if me['name']:
-            session['name'] = me['name']
-        elif me['login']:
-            session['name'] = me['login']
-        else:
-            session['name'] = ''
+    me = github.get('user').data
 
-        logout = 'Awesome, github auth works. This is who you are:'
-        body = logout + json.dumps(me)
-        return render_template('index.html', body=body)
+    session['logged_in'] = True
+    if me['name']:
+        session['name'] = me['name']
 
-    return redirect(url_for('login'))
+    if me['login']:
+        session['login'] = me['login']
+
+    return render_template('profile.html', body=me)
 
 
-@app.route('/edit/')
-def edit():
-    return render_template('editor.html', path='tmp',
-                           article_text='Article text goes here')
+@app.route('/write/<github_id>')
+@app.route('/write/', defaults={'github_id': None})
+def write(github_id):
+    # Grab the content from github
+    if github_id is not None:
+        pass
+    else:
+        github_id = ''
+
+    # The path here tells the Epic Editor what the name of the local storage
+    # file is called.  The file is overwritten if it exists so doesn't really
+    # matter what name we use here.
+    return render_template('editor.html', path='myfile', github_id=github_id)
 
 
 @app.route('/save/', methods=['POST'])
 def save():
-    return render_template('index.html', body=request.form['content'])
+    # Update content on github
+    if not request.form['github_id']:
+        pass
+    # Create content on github
+    else:
+        pass
+
+    # FIXME: We should create this gist as pluralsight not as this user but
+    # with this user as the author.
+
+    gist_info = {'files':  {'article.md': {'content': request.form['content']}}} 
+
+    resp = github.post('gists', data=gist_info, format='json')
+
+    if resp.status == 201:
+        try:
+            gist_url = 'https://gist.github.com/%s/%s' % (session['login'],
+                                                          resp.data['id'])
+        except KeyError:
+            gist_url = ''
+
+        return render_template('article.html', gist_url=gist_url)
+    else:
+        # FIXME: Handle errors
+        flash('Failed creating gist: %d' % (resp.status))
+        return redirect(url_for('index'))
 
 
 @github.tokengetter
