@@ -5,8 +5,8 @@ Main views of PSKB app
 from flask import redirect, url_for, session, request, render_template, flash
 from flask_oauthlib.client import OAuth
 
-from . import app
-from .models import Article
+from . import app, db
+from .models import Article, User, Tag
 
 oauth = OAuth(app)
 
@@ -25,10 +25,13 @@ github = oauth.remote_app(
 
 @app.route('/')
 def index():
-    if 'github_token' in session:
-        return redirect(url_for('user_profile'))
+    #if 'github_token' in session:
+        #return redirect(url_for('user_profile'))
 
-    return render_template('index.html')
+    # FIXME: This should only fetch the most recent x number.
+    articles = Article.query.all()
+
+    return render_template('index.html', articles=articles)
 
 
 @app.route('/login')
@@ -61,7 +64,12 @@ def user_profile():
 
     me = github.get('user').data
 
-    session['logged_in'] = True
+    user = User.query.filter_by(github_username=me['login']).first()
+    if user is None:
+        user = User(github_username=me['login'])
+        db.session.add(user)
+        db.session.commit()
+
     if me['name']:
         session['name'] = me['name']
 
@@ -98,6 +106,13 @@ def save():
     # FIXME: We should create this gist as pluralsight not as this user but
     # with this user as the author.
 
+    # Commit article to our db first so we can rollback if the github api call
+    # fails...
+    user = User.query.filter_by(github_username=session['login']).first()
+    if user is None:
+        # FIXME: Handle this, maybe get_or_404()
+        raise ValueError('No user found in session')
+
     gist_info = {'files':  {'article.md': {'content': request.form['content']}}} 
 
     resp = github.post('gists', data=gist_info, format='json')
@@ -108,6 +123,11 @@ def save():
                                                           resp.data['id'])
         except KeyError:
             gist_url = ''
+
+        article = Article(title=request.form['title'], author_id=user.id,
+                          github_id=resp.data['id'])
+        db.session.add(article)
+        db.session.commit()
 
         return render_template('article.html', gist_url=gist_url)
     else:

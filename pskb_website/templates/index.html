@@ -3,7 +3,11 @@
 {% block body %}
 
 <p>
-    {{body}}
+    <ul>
+        {% for article in articles %}
+            <li>{{article.title}}</li>
+        {% endfor %}
+    </ul>
 </p>
 
 {% endblock %}
