@@ -3,7 +3,7 @@
 The Pluralsight knowledgebase is a community-based website to help Software
 Developers learn new skills through writing and editing technical writing.
 
-## Requirements
+## Main requirements
 
 - Programming lanuage: [Python](http://python.org) 2.7.3 - Python 2.7.10
 - Web framework: [Flask](http://flask.pocoo.org)
@@ -105,3 +105,15 @@ The existing migrations can be found in the migrations folder.
 
 - Use \dt to list tables
 - Use \? to get help on shortcut commands
+
+### Interacting with database locally
+
+[Flask-SQLAlchemy](http://pythonhosted.org/Flask-SQLAlchemy/index.html) is used
+to interface with the [Postgres](http://www.postgresql.org) database.  This
+layer sits on top of [SQLAlchemy](http://www.sqlalchemy.org) to provide a nicer
+API to the database.
+
+You can test out the database without a browser by running the following
+command, provided by
+[Flask-Migrate](http://flask-migrate.readthedocs.org/en/latest/):
+    - `python migrate.py db shell`
