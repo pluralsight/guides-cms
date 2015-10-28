@@ -23,9 +23,12 @@ class Article(db.Model):
     tags = db.relationship('Tag', secondary=article_tags,
                            backref=db.backref('articles', lazy='dynamic'))
 
-    def __init__(self, title, author_id, github_id):
+    def __init__(self, title, author_id, github_id=None):
         self.title = title
         self.author_id = author_id
+
+        # This can be None b/c we may not have a github id at the time of
+        # location creation.
         self.github_id = github_id
 
     def __repr__(self):
