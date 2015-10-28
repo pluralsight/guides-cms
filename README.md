@@ -82,3 +82,26 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
     - `heroku addons:create heroku-postgresql:hobby-dev --app <app_name>`
 2. Run migration on heroku
     - `heroku run python manage.py db upgrade --app <app_name>`
+
+#### Database migrations
+
+Database migrations are handled by [Flask-Migrate](http://flask-migrate.readthedocs.org/en/latest/).  This Flask extension manages some of the lower-level work with
+[alembic](https://alembic.readthedocs.org/en/latest/index.html), which does the
+real migration work.
+
+The existing migrations can be found in the migrations folder.
+
+##### Creating a database migration
+
+1. Apply changes to models.py
+2. Run `python manage.py db migrate` to creation the new migration script
+3. Double-check the migration script the above command generated.
+    - The file will exist somewhere in migrations/versions/.  The migrate
+      command should point you there.
+4. Once the migration script is ready, run `python manage.py db upgrade`
+5. Add new migrations files to git
+
+##### Psql tips
+
+- Use \dt to list tables
+- Use \? to get help on shortcut commands
