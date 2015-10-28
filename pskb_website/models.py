@@ -17,7 +17,7 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String())
 
-    github_id = db.Column(db.String())
+    github_id = db.Column(db.String(), unique=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     tags = db.relationship('Tag', secondary=article_tags,
@@ -50,7 +50,7 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    github_username = db.Column(db.String())
+    github_username = db.Column(db.String(), unique=True)
     articles = db.relationship('Article', backref='user', lazy='dynamic')
 
     def __init__(self, github_username):
@@ -64,7 +64,7 @@ class Tag(db.Model):
     __tablename__ = 'tags'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(50), unique=True)
 
     def __init__(self, name):
         self.name = name
