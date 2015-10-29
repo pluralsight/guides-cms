@@ -117,3 +117,9 @@ You can test out the database without a browser by running the following
 command, provided by
 [Flask-Migrate](http://flask-migrate.readthedocs.org/en/latest/):
     - `python migrate.py db shell`
+
+
+### Interacting with database remotely
+
+- Run `heroku config --app <app_name>` and take note of your DATABASE_URL
+- Run `psql <DATABASE_URL>`
