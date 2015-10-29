@@ -9,7 +9,8 @@ import os
 # You must set each of these in your heroku environment with the heroku
 # config:set command. See README.md for more information.
 HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
-                           'GITHUB_SECRET', 'DATABASE_URL')
+                           'GITHUB_SECRET', 'DATABASE_URL',
+                           'SQLALCHEMY_DATABASE_URI')
 
 
 class Config(object):
