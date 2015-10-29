@@ -37,7 +37,7 @@ Title: <input type="text" id="title" name="title" />
 
         var content = document.createElement("input");
         content.name = "content";
-        content.value = editor.exportFile();
+        content.value = editor.exportFile("{{path}}", "json");
         form.appendChild(content.cloneNode());
 
         var github_id = document.createElement("input");

@@ -2,7 +2,7 @@
 Main views of PSKB app
 """
 
-from flask import redirect, url_for, session, request, render_template, flash
+from flask import redirect, url_for, session, request, render_template, flash, json
 from flask_oauthlib.client import OAuth
 
 from . import app, db
@@ -113,7 +113,10 @@ def save():
         # FIXME: Handle this, maybe get_or_404()
         raise ValueError('No user found in session')
 
-    gist_info = {'files':  {'article.md': {'content': request.form['content']}}} 
+    # Data is stored in form with input named content which holds json. The
+    # json has the 'real' data in the 'content' key.
+    content = json.loads(request.form['content'])['content']
+    gist_info = {'files':  {GIST_FILE: {'content': content}}}
 
     resp = github.post('gists', data=gist_info, format='json')
 
