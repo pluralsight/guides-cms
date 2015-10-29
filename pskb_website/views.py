@@ -23,6 +23,8 @@ github = oauth.remote_app(
 )
 
 
+GIST_FILE = 'article.md'
+
 @app.route('/')
 def index():
     #if 'github_token' in session:
@@ -82,16 +84,27 @@ def user_profile():
 @app.route('/write/<github_id>')
 @app.route('/write/', defaults={'github_id': None})
 def write(github_id):
-    # Grab the content from github
-    if github_id is not None:
-        pass
-    else:
+    article_text = ''
+    title = ''
+
+    if github_id is None:
         github_id = ''
+    else:
+        article = Article.query.filter_by(github_id=github_id).first()
+        if article is None:
+            raise ValueError('No article found in database')
+
+        title = article.title
+
+        resp = github.get('gists/%s' % (github_id))
+        if resp.status == 200:
+            article_text = resp.data['files'][GIST_FILE]['content']
 
     # The path here tells the Epic Editor what the name of the local storage
     # file is called.  The file is overwritten if it exists so doesn't really
     # matter what name we use here.
-    return render_template('editor.html', path='myfile', github_id=github_id)
+    return render_template('editor.html', path='myfile', github_id=github_id,
+                           article_text=article_text, title=title)
 
 
 @app.route('/save/', methods=['POST'])

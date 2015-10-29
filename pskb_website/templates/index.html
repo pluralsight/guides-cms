@@ -5,7 +5,7 @@
 <p>
     <ul>
         {% for article in articles %}
-            <li>{{article.title}}</li>
+            <li><a href="/write/{{article.github_id}}">{{article.title}}</a></li>
         {% endfor %}
     </ul>
 </p>
