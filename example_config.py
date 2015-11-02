@@ -10,7 +10,8 @@ import os
 # config:set command. See README.md for more information.
 HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'GITHUB_SECRET', 'DATABASE_URL',
-                           'SQLALCHEMY_DATABASE_URI')
+                           'SQLALCHEMY_DATABASE_URI', 'REPO_OWNER',
+                           'REPO_NAME')
 
 
 class Config(object):
@@ -20,6 +21,11 @@ class Config(object):
     GITHUB_SECRET = 'replace-me'
     HEROKU = False
     SECRET_KEY = 'not-a-good-value'
+
+    # Details of the repo where all articles are stored.  The GITHUB_CLIENT_ID
+    # and GITHUB_SECRET should allow full-access to this database.
+    REPO_OWNER = None
+    REPO_NAME = None
 
     # This should automatically be set by heroku if you've added a database to
     # your app.

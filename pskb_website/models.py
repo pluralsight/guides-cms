@@ -17,22 +17,33 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String())
 
-    github_id = db.Column(db.String(), unique=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    repo_id = db.Column(db.Integer, db.ForeignKey('repos.id'))
 
     tags = db.relationship('Tag', secondary=article_tags,
                            backref=db.backref('articles', lazy='dynamic'))
 
-    def __init__(self, title, author_id, github_id=None):
+    def __init__(self, title, author_id, repo_id):
         self.title = title
         self.author_id = author_id
-
-        # This can be None b/c we may not have a github id at the time of
-        # location creation.
-        self.github_id = github_id
+        self.repo_id = repo_id
 
     def __repr__(self):
         return '<id %d title: %s>' % (self.id, self.title)
+
+
+class Repo(db.Model):
+    __tablename__ = 'repos'
+
+    id = db.Column(db.Integer, primary_key=True)
+    owner = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64))
+    branch = db.Column(db.String(64))
+
+    def __init__(self, owner, name, branch='master'):
+        self.owner = owner
+        self.name = name
+        self.branch = branch
 
 
 # FIXME: Not sure what all we want here b/c we might want to include some
@@ -54,6 +65,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     github_username = db.Column(db.String(), unique=True)
+    email = db.Column(db.String(), unique=True)
     articles = db.relationship('Article', backref='user', lazy='dynamic')
 
     def __init__(self, github_username):
