@@ -64,11 +64,17 @@ def user_profile():
     if 'github_token' not in session:
         return redirect(url_for('login'))
 
+    # FIXME: Error handling
     me = github.get('user').data
+    email = get_primary_github_email_of_logged_in()
 
     user = User.query.filter_by(github_username=me['login']).first()
     if user is None:
-        user = User(github_username=me['login'])
+        user = User(me['login'], email)
+        db.session.add(user)
+        db.session.commit()
+    elif user.email != email:
+        user.email = email
         db.session.add(user)
         db.session.commit()
 
@@ -150,6 +156,22 @@ def save():
         # FIXME: Handle errors
         flash('Failed creating gist: %d' % (resp.status))
         return redirect(url_for('index'))
+
+
+def get_primary_github_email_of_logged_in():
+    """Get primary email address of logged in user"""
+
+    resp = github.get('user/emails')
+    if resp.status != 200:
+        flash('Failed reading user email addresses: %s' % (resp.status))
+        return None
+
+    for email_data in resp.data:
+        if email_data['primary']:
+            return email_data['email']
+
+    flash('No primary email address found')
+    return None
 
 
 @github.tokengetter

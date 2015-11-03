@@ -68,8 +68,9 @@ class User(db.Model):
     email = db.Column(db.String(), unique=True)
     articles = db.relationship('Article', backref='user', lazy='dynamic')
 
-    def __init__(self, github_username):
+    def __init__(self, github_username, email):
         self.github_username = github_username
+        self.email = email
 
     def __repr__(self):
         return '<id %d github_username: %s>' % (self.id, self.github_username)
