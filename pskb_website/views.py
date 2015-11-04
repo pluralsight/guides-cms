@@ -52,6 +52,7 @@ def authorized():
             request.args['error'], request.args['error_description'])
 
     session['github_token'] = (resp['access_token'], '')
+    print 'token = ', session['github_token']
 
     return redirect(url_for('user_profile'))
 
