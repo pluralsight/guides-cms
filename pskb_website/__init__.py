@@ -42,11 +42,11 @@ try:
 except Exception as err:
     # Protect against trying to import before the database is setup, etc.
     print 'Exception querying repos:', err
-    repo = None
+    app.config['REPO_ID'] = None
+else:
+    if repo is None:
+        repo = Repo(app.config['REPO_OWNER'], app.config['REPO_NAME'])
+        db.session.add(repo)
+        db.session.commit()
 
-if repo is None:
-    repo = Repo(app.config['REPO_OWNER'], app.config['REPO_NAME'])
-    db.session.add(repo)
-    db.session.commit()
-
-app.config['REPO_ID'] = repo.id
+    app.config['REPO_ID'] = repo.id
