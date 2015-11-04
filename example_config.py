@@ -11,7 +11,8 @@ import os
 HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'GITHUB_SECRET', 'DATABASE_URL',
                            'SQLALCHEMY_DATABASE_URI', 'REPO_OWNER',
-                           'REPO_NAME')
+                           'REPO_NAME', 'REPO_OWNER_ACCESS_TOKEN')
+
 
 
 class Config(object):
@@ -26,6 +27,7 @@ class Config(object):
     # and GITHUB_SECRET should allow full-access to this database.
     REPO_OWNER = None
     REPO_NAME = None
+    REPO_OWNER_ACCESS_TOKEN = None
 
     # This should automatically be set by heroku if you've added a database to
     # your app.
