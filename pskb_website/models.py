@@ -115,7 +115,7 @@ class User(db.Model):
         self.email = email
 
     def __repr__(self):
-        return '<id %d github_username: %s>' % (self.id, self.github_username)
+        return '<id %s github_username: %s>' % (self.id, self.github_username)
 
 
 class Tag(db.Model):
@@ -128,4 +128,4 @@ class Tag(db.Model):
         self.name = name
 
     def __repr__(self):
-        return '<id %d name: %s>' % (self.id, self.name)
+        return '<id %s name: %s>' % (self.id, self.name)
