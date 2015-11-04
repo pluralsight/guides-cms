@@ -40,10 +40,10 @@ Title: <input type="text" id="title" name="title" value="{{title}}"/>
         content.value = editor.exportFile("{{path}}", "json");
         form.appendChild(content.cloneNode());
 
-        var github_id = document.createElement("input");
-        github_id.name = "github_id";
-        github_id.value = "{{github_id}}"
-        form.appendChild(github_id.cloneNode());
+        var article_id = document.createElement("input");
+        article_id.name = "article_id";
+        article_id.value = "{{article_id}}"
+        form.appendChild(article_id.cloneNode());
 
         var title = document.getElementById("title");
         form.appendChild(title.cloneNode());

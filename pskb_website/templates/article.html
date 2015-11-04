@@ -2,8 +2,7 @@
 
 {% block body %}
 
-<p>
-    <a href="{{gist_url}}">Read your gist</a>
-</p>
+<p> {{text|safe}} </p>
+<p> <a href="{{github_link}}">View on Github</a> </p>
 
 {% endblock %}
