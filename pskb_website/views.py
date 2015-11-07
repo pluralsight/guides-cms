@@ -88,15 +88,17 @@ def user_profile():
     return render_template('profile.html', body=me)
 
 
-@app.route('/write/<path>')
-@app.route('/write/', defaults={'path': None})
-def write(path):
+@app.route('/write/<path:article_path>', methods=['GET'])
+@app.route('/write/', defaults={'article_path': None})
+def write(article_path):
     id_ = ''
     title = ''
     text = ''
 
-    if path is not None:
-        article = Article.query.first_or_404(path=path)
+    # FIXME: Require user to be logged in to see this view
+
+    if article_path is not None:
+        article = Article.query.filter_by(path=article_path).first_or_404()
         id_ = article.id
         title = article.title
 
@@ -105,11 +107,8 @@ def write(path):
         if resp.status == 200:
             text = base64.b64decode(resp.data['content'])
 
-    # The path here tells the Epic Editor what the name of the local storage
-    # file is called.  The file is overwritten if it exists so doesn't really
-    # matter what name we use here.
-    return render_template('editor.html', path='myfile', article_text=text,
-                           title=title, article_id=id_)
+    return render_template('editor.html', article_text=text, title=title,
+                           article_id=id_)
 
 
 @app.route('/fork/<path>')
@@ -136,20 +135,26 @@ def review(article_path):
         return redirect(url_for('index'))
 
     return render_template('article.html', text=text,
-                           github_link=article.github_url)
+                           github_link=article.github_url,
+                           path=article.path)
 
 
 @app.route('/save/', methods=['POST'])
 def save():
     user = User.query.filter_by(github_username=session['login']).first_or_404()
 
+    new_article = False
+
     try:
         article_id = int(request.form['article_id'])
     except ValueError:
         article = Article(title=request.form['title'], author_id=user.id,
                           repo_id=app.config['REPO_ID'])
+        new_article = True
     else:
         article = Article.query.get(article_id)
+
+        # FIXME: Cannot change title now because that would change the path
         article.title = request.form['title']
 
     # Save article locally first so we can have all the relationships to get
@@ -186,9 +191,11 @@ def save():
     if status in (200, 201):
         return redirect(url_for('review', article_path=article.path))
 
-    # FIXME: Handle errors
-    db.session.delete(article)
-    db.session.commit()
+    if new_article:
+        # FIXME: Handle errors
+        db.session.delete(article)
+        db.session.commit()
+
     flash('Failed creating article on github: %d' % (status))
     return redirect(url_for('index'))
 
