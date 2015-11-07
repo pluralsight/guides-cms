@@ -2,14 +2,13 @@
 
 {% block body %}
 
-Title: <input type="text" id="title" name="title" value="{{title}}"/>
-<br />
+<input id="title" name="title" type="text" class="form-control" placeholder="title" />
 <br />
 
 <div id="epiceditor"></div>
 
 <br />
-<button onclick="save()">Save</button>
+<button onclick="save()" class="btn btn-primary">Save</button>
 
 {% endblock %}
 
@@ -23,8 +22,8 @@ Title: <input type="text" id="title" name="title" value="{{title}}"/>
             autogrow: true,
             theme: {
                 base: '/themes/base/epiceditor.css',
-                preview: '/themes/preview/preview-dark.css',
-                editor: '/themes/editor/epic-dark.css'
+                preview: '/themes/preview/github.css',
+                editor: '/themes/editor/epic-light.css'
             },
         }
         ).load();
