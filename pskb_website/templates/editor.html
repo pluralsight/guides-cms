@@ -2,13 +2,16 @@
 
 {% block body %}
 
-<input id="title" name="title" type="text" class="form-control" placeholder="title" />
+<input id="title" name="title" type="text" class="form-control" placeholder="Title" value="{{title}}"/>
+
 <br />
 
 <div id="epiceditor"></div>
 
 <br />
 <button onclick="save()" class="btn btn-primary">Save</button>
+
+<textarea id="content" style="display:none">{{article_text}}</textarea>
 
 {% endblock %}
 
@@ -18,6 +21,8 @@
     <script src="/static/js/vendor/editor/epiceditor.min.js"></script>
     <script type="text/javascript">
         var editor = new EpicEditor({
+            clientSideStorage: false,
+            textarea: "content",
             basePath: '/static/css/vendor/editor/',
             autogrow: true,
             theme: {
@@ -27,7 +32,6 @@
             },
         }
         ).load();
-        editor.importFile("{{path}}", "{{article_text}}");
 
     function save() {
         var form = document.createElement("form");
