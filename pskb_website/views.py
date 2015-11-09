@@ -85,10 +85,7 @@ def write(article_path, sha):
     # FIXME: Require user to be logged in to see this view
 
     if article_path is not None:
-        article = Article.query.filter_by(path=article_path).first_or_404()
-        id_ = article.id
-        title = article.title
-        text = remote.raw_article_from_github(article)
+        text, curr_sha, link = remote.article_details_from_github(article_path)
 
     if sha is None:
         sha = ''

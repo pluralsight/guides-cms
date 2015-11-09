@@ -111,7 +111,7 @@ def read_article_from_github(path):
     if text is None:
         return (text, sha, link)
 
-    sha, link = article_details_from_github(path)
+    raw_text, sha, link = article_details_from_github(path)
 
     return (text, sha, link)
 
@@ -155,12 +155,13 @@ def rendered_markdown_from_github(path):
 
 def article_details_from_github(path):
     """
-    Get article SHA and github url from github
+    Get article article details from github
 
     :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
-    :returns: (SHA, github_url)
+    :returns: (raw_text, SHA, github_url)
     """
 
+    text = None
     sha = None
     link = None
     owner, repo, article_path = split_full_article_path(path)
@@ -170,8 +171,9 @@ def article_details_from_github(path):
     if resp.status == 200:
         sha = resp.data['sha']
         link = resp.data['_links']['html']
+        text = base64.b64decode(resp.data['content'])
 
-    return (sha, link)
+    return (text, sha, link)
 
 
 def commit_article_to_github(article, message, content, name, email, sha=None):
