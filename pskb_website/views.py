@@ -94,21 +94,6 @@ def write(article_path, sha):
                            article_id=id_, sha=sha)
 
 
-@app.route('/fork/<path>')
-def fork():
-    # FIXME:
-    #   - Create new article object
-    #   - Get logged in users information
-    #   - Submit a fork API request
-    #   - Save the article's repo as the forked address
-
-    # FIXME: We don't need to know who forked what b/c github tracks that for
-    # us
-
-    # FIXME: Require user to be logged in to see this view
-    pass
-
-
 @app.route('/review/<path:article_path>', methods=['GET'])
 def review(article_path):
     text, sha, github_url = remote.read_article_from_github(article_path)
