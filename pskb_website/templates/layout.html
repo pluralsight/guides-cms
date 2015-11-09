@@ -35,15 +35,15 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">PSKB</a>
+          <a class="navbar-brand" href="/">PSKB</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
+          <li class="{{ 'active' if g.index_active }}"><a href="/">Home</a></li>
 
             {% if session.github_token %}
-                <li class="active"><a href="/write/">Write</a></li>
-                <li><a href="/user/">Profile</a></li>
+                <li class="{{ 'active' if not g.index_active and not g.profile_active }}"><a href="/write/">Write</a></li>
+                <li class="{{ 'active' if g.profile_active }}"><a href="/user/">Profile</a></li>
                 <li><a href="/logout">Logout ({{session.name}})</a></li>
             {% else %}
                 <li class="active"><a href="/login">Login</a></li>

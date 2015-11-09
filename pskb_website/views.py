@@ -2,7 +2,7 @@
 Main views of PSKB app
 """
 
-from flask import redirect, url_for, session, request, render_template, flash, json
+from flask import redirect, url_for, session, request, render_template, flash, json, g
 
 from . import app, db
 from . import remote
@@ -14,6 +14,7 @@ def index():
     # FIXME: This should only fetch the most recent x number.
     articles = remote.list_articles_from_github()
 
+    g.index_active = True
     return render_template('index.html', articles=articles)
 
 
@@ -36,7 +37,6 @@ def authorized():
             request.args['error'], request.args['error_description'])
 
     session['github_token'] = (resp['access_token'], '')
-    print 'token = ', session['github_token']
 
     return redirect(url_for('user_profile'))
 
@@ -72,6 +72,7 @@ def user_profile():
         if 'name' not in session:
             session['name'] = me['login']
 
+    g.profile_active = True
     return render_template('profile.html', body=me)
 
 
