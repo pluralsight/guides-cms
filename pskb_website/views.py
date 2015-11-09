@@ -88,9 +88,9 @@ def user_profile():
     return render_template('profile.html', body=me)
 
 
-@app.route('/write/<path:article_path>', methods=['GET'])
-@app.route('/write/', defaults={'article_path': None})
-def write(article_path):
+@app.route('/write/<path:article_path>/<sha>', methods=['GET'])
+@app.route('/write/', defaults={'article_path': None, 'sha': None})
+def write(article_path, sha):
     id_ = ''
     title = ''
     text = ''
@@ -107,8 +107,11 @@ def write(article_path):
         if resp.status == 200:
             text = base64.b64decode(resp.data['content'])
 
+    if sha is None:
+        sha = ''
+
     return render_template('editor.html', article_text=text, title=title,
-                           article_id=id_)
+                           article_id=id_, sha=sha)
 
 
 @app.route('/fork/<path>')
@@ -121,13 +124,15 @@ def fork():
 
     # FIXME: We don't need to know who forked what b/c github tracks that for
     # us
+
+    # FIXME: Require user to be logged in to see this view
     pass
 
 
 @app.route('/review/<path:article_path>', methods=['GET'])
 def review(article_path):
     article = Article.query.filter_by(path=article_path).first_or_404()
-    text = read_article_from_github(article)
+    text, sha = read_article_from_github(article)
 
     # We can still show the article without the url, but we need the text.
     if text is None:
@@ -136,7 +141,7 @@ def review(article_path):
 
     return render_template('article.html', text=text,
                            github_link=article.github_url,
-                           path=article.path)
+                           path=article.path, sha=sha)
 
 
 @app.route('/save/', methods=['POST'])
@@ -169,9 +174,16 @@ def save():
     # json has the 'real' data in the 'content' key.
     content = json.loads(request.form['content'])['content']
 
-    message = 'New article %s' % (article.title)
+    if new_article:
+        message = 'New article %s' % (article.title)
+    else:
+        message = 'Updates to %s' % (article.title)
+
+    sha = request.form['sha']
+
     status = commit_article_to_github(article, message, content,
-                                      user.github_username, user.email)
+                                      user.github_username, user.email,
+                                      sha)
 
     # FIXME: If there's an article_id:
     #   - Grab it
@@ -200,7 +212,7 @@ def save():
     return redirect(url_for('index'))
 
 
-def commit_article_to_github(article, message, content, name, email):
+def commit_article_to_github(article, message, content, name, email, sha=None):
     """
     Save given article object and content to github
 
@@ -209,6 +221,8 @@ def commit_article_to_github(article, message, content, name, email):
     :params content: Content of article
     :params name: Name of author who wrote article
     :params email: Email address of author
+    :params sha: Optional SHA of article if it already exists on github
+
     :returns: HTTP status of API request
     """
 
@@ -216,6 +230,8 @@ def commit_article_to_github(article, message, content, name, email):
     commit_info = {'message': message, 'content': content,
                    'author': {'name': name, 'email': email}}
 
+    if sha:
+        commit_info['sha'] = sha
 
     # The flask-oauthlib API expects the access token to be in a tuple or a
     # list.  Not exactly sure why since the underlying oauthlib library has a
@@ -234,12 +250,48 @@ def read_article_from_github(article):
     Get rendered markdown article text from github API
 
     :params article: Article model object
-    :returns: article_text
+    :returns: (article_text, sha)
     """
 
-    url = 'repos/%s' % (article.github_api_location)
+    sha = None
+    text = get_rendered_markdown_from_github(article)
+
+    if text is None:
+        return (text, sha)
+
+    sha = get_article_sha_from_github(article)
+
+    return (text, sha)
+
+
+def get_article_sha_from_github(article):
+    """
+    Get article SHA from github
+
+    :params article: Article model object
+    :returns: SHA
+    """
+
+    sha = None
+    resp = github.get('repos/%s' % (article.github_api_location))
+
+    if resp.status == 200:
+        sha = resp.data['sha']
+
+    return sha
+
+
+def get_rendered_markdown_from_github(article):
+    """
+    Get rendered markdown article text from github API
+
+    :params article: Article model object
+    :returns: HTML article text
+    """
+
     headers = {'accept': 'application/vnd.github.html'}
-    resp = github.get(url, headers=headers)
+    resp = github.get('repos/%s' % (article.github_api_location),
+                      headers=headers)
 
     if resp.status == 200:
         return resp.data

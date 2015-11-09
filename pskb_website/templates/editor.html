@@ -48,6 +48,11 @@
         article_id.value = "{{article_id}}"
         form.appendChild(article_id.cloneNode());
 
+        var sha = document.createElement("input");
+        sha.name = "sha";
+        sha.value = "{{sha}}"
+        form.appendChild(sha.cloneNode());
+
         var title = document.getElementById("title");
         form.appendChild(title.cloneNode());
 
