@@ -91,7 +91,7 @@ def write(article_path, sha):
         sha = ''
 
     return render_template('editor.html', article_text=text, title=title,
-                           article_id=id_, sha=sha)
+                           path=article_path, sha=sha)
 
 
 @app.route('/review/<path:article_path>', methods=['GET'])
@@ -112,40 +112,20 @@ def review(article_path):
 def save():
     user = User.query.filter_by(github_username=session['login']).first_or_404()
 
-    new_article = False
-
-    try:
-        article_id = int(request.form['article_id'])
-    except ValueError:
-        article = Article(title=request.form['title'], author_id=user.id,
-                          repo_id=app.config['REPO_ID'])
-        new_article = True
-    else:
-        article = Article.query.get(article_id)
-
-        # FIXME: Cannot change title now because that would change the path
-        article.title = request.form['title']
-
-    # Save article locally first so we can have all the relationships to get
-    # the location to store on github.
-    db.session.add(article)
-    db.session.commit()
-    article.update_path()
-    db.session.add(article)
-    db.session.commit()
-
     # Data is stored in form with input named content which holds json. The
     # json has the 'real' data in the 'content' key.
     content = json.loads(request.form['content'])['content']
 
-    if new_article:
-        message = 'New article %s' % (article.title)
+    path = request.form['path']
+
+    if path:
+        message = 'Updates to %s' % (request.form['title'])
     else:
-        message = 'Updates to %s' % (article.title)
+        message = 'New article %s' % (request.form['title'])
 
     sha = request.form['sha']
 
-    status = remote.commit_article_to_github(article, message, content,
+    status = remote.commit_article_to_github(path, message, content,
                                              user.github_username, user.email,
                                              sha)
 
@@ -165,7 +145,7 @@ def save():
 
     # Successful creation
     if status in (200, 201):
-        return redirect(url_for('review', article_path=article.path))
+        return redirect(url_for('review', article_path=path))
 
     if new_article:
         # FIXME: Handle errors

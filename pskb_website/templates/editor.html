@@ -40,18 +40,18 @@
 
         var content = document.createElement("input");
         content.name = "content";
-        content.value = editor.exportFile("{{path}}", "json");
+        content.value = editor.exportFile("", "json");
         form.appendChild(content.cloneNode());
-
-        var article_id = document.createElement("input");
-        article_id.name = "article_id";
-        article_id.value = "{{article_id}}"
-        form.appendChild(article_id.cloneNode());
 
         var sha = document.createElement("input");
         sha.name = "sha";
         sha.value = "{{sha}}"
         form.appendChild(sha.cloneNode());
+
+        var path = document.createElement("input");
+        path.name = "path";
+        path.value = "{{path}}"
+        form.appendChild(path.cloneNode());
 
         var title = document.getElementById("title");
         form.appendChild(title.cloneNode());

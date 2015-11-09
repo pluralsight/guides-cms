@@ -141,11 +141,10 @@ def rendered_markdown_from_github(path):
     :returns: HTML article text
     """
 
-    owner, repo, article_path = split_full_article_path(path)
-
+    url = contents_url_from_path(path)
     headers = {'accept': 'application/vnd.github.html'}
-    resp = github.get('repos/%s/%s/contents/%s' % (owner, repo, article_path),
-                      headers=headers)
+
+    resp = github.get(url, headers=headers)
 
     if resp.status == 200:
         return resp.data
@@ -164,9 +163,9 @@ def article_details_from_github(path):
     text = None
     sha = None
     link = None
-    owner, repo, article_path = split_full_article_path(path)
+    url = contents_url_from_path(path)
 
-    resp = github.get('repos/%s/%s/contents/%s' % (owner, repo, article_path))
+    resp = github.get(url)
 
     if resp.status == 200:
         sha = resp.data['sha']
@@ -176,11 +175,11 @@ def article_details_from_github(path):
     return (text, sha, link)
 
 
-def commit_article_to_github(article, message, content, name, email, sha=None):
+def commit_article_to_github(path, message, content, name, email, sha=None):
     """
     Save given article object and content to github
 
-    :params article: Article object to save
+    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
     :params message: Commit message to save article with
     :params content: Content of article
     :params name: Name of author who wrote article
@@ -190,6 +189,7 @@ def commit_article_to_github(article, message, content, name, email, sha=None):
     :returns: HTTP status of API request
     """
 
+    url = contents_url_from_path(path)
     content = base64.b64encode(content)
     commit_info = {'message': message, 'content': content,
                    'author': {'name': name, 'email': email}}
@@ -202,7 +202,6 @@ def commit_article_to_github(article, message, content, name, email, sha=None):
     # separate kwargs for access_token.  See flask_oauthlib.client.make_client
     # for more information.
     token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
-    url = 'repos/%s' % (article.github_api_location)
 
     resp = github.put(url, data=commit_info, format='json', token=token)
 
@@ -229,3 +228,15 @@ def split_full_article_path(path):
     article_path = '/'.join(tokens[2:])
 
     return (owner, repo, article_path)
+
+
+def contents_url_from_path(path):
+    """
+    Get github API url for contents of article from full path
+
+    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
+    :returns: Url suitable for a content call with github API
+    """
+
+    owner, repo, article_path = split_full_article_path(path)
+    return 'repos/%s/%s/contents/%s' % (owner, repo, article_path)
