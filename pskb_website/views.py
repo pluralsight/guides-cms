@@ -114,17 +114,16 @@ def fork():
 
 @app.route('/review/<path:article_path>', methods=['GET'])
 def review(article_path):
-    article = Article.query.filter_by(path=article_path).first_or_404()
-    text, sha = remote.read_article_from_github(article)
+    text, sha, github_url = remote.read_article_from_github(article_path)
 
     # We can still show the article without the url, but we need the text.
-    if text is None or sha is None:
+    if None in (text, sha, github_url):
         flash('Failing reading article from github')
         return redirect(url_for('index'))
 
     return render_template('article.html', text=text,
-                           github_link=article.github_url,
-                           path=article.path, sha=sha)
+                           github_link=github_url,
+                           path=article_path, sha=sha)
 
 
 @app.route('/save/', methods=['POST'])

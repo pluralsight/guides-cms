@@ -59,7 +59,7 @@ def list_articles_from_github(limit=None):
             # and pull out title.
             title = tokens[0]
 
-            articles.append(article(title, obj['path']))
+            articles.append(article(title, '%s/%s' % (repo, obj['path'])))
             if limit is not None and len(articles) == limit:
                 return articles
 
@@ -96,23 +96,24 @@ def primary_github_email_of_logged_in():
         return None
 
 
-def read_article_from_github(article):
+def read_article_from_github(path):
     """
-    Get rendered markdown article text from github API
+    Get rendered markdown article text from github API, sha, and github link
 
-    :params article: Article model object
+    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
     :returns: (article_text, sha)
     """
 
     sha = None
-    text = rendered_markdown_from_github(article)
+    link = None
+    text = rendered_markdown_from_github(path)
 
     if text is None:
-        return (text, sha)
+        return (text, sha, link)
 
-    sha = article_sha_from_github(article)
+    sha, link = article_details_from_github(path)
 
-    return (text, sha)
+    return (text, sha, link)
 
 
 def raw_article_from_github(article):
@@ -124,24 +125,26 @@ def raw_article_from_github(article):
     """
 
     text= None
-
     resp = github.get('repos/%s' % (article.github_api_location))
+
     if resp.status == 200:
         text = base64.b64decode(resp.data['content'])
 
     return text
 
 
-def rendered_markdown_from_github(article):
+def rendered_markdown_from_github(path):
     """
     Get rendered markdown article text from github API
 
-    :params article: Article model object
+    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
     :returns: HTML article text
     """
 
+    owner, repo, article_path = split_full_article_path(path)
+
     headers = {'accept': 'application/vnd.github.html'}
-    resp = github.get('repos/%s' % (article.github_api_location),
+    resp = github.get('repos/%s/%s/contents/%s' % (owner, repo, article_path),
                       headers=headers)
 
     if resp.status == 200:
@@ -150,21 +153,25 @@ def rendered_markdown_from_github(article):
     return None
 
 
-def article_sha_from_github(article):
+def article_details_from_github(path):
     """
-    Get article SHA from github
+    Get article SHA and github url from github
 
-    :params article: Article model object
-    :returns: SHA
+    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
+    :returns: (SHA, github_url)
     """
 
     sha = None
-    resp = github.get('repos/%s' % (article.github_api_location))
+    link = None
+    owner, repo, article_path = split_full_article_path(path)
+
+    resp = github.get('repos/%s/%s/contents/%s' % (owner, repo, article_path))
 
     if resp.status == 200:
         sha = resp.data['sha']
+        link = resp.data['_links']['html']
 
-    return sha
+    return (sha, link)
 
 
 def commit_article_to_github(article, message, content, name, email, sha=None):
@@ -203,3 +210,20 @@ def commit_article_to_github(article, message, content, name, email, sha=None):
 @github.tokengetter
 def get_github_oauth_token():
     return session.get('github_token')
+
+
+def split_full_article_path(path):
+    """
+    Split full article path into owner, repo, and article_path
+
+    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
+    :returns: (owner, repo, article_path)
+    """
+
+    tokens = path.split('/')
+
+    owner = tokens[0]
+    repo = tokens[1]
+    article_path = '/'.join(tokens[2:])
+
+    return (owner, repo, article_path)
