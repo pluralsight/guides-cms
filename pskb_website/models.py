@@ -2,6 +2,7 @@
 Models for PSKB
 """
 
+from . import app
 from . import db
 from . import utils
 
@@ -10,6 +11,12 @@ article_tags = db.Table('article_tags',
     db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
     db.Column('article_id', db.Integer, db.ForeignKey('articles.id'))
 )
+
+
+def main_article_path():
+    """Get path to main repo"""
+
+    return '%s/%s' % (app.config['REPO_OWNER'], app.config['REPO_NAME'])
 
 
 class Article(db.Model):

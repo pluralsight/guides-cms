@@ -3,11 +3,13 @@ Main entry point for interacting with remote service APIs
 """
 
 import base64
+import collections
 
 from flask_oauthlib.client import OAuth
 from flask import session
 
 from . import app
+from . import models
 
 oauth = OAuth(app)
 
@@ -22,6 +24,62 @@ github = oauth.remote_app(
     access_token_url='https://github.com/login/oauth/access_token',
     authorize_url='https://github.com/login/oauth/authorize'
 )
+
+
+article = collections.namedtuple('article', 'title, path')
+
+
+def list_articles_from_github(limit=None):
+    """
+    Get list of article links from github
+
+    :params limit: Optional limit of the number of articles to return
+    :returns: List of article tuples containing title and path
+    """
+
+    articles = []
+    repo = models.main_article_path()
+
+    sha = repo_sha_from_github(repo)
+    if sha is None:
+        return articles
+
+    resp = github.get('repos/%s/git/trees/%s?recursive=1' % (repo, sha))
+    if resp.status != 200:
+        return articles
+
+    # FIXME: Handle this scenario
+    assert not resp.data['truncated'], 'Too many articles for API call'
+
+    for obj in resp.data['tree']:
+        if obj['path'].endswith('article.md'):
+            tokens = obj['path'].split('/')
+
+            # FIXME: This is where we will read the meta data file associated
+            # and pull out title.
+            title = tokens[0]
+
+            articles.append(article(title, obj['path']))
+            if limit is not None and len(articles) == limit:
+                return articles
+
+    return articles
+
+
+def repo_sha_from_github(repo, branch='master'):
+    """
+    Get sha from head of given repo
+
+    :params repo: Path to repo (owner/repo_name)
+    :params branch: Name of branch to get sha for
+    :returns: Sha of branch
+    """
+
+    resp = github.get('repos/%s/git/refs/heads/%s' % (repo, branch))
+    if resp.status != 200:
+        return None
+
+    return resp.data['object']['sha']
 
 
 def primary_github_email_of_logged_in():

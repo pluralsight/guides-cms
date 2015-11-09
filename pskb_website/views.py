@@ -12,7 +12,7 @@ from .models import Article, User, Tag
 @app.route('/')
 def index():
     # FIXME: This should only fetch the most recent x number.
-    articles = Article.query.all()
+    articles = remote.list_articles_from_github()
 
     return render_template('index.html', articles=articles)
 
