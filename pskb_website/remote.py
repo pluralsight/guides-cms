@@ -211,7 +211,15 @@ def commit_article_to_github(path, message, content, name, email, sha=None):
 
 @github.tokengetter
 def get_github_oauth_token():
-    return session.get('github_token')
+    token = session.get('github_token')
+    if token is None:
+        # The flask-oauthlib API expects the access token to be in a tuple or a
+        # list.  Not exactly sure why since the underlying oauthlib library has a
+        # separate kwargs for access_token.  See
+        # flask_oauthlib.client.make_client for more information.
+        token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+
+    return token
 
 
 def split_full_article_path(path):
