@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<input id="title" name="title" type="text" class="form-control" placeholder="Title" value="{{title}}"/>
+<input id="title" name="title" type="text" class="form-control" placeholder="Title" value="{{article.title}}"/>
 
 <br />
 
@@ -11,7 +11,7 @@
 <br />
 <button onclick="save()" class="btn btn-primary">Save</button>
 
-<textarea id="content" style="display:none">{{article_text}}</textarea>
+<textarea id="content" style="display:none">{{article.content}}</textarea>
 
 {% endblock %}
 
@@ -57,12 +57,12 @@
 
         var sha = document.createElement("input");
         sha.name = "sha";
-        sha.value = "{{sha}}"
+        sha.value = "{{article.sha}}"
         form.appendChild(sha.cloneNode());
 
         var path = document.createElement("input");
         path.name = "path";
-        path.value = "{{path}}"
+        path.value = "{{article.path}}"
         form.appendChild(path.cloneNode());
 
         var title = document.getElementById("title");

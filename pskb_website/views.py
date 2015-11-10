@@ -6,13 +6,13 @@ from flask import redirect, url_for, session, request, render_template, flash, j
 
 from . import app, db
 from . import remote
-from .models import User
+from . import models
 
 
 @app.route('/')
 def index():
     # FIXME: This should only fetch the most recent x number.
-    articles = remote.list_articles_from_github()
+    articles = models.get_available_articles()
 
     g.index_active = True
     return render_template('index.html', articles=articles)
@@ -53,9 +53,9 @@ def user_profile():
     if email is None:
         flash('No primary email address found')
 
-    user = User.query.filter_by(github_username=me['login']).first()
+    user = models.User.query.filter_by(github_username=me['login']).first()
     if user is None:
-        user = User(me['login'], email)
+        user = models.User(me['login'], email)
         db.session.add(user)
         db.session.commit()
     elif user.email != email:
@@ -79,39 +79,32 @@ def user_profile():
 @app.route('/write/<path:article_path>/<sha>', methods=['GET'])
 @app.route('/write/', defaults={'article_path': None, 'sha': None})
 def write(article_path, sha):
-    id_ = ''
-    title = ''
-    text = ''
-
     # FIXME: Require user to be logged in to see this view
 
+    article = None
+
     if article_path is not None:
-        text, curr_sha, link = remote.article_details_from_github(article_path)
+        article = models.read_article(article_path, rendered_text=False)
 
-    if sha is None:
-        sha = ''
+        if article.sha is None:
+            article.sha = ''
 
-    return render_template('editor.html', article_text=text, title=title,
-                           path=article_path, sha=sha)
+    return render_template('editor.html', article=article)
 
 
 @app.route('/review/<path:article_path>', methods=['GET'])
 def review(article_path):
-    text, sha, github_url = remote.read_article_from_github(article_path)
-
-    # We can still show the article without the url, but we need the text.
-    if None in (text, sha, github_url):
-        flash('Failing reading article from github')
+    article = models.read_article(article_path)
+    if article is None:
+        flash('Failing reading article')
         return redirect(url_for('index'))
 
-    return render_template('article.html', text=text,
-                           github_link=github_url,
-                           path=article_path, sha=sha)
+    return render_template('article.html', article=article)
 
 
 @app.route('/save/', methods=['POST'])
 def save():
-    user = User.query.filter_by(github_username=session['login']).first_or_404()
+    user = models.User.query.filter_by(github_username=session['login']).first_or_404()
 
     # Data is stored in form with input named content which holds json. The
     # json has the 'real' data in the 'content' key.
@@ -126,9 +119,8 @@ def save():
 
     sha = request.form['sha']
 
-    status = remote.commit_article_to_github(path, message, content,
-                                             user.github_username, user.email,
-                                             sha)
+    status = models.save_article(path, message, content, user.github_username,
+                                 user.email, sha)
 
     # FIXME: If there's an article_id:
     #   - Grab it

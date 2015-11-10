@@ -9,7 +9,6 @@ from flask_oauthlib.client import OAuth
 from flask import session
 
 from . import app
-from . import models
 
 oauth = OAuth(app)
 
@@ -26,44 +25,43 @@ github = oauth.remote_app(
 )
 
 
-article = collections.namedtuple('article', 'title, path')
+article_details = collections.namedtuple('article_details', 'path, sha')
 
 
-def list_articles_from_github(limit=None):
+def articles_from_github(repo, article_filename, limit=None):
     """
-    Get list of article links from github
+    Iterate through articles from github
 
+    :params repo: Path to repo to read articles from
+    :params article_filename: Name of filename that's considered an article
     :params limit: Optional limit of the number of articles to return
-    :returns: List of article tuples containing title and path
-    """
 
-    articles = []
-    repo = models.main_article_path()
+    :returns: Iterator through article tuples containing sha and path
+    """
 
     sha = repo_sha_from_github(repo)
     if sha is None:
-        return articles
+        raise StopIteration
 
     resp = github.get('repos/%s/git/trees/%s?recursive=1' % (repo, sha))
+    token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+
     if resp.status != 200:
-        return articles
+        # FIXME: Raise exception
+        raise StopIteration
 
     # FIXME: Handle this scenario
     assert not resp.data['truncated'], 'Too many articles for API call'
 
+    count = 0
     for obj in resp.data['tree']:
-        if obj['path'].endswith('article.md'):
-            tokens = obj['path'].split('/')
+        if obj['path'].endswith(article_filename):
+            full_path = '%s/%s' % (repo, obj['path'])
+            yield article_details(full_path, obj['sha'])
+            count += 1
 
-            # FIXME: This is where we will read the meta data file associated
-            # and pull out title.
-            title = tokens[0]
-
-            articles.append(article(title, '%s/%s' % (repo, obj['path'])))
-            if limit is not None and len(articles) == limit:
-                return articles
-
-    return articles
+        if limit is not None and count == limit:
+            raise StopIteration
 
 
 def repo_sha_from_github(repo, branch='master'):
@@ -96,22 +94,25 @@ def primary_github_email_of_logged_in():
         return None
 
 
-def read_article_from_github(path):
+def read_article_from_github(path, rendered_text=True):
     """
     Get rendered markdown article text from github API, sha, and github link
 
     :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
+    :params rendered_text: Return rendered or raw text
     :returns: (article_text, sha)
     """
 
     sha = None
     link = None
-    text = rendered_markdown_from_github(path)
-
-    if text is None:
-        return (text, sha, link)
+    text = None
 
     raw_text, sha, link = article_details_from_github(path)
+
+    if rendered_text:
+        text = rendered_markdown_from_github(path)
+    else:
+        text = raw_text
 
     return (text, sha, link)
 
