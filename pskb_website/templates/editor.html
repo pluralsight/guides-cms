@@ -18,7 +18,10 @@
 {% block js %}
 
     {{super()}}
+
+    <script src="/static/js/vendor/editor/highlight.pack.js"></script>
     <script src="/static/js/vendor/editor/epiceditor.min.js"></script>
+
     <script type="text/javascript">
         var editor = new EpicEditor({
             clientSideStorage: false,
@@ -32,6 +35,15 @@
             },
         }
         ).load();
+
+        // Have to dynamically stuff in the correct css in the iframe for the
+        // editor
+        iframe = editor.getElement('previewerIframe');
+        css = document.createElement('link');
+        css.href = "/static/css/vendor/github.css";
+        css.rel = "stylesheet";
+        css.type = "text/css";
+        iframe.contentDocument.body.appendChild(css);
 
     function save() {
         var form = document.createElement("form");

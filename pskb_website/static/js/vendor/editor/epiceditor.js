@@ -2868,7 +2868,9 @@ marked.defaults = {
   pedantic: false,
   sanitize: false,
   silent: false,
-  highlight: null
+  highlight: function (code) {
+      return hljs.highlightAuto(code).value;
+  }
 };
 
 /**
