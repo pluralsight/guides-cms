@@ -6,7 +6,7 @@ from flask import redirect, url_for, session, request, render_template, flash, j
 
 from . import app, db
 from . import remote
-from .models import Article, User, Tag
+from .models import User
 
 
 @app.route('/')
@@ -147,11 +147,6 @@ def save():
     # Successful creation
     if status in (200, 201):
         return redirect(url_for('review', article_path=path))
-
-    if new_article:
-        # FIXME: Handle errors
-        db.session.delete(article)
-        db.session.commit()
 
     flash('Failed creating article on github: %d' % (status))
     return redirect(url_for('index'))
