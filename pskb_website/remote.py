@@ -44,7 +44,6 @@ def files_from_github(repo, filename, limit=None):
         raise StopIteration
 
     resp = github.get('repos/%s/git/trees/%s?recursive=1' % (repo, sha))
-    token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
 
     if resp.status != 200:
         # FIXME: Raise exception
