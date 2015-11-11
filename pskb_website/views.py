@@ -15,6 +15,10 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'github_token' not in session:
+            # Save off the page so we can redirect them to what they were
+            # trying to view after logging in.
+            session['previously_requested_page'] = request.url
+
             return redirect(url_for('login'))
 
         return f(*args, **kwargs)
@@ -56,6 +60,10 @@ def authorized():
             request.args['error'], request.args['error_description'])
 
     session['github_token'] = (resp['access_token'], '')
+
+    url = session.pop('previously_requested_page', None)
+    if url is not None:
+        return redirect(url)
 
     return redirect(url_for('user_profile'))
 
