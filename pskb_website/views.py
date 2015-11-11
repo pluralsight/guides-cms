@@ -86,10 +86,10 @@ def user_profile():
     return render_template('profile.html', user=me)
 
 
-@app.route('/write/<path:article_path>/<sha>', methods=['GET'])
-@app.route('/write/', defaults={'article_path': None, 'sha': None})
+@app.route('/write/<path:article_path>/', methods=['GET'])
+@app.route('/write/', defaults={'article_path': None})
 @login_required
-def write(article_path, sha):
+def write(article_path):
     article = None
 
     if article_path is not None:
