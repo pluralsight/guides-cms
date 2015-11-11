@@ -27,17 +27,17 @@ def get_available_articles():
     # Go through the minimal listing of articles and turn it into the full
     # article objects.  This way the github layer only knows what's available
     # on github and doesn't have knowledge of how we organize things, etc.
-    for article_details in remote.articles_from_github(main_article_path(),
-                                                       ARTICLE_FILENAME):
+    for file_details in remote.files_from_github(main_article_path(),
+                                                 ARTICLE_FILENAME):
 
-        path = parse_full_path(article_details.path)
+        path = parse_full_path(file_details.path)
 
         # Cannot read this yet
         author_name = None
 
         yield Article(path.title, author_name, filename=path.filename,
                       repo_path=path.repo, language=path.language,
-                      sha=article_details.sha)
+                      sha=file_details.sha)
 
 
 def read_article(path, rendered_text=True):
@@ -51,8 +51,8 @@ def read_article(path, rendered_text=True):
     full_path = '%s/%s' % (main_article_path(), path)
     details = parse_full_path(full_path)
 
-    text, sha, github_url = remote.read_article_from_github(full_path,
-                                                            rendered_text)
+    text, sha, github_url = remote.read_file_from_github(full_path,
+                                                         rendered_text)
     if None in (text, sha):
         # FIXME: Handle error here
         return None
@@ -81,9 +81,11 @@ def save_article(title, path, message, new_content, author_name, email, sha):
     """
 
     article = Article(title, author_name)
-    status = remote.commit_article_to_github(article.full_path, message,
-                                             new_content, author_name, email,
-                                             sha)
+    if path:
+        article.path = path
+
+    status = remote.commit_file_to_github(article.full_path, message,
+                                          new_content, author_name, email, sha)
     if status not in (201, 200):
         # FIXME: Handle error
         return None

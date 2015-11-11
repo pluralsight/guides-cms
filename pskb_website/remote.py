@@ -25,18 +25,18 @@ github = oauth.remote_app(
 )
 
 
-article_details = collections.namedtuple('article_details', 'path, sha')
+file_details = collections.namedtuple('file_details', 'path, sha')
 
 
-def articles_from_github(repo, article_filename, limit=None):
+def files_from_github(repo, filename, limit=None):
     """
-    Iterate through articles from github
+    Iterate through files with a specific name from github
 
-    :params repo: Path to repo to read articles from
-    :params article_filename: Name of filename that's considered an article
-    :params limit: Optional limit of the number of articles to return
+    :params repo: Path to repo to read files from
+    :params filename: Name of filename to search for recursively
+    :params limit: Optional limit of the number of files to return
 
-    :returns: Iterator through article tuples containing sha and path
+    :returns: Iterator through file_details tuples
     """
 
     sha = repo_sha_from_github(repo)
@@ -51,13 +51,13 @@ def articles_from_github(repo, article_filename, limit=None):
         raise StopIteration
 
     # FIXME: Handle this scenario
-    assert not resp.data['truncated'], 'Too many articles for API call'
+    assert not resp.data['truncated'], 'Too many files for API call'
 
     count = 0
     for obj in resp.data['tree']:
-        if obj['path'].endswith(article_filename):
+        if obj['path'].endswith(filename):
             full_path = '%s/%s' % (repo, obj['path'])
-            yield article_details(full_path, obj['sha'])
+            yield file_details(full_path, obj['sha'])
             count += 1
 
         if limit is not None and count == limit:
@@ -94,20 +94,20 @@ def primary_github_email_of_logged_in():
         return None
 
 
-def read_article_from_github(path, rendered_text=True):
+def read_file_from_github(path, rendered_text=True):
     """
-    Get rendered markdown article text from github API, sha, and github link
+    Get rendered file text from github API, sha, and github link
 
-    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
+    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :params rendered_text: Return rendered or raw text
-    :returns: (article_text, sha)
+    :returns: (file_contents, sha, github_link)
     """
 
     sha = None
     link = None
     text = None
 
-    raw_text, sha, link = article_details_from_github(path)
+    raw_text, sha, link = file_details_from_github(path)
 
     if rendered_text:
         text = rendered_markdown_from_github(path)
@@ -117,29 +117,12 @@ def read_article_from_github(path, rendered_text=True):
     return (text, sha, link)
 
 
-def raw_article_from_github(article):
-    """
-    Get raw text from github API
-
-    :params article: Article model object
-    :returns: article text
-    """
-
-    text = None
-    resp = github.get('repos/%s' % (article.github_api_location))
-
-    if resp.status == 200:
-        text = base64.b64decode(resp.data['content'])
-
-    return text
-
-
 def rendered_markdown_from_github(path):
     """
-    Get rendered markdown article text from github API
+    Get rendered markdown file text from github API
 
-    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
-    :returns: HTML article text
+    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename.md>)
+    :returns: HTML file text
     """
 
     url = contents_url_from_path(path)
@@ -153,11 +136,11 @@ def rendered_markdown_from_github(path):
     return None
 
 
-def article_details_from_github(path):
+def file_details_from_github(path):
     """
-    Get article article details from github
+    Get file details from github
 
-    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
+    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :returns: (raw_text, SHA, github_url)
     """
 
@@ -176,16 +159,16 @@ def article_details_from_github(path):
     return (text, sha, link)
 
 
-def commit_article_to_github(path, message, content, name, email, sha=None):
+def commit_file_to_github(path, message, content, name, email, sha=None):
     """
-    Save given article object and content to github
+    Save given file content to github
 
-    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
-    :params message: Commit message to save article with
-    :params content: Content of article
-    :params name: Name of author who wrote article
+    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :params message: Commit message to save file with
+    :params content: Content of file
+    :params name: Name of author who wrote file
     :params email: Email address of author
-    :params sha: Optional SHA of article if it already exists on github
+    :params sha: Optional SHA of file if it already exists on github
 
     :returns: HTTP status of API request
     """
@@ -243,30 +226,30 @@ def get_github_oauth_token():
     return token
 
 
-def split_full_article_path(path):
+def split_full_file_path(path):
     """
-    Split full article path into owner, repo, and article_path
+    Split full file path into owner, repo, and file_path
 
-    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
-    :returns: (owner, repo, article_path)
+    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :returns: (owner, repo, file_path)
     """
 
     tokens = path.split('/')
 
     owner = tokens[0]
     repo = tokens[1]
-    article_path = '/'.join(tokens[2:])
+    file_path = '/'.join(tokens[2:])
 
-    return (owner, repo, article_path)
+    return (owner, repo, file_path)
 
 
 def contents_url_from_path(path):
     """
-    Get github API url for contents of article from full path
+    Get github API url for contents of file from full path
 
-    :params path: Path to article (<owner>/<repo>/<dir>/.../article.md>)
+    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :returns: Url suitable for a content call with github API
     """
 
-    owner, repo, article_path = split_full_article_path(path)
-    return 'repos/%s/%s/contents/%s' % (owner, repo, article_path)
+    owner, repo, file_path = split_full_file_path(path)
+    return 'repos/%s/%s/contents/%s' % (owner, repo, file_path)
