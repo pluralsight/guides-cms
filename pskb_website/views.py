@@ -110,20 +110,6 @@ def save():
     article = models.save_article(title, path, message, content, user.login,
                                   user.email, sha)
 
-    # FIXME: If there's an article_id:
-    #   - Grab it
-    #   - Check if this author is the owner
-    #       - If yes, just submit a put request to github to change the
-    #         contents of the file
-    #       - if no, submit a put request to github to create the contents
-
-    # FIXME: Need to handle forks here somehow too, but maybe that's taken care
-    # of by the fork action.
-
-    # FIXME: Need to detect if this save is for a forked article or not.
-    #   if it's for a forked article we should call github with a pull request
-    #   after this is done.
-
     # Successful creation
     if article:
         return redirect(url_for('review', article_path=article.path))
