@@ -2,11 +2,24 @@
 Main views of PSKB app
 """
 
+from functools import wraps
+
 from flask import redirect, url_for, session, request, render_template, flash, json, g
 
 from . import app
 from . import remote
 from . import models
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'github_token' not in session:
+            return redirect(url_for('login'))
+
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 
 @app.route('/')
@@ -20,10 +33,16 @@ def index():
 
 @app.route('/login')
 def login():
+    return render_template('login.html')
+
+
+@app.route('/github_login')
+def github_login():
     return remote.github.authorize(callback=url_for('authorized', _external=True))
 
 
 @app.route('/logout')
+@login_required
 def logout():
     session.pop('github_token', None)
     return redirect(url_for('index'))
@@ -42,10 +61,8 @@ def authorized():
 
 
 @app.route('/user/')
+@login_required
 def user_profile():
-    if 'github_token' not in session:
-        return redirect(url_for('login'))
-
     me = models.find_user()
 
     if me.name:
@@ -63,9 +80,8 @@ def user_profile():
 
 @app.route('/write/<path:article_path>/<sha>', methods=['GET'])
 @app.route('/write/', defaults={'article_path': None, 'sha': None})
+@login_required
 def write(article_path, sha):
-    # FIXME: Require user to be logged in to see this view
-
     article = None
 
     if article_path is not None:
@@ -88,6 +104,7 @@ def review(article_path):
 
 
 @app.route('/save/', methods=['POST'])
+@login_required
 def save():
     user = models.find_user(session['login'])
     if user is None:
