@@ -1,13 +1,12 @@
 """
-Models for PSKB
+Article related model API
 """
 
 import collections
 
-from . import app
-from . import db
-from . import utils
-from . import remote
+from .. import app
+from .. import utils
+from .. import remote
 
 
 ARTICLE_FILENAME = 'article.md'
@@ -76,7 +75,6 @@ def save_article(path, message, new_content, author_name, email, sha):
     return status
 
 
-
 def parse_full_path(path):
     """
     Parse full path and return tuple of details embedded in path
@@ -103,7 +101,7 @@ def parse_full_path(path):
     return path_details(repo_path, language, title, filename)
 
 
-class Article():
+class Article(object):
     def __init__(self, title, author_name, filename=ARTICLE_FILENAME,
                  repo_path=None, branch='master', language=None, sha=None,
                  content=None, external_url=None):
@@ -130,34 +128,3 @@ class Article():
 
     def __repr__(self):
         return '<author_name: %s title: %s>' % (self.author_name, self.title)
-
-
-
-
-# FIXME: Not sure what all we want here b/c we might want to include some
-# pluralsight username or something along with other social account names?
-# Benefits:
-#   - Don't have to keep track of and update if it changes.
-#       - i.e. github access tokens, we just use them as sessions and if
-#         github ever changes it we're ok
-#       - Also no security risk by storing the token.
-#           - This might not be a huge risk since attackers would still
-#             have to have our client id and client secret to use the
-#             access token, but still...
-#   - Save our own storage space..
-# Downsides:
-# ?
-
-class User(db.Model):
-    __tablename__ = 'users'
-
-    id = db.Column(db.Integer, primary_key=True)
-    github_username = db.Column(db.String(), unique=True)
-    email = db.Column(db.String(), unique=True)
-
-    def __init__(self, github_username, email):
-        self.github_username = github_username
-        self.email = email
-
-    def __repr__(self):
-        return '<id %s github_username: %s>' % (self.id, self.github_username)

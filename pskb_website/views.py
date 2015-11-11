@@ -4,7 +4,7 @@ Main views of PSKB app
 
 from flask import redirect, url_for, session, request, render_template, flash, json, g
 
-from . import app, db
+from . import app
 from . import remote
 from . import models
 
@@ -46,34 +46,19 @@ def user_profile():
     if 'github_token' not in session:
         return redirect(url_for('login'))
 
-    # FIXME: Error handling
-    me = remote.github.get('user').data
-    email = remote.primary_github_email_of_logged_in()
+    me = models.find_user()
 
-    if email is None:
-        flash('No primary email address found')
+    if me.name:
+        session['name'] = me.name
 
-    user = models.User.query.filter_by(github_username=me['login']).first()
-    if user is None:
-        user = models.User(me['login'], email)
-        db.session.add(user)
-        db.session.commit()
-    elif user.email != email:
-        user.email = email
-        db.session.add(user)
-        db.session.commit()
-
-    if me['name']:
-        session['name'] = me['name']
-
-    if me['login']:
-        session['login'] = me['login']
+    if me.login:
+        session['login'] = me.login
 
         if 'name' not in session:
-            session['name'] = me['login']
+            session['name'] = me.login
 
     g.profile_active = True
-    return render_template('profile.html', body=me)
+    return render_template('profile.html', user=me)
 
 
 @app.route('/write/<path:article_path>/<sha>', methods=['GET'])
@@ -104,7 +89,10 @@ def review(article_path):
 
 @app.route('/save/', methods=['POST'])
 def save():
-    user = models.User.query.filter_by(github_username=session['login']).first_or_404()
+    user = models.find_user(session['login'])
+    if user is None:
+        flash('Cannot save unless logged in')
+        return render_template('index.html'), 404
 
     # Data is stored in form with input named content which holds json. The
     # json has the 'real' data in the 'content' key.
@@ -119,7 +107,7 @@ def save():
 
     sha = request.form['sha']
 
-    status = models.save_article(path, message, content, user.github_username,
+    status = models.save_article(path, message, content, user.login,
                                  user.email, sha)
 
     # FIXME: If there's an article_id:

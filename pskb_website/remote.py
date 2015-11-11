@@ -209,6 +209,27 @@ def commit_article_to_github(path, message, content, name, email, sha=None):
     return resp.status
 
 
+def read_user_from_github(username=None):
+    """
+    Read user information from github
+
+    :param username: Optional username to search for, if no username given the
+                     currently logged in user will be returned (if any)
+    :returns: Dict of information from github API call
+    """
+
+    if username is not None:
+        resp = github.get('users/%s' % (username))
+    else:
+        resp = github.get('user')
+
+    if resp.status != 200:
+        # FIXME: Handle error
+        return {}
+
+    return resp.data
+
+
 @github.tokengetter
 def get_github_oauth_token():
     token = session.get('github_token')
