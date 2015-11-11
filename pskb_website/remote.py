@@ -125,7 +125,7 @@ def raw_article_from_github(article):
     :returns: article text
     """
 
-    text= None
+    text = None
     resp = github.get('repos/%s' % (article.github_api_location))
 
     if resp.status == 200:
