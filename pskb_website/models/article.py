@@ -64,15 +64,31 @@ def read_article(path, rendered_text=True):
                    content=text, external_url=github_url)
 
 
-def save_article(path, message, new_content, author_name, email, sha):
+def save_article(title, path, message, new_content, author_name, email, sha):
     """
     Create or save new article
+
+    :params title: Title of article
+    :params path: Short path to article, not including repo or owner, or empty
+                  for a new article
+    :params message: Commit message to save article with
+    :params content: Content of article
+    :params name: Name of author who wrote article
+    :params email: Email address of author
+    :params sha: Optional SHA of article if it already exists on github
+
+    :returns: Article object updated or saved
     """
 
-    full_path = '%s/%s' % (main_article_path(), path)
-    status = remote.commit_article_to_github(full_path, message, new_content,
-                                             author_name, email, sha)
-    return status
+    article = Article(title, author_name)
+    status = remote.commit_article_to_github(article.full_path, message,
+                                             new_content, author_name, email,
+                                             sha)
+    if status not in (201, 200):
+        # FIXME: Handle error
+        return None
+
+    return read_article(article.path, rendered_text=True)
 
 
 def parse_full_path(path):
@@ -128,3 +144,7 @@ class Article(object):
 
     def __repr__(self):
         return '<author_name: %s title: %s>' % (self.author_name, self.title)
+
+    @property
+    def full_path(self):
+        return '%s/%s' % (self.repo_path, self.path)

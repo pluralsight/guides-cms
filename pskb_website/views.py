@@ -99,16 +99,16 @@ def save():
     content = json.loads(request.form['content'])['content']
 
     path = request.form['path']
-
-    if path:
-        message = 'Updates to %s' % (request.form['title'])
-    else:
-        message = 'New article %s' % (request.form['title'])
-
+    title = request.form['title']
     sha = request.form['sha']
 
-    status = models.save_article(path, message, content, user.login,
-                                 user.email, sha)
+    if path:
+        message = 'Updates to %s' % (title)
+    else:
+        message = 'New article %s' % (title)
+
+    article = models.save_article(title, path, message, content, user.login,
+                                  user.email, sha)
 
     # FIXME: If there's an article_id:
     #   - Grab it
@@ -125,8 +125,8 @@ def save():
     #   after this is done.
 
     # Successful creation
-    if status in (200, 201):
-        return redirect(url_for('review', article_path=path))
+    if article:
+        return redirect(url_for('review', article_path=article.path))
 
-    flash('Failed creating article on github: %d' % (status))
+    flash('Failed creating article on github')
     return redirect(url_for('index'))
