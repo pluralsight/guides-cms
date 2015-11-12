@@ -40,6 +40,12 @@ def login():
     return render_template('login.html')
 
 
+@app.route('/faq')
+def faq():
+    g.faq_active = True
+    return render_template('faq.html')
+
+
 @app.route('/github_login')
 def github_login():
     return remote.github.authorize(callback=url_for('authorized', _external=True))
@@ -91,6 +97,7 @@ def user_profile():
 @login_required
 def write(article_path):
     article = None
+    g.write_active = True
 
     if article_path is not None:
         article = models.read_article(article_path, rendered_text=False)
@@ -103,6 +110,8 @@ def write(article_path):
 
 @app.route('/review/<path:article_path>', methods=['GET'])
 def review(article_path):
+    g.write_active = True
+
     article = models.read_article(article_path)
     if article is None:
         flash('Failing reading article')
