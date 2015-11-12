@@ -14,8 +14,7 @@ from .. import remote
 ARTICLE_FILENAME = 'article.md'
 ARTICLE_METADATA_FILENAME = 'details.json'
 
-path_details = collections.namedtuple('path_details',
-                                      'repo, language, title, filename')
+path_details = collections.namedtuple('path_details', 'repo, filename')
 
 
 def main_article_path():
@@ -25,7 +24,14 @@ def main_article_path():
 
 
 def get_available_articles():
-    """Get iterator for current article objects"""
+    """
+    Get iterator for current article objects
+
+    :returns: Iterator through article objects
+
+    Note that article objects only have path, title and author name filled out.
+    You'll need to call read_article() to get full article details.
+    """
 
     # Go through the minimal listing of articles and turn it into the full
     # article objects.  This way the github layer only knows what's available
@@ -33,14 +39,20 @@ def get_available_articles():
     for file_details in remote.files_from_github(main_article_path(),
                                                  ARTICLE_FILENAME):
 
-        path = parse_full_path(file_details.path)
+        path_info = parse_full_path(file_details.path)
+        json_str = read_meta_data_for_article_path(file_details.path)
 
-        # Cannot read this yet
-        author_name = None
+        # No meta data file available
+        if json_str is None:
+            # FIXME: Cannot do anything here b/c we do not know the title.
+            # FIXME: Handle this by logging at least
+            continue
+        else:
+            article = Article.from_json(json_str)
+            article.filename = path_info.filename
+            article.repo_path = path_info.repo
 
-        yield Article(path.title, author_name, filename=path.filename,
-                      repo_path=path.repo, language=path.language,
-                      sha=file_details.sha)
+        yield article
 
 
 def read_article(path, rendered_text=True):
@@ -60,21 +72,22 @@ def read_article(path, rendered_text=True):
 
     # Parse path to get article information but replace it with improved json
     # meta-data if available.
-    details = parse_full_path(full_path)
-
-    author_name = None
-
-    article = Article(details.title, author_name, filename=details.filename,
-                      repo_path=details.repo, language=details.language,
-                      sha=sha, content=text, external_url=github_url)
-
-    import pdb;pdb.set_trace()
-    json_str = read_meta_data_for_article(article)
+    path_info = parse_full_path(full_path)
+    json_str = read_meta_data_for_article_path(full_path)
 
     if json_str is not None:
         article = Article.from_json(json_str)
+
+        # Update it with what we pull from the article file and path
         article.content = text
         article.sha = sha
+        article.external_url = github_url
+        article.filename = path_info.filename
+        article.repo_path = path_info.repo
+    else:
+        # FIXME: Log something here? We cannot properly show an article without
+        # metadata
+        article = None
 
     return article
 
@@ -122,43 +135,48 @@ def save_article_meta_data(article, author_name, email):
     :returns: HTTP status of saving meta data
     """
  
-    filename = meta_data_path_for_article(article)
+    filename = meta_data_path_for_article_path(article.full_path)
 
     # Get sha of meta data if it exists so we can update it
     text, sha, github_url = remote.read_file_from_github(filename,
                                                          rendered_text=False)
-    content = article.to_json()
+
+    # Don't need to serialize everything, just the important stuff that's not
+    # stored in the path and article.
+    exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', 'path')
+    json_content = article.to_json(exclude_attrs=exclude_attrs)
+
     message = 'Updating article metadata for %s' % (article.title)
 
-    return remote.commit_file_to_github(filename, message, content,
+    return remote.commit_file_to_github(filename, message, json_content,
                                         author_name, email, sha)
 
 
-def read_meta_data_for_article(article):
+def read_meta_data_for_article_path(full_path):
     """
-    Read meta data for given article
+    Read meta data for given article path
 
-    :params article: Article object
+    :params full_path: Full path to article
     :returns: Meta-data for article as json
     """
 
-    filename = meta_data_path_for_article(article)
+    filename = meta_data_path_for_article_path(full_path)
     text, sha, github_url = remote.read_file_from_github(filename,
                                                          rendered_text=False)
     return text
 
 
-def meta_data_path_for_article(article):
+def meta_data_path_for_article_path(full_path):
     """
-    Get path to meta data file for given article
+    Get path to meta data file for given article path
 
-    :params article: Article object
+    :params full_path: Article object
     :returns: Full path to meta data file for article
     """
 
     # Last part is the filename, which we're replacing. The meta data file will
     # be stored right next to the article.
-    meta_data_path = '/'.join(article.full_path.split('/')[:-1])
+    meta_data_path = '/'.join(full_path.split('/')[:-1])
 
     return '%s/%s' % (meta_data_path, ARTICLE_METADATA_FILENAME)
 
@@ -175,18 +193,9 @@ def parse_full_path(path):
 
     # Repo path is user/repo_name
     repo_path = '/'.join(tokens[:2])
+    filename = tokens[-1]
 
-    # Includes language
-    if len(tokens) == 5:
-        language = tokens[2]
-        title = tokens[3]
-        filename = tokens[4]
-    else:
-        language = None
-        title = tokens[2]
-        filename = tokens[3]
-
-    return path_details(repo_path, language, title, filename)
+    return path_details(repo_path, filename)
 
 
 class Article(object):
@@ -227,33 +236,38 @@ class Article(object):
         """
 
         dict_ = json.loads(str_)
+
+        # Required arguments
         title = dict_.pop('title', None)
         author_name = dict_.pop('author_name', None)
 
-        # This is created dynamically from title
-        path = dict_.pop('path', None)
+        article = Article(title, author_name)
+        for attr, value in dict_.iteritems():
+            setattr(article, attr, value)
 
-        return Article(title, author_name, **dict_)
+        return article
 
-    def to_json(self, include_content=False):
+    def to_json(self, exclude_attrs=None):
         """
         Return json representation of article
 
-        :param include_content: Boolean to include article content in json
-                                exported.  This is useful if you're just
-                                wanting meta-data and not the 'real' content of
-                                an article.
-
+        :param exclude_attrs: List of attributes to exclude from serialization
         :returns: json representation of article as a string
         """
+
+        if exclude_attrs is None:
+            exclude_attrs = []
 
         # This is very simple by design. We don't have a lot of crazy nested
         # data here so just do the bare minimum without over-engineering.
         dict_ = copy.deepcopy(self.__dict__)
-        if not include_content:
-            del dict_['content']
+        for attr in exclude_attrs:
+            del dict_[attr]
 
-        return json.dumps(dict_)
+        # Print it to a string in a pretty format. Whitespace doesn't matter so
+        # might as well make it more readable.
+        return json.dumps(dict_, sort_keys=True, indent=4,
+                          separators=(',', ': '))
 
     @property
     def full_path(self):
