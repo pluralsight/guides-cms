@@ -3,12 +3,17 @@
 {% block body %}
 
 <p>
-    <h2>Articles for review</h2>
-    <ul>
-        {% for article in articles %}
-            <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
-        {% endfor %}
-    </ul>
+    The best way to learn is to teach, and you have unique expertise. Give back
+    to the community you learned from.  Get started now by
+    <a href="/">writing a new article</a> or editing one of the articles
+    needing review.
 </p>
+
+<h2>Articles for review</h2>
+<ul>
+    {% for article in articles %}
+        <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
+    {% endfor %}
+</ul>
 
 {% endblock %}
