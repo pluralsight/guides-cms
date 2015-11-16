@@ -1,8 +1,13 @@
 body {
   padding-top: 50px;
+  font-family: "Gotham SSm A","Gotham SSm B",sans-serif;
 }
 
 .starter-template {
   padding: 40px 15px;
   text-align: center;
+}
+
+.navbar-brand img {
+    margin-top: -7px;
 }
