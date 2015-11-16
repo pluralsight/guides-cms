@@ -11,9 +11,8 @@ if 'DATABASE_URL' not in os.environ:
     os.environ['DATABASE_URL'] = 'postgresql://localhost/pskb_dev'
 
 from pskb_website import app
-from pskb_website import db
 
-migrate = Migrate(app, db)
+migrate = Migrate(app)
 manager = Manager(app)
-manager.add_command('db', MigrateCommand)
+#manager.add_command('db', MigrateCommand)
 manager.run()

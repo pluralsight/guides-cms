@@ -1,4 +1,4 @@
-# Pluralsight KnowledgeBase
+# Pluralsight Tutorials
 
 The Pluralsight knowledgebase is a community-based website to help Software
 Developers learn new skills through writing and editing technical writing.
@@ -70,6 +70,19 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
       master is local branch you want to push.
     - **Make sure your changes are committed locally first!**
 
+#### Testing without browser
+
+You can test a lot of the functionality of the application without a web
+browser.  In general, much of the interaction with the Github API can be used
+directly from the command-line.  To do this run the following
+
+- `python manage.py shell`
+
+Now you have access to all the application.  So, to test a Github API response
+try the following:
+
+- `from pskb_website import remote`
+- `remote.read_user_from_github(username='octocat')`
 
 #### Making changes to Javascript
 
