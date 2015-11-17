@@ -93,11 +93,12 @@ def primary_github_email_of_logged_in():
         return None
 
 
-def read_file_from_github(path, rendered_text=True):
+def read_file_from_github(path, branch='master', rendered_text=True):
     """
     Get rendered file text from github API, sha, and github link
 
     :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :params branch: Name of branch to read file from
     :params rendered_text: Return rendered or raw text
     :returns: (file_contents, sha, github_link)
     """
@@ -106,7 +107,7 @@ def read_file_from_github(path, rendered_text=True):
     link = None
     text = None
 
-    raw_text, sha, link = file_details_from_github(path)
+    raw_text, sha, link = file_details_from_github(path, branch)
 
     if rendered_text:
         text = rendered_markdown_from_github(path)
@@ -135,11 +136,12 @@ def rendered_markdown_from_github(path):
     return None
 
 
-def file_details_from_github(path):
+def file_details_from_github(path, branch='master'):
     """
     Get file details from github
 
     :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :params branch: Name of branch to read file from
     :returns: (raw_text, SHA, github_url)
     """
 
@@ -148,7 +150,7 @@ def file_details_from_github(path):
     link = None
     url = contents_url_from_path(path)
 
-    resp = github.get(url)
+    resp = github.get(url, data={'ref': branch})
 
     if resp.status == 200:
         sha = resp.data['sha']
@@ -158,7 +160,8 @@ def file_details_from_github(path):
     return (text, sha, link)
 
 
-def commit_file_to_github(path, message, content, name, email, sha=None):
+def commit_file_to_github(path, message, content, name, email, sha=None,
+                          branch='master'):
     """
     Save given file content to github
 
@@ -168,13 +171,15 @@ def commit_file_to_github(path, message, content, name, email, sha=None):
     :params name: Name of author who wrote file
     :params email: Email address of author
     :params sha: Optional SHA of file if it already exists on github
+    :params branch: Name of branch to commit file to (branch must already
+                    exist)
 
     :returns: HTTP status of API request
     """
 
     url = contents_url_from_path(path)
     content = base64.b64encode(content)
-    commit_info = {'message': message, 'content': content,
+    commit_info = {'message': message, 'content': content, 'branch': branch,
                    'author': {'name': name, 'email': email}}
 
     if sha:
@@ -252,3 +257,75 @@ def contents_url_from_path(path):
 
     owner, repo, file_path = split_full_file_path(path)
     return 'repos/%s/%s/contents/%s' % (owner, repo, file_path)
+
+
+def read_branch(repo_path, name):
+    """
+    Read branch and get HEAD sha
+
+    :params repo_path: Path to repo of branch
+    :params name: Name of branch to read
+    :returns: SHA of HEAD and HTTP failure status code
+    """
+
+    resp = github.get('repos/%s/git/refs/heads/%s' % (repo_path, name))
+    if resp.status != 200:
+        return (None, resp.status)
+
+    return (resp.data['object']['sha'], resp.status)
+
+
+def create_branch(repo_path, name, sha):
+    """
+    Create a new branch
+
+    :params repo_path: Path to repo that branch should be created from
+    :params name: Name of branch to create
+    :params sha: SHA to branch from
+    :returns: True if branch was created or False if branch already exists or
+              could not be created
+    """
+
+    url = 'repos/%s/git/refs' % (repo_path)
+    data = {'ref': 'refs/heads/%s' % (name), 'sha': sha}
+
+    # Must use token of owner for this request b/c only owners and
+    # collaborators can create branches
+    token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+    resp = github.post(url, data=data, format='json', token=token)
+
+    if resp.status == 422:
+        # Maybe it already exists
+        sha, status = read_branch(repo_path, name)
+        if sha is not None:
+            return True
+
+        return False
+
+    elif resp.status != 201:
+        return False
+
+    return True
+
+
+def update_branch(repo_path, name, sha):
+    """
+    Update branch to new commit SHA
+
+    :params repo_path: Path to repo that branch should be created from
+    :params name: Name of branch to create
+    :params sha: SHA to branch from
+    :returns: True if branch was update or False if branch could not be updated
+    """
+
+    url = 'repos/%s/git/refs/heads/%s' % (repo_path, name)
+    data = {'sha': sha}
+
+    # Must use token of owner for this request b/c only owners and
+    # collaborators can update branches
+    token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+    resp = github.patch(url, data=data, format='json', token=token)
+    if resp.status != 200:
+        return False
+
+    return True
