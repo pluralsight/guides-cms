@@ -55,16 +55,18 @@ def get_available_articles():
         yield article
 
 
-def read_article(path, rendered_text=True):
+def read_article(path, rendered_text=True, branch='master'):
     """
     Read article
 
     :params path: Short path to article, not including repo or owner
+    :params branch: Name of branch to read file from
     :returns: Article object
     """
 
     full_path = '%s/%s' % (main_article_path(), path)
     text, sha, github_url = remote.read_file_from_github(full_path,
+                                                         branch,
                                                          rendered_text)
     if None in (text, sha):
         # FIXME: Handle error here
@@ -73,7 +75,7 @@ def read_article(path, rendered_text=True):
     # Parse path to get article information but replace it with improved json
     # meta-data if available.
     path_info = parse_full_path(full_path)
-    json_str = read_meta_data_for_article_path(full_path)
+    json_str = read_meta_data_for_article_path(full_path, branch=branch)
 
     if json_str is not None:
         article = Article.from_json(json_str)
@@ -84,6 +86,7 @@ def read_article(path, rendered_text=True):
         article.external_url = github_url
         article.filename = path_info.filename
         article.repo_path = path_info.repo
+        article.branch = branch
     else:
         # FIXME: Log something here? We cannot properly show an article without
         # metadata
@@ -92,9 +95,10 @@ def read_article(path, rendered_text=True):
     return article
 
 
-def save_article(title, path, message, new_content, author_name, email, sha):
+def save_article(title, path, message, new_content, author_name, email, sha,
+                 branch='master'):
     """
-    Create or save new article
+    Create or save new (original) article, not branched article
 
     :params title: Title of article
     :params path: Short path to article, not including repo or owner, or empty
@@ -104,42 +108,90 @@ def save_article(title, path, message, new_content, author_name, email, sha):
     :params author_name: Name of author who wrote article
     :params email: Email address of author
     :params sha: Optional SHA of article if it already exists on github
+    :params branch: Name of branch to commit file to (branch must already
+                    exist)
 
     :returns: Article object updated or saved
+
+    This function is not suitable for saving branched articles.  The article
+    created here will be attributed to the given author_name whereas branched
+    articles should be created with branch_article() so the correct author
+    information is maintained.
     """
 
-    article = Article(title, author_name)
+    article = Article(title, author_name, branch=branch)
     if path:
         article.path = path
 
     status = remote.commit_file_to_github(article.full_path, message,
-                                          new_content, author_name, email, sha)
+                                          new_content, author_name, email, sha,
+                                          branch)
     if status not in (201, 200):
         # FIXME: Handle error
         return None
 
-    status = save_article_meta_data(article, author_name, email)
+    if branch != 'master':
+        status = save_branched_article_meta_data(article, author_name, email)
+    else:
+        status = save_article_meta_data(article, author_name, email, branch)
+
     if status not in (201, 200):
         # FIXME: Handle error. This is interesting b/c now we created the
         # article, but not the meta data.
         return None
 
-    return read_article(article.path, rendered_text=True)
+    return read_article(article.path, rendered_text=True, branch=article.branch)
 
 
-def save_article_meta_data(article, author_name, email):
+def branch_article(article, message, new_content, author_name, email):
+    """
+    Create branch for article with new article contents
+
+    :params article: Article object to branch
+    :params message: Message describing article suggestions/changes
+    :params new_content: New article text
+    :params author_name: Name of author for article changes
+    :params email: Email of author for article changes
+    :returns: New article object
+
+    New branch will be named after original author
+    """
+
+    branch = author_name
+
+    # Create branch if we needed to
+    repo_sha, status = remote.read_branch(article.repo_path, branch)
+    if status == 404:
+        repo_sha, status = remote.read_branch(article.repo_path, 'master')
+        assert repo_sha is not None, 'Cannot find master branch'
+
+        if not remote.create_branch(article.repo_path, branch, repo_sha):
+            # FIXME: Handle error
+            return None
+
+    return save_article(article.title, article.path, message, new_content,
+                        author_name, email, article.sha, branch=branch)
+
+
+def save_article_meta_data(article, author_name, email, branch=None):
     """
     :params article: Article object
     :params name: Name of author who wrote article
     :params email: Email address of author
+    :params branch: Optional branch to save metadata, if not given
+                    article.branch will be used
     :returns: HTTP status of saving meta data
     """
- 
+
     filename = meta_data_path_for_article_path(article.full_path)
+
+    if branch is None:
+        branch = article.branch
 
     # Get sha of meta data if it exists so we can update it
     text, sha, github_url = remote.read_file_from_github(filename,
-                                                         rendered_text=False)
+                                                         rendered_text=False,
+                                                         branch=branch)
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
@@ -148,21 +200,27 @@ def save_article_meta_data(article, author_name, email):
 
     message = 'Updating article metadata for %s' % (article.title)
 
+    # Article is on a branch so we have to update the master meta data file
+    # with this new branch as well as the branch meta data file.
+
     return remote.commit_file_to_github(filename, message, json_content,
-                                        author_name, email, sha)
+                                        author_name, email, sha,
+                                        branch=branch)
 
 
-def read_meta_data_for_article_path(full_path):
+def read_meta_data_for_article_path(full_path, branch='master'):
     """
     Read meta data for given article path
 
     :params full_path: Full path to article
+    :params branch: Name of branch to read file from
     :returns: Meta-data for article as json
     """
 
     filename = meta_data_path_for_article_path(full_path)
     text, sha, github_url = remote.read_file_from_github(filename,
-                                                         rendered_text=False)
+                                                         rendered_text=False,
+                                                         branch=branch)
     return text
 
 
@@ -179,6 +237,38 @@ def meta_data_path_for_article_path(full_path):
     meta_data_path = '/'.join(full_path.split('/')[:-1])
 
     return '%s/%s' % (meta_data_path, ARTICLE_METADATA_FILENAME)
+
+
+def save_branched_article_meta_data(article, author_name, email):
+    """
+    Save metadata for branched article
+
+    :params article: Article object with branch attribute set to branch name
+    :params name: Name of author who wrote branched article
+    :params email: Email address of branched article author
+    :returns: HTTP status code of saving metadata
+
+    Metadata for branched articles should be identical to the original article.
+    This makes it easier for automatically merging changes because metadata
+    differences won't get in the way.  The author_name is the only thing useful
+    for a branched article.  However, that should already be encoded in the
+    branch name and the commits.  So, editors of original articles will get
+    credit for helping via those mechanisms, not metadata.
+    """
+
+    orig_article = read_article(article.path, rendered_text=False,
+                                branch='master')
+
+    # Nothing to save, we're already tracking this branch
+    if article.branch in orig_article.branches:
+        return 200
+
+    orig_article.branches.append(article.branch)
+
+    # Note we don't ever change metadata on the branches. This keeps the
+    # metadata from showing in up in merges. We only want to deal with article
+    # text for merges.
+    return save_article_meta_data(orig_article, author_name, email)
 
 
 def parse_full_path(path):
@@ -207,6 +297,7 @@ class Article(object):
         self.language = language
         self.content = content
         self.external_url = external_url
+        self.filename = filename
 
         # Only useful if article has already been saved to github
         self.sha = sha
@@ -215,8 +306,11 @@ class Article(object):
         if self.repo_path is None:
             self.repo_path = main_article_path()
 
+        # Branch this article is on
         self.branch = branch
-        self.filename = filename
+
+        # List of branch names where this article also exists
+        self.branches = []
 
         self.path = '%s/%s' % (utils.slugify(self.title), self.filename)
 
