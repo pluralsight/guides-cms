@@ -11,3 +11,12 @@ body {
 .navbar-brand img {
     margin-top: -7px;
 }
+
+dt {
+    padding: .2em .2em .2em 0em;
+    font-size: 1.2em;
+}
+
+dd {
+    padding-left: .8em;
+}
