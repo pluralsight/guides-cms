@@ -109,7 +109,7 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     :param email: Email address of author
     :param sha: Optional SHA of article if it already exists on github
     :param branch: Name of branch to commit file to (branch must already
-                    exist)
+                   exist)
 
     :returns: Article object updated or saved
 
@@ -210,7 +210,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     :param name: Name of author who wrote article
     :param email: Email address of author
     :param branch: Optional branch to save metadata, if not given
-                    article.branch will be used
+                   article.branch will be used
     :returns: HTTP status of saving meta data
     """
 

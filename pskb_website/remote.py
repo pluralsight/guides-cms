@@ -172,7 +172,7 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     :param email: Email address of author
     :param sha: Optional SHA of file if it already exists on github
     :param branch: Name of branch to commit file to (branch must already
-                    exist)
+                   exist)
 
     :returns: HTTP status of API request
     """
