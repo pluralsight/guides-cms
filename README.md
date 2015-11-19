@@ -15,6 +15,8 @@ These are not currently required, but they maybe in the future.
 
 - Database server: [Postgres](http://www.postgresql.org)
 - Python ORM: [SQLAlchemy](http://www.sqlalchemy.org)
+- Documentation: [Sphinx](http://sphinx-doc.org)
+    - Required for building documentation locally with `make html_docs` command
 
 ## Install for development
 

@@ -16,3 +16,6 @@ push:
 
 stage_logs:
 	heroku logs -t --app pskb-stage
+
+html_docs:
+	cd docs; make html
