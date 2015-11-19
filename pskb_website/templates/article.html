@@ -13,4 +13,15 @@
     <a href="{{article.external_url}}"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View on Github</a>
 </p>
 
+{% if article.branches %}
+    <h3>Community suggestions</h3>
+    <ul>
+        {% for branch in article.branches %}
+            <li>
+                <a href="/review/{{article.path}}?branch={{branch}}">{{branch}} suggestions</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 {% endblock %}
