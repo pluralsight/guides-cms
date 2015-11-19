@@ -12,7 +12,12 @@
 <h2>Articles for review</h2>
 <ul>
     {% for article in articles %}
-        <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
+        <li>
+            <a href="/review/{{article.path}}">{{article.title}}</a>
+            {% if article.branches %}
+                ({{article.branches|length}} suggestions)
+            {% endif %}
+        </li>
     {% endfor %}
 </ul>
 

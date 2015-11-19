@@ -97,6 +97,7 @@ def user_profile():
 @login_required
 def write(article_path):
     article = None
+    branch_article = False
     g.write_active = True
 
     if article_path is not None:
@@ -105,14 +106,24 @@ def write(article_path):
         if article.sha is None:
             article.sha = ''
 
-    return render_template('editor.html', article=article)
+        user = models.find_user(session['login'])
+        if user is None:
+            flash('Cannot save unless logged in')
+            return render_template('index.html'), 404
+
+        if user.login != article.author_name:
+            branch_article = True
+
+    return render_template('editor.html', article=article,
+                           branch_article=branch_article)
 
 
 @app.route('/review/<path:article_path>', methods=['GET'])
 def review(article_path):
     g.write_active = True
+    branch = request.args.get('branch', 'master')
+    article = models.read_article(article_path, branch=branch)
 
-    article = models.read_article(article_path)
     if article is None:
         flash('Failing reading article')
         return redirect(url_for('index'))
@@ -141,12 +152,13 @@ def save():
     else:
         message = 'New article %s' % (title)
 
-    article = models.save_article(title, path, message, content, user.login,
-                                  user.email, sha)
+    article = models.branch_or_save_article(title, path, message, content,
+                                            user.login, user.email, sha)
 
     # Successful creation
     if article:
-        return redirect(url_for('review', article_path=article.path))
+        return redirect(url_for('review', article_path=article.path,
+                                          branch=article.branch))
 
     flash('Failed creating article on github')
     return redirect(url_for('index'))

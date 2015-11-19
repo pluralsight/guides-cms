@@ -173,6 +173,37 @@ def branch_article(article, message, new_content, author_name, email):
                         author_name, email, article.sha, branch=branch)
 
 
+def branch_or_save_article(title, path, message, content, author_name, email,
+                           sha):
+    """
+    Save article as original or as a branch depending on if given author is
+    the same as original article (if it already exists)
+
+    :params title: Title of article
+    :params path: Short path to article, not including repo or owner, or empty
+                  for a new article
+    :params message: Commit message to save article with
+    :params content: Content of article
+    :params author_name: Name of author who wrote content
+    :params email: Email address of author
+    :params sha: Optional SHA of article if it already exists on github
+    :params branch: Name of branch to commit file to (branch must already
+                    exist)
+
+    :returns: Article object updated, saved, or branched
+    """
+
+    article = read_article(path, rendered_text=False, branch='master')
+
+    if article and article.author_name != author_name and sha:
+        new = branch_article(article, message, content, author_name, email)
+    else:
+        new = save_article(title, path, message, content, author_name, email,
+                           sha)
+
+    return new
+
+
 def save_article_meta_data(article, author_name, email, branch=None):
     """
     :params article: Article object

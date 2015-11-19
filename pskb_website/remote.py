@@ -110,26 +110,26 @@ def read_file_from_github(path, branch='master', rendered_text=True):
     raw_text, sha, link = file_details_from_github(path, branch)
 
     if rendered_text:
-        text = rendered_markdown_from_github(path)
+        text = rendered_markdown_from_github(path, branch)
     else:
         text = raw_text
 
     return (text, sha, link)
 
 
-def rendered_markdown_from_github(path):
+def rendered_markdown_from_github(path, branch='master'):
     """
     Get rendered markdown file text from github API
 
     :params path: Path to file (<owner>/<repo>/<dir>/.../<filename.md>)
+    :params branch: Name of branch to read file from
     :returns: HTML file text
     """
 
     url = contents_url_from_path(path)
     headers = {'accept': 'application/vnd.github.html'}
 
-    resp = github.get(url, headers=headers)
-
+    resp = github.get(url, headers=headers, data={'ref': branch})
     if resp.status == 200:
         return resp.data
 

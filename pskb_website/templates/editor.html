@@ -2,7 +2,8 @@
 
 {% block body %}
 
-<input id="title" name="title" type="text" class="form-control" placeholder="Title" value="{{article.title}}"/>
+<input id="title" name="title" type="text" class="form-control"
+placeholder="Title" value="{{article.title}}" {{'readOnly="true"' if branch_article else ""}} />
 
 <br />
 
