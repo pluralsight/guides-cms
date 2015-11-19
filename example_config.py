@@ -31,7 +31,11 @@ class Config(object):
 
     # This should automatically be set by heroku if you've added a database to
     # your app.
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    try:
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    except KeyError:
+        print 'Failed finding DATABASE_URL environment variable'
+        SQLALCHEMY_DATABASE_URI = ''
 
 
 class DevelopmentConfig(Config):
