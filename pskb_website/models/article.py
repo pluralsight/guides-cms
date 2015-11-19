@@ -59,8 +59,8 @@ def read_article(path, rendered_text=True, branch='master'):
     """
     Read article
 
-    :params path: Short path to article, not including repo or owner
-    :params branch: Name of branch to read file from
+    :param path: Short path to article, not including repo or owner
+    :param branch: Name of branch to read file from
     :returns: Article object
     """
 
@@ -100,15 +100,15 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     """
     Create or save new (original) article, not branched article
 
-    :params title: Title of article
-    :params path: Short path to article, not including repo or owner, or empty
+    :param title: Title of article
+    :param path: Short path to article, not including repo or owner, or empty
                   for a new article
-    :params message: Commit message to save article with
-    :params content: Content of article
-    :params author_name: Name of author who wrote article
-    :params email: Email address of author
-    :params sha: Optional SHA of article if it already exists on github
-    :params branch: Name of branch to commit file to (branch must already
+    :param message: Commit message to save article with
+    :param content: Content of article
+    :param author_name: Name of author who wrote article
+    :param email: Email address of author
+    :param sha: Optional SHA of article if it already exists on github
+    :param branch: Name of branch to commit file to (branch must already
                     exist)
 
     :returns: Article object updated or saved
@@ -147,11 +147,11 @@ def branch_article(article, message, new_content, author_name, email):
     """
     Create branch for article with new article contents
 
-    :params article: Article object to branch
-    :params message: Message describing article suggestions/changes
-    :params new_content: New article text
-    :params author_name: Name of author for article changes
-    :params email: Email of author for article changes
+    :param article: Article object to branch
+    :param message: Message describing article suggestions/changes
+    :param new_content: New article text
+    :param author_name: Name of author for article changes
+    :param email: Email of author for article changes
     :returns: New article object
 
     New branch will be named after original author
@@ -179,15 +179,15 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     Save article as original or as a branch depending on if given author is
     the same as original article (if it already exists)
 
-    :params title: Title of article
-    :params path: Short path to article, not including repo or owner, or empty
+    :param title: Title of article
+    :param path: Short path to article, not including repo or owner, or empty
                   for a new article
-    :params message: Commit message to save article with
-    :params content: Content of article
-    :params author_name: Name of author who wrote content
-    :params email: Email address of author
-    :params sha: Optional SHA of article if it already exists on github
-    :params branch: Name of branch to commit file to (branch must already
+    :param message: Commit message to save article with
+    :param content: Content of article
+    :param author_name: Name of author who wrote content
+    :param email: Email address of author
+    :param sha: Optional SHA of article if it already exists on github
+    :param branch: Name of branch to commit file to (branch must already
                     exist)
 
     :returns: Article object updated, saved, or branched
@@ -206,10 +206,10 @@ def branch_or_save_article(title, path, message, content, author_name, email,
 
 def save_article_meta_data(article, author_name, email, branch=None):
     """
-    :params article: Article object
-    :params name: Name of author who wrote article
-    :params email: Email address of author
-    :params branch: Optional branch to save metadata, if not given
+    :param article: Article object
+    :param name: Name of author who wrote article
+    :param email: Email address of author
+    :param branch: Optional branch to save metadata, if not given
                     article.branch will be used
     :returns: HTTP status of saving meta data
     """
@@ -243,8 +243,8 @@ def read_meta_data_for_article_path(full_path, branch='master'):
     """
     Read meta data for given article path
 
-    :params full_path: Full path to article
-    :params branch: Name of branch to read file from
+    :param full_path: Full path to article
+    :param branch: Name of branch to read file from
     :returns: Meta-data for article as json
     """
 
@@ -259,7 +259,7 @@ def meta_data_path_for_article_path(full_path):
     """
     Get path to meta data file for given article path
 
-    :params full_path: Article object
+    :param full_path: Article object
     :returns: Full path to meta data file for article
     """
 
@@ -274,9 +274,9 @@ def save_branched_article_meta_data(article, author_name, email):
     """
     Save metadata for branched article
 
-    :params article: Article object with branch attribute set to branch name
-    :params name: Name of author who wrote branched article
-    :params email: Email address of branched article author
+    :param article: Article object with branch attribute set to branch name
+    :param name: Name of author who wrote branched article
+    :param email: Email address of branched article author
     :returns: HTTP status code of saving metadata
 
     Metadata for branched articles should be identical to the original article.
@@ -306,7 +306,7 @@ def parse_full_path(path):
     """
     Parse full path and return tuple of details embedded in path
 
-    :params path: Full path to file including repo and owner
+    :param path: Full path to file including repo and owner
     :returns: path_details tuple
     """
 

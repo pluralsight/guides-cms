@@ -32,9 +32,9 @@ def files_from_github(repo, filename, limit=None):
     """
     Iterate through files with a specific name from github
 
-    :params repo: Path to repo to read files from
-    :params filename: Name of filename to search for recursively
-    :params limit: Optional limit of the number of files to return
+    :param repo: Path to repo to read files from
+    :param filename: Name of filename to search for recursively
+    :param limit: Optional limit of the number of files to return
 
     :returns: Iterator through file_details tuples
     """
@@ -67,8 +67,8 @@ def repo_sha_from_github(repo, branch='master'):
     """
     Get sha from head of given repo
 
-    :params repo: Path to repo (owner/repo_name)
-    :params branch: Name of branch to get sha for
+    :param repo: Path to repo (owner/repo_name)
+    :param branch: Name of branch to get sha for
     :returns: Sha of branch
     """
 
@@ -97,9 +97,9 @@ def read_file_from_github(path, branch='master', rendered_text=True):
     """
     Get rendered file text from github API, sha, and github link
 
-    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
-    :params branch: Name of branch to read file from
-    :params rendered_text: Return rendered or raw text
+    :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :param branch: Name of branch to read file from
+    :param rendered_text: Return rendered or raw text
     :returns: (file_contents, sha, github_link)
     """
 
@@ -121,8 +121,8 @@ def rendered_markdown_from_github(path, branch='master'):
     """
     Get rendered markdown file text from github API
 
-    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename.md>)
-    :params branch: Name of branch to read file from
+    :param path: Path to file (<owner>/<repo>/<dir>/.../<filename.md>)
+    :param branch: Name of branch to read file from
     :returns: HTML file text
     """
 
@@ -140,8 +140,8 @@ def file_details_from_github(path, branch='master'):
     """
     Get file details from github
 
-    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
-    :params branch: Name of branch to read file from
+    :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :param branch: Name of branch to read file from
     :returns: (raw_text, SHA, github_url)
     """
 
@@ -165,13 +165,13 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     """
     Save given file content to github
 
-    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
-    :params message: Commit message to save file with
-    :params content: Content of file
-    :params name: Name of author who wrote file
-    :params email: Email address of author
-    :params sha: Optional SHA of file if it already exists on github
-    :params branch: Name of branch to commit file to (branch must already
+    :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :param message: Commit message to save file with
+    :param content: Content of file
+    :param name: Name of author who wrote file
+    :param email: Email address of author
+    :param sha: Optional SHA of file if it already exists on github
+    :param branch: Name of branch to commit file to (branch must already
                     exist)
 
     :returns: HTTP status of API request
@@ -234,7 +234,7 @@ def split_full_file_path(path):
     """
     Split full file path into owner, repo, and file_path
 
-    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :returns: (owner, repo, file_path)
     """
 
@@ -251,7 +251,7 @@ def contents_url_from_path(path):
     """
     Get github API url for contents of file from full path
 
-    :params path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :returns: Url suitable for a content call with github API
     """
 
@@ -263,8 +263,8 @@ def read_branch(repo_path, name):
     """
     Read branch and get HEAD sha
 
-    :params repo_path: Path to repo of branch
-    :params name: Name of branch to read
+    :param repo_path: Path to repo of branch
+    :param name: Name of branch to read
     :returns: SHA of HEAD and HTTP failure status code
     """
 
@@ -279,9 +279,9 @@ def create_branch(repo_path, name, sha):
     """
     Create a new branch
 
-    :params repo_path: Path to repo that branch should be created from
-    :params name: Name of branch to create
-    :params sha: SHA to branch from
+    :param repo_path: Path to repo that branch should be created from
+    :param name: Name of branch to create
+    :param sha: SHA to branch from
     :returns: True if branch was created or False if branch already exists or
               could not be created
     """
@@ -312,9 +312,9 @@ def update_branch(repo_path, name, sha):
     """
     Update branch to new commit SHA
 
-    :params repo_path: Path to repo that branch should be created from
-    :params name: Name of branch to create
-    :params sha: SHA to branch from
+    :param repo_path: Path to repo that branch should be created from
+    :param name: Name of branch to create
+    :param sha: SHA to branch from
     :returns: True if branch was update or False if branch could not be updated
     """
 
