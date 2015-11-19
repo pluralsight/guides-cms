@@ -55,6 +55,9 @@ def github_login():
 @login_required
 def logout():
     session.pop('github_token', None)
+    session.pop('login', None)
+    session.pop('name', None)
+
     return redirect(url_for('index'))
 
 
@@ -128,7 +131,17 @@ def review(article_path):
         flash('Failing reading article')
         return redirect(url_for('index'))
 
-    return render_template('article.html', article=article)
+    login = session.get('login', None)
+
+    # Only allow editing if user is logged in and it's the master branch (i.e.
+    # they can branch from it) or it's their own branch.
+    if (login and branch == 'master') or login == branch:
+        allow_edits = True
+    else:
+        allow_edits = False
+
+    return render_template('article.html', article=article,
+                           allow_edits=allow_edits)
 
 
 @app.route('/save/', methods=['POST'])
