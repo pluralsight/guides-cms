@@ -193,7 +193,10 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     :returns: Article object updated, saved, or branched
     """
 
-    article = read_article(path, rendered_text=False, branch='master')
+    if path:
+        article = read_article(path, rendered_text=False, branch='master')
+    else:
+        article = None
 
     if article and article.author_name != author_name and sha:
         new = branch_article(article, message, content, author_name, email)
