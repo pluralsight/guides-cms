@@ -2,12 +2,12 @@ import os
 
 from flask import Flask
 
-import example_config
-
 app = Flask(__name__)
 
 # Running on heroku
 if 'HEROKU' in os.environ:
+    import example_config
+
     # example_config.py provides a blueprint for which variables to look for in
     # the environment and set in our app config.
     for var in example_config.HEROKU_ENV_REQUIREMENTS:
@@ -27,6 +27,7 @@ else:
     try:
         app.config.from_object(os.environ['APP_SETTINGS'])
     except KeyError:
+        import example_config
         print 'Unable to find configuration, using example'
         app.config.from_object(example_config.DevelopmentConfig)
 
