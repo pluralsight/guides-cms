@@ -131,7 +131,7 @@ def rendered_markdown_from_github(path, branch='master'):
 
     resp = github.get(url, headers=headers, data={'ref': branch})
     if resp.status == 200:
-        return resp.data
+        return unicode(resp.data, encoding='utf-8')
 
     return None
 
@@ -155,7 +155,7 @@ def file_details_from_github(path, branch='master'):
     if resp.status == 200:
         sha = resp.data['sha']
         link = resp.data['_links']['html']
-        text = base64.b64decode(resp.data['content'])
+        text = base64.b64decode(resp.data['content'].encode('utf-8'))
 
     return (text, sha, link)
 
@@ -178,7 +178,7 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     """
 
     url = contents_url_from_path(path)
-    content = base64.b64encode(content)
+    content = base64.b64encode(content.encode('utf-8'))
     commit_info = {'message': message, 'content': content, 'branch': branch,
                    'author': {'name': name, 'email': email}}
 
