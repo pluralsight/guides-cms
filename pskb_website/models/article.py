@@ -50,7 +50,12 @@ def get_available_articles(published=None):
             # FIXME: Handle this by logging at least
             continue
         else:
-            article = Article.from_json(json_str)
+            try:
+                article = Article.from_json(json_str)
+            except ValueError:
+                # FIXME: Log something
+                continue
+
             article.filename = path_info.filename
             article.repo_path = path_info.repo
 
