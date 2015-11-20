@@ -146,8 +146,15 @@ def review(article_path):
     else:
         allow_edits = False
 
-    return render_template('article.html', article=article,
-                           allow_edits=allow_edits)
+    # Use http as canonical protocol for url to avoid having two separate
+    # comment threads for an article. Disqus uses this variable to save
+    # comments.
+    canonical_url = request.base_url.replace('https://', 'http://')
+
+    return render_template('article.html',
+                           article=article,
+                           allow_edits=allow_edits,
+                           canonical_url=canonical_url)
 
 
 @app.route('/save/', methods=['POST'])
