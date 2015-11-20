@@ -29,7 +29,7 @@ def login_required(f):
 @app.route('/')
 def index():
     # FIXME: This should only fetch the most recent x number.
-    articles = models.get_available_articles()
+    articles = models.get_available_articles(published=True)
 
     g.index_active = True
     return render_template('index.html', articles=articles)
@@ -122,7 +122,13 @@ def write(article_path):
 
 
 @app.route('/review/<path:article_path>', methods=['GET'])
+@app.route('/review/', defaults={'article_path': None}, methods=['GET'])
 def review(article_path):
+    if article_path is None:
+        g.review_active = True
+        articles = models.get_available_articles(published=False)
+        return render_template('review.html', articles=articles)
+
     g.write_active = True
     branch = request.args.get('branch', 'master')
     article = models.read_article(article_path, branch=branch)

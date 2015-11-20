@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    {% block article_list %}
+        <ul>
+            {% for article in articles %}
+                <li>
+                    <a href="/review/{{article.path}}">{{article.title}}</a>
+
+                    {% if article.branches|length > 1 %}
+                        ({{article.branches|length}} suggestions)
+                    {% elif article.branches|length == 1 %}
+                        ({{article.branches|length}} suggestion)
+                    {% endif %}
+
+                </li>
+            {% endfor %}
+        </ul>
+    {% endblock %}
+
+{% endblock %}

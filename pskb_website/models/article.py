@@ -23,10 +23,12 @@ def main_article_path():
     return '%s/%s' % (app.config['REPO_OWNER'], app.config['REPO_NAME'])
 
 
-def get_available_articles():
+def get_available_articles(published=None):
     """
     Get iterator for current article objects
 
+    :param published: True for only published articles, False for only drafts
+                      or None for all articles
     :returns: Iterator through article objects
 
     Note that article objects only have path, title and author name filled out.
@@ -52,7 +54,8 @@ def get_available_articles():
             article.filename = path_info.filename
             article.repo_path = path_info.repo
 
-        yield article
+        if published is None or article.published == published:
+            yield article
 
 
 def read_article(path, rendered_text=True, branch='master'):
@@ -351,8 +354,12 @@ class Article(object):
         if self.language is not None:
             self.path = '%s/%s' % (self.language, self.path)
 
+        self.published = False
+
     def __repr__(self):
-        return '<author_name: %s title: %s>' % (self.author_name, self.title)
+        return '<author_name: %s title: %s published: %s>' % (self.author_name,
+                                                              self.title,
+                                                              self.published)
 
     @staticmethod
     def from_json(str_):
