@@ -6,49 +6,82 @@
 {% endblock %}
 
 {% block body %}
+<div class="col-md-11">
+    <h1>{{article.title}}</h1>
+    <p> {{article.content|safe}} </p>
+    <p>
+        {% if allow_edits %}
+            <a href="/write/{{article.path}}/"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit article</a>
+        {% endif %}
+    </p>
+    <p>
+        <a href="{{article.external_url}}"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View on Github</a>
+    </p>
 
-<h1>{{article.title}}</h1>
-
-<p> {{article.content|safe}} </p>
-
-<p>
-    {% if allow_edits %}
-        <a href="/write/{{article.path}}/"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit article</a>
+    {% if article.branches %}
+        <h3>Community suggestions</h3>
+        <ul>
+            {% for branch in article.branches %}
+                <li>
+                    <a href="/review/{{article.path}}?branch={{branch}}">{{branch}} suggestions</a>
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
 
-</p>
-<p>
-    <a href="{{article.external_url}}"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View on Github</a>
-</p>
 
-{% if article.branches %}
-    <h3>Community suggestions</h3>
-    <ul>
-        {% for branch in article.branches %}
-            <li>
-                <a href="/review/{{article.path}}?branch={{branch}}">{{branch}} suggestions</a>
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
+    <div id="disqus_thread"></div>
 
+    <script>
+        var disqus_config = function () {
+            this.page.url = "{{canonical_url}}"; 
+            this.page.identifier = "{{article.path}}"; 
+        };
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
 
-<div id="disqus_thread"></div>
+        s.src = '//pluralsighttutorials.disqus.com/embed.js';
 
-<script>
-    var disqus_config = function () {
-        this.page.url = "{{canonical_url}}"; 
-        this.page.identifier = "{{article.path}}"; 
-    };
-    (function() { // DON'T EDIT BELOW THIS LINE
-    var d = document, s = d.createElement('script');
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+<div class="navbar-right">
+    <a class="twitter-share-button"
+       href="https://twitter.com/intent/tweet?text=Loved%20this%20article%20on%20{{article.title}}">Tweet</a>
 
-    s.src = '//pluralsighttutorials.disqus.com/embed.js';
+    <br/> <br/>
+    <div class="fb-like" data-href="{{canonical_url}}" data-layout="box_count" data-action="like" data-show-faces="true">
+    </div>
 
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-    })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+    <!-- Load Facebook SDK for JavaScript -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+</div>
+
+<script>window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));</script>
 
 {% endblock %}

@@ -20,3 +20,8 @@ dt {
 dd {
     padding-left: .8em;
 }
+
+.navbar-right {
+    position: fixed;
+    margin-left: 80%;
+}
