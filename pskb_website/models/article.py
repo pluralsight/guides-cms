@@ -63,6 +63,21 @@ def get_available_articles(published=None):
             yield article
 
 
+def get_articles_for_author(author_name, published=None):
+    """
+    Get iterator for articles from given author
+
+    :param author_name: Name of author to find articles for
+    :param published: True for only published articles, False for only drafts
+                      or None for all articles
+    :returns: Iterator through article objects
+    """
+
+    for article in get_available_articles(published=published):
+        if article.author_name == author_name:
+            yield article
+
+
 def read_article(path, rendered_text=True, branch='master'):
     """
     Read article

@@ -2,15 +2,25 @@
 
 {% block body %}
 
-<div class="col-md-4">
-    {% if user.avatar_url %}
-        <img height="230" src="{{user.avatar_url}}&amp;s=460" width="230" />
-    {% endif %}
-</div>
-
 <div class="col-md-8">
     {% if user.bio %}
         <p>{{user.bio}}</p>
+    {% endif %}
+
+    {% if articles %}
+        <h2>{{user.login}}'s articles</h2>
+        <ul>
+            {% for article in articles %}
+                <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+</div>
+
+<div class="col-md-4">
+    {% if user.avatar_url %}
+        <img height="230" src="{{user.avatar_url}}&amp;s=460" width="230" />
     {% endif %}
 </div>
 

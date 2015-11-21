@@ -78,22 +78,27 @@ def authorized():
     return redirect(url_for('user_profile'))
 
 
-@app.route('/user/')
-@login_required
-def user_profile():
-    me = models.find_user()
+@app.route('/user/<author_name>', methods=['GET'])
+@app.route('/user/', defaults={'author_name': None})
+def user_profile(author_name):
+    if author_name is None:
+        user = models.find_user()
 
-    if me.name:
-        session['name'] = me.name
+        if user.name:
+            session['name'] = user.name
 
-    if me.login:
-        session['login'] = me.login
+        if user.login:
+            session['login'] = user.login
 
-        if 'name' not in session:
-            session['name'] = me.login
+            if 'name' not in session:
+                session['name'] = user.login
+    else:
+        user = models.find_user(author_name)
+
+    articles = models.get_articles_for_author(user.login)
 
     g.profile_active = True
-    return render_template('profile.html', user=me)
+    return render_template('profile.html', user=user, articles=articles)
 
 
 @app.route('/write/<path:article_path>/', methods=['GET'])
