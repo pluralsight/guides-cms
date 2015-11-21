@@ -8,4 +8,6 @@ from .article import save_article
 from .article import branch_article
 from .article import branch_or_save_article
 
+from .file import read_file
+
 from .user import find_user

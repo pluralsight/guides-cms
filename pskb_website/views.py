@@ -43,7 +43,8 @@ def login():
 @app.route('/faq')
 def faq():
     g.faq_active = True
-    return render_template('faq.html')
+    text = models.read_file('faq.md', rendered_text=True)
+    return render_template('faq.html', body=text)
 
 
 @app.route('/github_login')
