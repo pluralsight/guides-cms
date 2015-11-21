@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 
+{% block css %}
+    {{ super() }}
+    <link href="/static/css/vendor/github.css" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
 
 <h1>{{article.title}}</h1>
