@@ -11,11 +11,17 @@ clean:
 deploy_stage:
 	git push stage master
 
+deploy_prod:
+	git push prod production:master
+
 push:
 	git push origin master
 
 stage_logs:
 	heroku logs -t --app pskb-stage
+
+prod_logs:
+	heroku logs -t --app pskb-prod
 
 html_docs:
 	cd docs; make html
