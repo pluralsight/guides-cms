@@ -49,8 +49,7 @@ def faq():
 
 @app.route('/github_login')
 def github_login():
-    return remote.github.authorize(
-                callback='http://tutorials.pluralsight.com/github/authorized')
+    return remote.github.authorize(callback=url_for('authorized', _external=True))
 
 
 @app.route('/logout')
