@@ -97,6 +97,8 @@ def user_profile(author_name):
     else:
         user = models.find_user(author_name)
 
+    print 'session', session['github_token']
+
     articles = models.get_articles_for_author(user.login)
 
     g.profile_active = True
