@@ -73,6 +73,17 @@ def authorized():
 
     session['github_token'] = (resp['access_token'], '')
 
+    user = models.find_user()
+
+    if user.name:
+        session['name'] = user.name
+
+    if user.login:
+        session['login'] = user.login
+
+        if 'name' not in session:
+            session['name'] = user.login
+
     url = session.pop('previously_requested_page', None)
     if url is not None:
         return redirect(url)
@@ -83,20 +94,7 @@ def authorized():
 @app.route('/user/<author_name>', methods=['GET'])
 @app.route('/user/', defaults={'author_name': None})
 def user_profile(author_name):
-    if author_name is None:
-        user = models.find_user()
-
-        if user.name:
-            session['name'] = user.name
-
-        if user.login:
-            session['login'] = user.login
-
-            if 'name' not in session:
-                session['name'] = user.login
-    else:
-        user = models.find_user(author_name)
-
+    user = models.find_user(author_name)
     print 'session', session['github_token']
 
     articles = models.get_articles_for_author(user.login)
