@@ -31,8 +31,10 @@ def index():
     # FIXME: This should only fetch the most recent x number.
     articles = models.get_available_articles(published=True)
 
+    text = models.read_file('welcome.md', rendered_text=True)
+
     g.index_active = True
-    return render_template('index.html', articles=articles)
+    return render_template('index.html', articles=articles, welcome_text=text)
 
 
 @app.route('/login')
