@@ -1,7 +1,7 @@
 {% extends "article_list.html" %}
 
 {% block body %}
-    {{welcome_text}}
+    {{welcome_text|safe}}
 
     {{super()}}
 {% endblock %}
