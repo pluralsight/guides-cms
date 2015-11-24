@@ -155,7 +155,8 @@ def file_details_from_github(path, branch='master'):
     if resp.status == 200:
         sha = resp.data['sha']
         link = resp.data['_links']['html']
-        text = base64.b64decode(resp.data['content'].encode('utf-8'))
+        text = unicode(base64.b64decode(resp.data['content'].encode('utf-8')),
+                       encoding='utf-8')
 
     return (text, sha, link)
 
