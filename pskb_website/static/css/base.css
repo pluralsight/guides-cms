@@ -21,7 +21,11 @@ dd {
     padding-left: .8em;
 }
 
-.navbar-right {
+.navbar-left {
     position: fixed;
-    margin-left: 80%;
+    z-index: 1000;
+}
+
+.article-right {
+    margin-left: 120px;
 }
