@@ -8,17 +8,22 @@ body {
   text-align: center;
 }
 
+/* Push logo down simliar to Pluralsight navbar */
 .navbar-brand img {
-    margin-top: -7px;
+    margin-top: 35px;
 }
 
-dt {
-    padding: .2em .2em .2em 0em;
-    font-size: 1.2em;
+.article-right {
+    margin-left: 140px;
 }
 
-dd {
-    padding-left: .8em;
+/* Default color of Pluralsight buttons */
+.btn-primary,
+.btn-primary:focus,
+.btn-primary:hover,
+.btn-primary:active {
+    background-color: #fb6e20;
+    border-color: #fb6e20;
 }
 
 .navbar-left {
@@ -26,6 +31,24 @@ dd {
     z-index: 1000;
 }
 
-.article-right {
-    margin-left: 120px;
+/* Use default Pluralsight link styling */
+a,
+a:visited,
+a:hover,
+a:focus {
+  color: #f96816;
+  text-decoration: none;
+}
+
+/* Make navbar height simliar to main Pluralsight navbar */
+#navbar {
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+/* Remove box around active links  */
+.navbar-inverse .navbar-nav > .active > a,
+.navbar-inverse .navbar-nav > .active > a:hover,
+.navbar-inverse .navbar-nav > .active > a:focus {
+  background-color: #222;
 }
