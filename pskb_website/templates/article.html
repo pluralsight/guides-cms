@@ -43,6 +43,7 @@
 
 <div class="col-md-11 article-right">
     <h1>{{article.title}}</h1>
+    <h4><small>written by {{article.author_name}}</small></h4>
     <p> {{article.content|safe}} </p>
     <p>
         {% if allow_edits %}
@@ -52,6 +53,12 @@
     <p>
         <a href="{{article.external_url}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View on Github</a>
     </p>
+
+    {% if article.author_name %}
+        <p class="small">
+        <a href="http://github.com/{{article.author_name}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View more from {{article.author_name}} on Github</a>
+        </p>
+    {% endif %}
 
     {% if article.branches %}
         <h3>Community suggestions</h3>
