@@ -68,8 +68,10 @@ def logout():
 def authorized():
     resp = remote.github.authorized_response()
     if resp is None:
-        return 'Access denied: reason=%s error=%s' % (
-            request.args['error'], request.args['error_description'])
+        flash('Access denied: reason=%s error=%s' % (
+              request.args['error'], request.args['error_description']),
+              category='error')
+        return redirect(url_for('index'))
 
     session['github_token'] = (resp['access_token'], '')
 
@@ -87,6 +89,8 @@ def authorized():
     url = session.pop('previously_requested_page', None)
     if url is not None:
         return redirect(url)
+
+    flash('Thanks for logging in. You can now <a href="/review/"> review unpublished tutorials</a> and <a href="/write/">write new tutorials</a>.', category='info')
 
     return redirect(url_for('user_profile'))
 
@@ -117,7 +121,7 @@ def write(article_path):
 
         user = models.find_user(session['login'])
         if user is None:
-            flash('Cannot save unless logged in')
+            flash('Cannot save unless logged in', category='error')
             return render_template('index.html'), 404
 
         if user.login != article.author_name:
@@ -146,7 +150,7 @@ def review(article_path):
     article = models.read_article(article_path, branch=branch)
 
     if article is None:
-        flash('Failing reading article')
+        flash('Failed reading article', category='error')
         return redirect(url_for('index'))
 
     # Don't allow random users to see review posts. This is a requirement
@@ -180,7 +184,7 @@ def review(article_path):
 def save():
     user = models.find_user(session['login'])
     if user is None:
-        flash('Cannot save unless logged in')
+        flash('Cannot save unless logged in', category='error')
         return render_template('index.html'), 404
 
     # Data is stored in form with input named content which holds json. The
@@ -201,8 +205,8 @@ def save():
 
     # Successful creation
     if article:
-        return redirect(url_for('review', article_path=article.path,
-                                          branch=article.branch))
+        url = url_for('review', article_path=article.path, branch=article.branch)
+        return redirect(url)
 
-    flash('Failed creating article on github')
+    flash('Failed creating article on github', category='error')
     return redirect(url_for('index'))

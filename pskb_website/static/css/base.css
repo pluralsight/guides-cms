@@ -60,3 +60,8 @@ a:focus {
 .navbar-inverse .navbar-nav > .active > a:focus {
   background-color: #222;
 }
+
+/* Give a bit of breathing room to surrounding area of message boxes */
+.bg-info, .bg-danger {
+    padding: 10px;
+}
