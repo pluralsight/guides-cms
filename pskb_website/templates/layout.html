@@ -69,6 +69,19 @@
       <div class="starter-template">
         <h1>Pluralsight Tutorials</h1>
         <p class="lead">Learn more by sharing</p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="bg-info">{{ message|safe }} </p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+      {% if error %}
+        <p class="bg-info">{{ message }} </p>
+      {% endif %}
+
       </div>
 
       {% block body %}

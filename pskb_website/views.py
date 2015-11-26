@@ -88,6 +88,8 @@ def authorized():
     if url is not None:
         return redirect(url)
 
+    flash('Thanks for logging in. You can now <a href="/review/"> review unpublished tutorials</a> and <a href="/write/">write tutorials</a>.')
+
     return redirect(url_for('user_profile'))
 
 
@@ -117,8 +119,8 @@ def write(article_path):
 
         user = models.find_user(session['login'])
         if user is None:
-            flash('Cannot save unless logged in')
-            return render_template('index.html'), 404
+            return render_template('index.html',
+                                   error='Cannot save unless logged in'), 404
 
         if user.login != article.author_name:
             branch_article = True
@@ -146,8 +148,7 @@ def review(article_path):
     article = models.read_article(article_path, branch=branch)
 
     if article is None:
-        flash('Failing reading article')
-        return redirect(url_for('index'))
+        return redirect(url_for('index'), error='Failed reading article')
 
     # Don't allow random users to see review posts. This is a requirement
     # from Pluralsight content team.
@@ -180,8 +181,8 @@ def review(article_path):
 def save():
     user = models.find_user(session['login'])
     if user is None:
-        flash('Cannot save unless logged in')
-        return render_template('index.html'), 404
+        return render_template('index.html',
+                               error='Cannot save unless logged in'), 404
 
     # Data is stored in form with input named content which holds json. The
     # json has the 'real' data in the 'content' key.
@@ -204,5 +205,4 @@ def save():
         return redirect(url_for('review', article_path=article.path,
                                           branch=article.branch))
 
-    flash('Failed creating article on github')
-    return redirect(url_for('index'))
+    return redirect(url_for('index'), error='Failed creating article on github')
