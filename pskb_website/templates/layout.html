@@ -70,17 +70,17 @@
         <h1>Pluralsight Tutorials</h1>
         <p class="lead">Learn more by sharing</p>
 
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <p class="bg-info">{{ message|safe }} </p>
-                {% endfor %}
-            {% endif %}
+        {% with messages = get_flashed_messages(category_filter=['info', 'message']) %}
+            {% for message in messages %}
+                <p class="bg-info">{{ message|safe }} </p>
+            {% endfor %}
         {% endwith %}
 
-      {% if error %}
-        <p class="bg-info">{{ message }} </p>
-      {% endif %}
+        {% with messages = get_flashed_messages(category_filter=['error']) %}
+            {% for message in messages %}
+                <p class="bg-danger">{{ message|safe }} </p>
+            {% endfor %}
+        {% endwith %}
 
       </div>
 
