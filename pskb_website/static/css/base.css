@@ -13,6 +13,14 @@ body {
     margin-top: 35px;
 }
 
+
+/* Nav bar is much shorter on small screens */
+@media(max-width:767px) {
+    .navbar-brand img {
+        margin-top: -8px;
+    }
+}
+
 .article-right {
     margin-left: 140px;
 }
