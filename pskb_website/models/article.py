@@ -94,7 +94,8 @@ def read_article(path, rendered_text=True, branch='master'):
                                                          branch,
                                                          rendered_text)
     if None in (text, sha):
-        # FIXME: Handle error here
+        app.logger.error('Failed reading path: "%s" branch: %s', full_path,
+                         branch)
         return None
 
     # Parse path to get article information but replace it with improved json
@@ -113,9 +114,10 @@ def read_article(path, rendered_text=True, branch='master'):
         article.repo_path = path_info.repo
         article.branch = branch
     else:
-        # FIXME: Log something here? We cannot properly show an article without
-        # metadata
+        # We cannot properly show an article without metadata.
         article = None
+        app.logger.error('Failed reading meta data for "%s", branch: %s',
+                         path_info, branch)
 
     return article
 
@@ -187,10 +189,12 @@ def branch_article(article, message, new_content, author_name, email):
     repo_sha, status = remote.read_branch(article.repo_path, branch)
     if status == 404:
         repo_sha, status = remote.read_branch(article.repo_path, 'master')
-        assert repo_sha is not None, 'Cannot find master branch'
+        if repo_sha is None:
+            app.logger.error('Cannot find master branch "%s"',
+                             article.repo_path)
+            return None
 
         if not remote.create_branch(article.repo_path, branch, repo_sha):
-            # FIXME: Handle error
             return None
 
     return save_article(article.title, article.path, message, new_content,
@@ -347,9 +351,27 @@ def parse_full_path(path):
 
 
 class Article(object):
+    """
+    Object representing article
+    """
+
     def __init__(self, title, author_name, filename=ARTICLE_FILENAME,
                  repo_path=None, branch='master', language=None, sha=None,
                  content=None, external_url=None):
+        """
+        Initalize article object
+
+        :param title: Title of article
+        :param author_name: Name of original author
+        :param filename: Name of file to save article in
+        :param repo_path: Path to repository to save article in
+        :param branch: Branch to save article to
+        :param language: Language/stack article primarily covers
+        :param sha: Git SHA of article (if article already exists in repo)
+        :param content: Contents of article
+        :param external_url: External URL to view article at
+        """
+
         self.title = title
         self.author_name = author_name
         self.language = language
@@ -427,4 +449,8 @@ class Article(object):
 
     @property
     def full_path(self):
+        """
+        Get full path to article including repo information
+        :returns:  Full path to article
+        """
         return '%s/%s' % (self.repo_path, self.path)
