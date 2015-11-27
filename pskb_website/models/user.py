@@ -26,7 +26,19 @@ def find_user(username=None):
 
 
 class User(object):
+    """Object representing user"""
+
     def __init__(self, name, login, email=None, avatar_url=None, bio=None):
+        """
+        Initialize user
+
+        :param name: Name of user
+        :param login: Login/username of user
+        :param email: Email of user
+        :param avatar_url: URL to avatar/image for user
+        :param bio: Biography text of user
+        """
+
         self.name = name
         self.login = login
         self.email = email
