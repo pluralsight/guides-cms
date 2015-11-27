@@ -29,7 +29,9 @@ body {
 .btn-primary,
 .btn-primary:focus,
 .btn-primary:hover,
-.btn-primary:active {
+.btn-primary:active,
+.btn-primary:active:hover,
+.btn-primary:active:focus {
     background-color: #fb6e20;
     border-color: #fb6e20;
 }
