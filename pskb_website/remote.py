@@ -206,7 +206,7 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     :param branch: Name of branch to commit file to (branch must already
                    exist)
 
-    :returns: HTTP status of API request
+    :returns: True if data was saved, False otherwise
     """
 
     url = contents_url_from_path(path)
@@ -225,7 +225,13 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
 
     resp = github.put(url, data=commit_info, format='json', token=token)
 
-    return resp.status
+    if resp.status not in (201, 200):
+        log_error('Failed saving file', url, resp, commit_msg=message,
+                  content=content, name=name, email=email, sha=sha,
+                  branch=branch)
+        return False
+
+    return True
 
 
 def read_user_from_github(username=None):
