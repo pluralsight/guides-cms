@@ -46,18 +46,20 @@ def get_available_articles(published=None):
 
         # No meta data file available
         if json_str is None:
-            # FIXME: Cannot do anything here b/c we do not know the title.
-            # FIXME: Handle this by logging at least
+            # Cannot do anything here b/c we do not know the title.
+            app.logger.error('Failed reading meta data for "%s", file_details: %s',
+                             path_info, file_details)
             continue
-        else:
-            try:
-                article = Article.from_json(json_str)
-            except ValueError:
-                # FIXME: Log something
-                continue
 
-            article.filename = path_info.filename
-            article.repo_path = path_info.repo
+        try:
+            article = Article.from_json(json_str)
+        except ValueError:
+            app.logger.error('Failed parsing json meta data for "%s", file_details: %s, json: %s',
+                             path_info, file_details, json_str)
+            continue
+
+        article.filename = path_info.filename
+        article.repo_path = path_info.repo
 
         if published is None or article.published == published:
             yield article
