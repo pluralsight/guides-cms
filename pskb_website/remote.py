@@ -307,18 +307,21 @@ def read_branch(repo_path, name):
 
     :param repo_path: Path to repo of branch
     :param name: Name of branch to read
-    :returns: SHA of HEAD and HTTP failure status code
+    :returns: SHA of HEAD or None if branch is not found
     """
 
     url = 'repos/%s/git/refs/heads/%s' % (repo_path, name)
     resp = github.get(url)
 
+    # Branch doesn't exist
+    if resp.status == 404:
+        return None
+
     if resp.status != 200:
         log_error('Failed reading branch', url, resp)
+        return None
 
-        return (None, resp.status)
-
-    return (resp.data['object']['sha'], resp.status)
+    return resp.data['object']['sha']
 
 
 def create_branch(repo_path, name, sha):
@@ -342,7 +345,7 @@ def create_branch(repo_path, name, sha):
 
     if resp.status == 422:
         # Maybe it already exists
-        curr_sha, status = read_branch(repo_path, name)
+        curr_sha = read_branch(repo_path, name)
         if curr_sha is not None:
             return True
 

@@ -186,9 +186,9 @@ def branch_article(article, message, new_content, author_name, email):
     branch = author_name
 
     # Create branch if we needed to
-    repo_sha, status = remote.read_branch(article.repo_path, branch)
-    if status == 404:
-        repo_sha, status = remote.read_branch(article.repo_path, 'master')
+    repo_sha = remote.read_branch(article.repo_path, branch)
+    if repo_sha is None:
+        repo_sha = remote.read_branch(article.repo_path, 'master')
         if repo_sha is None:
             app.logger.error('Cannot find master branch "%s"',
                              article.repo_path)
