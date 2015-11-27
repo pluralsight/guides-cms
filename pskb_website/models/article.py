@@ -148,19 +148,18 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     if path:
         article.path = path
 
-    status = remote.commit_file_to_github(article.full_path, message,
-                                          new_content, author_name, email, sha,
-                                          branch)
-    if status not in (201, 200):
-        # FIXME: Handle error
+    saved = remote.commit_file_to_github(article.full_path, message,
+                                         new_content, author_name, email, sha,
+                                         branch)
+    if not saved:
         return None
 
     if branch != 'master':
-        status = save_branched_article_meta_data(article, author_name, email)
+        saved = save_branched_article_meta_data(article, author_name, email)
     else:
-        status = save_article_meta_data(article, author_name, email, branch)
+        saved = save_article_meta_data(article, author_name, email, branch)
 
-    if status not in (201, 200):
+    if not saved:
         # FIXME: Handle error. This is interesting b/c now we created the
         # article, but not the meta data.
         return None
@@ -239,7 +238,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     :param email: Email address of author
     :param branch: Optional branch to save metadata, if not given
                    article.branch will be used
-    :returns: HTTP status of saving meta data
+    :returns: True if meta data is saved, False otherwise
     """
 
     filename = meta_data_path_for_article_path(article.full_path)
@@ -305,7 +304,7 @@ def save_branched_article_meta_data(article, author_name, email):
     :param article: Article object with branch attribute set to branch name
     :param name: Name of author who wrote branched article
     :param email: Email address of branched article author
-    :returns: HTTP status code of saving metadata
+    :returns: True if data is saved, False otherwise
 
     Metadata for branched articles should be identical to the original article.
     This makes it easier for automatically merging changes because metadata
@@ -320,7 +319,7 @@ def save_branched_article_meta_data(article, author_name, email):
 
     # Nothing to save, we're already tracking this branch
     if article.branch in orig_article.branches:
-        return 200
+        return True
 
     orig_article.branches.append(article.branch)
 
