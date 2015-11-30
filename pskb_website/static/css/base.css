@@ -10,14 +10,14 @@ body {
 
 /* Push logo down simliar to Pluralsight navbar */
 .navbar-brand img {
-    margin-top: 35px;
+    margin-top: 14;
 }
 
 
 /* Nav bar is much shorter on small screens */
 @media(max-width:767px) {
     .navbar-brand img {
-        margin-top: -8px;
+        margin-top: -15px;
     }
 }
 
