@@ -1,7 +1,42 @@
 {% extends "article_list.html" %}
 
 {% block body %}
-    {{welcome_text|safe}}
+    <div class="row features">
+        <div class="col-md-4">
+            <img src="/static/img/check.png" width="28" height="18" /><span>Integrated with GITHUB</span>
+        </div>
+        <div class="col-md-4">
+            <img src="/static/img/check.png" width="28" height="18" /><span>Write using MARKDOWN</span>
+        </div>
+        <div class="col-md-4">
+            <img src="/static/img/check.png" width="28" height="18" /><span>Engine is OPEN SOURCE</span>
+        </div>
+    </div>
 
-    {{super()}}
+    <div class="col-md-2 navbar-left index-left">
+        <h3>Become an author:</h3>
+        <a href="/write/">Create tutorial</a>
+
+        <h4>What do you want?</h4>
+        <form action="#">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="" />
+                    AngularJS
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="" />
+                    Ruby on Rails
+                </label>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-10 index-right">
+        {{welcome_text|safe}}
+
+        {{super()}}
+    </div>
 {% endblock %}
