@@ -1,6 +1,9 @@
 body {
   padding-top: 50px;
   font-family: "Gotham SSm A","Gotham SSm B",sans-serif;
+
+  /* Height of footer */
+  padding-bottom: 75px;
 }
 
 .starter-template {
@@ -66,4 +69,56 @@ a:focus {
 /* Give a bit of breathing room to surrounding area of message boxes */
 .bg-info, .bg-danger {
     padding: 10px;
+}
+
+.navbar-fixed-bottom {
+    height: 75px;
+}
+
+.tagline {
+    color: #f5518a;
+    font-weight: 100;
+}
+
+.features {
+    margin-left: auto;
+    margin-right: auto;
+    color: #fd0808;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 85px;
+}
+
+.features img {
+    margin-right: 10px;
+}
+
+.index-left h3 {
+    font-size: 18px;
+    color: #555555;
+}
+
+.index-left h4 {
+    margin-top: 35px;
+    font-size: 16px;
+    color: #555555;
+}
+
+.index-left a {
+    display: block;
+    border: 1px solid #f96816;
+    padding: 10px;
+    text-decoration: none;
+    margin-right: 50px;
+    text-align: center;
+}
+
+.index-left .checkbox {
+    line-height: 1.5em;
+    font-size: 16px;
+    color: #1a1a1a;
+}
+
+.index-right {
+    margin-left: 190px;
 }
