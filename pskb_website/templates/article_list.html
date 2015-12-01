@@ -2,21 +2,31 @@
 
 {% block body %}
 
+    <br />
     {% block article_list %}
-        <ul>
-            {% for article in articles %}
-                <li>
-                    <a href="/review/{{article.path}}">{{article.title}}</a>
+        {% for article in articles %}
+            {% if not loop.index % 3 or loop.index == 0 %}
+                <div class="row">
+            {% endif %}
 
-                    {% if article.branches|length > 1 %}
-                        ({{article.branches|length}} suggestions)
-                    {% elif article.branches|length == 1 %}
-                        ({{article.branches|length}} suggestion)
-                    {% endif %}
+                <div class="col-xs-6 col-lg-3 article-teaser">
+                    <div class="article-description">
+                        <p>
+                            <img src="/static/img/rocket.png" width="210" height="143" />
+                        </p>
+                        <p class='title'> {{article.title|truncate(100) }}</p>
+                    </div>
+                    <hr>
+                    <p class='learning-link'>
+                        <a href="/review/{{article.path}}">Start learning</a>
+                    </p>
+                </div>
 
-                </li>
-            {% endfor %}
-        </ul>
+            {% if not loop.index % 3 or loop.index == 0 %}
+                </div>
+            {% endif %}
+
+        {% endfor %}
     {% endblock %}
 
 {% endblock %}
