@@ -22,12 +22,6 @@ body {
 }
 
 
-.navbar-left {
-    position: fixed;
-    z-index: 1000;
-}
-
-
 /* Nav bar is much shorter on small screens */
 @media(max-width:767px) {
     .navbar-brand img {
@@ -70,6 +64,7 @@ a:focus {
 #navbar {
     padding-top: 25px;
     padding-bottom: 25px;
+    font-size: 18px;
 }
 
 /* Remove box around active links  */
@@ -122,7 +117,6 @@ a:focus {
     border: 1px solid #f96816;
     padding: 10px;
     text-decoration: none;
-    margin-right: 50px;
     text-align: center;
 }
 
@@ -132,6 +126,47 @@ a:focus {
     color: #1a1a1a;
 }
 
-.index-right {
-    margin-left: 190px;
+
+/* The following doesn't work in IE9 and below, but not a huge deal because
+ * it's just a small design nicety that's not strictly necessary */
+.line-header {
+    width: 100%;
+    height:3px;
+    background: rgba(226,42,97,1);
+    background: -webkit-linear-gradient(left, rgba(226,42,97,1) 0%, rgba(229,161,3,1) 50%, rgba(199,23,49,1) 100%);
+    background: -moz-linear-gradient(left, rgba(226,42,97,1) 0%, rgba(229,161,3,1) 50%, rgba(199,23,49,1) 100%);
+    background: -o-linear-gradient(left, rgba(226,42,97,1) 0%, rgba(229,161,3,1) 50%, rgba(199,23,49,1) 100%);
+    background: linear-gradient(to right, rgba(226,42,97,1) 0%, rgba(229,161,3,1) 50%, rgba(199,23,49,1) 100%);
+}
+
+.line-header {
+    margin-top: -2px;
+    margin-bottom: -2px;
+}
+
+.article-teaser {
+    height: 350px;
+    border: 1px solid #cecece;
+    text-align: center;
+    padding: 15px 10px 15px 10px;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    color: #555555;
+    position: relative;
+}
+
+.article-teaser .title {
+    font-size: 18px;
+}
+
+.article-teaser hr {
+    /* override bootstrap defaults */
+    border-top: 1px solid #cecece;
+}
+
+.article-description {
+    /* Based off of article-teaser height. Forces the hr and link inside teaser
+     * to show up in uniform place regardless of title length. */
+    height: 250px;
 }
