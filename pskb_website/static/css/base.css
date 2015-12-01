@@ -156,6 +156,11 @@ a:focus {
     position: relative;
 }
 
+.article-teaser img {
+    width: 210px;
+    height: 143px;
+}
+
 .article-teaser .title {
     font-size: 18px;
 }
@@ -169,4 +174,26 @@ a:focus {
     /* Based off of article-teaser height. Forces the hr and link inside teaser
      * to show up in uniform place regardless of title length. */
     height: 250px;
+}
+
+@media(max-width:767px) {
+    .article-teaser {
+        height: 220px;
+        margin-right: 0px;
+        padding: 15px 0px 15px 0px;
+        border-right: 0px;
+        border-left: 0px;
+    }
+
+    .article-teaser img {
+        display:none;
+    }
+
+    .article-teaser .title {
+        font-size: 14px;
+    }
+
+    .article-description {
+        height: 65%;
+    }
 }
