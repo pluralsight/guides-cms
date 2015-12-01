@@ -17,16 +17,34 @@ body {
 }
 
 
-/* Nav bar is much shorter on small screens */
-@media(max-width:767px) {
-    .navbar-brand img {
-        margin-top: -15px;
-    }
-}
-
 .article-right {
     margin-left: 140px;
 }
+
+
+.navbar-left {
+    position: fixed;
+    z-index: 1000;
+}
+
+
+/* Nav bar is much shorter on small screens */
+@media(max-width:767px) {
+    .navbar-brand img {
+        margin-top: -13px;
+    }
+}
+
+@media(max-width:767px) {
+    .article-right {
+        margin-left: 2px;
+    }
+
+    .navbar-left {
+        position: relative;
+    }
+}
+
 
 /* Default color of Pluralsight buttons */
 .btn-primary,
@@ -37,11 +55,6 @@ body {
 .btn-primary:active:focus {
     background-color: #fb6e20;
     border-color: #fb6e20;
-}
-
-.navbar-left {
-    position: fixed;
-    z-index: 1000;
 }
 
 /* Use default Pluralsight link styling */
