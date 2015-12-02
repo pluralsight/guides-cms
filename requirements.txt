@@ -1,3 +1,4 @@
 Flask==0.10.1
 gunicorn==19.3.0
 Flask-OAuthlib==0.9.1
+redis==2.10.5
