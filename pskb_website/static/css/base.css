@@ -16,6 +16,10 @@ body {
     margin-top: 14;
 }
 
+.navbar-left-article {
+    position: fixed;
+    z-index: 1000;
+}
 
 .article-right {
     margin-left: 140px;
@@ -34,7 +38,7 @@ body {
         margin-left: 2px;
     }
 
-    .navbar-left {
+    .navbar-left-index {
         position: relative;
     }
 }
