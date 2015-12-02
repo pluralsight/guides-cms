@@ -166,21 +166,21 @@ def file_details_from_github(path, branch='master'):
 
     :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :param branch: Name of branch to read file from
-    :returns: file_details namedtuple
+    :returns: file_details namedtuple or None for error
     """
 
     url = contents_url_from_path(path)
     resp = github.get(url, data={'ref': branch})
-
-    last_updated = None
 
     if resp.status == 200:
         sha = resp.data['sha']
         link = resp.data['_links']['html']
         text = unicode(base64.b64decode(resp.data['content'].encode('utf-8')),
                        encoding='utf-8')
+        last_updated = resp._resp.headers.get('Last-Modified')
     else:
         log_error('Failed reading file details', url, resp, branch=branch)
+        return None
 
     return file_details(path, branch, sha, last_updated, link, text)
 
