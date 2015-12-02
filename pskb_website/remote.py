@@ -382,3 +382,19 @@ def update_branch(repo_path, name, sha):
         return False
 
     return True
+
+
+def check_rate_limit():
+    """
+    Get rate limit data
+
+    :returns: None in case of an error or raw rate limit request data
+    """
+
+    url = '/rate_limit'
+    resp = github.get(url)
+    if resp.status != 200:
+        log_error('Failed checking rate limit', url, resp)
+        return None
+
+    return resp.data

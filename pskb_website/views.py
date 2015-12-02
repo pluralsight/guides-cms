@@ -42,6 +42,13 @@ def login():
     return render_template('login.html')
 
 
+@app.route('/gh_rate_limit')
+def gh_rate_limit():
+    """Debug request to view rate limit on Github"""
+
+    return repr(remote.check_rate_limit())
+
+
 @app.route('/faq')
 def faq():
     g.faq_active = True
