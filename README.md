@@ -17,6 +17,8 @@ These are not currently required, but they maybe in the future.
 - Python ORM: [SQLAlchemy](http://www.sqlalchemy.org)
 - Documentation: [Sphinx](http://sphinx-doc.org)
     - Required for building documentation locally with `make html_docs` command
+- Caching: [Redis](http://redis.io)
+    - Requires redis module, install with: `pip install redis`
 
 ## Install for development
 
@@ -114,3 +116,18 @@ Once you have a minifier installed, you can make changes to the 'full source'
 of the Javascript then minify it with something simliar to the following
 (depending on your minifier):
     - `uglifyjs <full_source> > <new_minified_source>`
+
+
+#### Adding Redis caching on Heroku
+
+1. Determine if you want to use a
+   [caching addon](https://elements.heroku.com/addons#caching) or
+   [redis addon](https://elements.heroku.com/addons#data-stores).
+
+   - This application has been tested with the [redis cloud addon](https://elements.heroku.com/addons/rediscloud).
+   - Redis was chosen for the following reasons:
+    - Cache value larger than 1MB (for large articles)
+    - Use the same service for other things later instead of just caching
+2. Add your addon
+    - `heroku addons:create rediscloud:30 --app <app_name>`
+3. See [heroku python with redis docs](https://devcenter.heroku.com/articles/rediscloud#using-redis-from-python)

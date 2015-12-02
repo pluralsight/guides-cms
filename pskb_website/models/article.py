@@ -9,6 +9,7 @@ import json
 from .. import app
 from .. import utils
 from .. import remote
+from .. import cache
 
 
 ARTICLE_FILENAME = 'article.md'
@@ -85,11 +86,17 @@ def read_article(path, rendered_text=True, branch='master'):
     Read article
 
     :param path: Short path to article, not including repo or owner
+    :param rendered_text: Boolean to read rendered or raw text
     :param branch: Name of branch to read file from
     :returns: Article object
     """
 
     full_path = '%s/%s' % (main_article_path(), path)
+
+    json_str = cache.read_article(path, branch)
+    if json_str is not None:
+        return Article.from_json(json_str)
+
     details = remote.read_file_from_github(full_path, branch, rendered_text)
     if details is None or None in (details.text, details.sha):
         app.logger.error('Failed reading path: "%s" branch: %s', full_path,
@@ -111,6 +118,12 @@ def read_article(path, rendered_text=True, branch='master'):
         article.filename = path_info.filename
         article.repo_path = path_info.repo
         article.branch = branch
+        article.last_updated = details.last_updated
+
+        # We don't have a ton of cache space so reserve it for more
+        # high-traffic data like published articles.
+        if article.published:
+            cache.save_article(article)
     else:
         # We cannot properly show an article without metadata.
         article = None
@@ -258,7 +271,8 @@ def save_article_meta_data(article, author_name, email, branch=None):
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
-    exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', 'path')
+    exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', 'path',
+                     'last_updated')
     json_content = article.to_json(exclude_attrs=exclude_attrs)
 
     message = 'Updating article metadata for %s' % (article.title)
@@ -381,6 +395,7 @@ class Article(object):
         self.content = content
         self.external_url = external_url
         self.filename = filename
+        self.last_updated = None
 
         # Only useful if article has already been saved to github
         self.sha = sha
