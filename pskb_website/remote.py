@@ -24,8 +24,7 @@ github = oauth.remote_app(
     authorize_url='https://github.com/login/oauth/authorize'
 )
 
-
-file_details = collections.namedtuple('file_details', 'path, sha')
+file_details = collections.namedtuple('file_details', 'path, branch, sha, last_updated, url, text')
 
 
 def log_error(message, url, resp, **kwargs):
@@ -80,7 +79,7 @@ def files_from_github(repo, filename, limit=None):
     for obj in resp.data['tree']:
         if obj['path'].endswith(filename):
             full_path = '%s/%s' % (repo, obj['path'])
-            yield file_details(full_path, obj['sha'])
+            yield file_details(full_path, None, obj['sha'], None, None, None)
             count += 1
 
         if limit is not None and count == limit:
@@ -122,26 +121,22 @@ def primary_github_email_of_logged_in():
 
 def read_file_from_github(path, branch='master', rendered_text=True):
     """
-    Get rendered file text from github API, sha, and github link
+    Get rendered file text from github API
 
     :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :param branch: Name of branch to read file from
     :param rendered_text: Return rendered or raw text
-    :returns: (file_contents, sha, github_link)
+    :returns: file_details namedtuple or None if error
     """
 
-    sha = None
-    link = None
-    text = None
-
-    raw_text, sha, link = file_details_from_github(path, branch)
+    details = file_details_from_github(path, branch)
 
     if rendered_text:
         text = rendered_markdown_from_github(path, branch)
-    else:
-        text = raw_text
+        details = file_details(path, branch, details.sha, details.last_updated,
+                               details.url, text)
 
-    return (text, sha, link)
+    return details
 
 
 def rendered_markdown_from_github(path, branch='master'):
@@ -171,15 +166,13 @@ def file_details_from_github(path, branch='master'):
 
     :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :param branch: Name of branch to read file from
-    :returns: (raw_text, SHA, github_url)
+    :returns: file_details namedtuple
     """
 
-    text = None
-    sha = None
-    link = None
     url = contents_url_from_path(path)
-
     resp = github.get(url, data={'ref': branch})
+
+    last_updated = None
 
     if resp.status == 200:
         sha = resp.data['sha']
@@ -189,7 +182,7 @@ def file_details_from_github(path, branch='master'):
     else:
         log_error('Failed reading file details', url, resp, branch=branch)
 
-    return (text, sha, link)
+    return file_details(path, branch, sha, last_updated, link, text)
 
 
 def commit_file_to_github(path, message, content, name, email, sha=None,

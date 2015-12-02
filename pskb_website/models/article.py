@@ -90,10 +90,8 @@ def read_article(path, rendered_text=True, branch='master'):
     """
 
     full_path = '%s/%s' % (main_article_path(), path)
-    text, sha, github_url = remote.read_file_from_github(full_path,
-                                                         branch,
-                                                         rendered_text)
-    if None in (text, sha):
+    details = remote.read_file_from_github(full_path, branch, rendered_text)
+    if details is None or None in (details.text, details.sha):
         app.logger.error('Failed reading path: "%s" branch: %s', full_path,
                          branch)
         return None
@@ -107,9 +105,9 @@ def read_article(path, rendered_text=True, branch='master'):
         article = Article.from_json(json_str)
 
         # Update it with what we pull from the article file and path
-        article.content = text
-        article.sha = sha
-        article.external_url = github_url
+        article.content = details.text
+        article.sha = details.sha
+        article.external_url = details.url
         article.filename = path_info.filename
         article.repo_path = path_info.repo
         article.branch = branch
@@ -251,9 +249,12 @@ def save_article_meta_data(article, author_name, email, branch=None):
         branch = article.branch
 
     # Get sha of meta data if it exists so we can update it
-    text, sha, github_url = remote.read_file_from_github(filename,
-                                                         rendered_text=False,
-                                                         branch=branch)
+    details = remote.read_file_from_github(filename, rendered_text=False,
+                                           branch=branch)
+    if details is None or details.sha is None:
+        app.logger.error('Failed reading file "%s", branch: %s to save meta data',
+                         article.path, branch)
+        return False
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
@@ -266,7 +267,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     # with this new branch as well as the branch meta data file.
 
     return remote.commit_file_to_github(filename, message, json_content,
-                                        author_name, email, sha,
+                                        author_name, email, details.sha,
                                         branch=branch)
 
 
@@ -280,10 +281,12 @@ def read_meta_data_for_article_path(full_path, branch='master'):
     """
 
     filename = meta_data_path_for_article_path(full_path)
-    text, sha, github_url = remote.read_file_from_github(filename,
-                                                         rendered_text=False,
-                                                         branch=branch)
-    return text
+    details = remote.read_file_from_github(filename, rendered_text=False,
+                                           branch=branch)
+    if details is None:
+        return None
+
+    return details.text
 
 
 def meta_data_path_for_article_path(full_path):
