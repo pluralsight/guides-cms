@@ -72,6 +72,23 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
       master is local branch you want to push.
     - **Make sure your changes are committed locally first!**
 
+By default the application will be served up by [Gunicorn](http://gunicorn.org)
+only.  This is great for testing, but gunicorn is best when run behind a proxy
+like [nginx](http://nginx.org). Gunicorn is easily suseptible to
+[DOS](https://en.wikipedia.org/wiki/Denial-of-service_attack) issues.  You can
+slightly improve your performance on heroku by using setting the
+`WEB_CONCURRENCY` environment variable, which gunicorn automatically honors:
+    - `heroku config:set WEB_CONCURRENCY=3`
+
+You'll want to set this to something suitable for the size of your
+[heroku dyno](https://www.heroku.com/pricing) and the memory requirements of
+your the flask application.
+
+#### Heroku add-ons worth checking out
+
+1. [Papertrail](https://elements.heroku.com/addons/papertrail)
+    - Provides bigger log for debugging issues and enables easy searching
+
 #### Testing without browser
 
 You can test a lot of the functionality of the application without a web
