@@ -2,11 +2,7 @@
 Caching utilities
 """
 
-import collections
-import os
-import pickle
 import urlparse
-import json
 
 from . import app
 
