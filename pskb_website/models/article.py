@@ -95,7 +95,17 @@ def read_article(path, rendered_text=True, branch='master'):
 
     json_str = cache.read_article(path, branch)
     if json_str is not None:
-        return Article.from_json(json_str)
+        article = Article.from_json(json_str)
+
+        # Only caching rendered text b/c that's the 'front-end' of the site and
+        # is more important to be fast.
+        if rendered_text:
+            return article
+
+        details = remote.file_details_from_github(full_path, branch)
+        if details is not None and details.text is not None:
+            article.content = details.text
+            return article
 
     details = remote.read_file_from_github(full_path, branch, rendered_text)
     if details is None or None in (details.text, details.sha):
