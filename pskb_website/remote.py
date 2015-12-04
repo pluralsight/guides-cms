@@ -179,7 +179,9 @@ def file_details_from_github(path, branch='master'):
                        encoding='utf-8')
         last_updated = resp._resp.headers.get('Last-Modified')
     else:
-        log_error('Failed reading file details', url, resp, branch=branch)
+        app.logger.warning('Failed reading file details at "%s", status: %d, data: %s',
+                           url, resp.status, resp.data)
+
         return None
 
     return file_details(path, branch, sha, last_updated, link, text)
