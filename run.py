@@ -3,6 +3,7 @@
 import os
 
 os.environ['APP_SETTINGS'] = 'config.DevelopmentConfig'
+#os.environ['APP_SETTINGS'] = 'config.DebugProductionConfig'
 
 from pskb_website import app
 
