@@ -271,13 +271,13 @@ def save_article_meta_data(article, author_name, email, branch=None):
     if branch is None:
         branch = article.branch
 
-    # Get sha of meta data if it exists so we can update it
+    # Get sha of meta data if it exists so we can update it if it already
+    # exists
     details = remote.read_file_from_github(filename, rendered_text=False,
                                            branch=branch)
-    if details is None or details.sha is None:
-        app.logger.error('Failed reading file "%s", branch: %s to save meta data',
-                         article.path, branch)
-        return False
+    sha = None
+    if details is not None:
+        sha = details.sha
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
@@ -291,8 +291,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     # with this new branch as well as the branch meta data file.
 
     return remote.commit_file_to_github(filename, message, json_content,
-                                        author_name, email, details.sha,
-                                        branch=branch)
+                                        author_name, email, sha, branch=branch)
 
 
 def read_meta_data_for_article_path(full_path, branch='master'):
