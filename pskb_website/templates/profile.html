@@ -7,14 +7,25 @@
         <p>{{user.bio}}</p>
     {% endif %}
 
-    {% if articles %}
-        <h2>{{user.login}}'s articles</h2>
-        <ul>
-            {% for article in articles %}
-                <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <h2>{{user.login}}'s articles</h2>
+
+    {% for article in articles %}
+        {% if loop.index0 == 0 %}
+            <ul>
+        {% endif %}
+
+        <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
+
+        {% if loop.last %}
+            </ul>
+        {% endif %}
+    {% else %}
+        <p>No articles yet!</p>
+        <p>
+            As a next step, why not create an article? You can do so by
+            <a href="/write/">clicking here</a>.
+        </p>
+    {% endfor %}
 
 </div>
 
