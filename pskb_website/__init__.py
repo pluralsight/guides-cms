@@ -1,3 +1,4 @@
+import logging
 import os
 
 from flask import Flask
@@ -33,5 +34,10 @@ else:
 
     app.secret_key = app.config['SECRET_KEY']
 
+# Force flask to log to a file otherwise if we're not in DEBUG mode the logs
+# won't show up in the console (on heroku)
+if not app.debug:
+    app.logger.setLevel(logging.INFO)
+    app.logger.addHandler(logging.StreamHandler())
 
 import pskb_website.views
