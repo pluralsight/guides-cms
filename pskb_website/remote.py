@@ -130,6 +130,8 @@ def read_file_from_github(path, branch='master', rendered_text=True):
     """
 
     details = file_details_from_github(path, branch)
+    if details is None:
+        return details
 
     if rendered_text:
         text = rendered_markdown_from_github(path, branch)
