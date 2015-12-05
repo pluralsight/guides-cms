@@ -106,6 +106,10 @@ def authorized():
 @app.route('/user/', defaults={'author_name': None})
 def user_profile(author_name):
     user = models.find_user(author_name)
+    if not user:
+        flash('Unable to find user "%s"' % (author_name), category='error')
+        return redirect(url_for('index'))
+
     articles = models.get_articles_for_author(user.login)
 
     g.profile_active = True
