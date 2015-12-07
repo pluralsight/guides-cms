@@ -59,6 +59,10 @@ a:focus {
     letter-spacing: -0.23999999463558197px;
 }
 
+.navbar li a {
+    margin-left: 25px;
+}
+
 .navbar li a:hover {
     text-decoration: underline;
 }
@@ -116,12 +120,14 @@ a:focus {
     color: #555555;
 }
 
-.index-left a {
+a.emphasize {
     display: block;
     border: 1px solid #f96816;
     padding: 10px;
     text-decoration: none;
     text-align: center;
+    color: #f96816;
+    font-weight: 500;
 }
 
 .index-left .checkbox {
@@ -234,7 +240,13 @@ a:focus {
         margin-left: 2px;
     }
 
+
     .navbar-left-index {
         position: relative;
+    }
+
+    a.emphasize {
+        border: 0px;
+        text-align: left;
     }
 }

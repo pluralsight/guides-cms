@@ -20,9 +20,9 @@
                 <li class="{{ 'active' if g.faq_active }}"><a href="/faq">FAQ</a></li>
                 <li><a href="/logout">Logout ({{session.name}})</a></li>
             {% else %}
-                <li class="{{ 'active' if not g.write_active and not g.faq_active and not g.index_active}}"><a href="/login">Login</a></li>
                 <li class="{{ 'active' if g.write_active }}"><a href="/write/">Write</a></li>
                 <li class="{{ 'active' if g.faq_active }}"><a href="/faq">FAQ</a></li>
+                <li><a href="/login" class="emphasize" style="color: #f96826">Login</a></li>
             {% endif %}
 
           </ul>
