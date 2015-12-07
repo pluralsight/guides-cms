@@ -4,7 +4,7 @@ body {
 }
 
 .starter-template {
-  padding: 40px 15px;
+  padding: 20px 15px 0px 15px;
   text-align: center;
 }
 
@@ -82,7 +82,8 @@ a:focus {
     color: #fd0808;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 85px;
+    margin-top: 30px;
+    margin-bottom: 20px;
 }
 
 .features img {
