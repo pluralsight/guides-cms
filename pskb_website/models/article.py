@@ -137,8 +137,8 @@ def read_article(path, rendered_text=True, branch='master'):
     else:
         # We cannot properly show an article without metadata.
         article = None
-        app.logger.error('Failed reading meta data for "%s", branch: %s',
-                         path_info, branch)
+        app.logger.error('Failed reading meta data for %s, full_path: %s, branch: %s',
+                         path_info, full_path, branch)
 
     return article
 
@@ -201,7 +201,7 @@ def branch_article(article, message, new_content, author_name, email):
     :param email: Email of author for article changes
     :returns: New article object
 
-    New branch will be named after original author
+    New branch will be named after author of changes
     """
 
     branch = author_name
