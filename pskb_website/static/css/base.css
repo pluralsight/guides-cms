@@ -211,11 +211,14 @@ a:focus {
     .article-description {
         height: 65%;
     }
-}
 
-
-@media(max-width:767px) {
     .navbar-fixed-bottom {
         min-height: 150px;
+    }
+
+    /* Don't show this on mobile b/c takes up space and users are not going to
+     * write tutorials on mobile anyway */
+    .create-tutorial {
+        display: none;
     }
 }
