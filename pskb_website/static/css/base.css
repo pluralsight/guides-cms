@@ -187,6 +187,10 @@ a:focus {
     height: 250px;
 }
 
+.footer {
+    margin-top: 2px;
+}
+
 @media(max-width:767px) {
     .article-teaser {
         height: 220px;
@@ -206,5 +210,12 @@ a:focus {
 
     .article-description {
         height: 65%;
+    }
+}
+
+
+@media(max-width:767px) {
+    .navbar-fixed-bottom {
+        min-height: 150px;
     }
 }
