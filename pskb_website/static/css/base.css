@@ -1,19 +1,11 @@
 body {
   padding-top: 50px;
   font-family: "Gotham SSm A","Gotham SSm B",sans-serif;
-
-  /* Height of footer */
-  padding-bottom: 75px;
 }
 
 .starter-template {
   padding: 40px 15px;
   text-align: center;
-}
-
-/* Push logo down simliar to Pluralsight navbar */
-.navbar-brand img {
-    margin-top: 14;
 }
 
 .navbar-left-article {
@@ -23,24 +15,6 @@ body {
 
 .article-right {
     margin-left: 140px;
-}
-
-
-/* Nav bar is much shorter on small screens */
-@media(max-width:767px) {
-    .navbar-brand img {
-        margin-top: -13px;
-    }
-}
-
-@media(max-width:767px) {
-    .article-right {
-        margin-left: 2px;
-    }
-
-    .navbar-left-index {
-        position: relative;
-    }
 }
 
 
@@ -66,9 +40,12 @@ a:focus {
 
 /* Make navbar height simliar to main Pluralsight navbar */
 #navbar {
-    padding-top: 25px;
-    padding-bottom: 25px;
+    padding-bottom: 15px;
     font-size: 18px;
+}
+
+#navbar li {
+    margin-top: 10px;
 }
 
 /* Remove box around active links  */
@@ -187,7 +164,17 @@ a:focus {
     height: 250px;
 }
 
-.footer {
+#footer {
+}
+
+/* Override bootstrap margin to push footer all the way down with no bottom gap
+ * */
+#footer .navbar {
+    margin-bottom: 0px;
+    min-height: 80px;
+}
+
+#footer ul {
     margin-top: 2px;
 }
 
@@ -220,5 +207,18 @@ a:focus {
      * write tutorials on mobile anyway */
     .create-tutorial {
         display: none;
+    }
+
+    /* Nav bar is much shorter on small screens */
+    .navbar-brand img {
+        margin-top: -10px;
+    }
+
+    .article-right {
+        margin-left: 2px;
+    }
+
+    .navbar-left-index {
+        position: relative;
     }
 }

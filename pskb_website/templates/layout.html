@@ -62,12 +62,14 @@
 
     </div><!-- /.container -->
 
-    <nav class="navbar navbar-inverse navbar-fixed-bottom">
-      <div class="line-header"></div>
-      <div class="container footer">
-          {% include 'footer.html' %}
-      </div>
-    </nav>
+    <div id="footer">
+        <nav class="navbar navbar-inverse">
+        <div class="line-header"></div>
+        <div class="container">
+            {% include 'footer.html' %}
+        </div>
+        </nav>
+    </div>
 
     {% block js %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
