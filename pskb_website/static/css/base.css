@@ -1,6 +1,6 @@
 body {
+  font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
   padding-top: 50px;
-  font-family: "Gotham SSm A","Gotham SSm B",sans-serif;
 }
 
 .starter-template {
@@ -39,13 +39,28 @@ a:focus {
 }
 
 /* Make navbar height simliar to main Pluralsight navbar */
-#navbar {
+.navbar {
+    font-style: normal;
     padding-bottom: 15px;
-    font-size: 18px;
+    font-weight: 500;
+    font-size: 14px;
 }
 
-#navbar li {
+.navbar-fixed-top {
+    padding-bottom: 0px;
+}
+
+.navbar-fixed-top .line-header {
     margin-top: 10px;
+}
+
+.navbar li {
+    margin-top: 10px;
+    letter-spacing: -0.23999999463558197px;
+}
+
+.navbar li a:hover {
+    text-decoration: underline;
 }
 
 /* Remove box around active links  */
