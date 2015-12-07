@@ -88,8 +88,15 @@ a:focus {
 }
 
 .tagline {
-    color: #f5518a;
     font-weight: 100;
+}
+
+.gradient-text {
+    font-family: sans-serif;
+    color: #fd0808;
+    background: -webkit-linear-gradient(left, #f5518a 0%, #fd0808 50%, #9f041b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .features {
