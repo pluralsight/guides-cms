@@ -23,5 +23,8 @@ stage_logs:
 prod_logs:
 	heroku logs -t --app pskb-prod
 
+prod_logs_app:
+	heroku logs -t --app pskb-prod --source app
+
 html_docs:
 	cd docs; make html
