@@ -12,7 +12,8 @@ from .. import remote
 from .. import cache
 
 
-ARTICLE_FILENAME = 'article.md'
+FILE_EXTENSION = '.md'
+ARTICLE_FILENAME = 'article%s' % (FILE_EXTENSION)
 ARTICLE_METADATA_FILENAME = 'details.json'
 
 path_details = collections.namedtuple('path_details', 'repo, filename')
@@ -92,6 +93,11 @@ def read_article(path, rendered_text=True, branch='master'):
     """
 
     full_path = '%s/%s' % (main_article_path(), path)
+
+    # Handle scenario where caller forgets to include filename, default it
+    if not path.endswith(FILE_EXTENSION):
+        slash = '' if path.endswith('/') else '/'
+        full_path = '%s%s%s' % (full_path, slash, ARTICLE_FILENAME)
 
     json_str = cache.read_article(path, branch)
     if json_str is not None:
