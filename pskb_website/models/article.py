@@ -122,7 +122,7 @@ def read_article(path, rendered_text=True, branch='master'):
     # Parse path to get article information but replace it with improved json
     # meta-data if available.
     path_info = parse_full_path(full_path)
-    json_str = read_meta_data_for_article_path(full_path, branch=branch)
+    json_str = read_meta_data_for_article_path(full_path)
 
     if json_str is not None:
         article = Article.from_json(json_str)
@@ -300,18 +300,19 @@ def save_article_meta_data(article, author_name, email, branch=None):
                                         author_name, email, sha, branch=branch)
 
 
-def read_meta_data_for_article_path(full_path, branch='master'):
+def read_meta_data_for_article_path(full_path):
     """
-    Read meta data for given article path
+    Read meta data for given article path from master branch
 
     :param full_path: Full path to article
-    :param branch: Name of branch to read file from
     :returns: Meta-data for article as json
+
+    Always read meta data from master branch because metadata is never altered
+    or updated in branches to keep merging simple.
     """
 
     filename = meta_data_path_for_article_path(full_path)
-    details = remote.read_file_from_github(filename, rendered_text=False,
-                                           branch=branch)
+    details = remote.read_file_from_github(filename, rendered_text=False)
     if details is None:
         return None
 
