@@ -19,5 +19,9 @@ def read_file(path, rendered_text=True, branch='master'):
     """
 
     full_path = '%s/%s' % (main_article_path(), path)
+
     details = read_file_from_github(full_path, branch, rendered_text)
+    if details is None:
+        return u''
+
     return details.text
