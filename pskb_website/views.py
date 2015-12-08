@@ -26,13 +26,6 @@ def login_required(f):
     return decorated_function
 
 
-@app.route('/email')
-def email():
-    from flask import jsonify
-    resp = remote.github.get('user/emails')
-    return jsonify(status=resp.status, data=resp.data)
-
-
 @app.route('/')
 def index():
     # FIXME: This should only fetch the most recent x number.
