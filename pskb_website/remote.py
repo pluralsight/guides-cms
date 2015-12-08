@@ -116,7 +116,7 @@ def primary_github_email_of_logged_in():
         if email_data['primary']:
             return email_data['email']
 
-        return None
+    return None
 
 
 def read_file_from_github(path, branch='master', rendered_text=True):
