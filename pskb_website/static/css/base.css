@@ -217,19 +217,27 @@ a.emphasize {
 
 @media(max-width:767px) {
     .article-teaser {
-        height: 220px;
+        height: auto;
         margin-right: 0px;
         padding: 15px 0px 15px 0px;
-        border-right: 0px;
-        border-left: 0px;
+        border: 0px;
     }
 
     .article-teaser img {
         display:none;
     }
 
+    .article-teaser .learning-link {
+        display: none;
+    }
+
+    .article-teaser hr {
+        display: none;
+    }
+
     .article-teaser .title {
         font-size: 14px;
+        color: #f96816;
     }
 
     .article-description {
@@ -254,7 +262,6 @@ a.emphasize {
     .article-right {
         margin-left: 2px;
     }
-
 
     .navbar-left-index {
         position: relative;
