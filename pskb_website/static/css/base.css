@@ -1,9 +1,21 @@
+html {
+    height: 100%;
+}
+
 body {
   font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
   padding-top: 50px;
+  height: 100%;
 }
 
-.starter-template {
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin-bottom: -80px;
+}
+
+.header {
   padding: 20px 15px 0px 15px;
   text-align: center;
 }
@@ -17,6 +29,9 @@ body {
     margin-left: 140px;
 }
 
+.push {
+    height: 80px;
+}
 
 /* Default color of Pluralsight buttons */
 .btn-primary,
@@ -202,6 +217,7 @@ a.emphasize {
 }
 
 #footer {
+    clear: both;
 }
 
 /* Override bootstrap margin to push footer all the way down with no bottom gap
@@ -209,6 +225,7 @@ a.emphasize {
 #footer .navbar {
     margin-bottom: 0px;
     min-height: 80px;
+    margin-top: 100px;
 }
 
 #footer ul {
@@ -220,6 +237,10 @@ a.emphasize {
         height: auto;
         margin-right: 0px;
         padding: 15px 0px 15px 0px;
+        border: 0px;
+    }
+
+    .article-teaser:hover {
         border: 0px;
     }
 
@@ -242,10 +263,6 @@ a.emphasize {
 
     .article-description {
         height: 65%;
-    }
-
-    .navbar-fixed-bottom {
-        min-height: 150px;
     }
 
     /* Don't show this on mobile b/c takes up space and users are not going to

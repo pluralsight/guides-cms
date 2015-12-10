@@ -39,7 +39,7 @@
 
     <div class="container">
 
-      <div class="starter-template">
+      <div class="header">
         <h1 class="tagline gradient-text">A community of developers bringing knowledge to the world</h1>
 
         {% with messages = get_flashed_messages(category_filter=['info', 'message']) %}
@@ -56,11 +56,16 @@
 
       </div>
 
+    </div><!-- /.container -->
+
+    <div id="wrap">
+        <div class="container">
       {% block body %}
 
       {% endblock %}
-
-    </div><!-- /.container -->
+      <div class="push"></div>
+    </div>
+    </div>
 
     <div id="footer">
         <nav class="navbar navbar-inverse">
@@ -69,6 +74,8 @@
             {% include 'footer.html' %}
         </div>
         </nav>
+    </div>
+
     </div>
 
     {% block js %}
