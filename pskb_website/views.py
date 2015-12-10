@@ -39,6 +39,14 @@ def index():
 
 @app.route('/login')
 def login():
+    prev_url = session.get('previously_requested_page')
+
+    # See if user got here from write page and highlight that tab to indicate
+    # that they're trying to write and the click succeeded in getting them
+    # closer to writing; specific suggestion from Ed.
+    if '/write/' in prev_url:
+        g.write_active = True
+
     return render_template('login.html')
 
 
