@@ -29,6 +29,17 @@ body {
     margin-left: 140px;
 }
 
+.navbar-left-article .create-tutorial a.emphasize {
+    font-size: 12px;
+    display: block;
+    border: 1px solid #f96816;
+    padding: 3px;
+    text-decoration: none;
+    text-align: center;
+    color: #f96816;
+    font-weight: 500;
+}
+
 .push {
     height: 80px;
 }
