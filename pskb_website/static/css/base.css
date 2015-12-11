@@ -307,6 +307,16 @@ a.emphasize {
         margin-top: -10px;
     }
 
+
+    #footer ul {
+        padding-top: 75px;
+    }
+
+    #footer ul li {
+        margin-top: 0px;
+        padding-top: 0px;
+    }
+
     .navbar-fixed-top {
         height: auto;
     }
