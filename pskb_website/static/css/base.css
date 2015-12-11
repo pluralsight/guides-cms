@@ -80,6 +80,11 @@ a:focus {
 
 .navbar-fixed-top {
     padding-bottom: 0px;
+    height: 97px;
+}
+
+.navbar-fixed-top li a {
+    margin-top: 10px;
 }
 
 .navbar li {
@@ -287,6 +292,10 @@ a.emphasize {
     /* Nav bar is much shorter on small screens */
     .navbar-brand img {
         margin-top: -10px;
+    }
+
+    .navbar-fixed-top {
+        height: auto;
     }
 
     .article-right {
