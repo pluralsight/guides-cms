@@ -40,6 +40,12 @@ body {
     font-weight: 500;
 }
 
+.navbar-left-article .create-tutorial a.emphasize:hover {
+    color: #9f041b;
+    border: 1px solid #9f041b;
+    font-weight: 500;
+}
+
 .push {
     height: 80px;
 }
@@ -149,7 +155,7 @@ a.emphasize {
     text-decoration: none;
     text-align: center;
     color: #f96816;
-    font-weight: 500;
+    font-weight: 300;
 }
 
 .index-left .checkbox {
