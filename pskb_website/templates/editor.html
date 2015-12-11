@@ -2,16 +2,32 @@
 
 {% block body %}
 
-<input id="title" name="title" type="text" class="form-control" placeholder="Title" value="{{article.title}}" {{'readOnly="true"' if branch_article else ""}} />
+<div id="editor">
+    <p>
+        Here's what you need to get started:
+        <ul>
+            <li>Fill up the title and grey box below with your awesome tutorial.</li>
+            <li>The editor supports <a href="http://daringfireball.net/projects/markdown/">markdown format</a>, which means you can create great looking tutorials with a bit of special syntax:
+                <ul>
+                    <li>Surround text with ** to make this **<b>bold</b>**.</li>
+                    <li>Use - in front of lines to automatically create lists.</li>
+                    <li>Use # to make header text and much more.</li>
+                    <li>Get more tips <a href="http://daringfireball.net/projects/markdown/">here</a>.</li>
+                </ul>
+            <li>Hit save and your tutorial will go straight to our official <a href="https://github.com/pluralsight/tutorials/"> Github repository</a> where editors around the world can help you fullfill your article's potential.</li>
+            <li>We'll put it on our <a href="/">homepage</a> so your expertise can help educate the world once our editors feel your article is ready.</li>
+        </ul>
+    </p>
+    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" value="{{article.title}}" {{'readOnly="true"' if branch_article else ""}} />
 
-<br />
+    <br />
+    <div id="epiceditor"></div>
 
-<div id="epiceditor"></div>
+    <br />
+    <button onclick="save()" class="btn btn-primary">Save</button>
 
-<br />
-<button onclick="save()" class="btn btn-primary">Save</button>
-
-<textarea id="content" style="display:none">{{article.content}}</textarea>
+    <textarea id="content" style="display:none">{{article.content}}</textarea>
+</div>
 
 {% endblock %}
 

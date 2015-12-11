@@ -118,6 +118,7 @@ a:focus {
 
 .tagline {
     font-weight: 100;
+    margin-top: 50px;
 }
 
 .gradient-text {
@@ -215,6 +216,14 @@ a.emphasize {
     /* Based off of article-teaser height. Forces the hr and link inside teaser
      * to show up in uniform place regardless of title length. */
     height: 250px;
+}
+
+#editor {
+    margin-top: 50px;
+}
+
+#editor input.article-title {
+    margin-top: 50px;
 }
 
 #footer {
