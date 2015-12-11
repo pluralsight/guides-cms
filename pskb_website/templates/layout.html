@@ -46,6 +46,8 @@
         <h2 class="tagline gradient-text">You have unique expertise and this is where to share it.</h2>
        {% endif %}
 
+       <hr>
+
         {% with messages = get_flashed_messages(category_filter=['info', 'message']) %}
             {% for message in messages %}
                 <p class="bg-info">{{ message|safe }} </p>

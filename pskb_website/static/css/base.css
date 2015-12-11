@@ -121,6 +121,10 @@ a:focus {
     margin-top: 50px;
 }
 
+.header hr {
+    border-top-color: #ddd;
+}
+
 .gradient-text {
     font-family: sans-serif;
     color: #fd0808;
