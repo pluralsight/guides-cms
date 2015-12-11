@@ -222,6 +222,23 @@ a.emphasize {
     margin-top: 2px;
 }
 
+#footer ul li {
+    color: #9d9d9d;
+    font-size: 12px;
+    font-weight: 500;
+    font-style: normal;
+    margin-left: 25px;
+    padding-bottom: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+}
+
+#footer ul li a {
+    padding-left: 10px;
+    padding-top: 0px;
+    margin-left: 0px;
+}
+
 @media(max-width:767px) {
     .article-teaser {
         height: auto;
