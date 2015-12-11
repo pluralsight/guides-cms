@@ -153,6 +153,8 @@ def write(article_path):
 @app.route('/review/<path:article_path>', methods=['GET'])
 @app.route('/review/', defaults={'article_path': None}, methods=['GET'])
 def review(article_path):
+    g.review_active = True
+
     if article_path is None:
         # Don't allow random users to see review posts. This is a requirement
         # from Pluralsight content team.
@@ -160,11 +162,9 @@ def review(article_path):
             session['previously_requested_page'] = request.url
             return redirect(url_for('login'))
 
-        g.review_active = True
         articles = models.get_available_articles(published=False)
         return render_template('review.html', articles=articles)
 
-    g.write_active = True
     branch = request.args.get('branch', 'master')
     article = models.read_article(article_path, branch=branch)
 
