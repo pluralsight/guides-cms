@@ -1,16 +1,21 @@
 body {
   padding-top: 50px;
   font-family: "Gotham SSm A","Gotham SSm B",sans-serif;
+  letter-spacing: -.015em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -.045em;
 }
 
 .starter-template {
-  padding: 40px 15px;
+  padding: 80px 15px;
   text-align: center;
 }
 
 /* Push logo down simliar to Pluralsight navbar */
 .navbar-brand img {
-    margin-top: 14;
+    margin-top: 20px;
 }
 
 
