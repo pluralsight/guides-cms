@@ -290,11 +290,6 @@ a.emphasize {
         border: 0px;
     }
 
-    /* Our logo is a bit wide so slightly shorten distance from nav button */
-    .navbar-toggle {
-        padding-left: 5px;
-    }
-
     .article-teaser img {
         display:none;
     }
