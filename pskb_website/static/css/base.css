@@ -162,6 +162,10 @@ a:focus {
     margin-right: 10px;
 }
 
+.index-left {
+    text-align: center;
+}
+
 .index-left h3 {
     font-size: 18px;
     color: #555555;
