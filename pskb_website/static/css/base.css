@@ -34,7 +34,6 @@ h1, h2, h3, h4, h5, h6 {
     margin-left: 140px;
 }
 
-
 /* Push image down just a bit to level out with links in header */
 .navbar-brand img {
     margin-top: 15px;
@@ -42,23 +41,6 @@ h1, h2, h3, h4, h5, h6 {
 
 #footer .navbar-brand img {
     margin-top: 7px;
-}
-
-.navbar-left-article .create-tutorial a.emphasize {
-    font-size: 12px;
-    display: block;
-    border: 1px solid #f96816;
-    padding: 3px;
-    text-decoration: none;
-    text-align: center;
-    color: #f96816;
-    font-weight: 500;
-}
-
-.navbar-left-article .create-tutorial a.emphasize:hover {
-    color: #9f041b;
-    border: 1px solid #9f041b;
-    font-weight: 500;
 }
 
 .push {
@@ -185,6 +167,23 @@ a.emphasize {
     text-align: center;
     color: #f96816;
     font-weight: 300;
+}
+
+a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
+    color: #9f041b;
+    border: 1px solid #9f041b;
+    font-weight: 500;
+}
+
+.navbar-left-article .create-tutorial a.emphasize {
+    font-size: 12px;
+    display: block;
+    border: 1px solid #f96816;
+    padding: 3px;
+    text-decoration: none;
+    text-align: center;
+    color: #f96816;
+    font-weight: 500;
 }
 
 .index-left .checkbox {
