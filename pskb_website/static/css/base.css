@@ -6,6 +6,11 @@ body {
   font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
   padding-top: 50px;
   height: 100%;
+  letter-spacing: -.015em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -.045em;
 }
 
 #wrap {
@@ -27,6 +32,16 @@ body {
 
 .article-right {
     margin-left: 140px;
+}
+
+
+/* Push image down just a bit to level out with links in header */
+.navbar-brand img {
+    margin-top: 15px;
+}
+
+#footer .navbar-brand img {
+    margin-top: 7px;
 }
 
 .navbar-left-article .create-tutorial a.emphasize {
@@ -273,6 +288,11 @@ a.emphasize {
 
     .article-teaser:hover {
         border: 0px;
+    }
+
+    /* Our logo is a bit wide so slightly shorten distance from nav button */
+    .navbar-toggle {
+        padding-left: 5px;
     }
 
     .article-teaser img {
