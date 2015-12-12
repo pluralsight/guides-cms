@@ -220,7 +220,8 @@ def save():
         message = 'New article %s' % (title)
 
     article = models.branch_or_save_article(title, path, message, content,
-                                            user.login, user.email, sha)
+                                            user.login, user.email, sha,
+                                            user.avatar_url)
 
     # Successful creation
     if article:

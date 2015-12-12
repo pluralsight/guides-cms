@@ -220,11 +220,6 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     z-index: 1;
 }
 
-.article-teaser img {
-    width: 210px;
-    height: 143px;
-}
-
 .article-teaser .title {
     font-size: 18px;
 }

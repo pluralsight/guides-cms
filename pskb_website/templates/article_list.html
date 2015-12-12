@@ -15,7 +15,12 @@
                     </a>
                     <div class="article-description">
                         <p>
-                            <img src="/static/img/rocket.png" />
+                            {% if article.image_url %}
+                                <img src="{{article.image_url}}&amp;s=300" width="150" height="150"/>
+                            {% else %}
+                                <img src="/static/img/pluralsight_user.png" width="150" height="150"/>
+                            {% endif %}
+
                         </p>
                         <p class='title'> {{article.title|truncate(100) }}</p>
                     </div>
