@@ -11,22 +11,20 @@
 
                 <div class="col-xs-12 col-lg-3 article-teaser">
                     <a href="/review/{{article.path}}">
-                        <span></span>
+                        <span class="clickable"></span>
                     </a>
                     <div class="article-description">
-                        <p>
-                            {% if article.image_url %}
-                                <img src="{{article.image_url}}&amp;s=300" width="150" height="150"/>
-                            {% else %}
-                                <img src="/static/img/pluralsight_user.png" width="150" height="150"/>
-                            {% endif %}
-
-                        </p>
-                        <p class='title'> {{article.title|truncate(100) }}</p>
+                        <!-- <p class='date'> {{article.last_updated}}</p> -->
+                        <p class='title'> {{article.title|truncate(100)}}</p>
                     </div>
                     <hr>
-                    <p class='learning-link'>
-                        <a href="/review/{{article.path}}">Start learning</a>
+                    <p class="article-author">
+                        {% if article.image_url %}
+                            <img src="{{article.image_url}}&amp;s=86" width="43" height="43" style="border-radius: 22px;"/>
+                        {% else %}
+                            <img src="/static/img/pluralsight_user.png" width="43" height="43" style="border-radius: 22px;"/>
+                        {% endif %}
+                        <span> {{article.author_name}} </span>
                     </p>
                 </div>
 
