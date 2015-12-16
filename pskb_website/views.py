@@ -156,12 +156,6 @@ def review(article_path):
     g.review_active = True
 
     if article_path is None:
-        # Don't allow random users to see review posts. This is a requirement
-        # from Pluralsight content team.
-        if 'github_token' not in session:
-            session['previously_requested_page'] = request.url
-            return redirect(url_for('login'))
-
         articles = models.get_available_articles(published=False)
         return render_template('review.html', articles=articles)
 
@@ -171,12 +165,6 @@ def review(article_path):
     if article is None:
         flash('Failed reading article', category='error')
         return redirect(url_for('index'))
-
-    # Don't allow random users to see review posts. This is a requirement
-    # from Pluralsight content team.
-    if 'github_token' not in session and not article.published:
-        session['previously_requested_page'] = request.url
-        return redirect(url_for('login'))
 
     login = session.get('login', None)
 
