@@ -48,7 +48,7 @@
 
 <div class="col-md-11 article-right">
     <h1>{{article.title}}</h1>
-    <h4><small>written by {{article.author_name}}</small></h4>
+    <h4><small>written by <a href="/user/{{article.author_name}}">{{article.author_name}}</a></small></h4>
     <p> {{article.content|safe}} </p>
     <p>
         {% if allow_edits %}
