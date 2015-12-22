@@ -15,6 +15,7 @@
 
             {% if session.github_token %}
                 <li class="{{ 'active' if g.write_active }}"><a href="/write/">Write</a></li>
+                <li class="{{ 'active' if g.review_active }}"><a href="/review/">Review</a></li>
                 <li class="{{ 'active' if g.profile_active }}"><a href="/user/">Profile</a></li>
                 <li class="{{ 'active' if g.faq_active }}"><a href="/faq">FAQ</a></li>
                 <li><a href="/logout">Logout ({{session.name}})</a></li>
