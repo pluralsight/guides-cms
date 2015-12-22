@@ -15,13 +15,8 @@ def read_file(path, rendered_text=True, branch='master'):
 
     :param path: Short path to file, not including repo or owner
     :param branch: Name of branch to read file from
-    :returns: Raw or HTML rendered text of file
+    :returns: remote.file_details tuple or None if file is missing
     """
 
     full_path = '%s/%s' % (main_article_path(), path)
-
-    details = read_file_from_github(full_path, branch, rendered_text)
-    if details is None:
-        return u''
-
-    return details.text
+    return read_file_from_github(full_path, branch, rendered_text)

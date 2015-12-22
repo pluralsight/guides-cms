@@ -4,6 +4,12 @@
 
 <h1>Frequently Asked Questions</h1>
 
-{{ body|safe }}
+{% if details %}
+    {{ details.text|safe }}
+    <p>
+        <a href="{{details.url}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Edit FAQ on Github</a>
+    </p>
+{% endif %}
+
 
 {% endblock %}
