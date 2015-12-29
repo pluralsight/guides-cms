@@ -7,7 +7,11 @@
 
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     {% block title %}
+    {% if article and article.title %}
+        <title>{{article.title}}</title>
+    {% else %}
         <title>Pluralsight Tutorials</title>
+    {% endif %}
     {% endblock %}
 
     {% block css %}
