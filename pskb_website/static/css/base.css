@@ -171,8 +171,9 @@ a.emphasize {
 }
 
 a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
-    color: #9f041b;
-    border: 1px solid #9f041b;
+    background-color: #f96816;
+    color: #ffffff;
+    border: 1px solid #f96816;
     font-weight: 500;
 }
 
