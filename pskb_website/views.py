@@ -223,3 +223,9 @@ def save():
 
     flash('Failed creating article on github', category='error')
     return redirect(url_for('index'))
+
+
+@app.route('/subscribe/', methods=['POST'])
+def subscribe():
+    flash('Thanks for subscribing!', category='info')
+    return redirect(request.referrer)
