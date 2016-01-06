@@ -290,6 +290,12 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     margin-left: 0px;
 }
 
+#email-signup .modal-footer {
+    /* Push the buttons down a bit to give some breathing room between the last
+     * input element and the buttons. */
+    padding-top: 250px;
+}
+
 @media(max-width:767px) {
     .article-teaser {
         height: auto;
