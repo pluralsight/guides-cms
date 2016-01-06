@@ -1,5 +1,12 @@
 {% extends "layout.html" %}
 
+{% block js %}
+    {{super()}}
+
+    <script src="/static/js/vendor/editor/highlight.pack.js"></script>
+    <script src="/static/js/vendor/editor/epiceditor.min.js"></script>
+{% endblock %}
+
 {% block body %}
 
 <div id="editor">
@@ -29,70 +36,61 @@
     <textarea id="content" style="display:none">{{article.content}}</textarea>
 </div>
 
-{% endblock %}
+<script type="text/javascript">
+    var editor = new EpicEditor({
+        clientSideStorage: false,
+        textarea: "content",
+        basePath: '/static/css/vendor/editor/',
+        autogrow: true,
+        theme: {
+            base: '/themes/base/epiceditor.css',
+            preview: '/themes/preview/github.css',
+            editor: '/themes/editor/epic-light.css'
+        },
+    }
+    ).load();
 
-{% block js %}
+    // Have to dynamically stuff in the correct css in the iframe for the
+    // editor
+    iframe = editor.getElement('previewerIframe');
+    css = document.createElement('link');
+    css.href = "/static/css/vendor/github.css";
+    css.rel = "stylesheet";
+    css.type = "text/css";
+    iframe.contentDocument.body.appendChild(css);
 
-    {{super()}}
+function save() {
+    var form = document.createElement("form");
+    form.action = "/save/";
+    form.method = "POST";
 
-    <script src="/static/js/vendor/editor/highlight.pack.js"></script>
-    <script src="/static/js/vendor/editor/epiceditor.min.js"></script>
+    var content = document.createElement("input");
+    content.name = "content";
+    content.value = editor.exportFile("", "json");
+    form.appendChild(content.cloneNode());
 
-    <script type="text/javascript">
-        var editor = new EpicEditor({
-            clientSideStorage: false,
-            textarea: "content",
-            basePath: '/static/css/vendor/editor/',
-            autogrow: true,
-            theme: {
-                base: '/themes/base/epiceditor.css',
-                preview: '/themes/preview/github.css',
-                editor: '/themes/editor/epic-light.css'
-            },
-        }
-        ).load();
+    var sha = document.createElement("input");
+    sha.name = "sha";
+    sha.value = "{{article.sha}}"
+    form.appendChild(sha.cloneNode());
 
-        // Have to dynamically stuff in the correct css in the iframe for the
-        // editor
-        iframe = editor.getElement('previewerIframe');
-        css = document.createElement('link');
-        css.href = "/static/css/vendor/github.css";
-        css.rel = "stylesheet";
-        css.type = "text/css";
-        iframe.contentDocument.body.appendChild(css);
+    var path = document.createElement("input");
+    path.name = "path";
+    path.value = "{{article.path}}"
+    form.appendChild(path.cloneNode());
 
-    function save() {
-        var form = document.createElement("form");
-        form.action = "/save/";
-        form.method = "POST";
+    var title = document.getElementById("title");
+    form.appendChild(title.cloneNode());
 
-        var content = document.createElement("input");
-        content.name = "content";
-        content.value = editor.exportFile("", "json");
-        form.appendChild(content.cloneNode());
+    // To be sent, the form needs to be attached to the main document.
+    form.style.display = "none";
+    document.body.appendChild(form);
 
-        var sha = document.createElement("input");
-        sha.name = "sha";
-        sha.value = "{{article.sha}}"
-        form.appendChild(sha.cloneNode());
+    form.submit();
 
-        var path = document.createElement("input");
-        path.name = "path";
-        path.value = "{{article.path}}"
-        form.appendChild(path.cloneNode());
+    // But once the form is sent, it's useless to keep it.
+    document.body.removeChild(form);
+};
 
-        var title = document.getElementById("title");
-        form.appendChild(title.cloneNode());
-
-        // To be sent, the form needs to be attached to the main document.
-        form.style.display = "none";
-        document.body.appendChild(form);
-
-        form.submit();
-
-        // But once the form is sent, it's useless to keep it.
-        document.body.removeChild(form);
-    };
-
-    </script>
+</script>
 {% endblock %}
