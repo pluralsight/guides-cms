@@ -12,7 +12,8 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'GITHUB_SECRET', 'DATABASE_URL',
                            'SQLALCHEMY_DATABASE_URI', 'REPO_OWNER',
                            'REPO_NAME', 'REPO_OWNER_ACCESS_TOKEN',
-                           'REDISCLOUD_URL')
+                           'REDISCLOUD_URL', 'MAILCHIMP_API_KEY',
+                           'MAILCHIMP_LIST_ID', 'MAILCHIMP_STACKS_GROUP_NAME')
 
 class Config(object):
     DEBUG = False
@@ -29,6 +30,9 @@ class Config(object):
     REPO_OWNER_ACCESS_TOKEN = None
 
     REDISCLOUD_URL = None
+    MAILCHIMP_API_KEY = None
+    MAILCHIMP_LIST_ID = None
+    MAILCHIMP_STACKS_GROUP_NAME = None
 
     # This should automatically be set by heroku if you've added a database to
     # your app.
