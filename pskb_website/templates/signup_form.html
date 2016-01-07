@@ -8,36 +8,19 @@
         <div class="modal-body">
             <form action="/subscribe/" method="POST" id="signup-form">
                 <div class="form-group">
-                    <input id="email" name="email" type="email" class="form-control" placeholder="Email" />
+                    {{ form.email(class='form-control', id='email', type='email', placeholder='Email') }}
+                <!-- Add this class to form-group div has-error has-feedback
+                    <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+  <span id="inputError2Status" class="sr-only">(error)</span>
+                -->
                 </div>
                 <div class="form-group">
+                    {{ form.hidden_tag() }}
                     <select name="stacks" class="form-control selectpicker" data-size="10"  data-live-search="true" multiple>
-                        <option value="Java and J2EE">Java and J2EE</option>
-                        <option value="C/C++">C/C++</option>
-                        <option value="Python">Python</option>
-                        <option value="PHP">PHP</option>
-                        <option value="Ruby">Ruby</option>
-                        <option value="Ruby on Rails">Ruby on Rails</option>
-                        <option value="Node.js">Node.js</option>
-                        <option value="SQL">SQL</option>
-                        <option value="HTML/CSS">HTML/CSS</option>
-                        <option value="Lua">Lua</option>
-                        <option value="Go">Go</option>
-                        <option value="Scala">Scala</option>
-                        <option value="Haskell">Haskell</option>
-                        <option value="Clojure">Clojure</option>
-                        <option value="Erlang">Erlang</option>
-                        <option value="Objective C">Objective C</option>
-                        <option value="Swift">Swift</option>
-                        <option value="Software Engineering Best Practices">Software Engineering Best Practices</option>
-                        <option value="Microsoft.NET (C#, ASP.NET, VB.NET, etc)">Microsoft.NET (C#, ASP.NET, VB.NET, etc)</option>
-                        <option value="Big Data (Hadoop, Spark, etc)">Big Data (Hadoop, Spark, etc)</option>
-                        <option value="NoSQL Databases (MongoDB, Cassandra, etc)">NoSQL Databases (MongoDB, Cassandra, etc)</option>
-                        <option value="Interesting APIs (SendGrid, Twilio, etc)">Interesting APIs (SendGrid, Twilio, etc)</option>
-                        <option value="Front-End JavaScript (Angular, React, Meteor, etc)">Front-End JavaScript (Angular, React, Meteor, etc)</option>
-                        <option value="DevOps (Docker, Nagios, Jenkins, Chef, Puppet, etc)">DevOps (Docker, Nagios, Jenkins, Chef, Puppet, etc)</option>
-                        <option value="Android">Android</option>
-                    </select>
+                        {% for stack in form.stacks %}
+                            {{ stack() }}
+                        {% endfor %}
+                   </select>
                 </div>
             </form>
         </div>

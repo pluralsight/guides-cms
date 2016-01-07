@@ -9,6 +9,7 @@ from flask import redirect, url_for, session, request, render_template, flash, j
 from . import app
 from . import remote
 from . import models
+from . import forms
 
 
 def login_required(f):
@@ -185,10 +186,13 @@ def review(article_path):
     # comments.
     canonical_url = request.base_url.replace('https://', 'http://')
 
+    form = forms.SignupForm()
+
     return render_template('article.html',
                            article=article,
                            allow_edits=allow_edits,
-                           canonical_url=canonical_url)
+                           canonical_url=canonical_url,
+                           form=form)
 
 
 @app.route('/save/', methods=['POST'])
@@ -227,5 +231,23 @@ def save():
 
 @app.route('/subscribe/', methods=['POST'])
 def subscribe():
-    flash('Thanks for subscribing!', category='info')
-    return redirect(request.referrer)
+    form = forms.SignupForm()
+
+    # Note this helper automatically grabs request.form
+    if form.validate_on_submit():
+        flash('Thanks for subscribing!', category='info')
+
+        app.logger.debug('Adding new subscriber: %s - %s' % (form.email.data,
+                                                             form.stacks.data))
+
+        sub_id = models.add_subscriber(form.email.data, form.stacks.data)
+        if sub_id is None:
+            flash('Failed adding to list', category='error')
+
+        return redirect(request.referrer)
+    else:
+        for input_name, errors in form.errors.iteritems():
+            for error in errors:
+                flash('%s - %s' % (input_name, error), category='error')
+
+        return redirect(request.referrer)
