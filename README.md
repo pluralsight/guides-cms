@@ -74,9 +74,11 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
       must be setup in your heroku config.
     - You can set heroku config variables with the following syntax:
         - `heroku config:set APP_SETTINGS=config.ProductionConfig`
+        - ... (see example_config.py for full list)
         - Or something like the following if you have multiple remotes for heroku
         - `heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`
         - `heroku config:set APP_SETTINGS=config.StagingConfig --remote stage`
+        - ... (see example_config.py for full list)
 4. Deploy changes
     - `git push heroku master`
     - Or something like the following if you have multiple remotes for heroku
@@ -102,6 +104,8 @@ your the flask application.
     - Provides bigger log for debugging issues and enables easy searching
 
 #### Testing without browser
+
+1. `pip install Flask-Migrate`
 
 You can test a lot of the functionality of the application without a web
 browser.  In general, much of the interaction with the Github API can be used
