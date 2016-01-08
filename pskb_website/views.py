@@ -235,14 +235,14 @@ def subscribe():
 
     # Note this helper automatically grabs request.form
     if form.validate_on_submit():
-        flash('Thanks for subscribing!', category='info')
-
         app.logger.debug('Adding new subscriber: %s - %s' % (form.email.data,
                                                              form.stacks.data))
 
         sub_id = models.add_subscriber(form.email.data, form.stacks.data)
-        if sub_id is None:
+        if not sub_id:
             flash('Failed adding to list', category='error')
+        else:
+            flash('Thanks for subscribing!', category='info')
 
         return redirect(request.referrer)
     else:
