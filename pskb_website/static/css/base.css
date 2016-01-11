@@ -31,7 +31,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .article-right {
-    margin-left: 140px;
+    margin-left: 195px;
 }
 
 /* Push image down just a bit to level out with links in header */
@@ -45,6 +45,21 @@ h1, h2, h3, h4, h5, h6 {
 
 .push {
     height: 80px;
+}
+
+
+#signup {
+    border: 1px solid #f96816;
+    padding: 4px;
+}
+
+#signup .form-group {
+    padding-top: 15px;
+}
+
+#signup {
+    font-size: 8pt;
+    font-weight: 500;
 }
 
 /* Default color of Pluralsight buttons */
@@ -290,11 +305,6 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     margin-left: 0px;
 }
 
-#email-signup .modal-footer {
-    /* Push the buttons down a bit to give some breathing room between the last
-     * input element and the buttons. */
-    padding-top: 250px;
-}
 
 @media(max-width:767px) {
     .article-teaser {
