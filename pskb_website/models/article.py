@@ -25,12 +25,14 @@ def main_article_path():
     return '%s/%s' % (app.config['REPO_OWNER'], app.config['REPO_NAME'])
 
 
-def get_available_articles(published=None):
+def get_available_articles(published=None, repo_path=None):
     """
     Get iterator for current article objects
 
     :param published: True for only published articles, False for only drafts
                       or None for all articles
+    :param repo_path: Optional repo path to read from (<owner>/<name>)
+
     :returns: Iterator through article objects
 
     Note that article objects only have path, title and author name filled out.
@@ -40,9 +42,10 @@ def get_available_articles(published=None):
     # Go through the minimal listing of articles and turn it into the full
     # article objects.  This way the github layer only knows what's available
     # on github and doesn't have knowledge of how we organize things, etc.
-    for file_details in remote.files_from_github(main_article_path(),
-                                                 ARTICLE_FILENAME):
+    if repo_path is None:
+        repo_path = main_article_path()
 
+    for file_details in remote.files_from_github(repo_path, ARTICLE_FILENAME):
         path_info = parse_full_path(file_details.path)
         json_str = read_meta_data_for_article_path(file_details.path)
 
@@ -82,17 +85,22 @@ def get_articles_for_author(author_name, published=None):
             yield article
 
 
-def read_article(path, rendered_text=True, branch='master'):
+def read_article(path, rendered_text=True, branch='master', repo_path=None):
     """
     Read article
 
     :param path: Short path to article, not including repo or owner
     :param rendered_text: Boolean to read rendered or raw text
     :param branch: Name of branch to read file from
+    :param repo_path: Optional repo path to read from (<owner>/<name>)
+
     :returns: Article object
     """
 
-    full_path = '%s/%s' % (main_article_path(), path)
+    if repo_path is None:
+        repo_path = main_article_path()
+
+    full_path = '%s/%s' % (repo_path, path)
 
     # Handle scenario where caller forgets to include filename, default it
     if not path.endswith(FILE_EXTENSION):
@@ -150,7 +158,7 @@ def read_article(path, rendered_text=True, branch='master'):
 
 
 def save_article(title, path, message, new_content, author_name, email, sha,
-                 branch='master', image_url=None):
+                 branch='master', image_url=None, repo_path=None):
     """
     Create or save new (original) article, not branched article
 
@@ -165,6 +173,7 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     :param branch: Name of branch to commit file to (branch must already
                    exist)
     :param image_url: Image to use for article
+    :param repo_path: Optional repo path to save into (<owner>/<name>)
 
     :returns: Article object updated or saved
 
@@ -174,7 +183,8 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     information is maintained.
     """
 
-    article = Article(title, author_name, branch=branch, image_url=image_url)
+    article = Article(title, author_name, branch=branch, image_url=image_url,
+                      repo_path=repo_path)
     if path:
         article.path = path
 
@@ -194,7 +204,8 @@ def save_article(title, path, message, new_content, author_name, email, sha,
         # article, but not the meta data.
         return None
 
-    return read_article(article.path, rendered_text=True, branch=article.branch)
+    return read_article(article.path, rendered_text=True,
+                        branch=article.branch, repo_path=repo_path)
 
 
 def branch_article(article, message, new_content, author_name, email, image_url):
@@ -233,7 +244,7 @@ def branch_article(article, message, new_content, author_name, email, image_url)
 
 
 def branch_or_save_article(title, path, message, content, author_name, email,
-                           sha, image_url):
+                           sha, image_url, repo_path=None):
     """
     Save article as original or as a branch depending on if given author is
     the same as original article (if it already exists)
@@ -249,12 +260,14 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     :param branch: Name of branch to commit file to (branch must already
                     exist)
     :param image_url: Image to use for article
+    :param repo_path: Optional repo path to save into (<owner>/<name>)
 
     :returns: Article object updated, saved, or branched
     """
 
     if path:
-        article = read_article(path, rendered_text=False, branch='master')
+        article = read_article(path, rendered_text=False, branch='master',
+                               repo_path=repo_path)
     else:
         article = None
 
@@ -263,7 +276,7 @@ def branch_or_save_article(title, path, message, content, author_name, email,
                              image_url)
     else:
         new = save_article(title, path, message, content, author_name, email,
-                           sha, image_url=image_url)
+                           sha, image_url=image_url, repo_path=repo_path)
 
     return new
 
@@ -358,7 +371,7 @@ def save_branched_article_meta_data(article, author_name, email):
     """
 
     orig_article = read_article(article.path, rendered_text=False,
-                                branch='master')
+                                branch='master', repo_path=article.repo_path)
 
     # Nothing to save, we're already tracking this branch
     if article.branch in orig_article.branches:
