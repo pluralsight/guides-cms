@@ -12,10 +12,8 @@
 {% endblock %}
 
 {% block body %}
-<div class="col-md-1 navbar-left-article">
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#email-signup">
-        Signup for updates
-    </button>
+<div class="col-md-2 navbar-left-article">
+    {% include 'signup_form.html' %}
 
     <br/><br/>
 
@@ -58,7 +56,7 @@
   return t;
 }(document, "script", "twitter-wjs"));</script>
 
-<div class="col-md-11 article-right">
+<div class="col-md-10 article-right">
     <h1>{{article.title}}</h1>
     <h4><small>written by <a href="/user/{{article.author_name}}">{{article.author_name}}</a></small></h4>
     <p> {{article.content|safe}} </p>
@@ -107,7 +105,5 @@
         </script>
         <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
-
-{% include 'signup_form.html' %}
 
 {% endblock %}
