@@ -82,6 +82,13 @@ function save() {
     var title = document.getElementById("title");
     form.appendChild(title.cloneNode());
 
+    {% if secondary_repo %}
+        var secondary_repo = document.createElement("input");
+        secondary_repo.name = "secondary_repo";
+        secondary_repo.value = 1;
+        form.appendChild(secondary_repo.cloneNode());
+    {% endif %}
+
     // To be sent, the form needs to be attached to the main document.
     form.style.display = "none";
     document.body.appendChild(form);
