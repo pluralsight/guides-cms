@@ -138,6 +138,10 @@ def write(article_path):
     branch_article = False
     g.write_active = True
 
+    secondary_repo = False
+    if request.args.get('secondary_repo', None) is not None:
+        secondary_repo = True
+
     if article_path is not None:
         article = models.read_article(article_path, rendered_text=False)
 
@@ -153,7 +157,8 @@ def write(article_path):
             branch_article = True
 
     return render_template('editor.html', article=article,
-                           branch_article=branch_article)
+                           branch_article=branch_article,
+                           secondary_repo=secondary_repo)
 
 
 @app.route('/review/<path:article_path>', methods=['GET'])
@@ -194,6 +199,42 @@ def review(article_path):
                            canonical_url=canonical_url,
                            form=form)
 
+# URL for articles from hackhands blog -- these articles are not editable.
+@app.route('/article/<path:article_path>', methods=['GET'])
+@app.route('/article/', defaults={'article_path': None}, methods=['GET'])
+def article(article_path):
+    g.review_active = True
+
+    try:
+        repo_path = '%s/%s' % (app.config['SECONDARY_REPO_OWNER'],
+                               app.config['SECONDARY_REPO_NAME'])
+    except KeyError:
+        flash('No secondardy article configuration', category='error')
+        return redirect(url_for('index'))
+
+    if article_path is None:
+        articles = models.get_available_articles(published=True,
+                                                 repo_path=repo_path)
+        return render_template('review.html', articles=articles)
+
+    article = models.read_article(article_path, repo_path=repo_path)
+    if article is None:
+        flash('Failed reading article', category='error')
+        return redirect(url_for('index'))
+
+    # Use http as canonical protocol for url to avoid having two separate
+    # comment threads for an article. Disqus uses this variable to save
+    # comments.
+    canonical_url = request.base_url.replace('https://', 'http://')
+
+    form = forms.SignupForm()
+
+    return render_template('article.html',
+                           article=article,
+                           allow_edits=False,
+                           canonical_url=canonical_url,
+                           form=form)
+
 
 @app.route('/save/', methods=['POST'])
 @login_required
@@ -216,13 +257,27 @@ def save():
     else:
         message = 'New article %s' % (title)
 
+    # Hidden option for admin to save articles to our other repo that's not
+    # editable
+    repo_path = None
+    if request.form.get('secondary_repo', None) is not None:
+        repo_path = '%s/%s' % (app.config['SECONDARY_REPO_OWNER'],
+                               app.config['SECONDARY_REPO_NAME'])
+
     article = models.branch_or_save_article(title, path, message, content,
                                             user.login, user.email, sha,
-                                            user.avatar_url)
+                                            user.avatar_url,
+                                            repo_path=repo_path)
 
     # Successful creation
     if article:
-        url = url_for('review', article_path=article.path, branch=article.branch)
+        if repo_path is not None:
+            url = url_for('article', article_path=article.path,
+                          branch=article.branch)
+        else:
+            url = url_for('review', article_path=article.path,
+                          branch=article.branch)
+
         return redirect(url)
 
     flash('Failed creating article on github', category='error')
