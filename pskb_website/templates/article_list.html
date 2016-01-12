@@ -24,7 +24,7 @@
                         {% else %}
                             <img src="/static/img/pluralsight_user.png" width="43" height="43" style="border-radius: 22px;"/>
                         {% endif %}
-                        <span> {{article.author_name}} </span>
+                        <span> {{article.author_real_name if article.author_real_name else article.author_name}} </span>
                     </p>
                 </div>
 

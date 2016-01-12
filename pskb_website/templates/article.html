@@ -58,7 +58,7 @@
 
 <div class="col-md-10 article-right">
     <h1>{{article.title}}</h1>
-    <h4><small>written by <a href="/user/{{article.author_name}}">{{article.author_name}}</a></small></h4>
+    <h4><small>written by <a href="/user/{{article.author_name}}">{{article.author_real_name if article.author_real_name else article.author_name}}</a></small></h4>
     <p> {{article.content|safe}} </p>
     <p>
         {% if allow_edits %}
@@ -71,7 +71,7 @@
 
     {% if article.author_name %}
         <p class="small">
-        <a href="http://github.com/{{article.author_name}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View more from {{article.author_name}} on Github</a>
+        <a href="http://github.com/{{article.author_name}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View more from {{article.author_real_name if article.author_real_name else article.author_name}} on Github</a>
         </p>
     {% endif %}
 
