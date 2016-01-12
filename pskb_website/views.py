@@ -132,10 +132,6 @@ def write(article_path):
     branch_article = False
     g.write_active = True
 
-    secondary_repo = False
-    if request.args.get('secondary_repo', None) is not None:
-        secondary_repo = True
-
     if article_path is not None:
         article = models.read_article(article_path, rendered_text=False)
 
@@ -149,6 +145,22 @@ def write(article_path):
 
         if user.login != article.author_name:
             branch_article = True
+
+    return render_template('editor.html', article=article,
+                           branch_article=branch_article)
+
+
+# Special 'hidden' URL to import articles to secondary repo
+@app.route('/partner/import/')
+@login_required
+def partner_import():
+    article = None
+    branch_article = False
+    g.write_active = True
+    secondary_repo = True
+
+    flash('You are posting an article to the partner repository!',
+          category='info')
 
     return render_template('editor.html', article=article,
                            branch_article=branch_article,
