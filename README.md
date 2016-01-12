@@ -76,8 +76,8 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
         - `heroku config:set APP_SETTINGS=config.ProductionConfig`
         - ... (see example_config.py for full list)
         - Or something like the following if you have multiple remotes for heroku
-        - `heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`
-        - `heroku config:set APP_SETTINGS=config.StagingConfig --remote stage`
+        - `heroku config:set APP_SETTINGS=config.ProductionConfig --app pro`
+        - `heroku config:set APP_SETTINGS=config.StagingConfig --app stage`
         - ... (see example_config.py for full list)
 4. Deploy changes
     - `git push heroku master`
