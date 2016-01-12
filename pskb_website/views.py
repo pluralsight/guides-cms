@@ -224,7 +224,8 @@ def partner(article_path):
                            article=article,
                            allow_edits=False,
                            canonical_url=canonical_url,
-                           form=form)
+                           form=form,
+                           disclaimer=True)
 
 
 @app.route('/save/', methods=['POST'])
