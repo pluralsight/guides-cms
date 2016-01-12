@@ -13,7 +13,9 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'SQLALCHEMY_DATABASE_URI', 'REPO_OWNER',
                            'REPO_NAME', 'REPO_OWNER_ACCESS_TOKEN',
                            'REDISCLOUD_URL', 'MAILCHIMP_API_KEY',
-                           'MAILCHIMP_LIST_ID', 'MAILCHIMP_STACKS_GROUP_NAME')
+                           'MAILCHIMP_LIST_ID', 'MAILCHIMP_STACKS_GROUP_NAME',
+                           'SECONDARY_REPO_OWNER', 'SECONDARY_REPO_NAME')
+
 
 class Config(object):
     DEBUG = False
@@ -28,6 +30,10 @@ class Config(object):
     REPO_OWNER = None
     REPO_NAME = None
     REPO_OWNER_ACCESS_TOKEN = None
+
+    # Secondary (optional) repo for articles that are not editable
+    SECONDARY_REPO_OWNER = None
+    SECONDARY_REPO_NAME = None
 
     REDISCLOUD_URL = None
     MAILCHIMP_API_KEY = None
