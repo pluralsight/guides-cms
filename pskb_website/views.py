@@ -191,9 +191,9 @@ def review(article_path):
                            canonical_url=canonical_url)
 
 # URL for articles from hackhands blog -- these articles are not editable.
-@app.route('/article/<path:article_path>', methods=['GET'])
-@app.route('/article/', defaults={'article_path': None}, methods=['GET'])
-def article(article_path):
+@app.route('/partner/<path:article_path>', methods=['GET'])
+@app.route('/partner/', defaults={'article_path': None}, methods=['GET'])
+def partner(article_path):
     g.review_active = True
 
     try:
@@ -262,7 +262,7 @@ def save():
     # Successful creation
     if article:
         if repo_path is not None:
-            url = url_for('article', article_path=article.path,
+            url = url_for('partner', article_path=article.path,
                           branch=article.branch)
         else:
             url = url_for('review', article_path=article.path,
