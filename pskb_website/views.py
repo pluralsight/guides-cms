@@ -218,13 +218,10 @@ def partner(article_path):
     # comments.
     canonical_url = request.base_url.replace('https://', 'http://')
 
-    form = forms.SignupForm()
-
     return render_template('article.html',
                            article=article,
                            allow_edits=False,
                            canonical_url=canonical_url,
-                           form=form,
                            disclaimer=True)
 
 
