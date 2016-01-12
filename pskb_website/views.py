@@ -280,7 +280,8 @@ def save():
     article = models.branch_or_save_article(title, path, message, content,
                                             user.login, user.email, sha,
                                             user.avatar_url,
-                                            repo_path=repo_path)
+                                            repo_path=repo_path,
+                                            author_real_name=user.name)
 
     # Successful creation
     if article:
