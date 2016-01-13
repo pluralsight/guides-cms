@@ -39,10 +39,6 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 15px;
 }
 
-#footer .navbar-brand img {
-    margin-top: 7px;
-}
-
 .push {
     height: 80px;
 }
@@ -286,6 +282,7 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 
 #footer ul {
     margin-top: 2px;
+    margin-left: 55px;
 }
 
 #footer ul li {
@@ -294,15 +291,37 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     font-weight: 500;
     font-style: normal;
     margin-left: 25px;
-    padding-bottom: 15px;
-    padding-right: 15px;
-    padding-top: 15px;
+    padding-bottom: 0px;
+    padding-right: 0px;
+    padding-top: 10px;
 }
 
 #footer ul li a {
-    padding-left: 10px;
+    padding-left: 5px;
     padding-top: 0px;
     margin-left: 0px;
+}
+
+#footer .navbar-brand img {
+    margin-top: 7px;
+}
+
+.nav-footer h6 {
+    color: #ffffff;
+    font-size: 14px;
+    padding-left: 30px;
+    line-height: 17px;
+}
+
+.nav-footer li a {
+    color: #9d9d9d;
+    font-size: 12px;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.nav-footer li a:hover {
+    background-color: #222;
 }
 
 
