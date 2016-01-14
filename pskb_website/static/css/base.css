@@ -268,6 +268,10 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     margin-top: 50px;
 }
 
+.stacks-editor {
+    max-width: 200px;
+}
+
 #footer {
     clear: both;
 }

@@ -137,12 +137,18 @@ def write(article_path):
     article = None
     branch_article = False
     g.write_active = True
+    selected_stack = None
 
     if article_path is not None:
         article = models.read_article(article_path, rendered_text=False)
 
         if article.sha is None:
             article.sha = ''
+
+        # Only allowing a single stack choice now but the back-end article
+        # model can handle multiple.
+        if article.stacks:
+            selected_stack = article.stacks[0]
 
         user = models.find_user(session['login'])
         if user is None:
@@ -153,7 +159,9 @@ def write(article_path):
             branch_article = True
 
     return render_template('editor.html', article=article,
-                           branch_article=branch_article)
+                           branch_article=branch_article,
+                           stacks=forms.STACK_OPTIONS,
+                           selected_stack=selected_stack)
 
 
 # Special 'hidden' URL to import articles to secondary repo
@@ -265,6 +273,13 @@ def save():
     title = request.form['title']
     sha = request.form['sha']
 
+    # Form only accepts 1 stack right now but we can handle multiple on the
+    # back-end.
+    if not request.form['stacks']:
+        stacks = None
+    else:
+        stacks = request.form.getlist('stacks')
+
     if path:
         message = 'Updates to %s' % (title)
     else:
@@ -280,6 +295,7 @@ def save():
     article = models.branch_or_save_article(title, path, message, content,
                                             user.login, user.email, sha,
                                             user.avatar_url,
+                                            stacks=stacks,
                                             repo_path=repo_path,
                                             author_real_name=user.name)
 

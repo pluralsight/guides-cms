@@ -59,6 +59,11 @@
 <div class="col-md-10 article-right">
     <h1>{{article.title}}</h1>
     <h4><small>written by <a href="/user/{{article.author_name}}">{{article.author_real_name if article.author_real_name else article.author_name}}</a></small></h4>
+
+    {% if article.stacks %}
+        <h5><small>Related to {{article.stacks|join(',')}}</small></h5>
+    {% endif %}
+
     <p> {{article.content|safe}} </p>
     <p>
         {% if allow_edits %}
