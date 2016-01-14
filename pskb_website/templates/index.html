@@ -14,6 +14,13 @@
     </div>
 
     <div class="col-xs-12 col-md-2 navbar-left-index index-left">
+        <h4>Filter by stack</h4>
+        <select id="stacks" name="stacks" class="form-control selectpicker" data-size="6"  data-dropup-auto="false" data-live-search="true" title="Stacks" multiple onchange="filter()">
+            {% for stack in stacks %}
+                <option value="{{ stack }}">{{ stack }}</option>
+            {% endfor %}
+        </select>
+
         <div class="create-tutorial">
             <h3>Become an author</h3>
             <a href="/write/" class="emphasize">Create tutorial</a>
@@ -29,4 +36,5 @@
 
         {{super()}}
     </div>
+
 {% endblock %}
