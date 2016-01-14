@@ -39,7 +39,8 @@ def index():
         text = file_details.text
 
     g.index_active = True
-    return render_template('index.html', articles=articles, welcome_text=text)
+    return render_template('index.html', articles=articles, welcome_text=text,
+                           stacks=forms.STACK_OPTIONS)
 
 
 @app.route('/login')
@@ -188,7 +189,8 @@ def review(article_path):
 
     if article_path is None:
         articles = models.get_available_articles(published=False)
-        return render_template('review.html', articles=articles)
+        return render_template('review.html', articles=articles,
+                               stacks=forms.STACK_OPTIONS)
 
     branch = request.args.get('branch', 'master')
     article = models.read_article(article_path, branch=branch)

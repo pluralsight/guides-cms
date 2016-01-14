@@ -1,5 +1,16 @@
 {% extends "layout.html" %}
 
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
+{% endblock %}
+
+{% block js %}
+    {{super()}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
+    <script src="/static/js/utils.js"></script>
+{% endblock %}
+
 {% block body %}
 
     <br />
@@ -10,6 +21,10 @@
             {% endif %}
 
                 <div class="col-xs-12 col-lg-3 article-teaser">
+                    {% for stack in article.stacks %}
+                        <span class="stack" style="display: none;">{{stack}}</span>
+                    {% endfor %}
+
                     <a href="/review/{{article.path}}">
                         <span class="clickable"></span>
                     </a>
@@ -34,5 +49,14 @@
 
         {% endfor %}
     {% endblock %}
+
+    <script type="text/javascript">
+        /*
+            Force stacks select box to hide on initial load to prevent flashing
+            of the full box before the bootstrap-select js runs and transforms
+            it.
+        */
+        $('#stacks').hide();
+    </script>
 
 {% endblock %}
