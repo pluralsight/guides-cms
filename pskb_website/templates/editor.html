@@ -1,89 +1,128 @@
 {% extends "layout.html" %}
 
-{% block body %}
-
-<input id="title" name="title" type="text" class="form-control" placeholder="Title" value="{{article.title}}" {{'readOnly="true"' if branch_article else ""}} />
-
-<br />
-
-<div id="epiceditor"></div>
-
-<br />
-<button onclick="save()" class="btn btn-primary">Save</button>
-
-<textarea id="content" style="display:none">{{article.content}}</textarea>
-
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
 {% endblock %}
 
 {% block js %}
-
     {{super()}}
-
     <script src="/static/js/vendor/editor/highlight.pack.js"></script>
     <script src="/static/js/vendor/editor/epiceditor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
+{% endblock %}
 
-    <script type="text/javascript">
-        var editor = new EpicEditor({
-            clientSideStorage: false,
-            textarea: "content",
-            basePath: '/static/css/vendor/editor/',
-            autogrow: true,
-            theme: {
-                base: '/themes/base/epiceditor.css',
-                preview: '/themes/preview/github.css',
-                editor: '/themes/editor/epic-light.css'
-            },
-        }
-        ).load();
+{% block body %}
 
-        // Have to dynamically stuff in the correct css in the iframe for the
-        // editor
-        iframe = editor.getElement('previewerIframe');
-        css = document.createElement('link');
-        css.href = "/static/css/vendor/github.css";
-        css.rel = "stylesheet";
-        css.type = "text/css";
-        iframe.contentDocument.body.appendChild(css);
+<div id="editor">
+    <p>
+        Here's what you need to get started:
+        <ul>
+            <li>Fill up the title and grey box below with your awesome tutorial.</li>
+            <li>The editor supports <a href="http://daringfireball.net/projects/markdown/">markdown format</a>, which means you can create great looking tutorials with a bit of special syntax:
+                <ul>
+                    <li>Surround text with ** to make this **<b>bold</b>**.</li>
+                    <li>Use - in front of lines to automatically create lists.</li>
+                    <li>Use # to make header text and much more.</li>
+                    <li>Get more tips <a href="http://daringfireball.net/projects/markdown/">here</a>.</li>
+                </ul>
+            <li>Hit save and your tutorial will go straight to our official <a href="https://github.com/pluralsight/tutorials/"> Github repository</a> where editors around the world can help you fullfill your article's potential.</li>
+            <li>We'll put it on our <a href="/">homepage</a> so your expertise can help educate the world once our editors feel your article is ready.</li>
+        </ul>
+    </p>
+    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" value="{{article.title}}" {{'readOnly="true"' if branch_article else ""}} />
 
-    function save() {
-        var form = document.createElement("form");
-        form.action = "/save/";
-        form.method = "POST";
+    <br />
+    <div id="epiceditor"></div>
+    <br />
 
-        var content = document.createElement("input");
-        content.name = "content";
-        content.value = editor.exportFile("", "json");
-        form.appendChild(content.cloneNode());
+    <h3>Choose your stack</h3>
+    <p>
+        Picking a stack to categorize your tutorial will help readers find it
+        more easily.
+    </p>
+    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-live-search="true" title="Stacks">
+        {% for stack in stacks %}
+            <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
+        {% endfor %}
+    </select>
 
-        var sha = document.createElement("input");
-        sha.name = "sha";
-        sha.value = "{{article.sha}}"
-        form.appendChild(sha.cloneNode());
+    <br />
+    <br />
 
-        var path = document.createElement("input");
-        path.name = "path";
-        path.value = "{{article.path}}"
-        form.appendChild(path.cloneNode());
+    <button onclick="save()" class="btn btn-primary">Save</button>
 
-        var title = document.getElementById("title");
-        form.appendChild(title.cloneNode());
+    <textarea id="content" style="display:none">{{article.content}}</textarea>
+</div>
 
-        {% if secondary_repo %}
-            var secondary_repo = document.createElement("input");
-            secondary_repo.name = "secondary_repo";
-            secondary_repo.value = 1;
-            form.appendChild(secondary_repo.cloneNode());
-        {% endif %}
+<script type="text/javascript">
+    var editor = new EpicEditor({
+        clientSideStorage: false,
+        textarea: "content",
+        basePath: '/static/css/vendor/editor/',
+        autogrow: true,
+        theme: {
+            base: '/themes/base/epiceditor.css',
+            preview: '/themes/preview/github.css',
+            editor: '/themes/editor/epic-light.css'
+        },
+    }
+    ).load();
 
-        // To be sent, the form needs to be attached to the main document.
-        form.style.display = "none";
-        document.body.appendChild(form);
+    // Have to dynamically stuff in the correct css in the iframe for the
+    // editor
+    iframe = editor.getElement('previewerIframe');
+    css = document.createElement('link');
+    css.href = "/static/css/vendor/github.css";
+    css.rel = "stylesheet";
+    css.type = "text/css";
+    iframe.contentDocument.body.appendChild(css);
 
-        form.submit();
+function save() {
+    var form = document.createElement("form");
+    form.action = "/save/";
+    form.method = "POST";
 
-        // But once the form is sent, it's useless to keep it.
-        document.body.removeChild(form);
-    };
+    var content = document.createElement("input");
+    content.name = "content";
+    content.value = editor.exportFile("", "json");
+    form.appendChild(content.cloneNode());
 
-    </script>
+    var sha = document.createElement("input");
+    sha.name = "sha";
+    sha.value = "{{article.sha}}"
+    form.appendChild(sha.cloneNode());
+
+    var path = document.createElement("input");
+    path.name = "path";
+    path.value = "{{article.path}}"
+    form.appendChild(path.cloneNode());
+
+    var title = document.getElementById("title");
+    form.appendChild(title.cloneNode());
+
+    var stacks_select = document.getElementById("stacks");
+    var stacks = document.createElement("input");
+    stacks.name = "stacks";
+    stacks.value = stacks_select.value;
+    form.appendChild(stacks.cloneNode());
+
+    {% if secondary_repo %}
+        var secondary_repo = document.createElement("input");
+        secondary_repo.name = "secondary_repo";
+        secondary_repo.value = 1;
+        form.appendChild(secondary_repo.cloneNode());
+    {% endif %}
+
+    // To be sent, the form needs to be attached to the main document.
+    form.style.display = "none";
+    document.body.appendChild(form);
+
+    form.submit();
+
+    // But once the form is sent, it's useless to keep it.
+    document.body.removeChild(form);
+};
+
+</script>
 {% endblock %}

@@ -158,7 +158,8 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
 
 
 def save_article(title, path, message, new_content, author_name, email, sha,
-                 branch='master', repo_path=None):
+                 branch='master', image_url=None, repo_path=None,
+                 author_real_name=None, stacks=None):
     """
     Create or save new (original) article, not branched article
 
@@ -172,7 +173,10 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     :param sha: Optional SHA of article if it already exists on github
     :param branch: Name of branch to commit file to (branch must already
                    exist)
+    :param image_url: Image to use for article
     :param repo_path: Optional repo path to save into (<owner>/<name>)
+    :param author_real_name: Optional real name of author, not username
+    :param stacks: Optional list of stacks to associate with article
 
     :returns: Article object updated or saved
 
@@ -182,8 +186,9 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     information is maintained.
     """
 
-    article = Article(title, author_name, branch=branch, repo_path=repo_path)
-
+    article = Article(title, author_name, branch=branch, image_url=image_url,
+                      repo_path=repo_path, author_real_name=author_real_name,
+                      stacks=stacks)
     if path:
         article.path = path
 
@@ -207,7 +212,8 @@ def save_article(title, path, message, new_content, author_name, email, sha,
                         branch=article.branch, repo_path=repo_path)
 
 
-def branch_article(article, message, new_content, author_name, email):
+def branch_article(article, message, new_content, author_name, email,
+                   image_url, author_real_name=None):
     """
     Create branch for article with new article contents
 
@@ -216,6 +222,9 @@ def branch_article(article, message, new_content, author_name, email):
     :param new_content: New article text
     :param author_name: Name of author for article changes
     :param email: Email of author for article changes
+    :param image_url: Image to use for article
+    :param author_real_name: Optional real name of author, not username
+
     :returns: New article object
 
     New branch will be named after author of changes
@@ -236,11 +245,14 @@ def branch_article(article, message, new_content, author_name, email):
             return None
 
     return save_article(article.title, article.path, message, new_content,
-                        author_name, email, article.sha, branch=branch)
+                        author_name, email, article.sha, branch=branch,
+                        image_url=image_url, author_real_name=author_real_name,
+                        stacks=article.stacks)
 
 
 def branch_or_save_article(title, path, message, content, author_name, email,
-                           sha, repo_path=None):
+                           sha, image_url, repo_path=None,
+                           author_real_name=None, stacks=None):
     """
     Save article as original or as a branch depending on if given author is
     the same as original article (if it already exists)
@@ -255,7 +267,11 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     :param sha: Optional SHA of article if it already exists on github
     :param branch: Name of branch to commit file to (branch must already
                     exist)
+    :param image_url: Image to use for article
     :param repo_path: Optional repo path to save into (<owner>/<name>)
+    :param author_real_name: Optional real name of author, not username
+    :param stacks: Optional list of stacks to associate with article (this
+                   argument is ignored if article is branched)
 
     :returns: Article object updated, saved, or branched
     """
@@ -267,10 +283,14 @@ def branch_or_save_article(title, path, message, content, author_name, email,
         article = None
 
     if article and article.author_name != author_name and sha:
-        new = branch_article(article, message, content, author_name, email)
+        # Note branching an article cannot change the stacks!
+        new = branch_article(article, message, content, author_name, email,
+                             image_url, author_real_name=author_real_name)
     else:
         new = save_article(title, path, message, content, author_name, email,
-                           sha, repo_path=repo_path)
+                           sha, image_url=image_url, repo_path=repo_path,
+                           author_real_name=author_real_name,
+                           stacks=stacks)
 
     return new
 
@@ -402,8 +422,9 @@ class Article(object):
     """
 
     def __init__(self, title, author_name, filename=ARTICLE_FILENAME,
-                 repo_path=None, branch='master', language=None, sha=None,
-                 content=None, external_url=None):
+                 repo_path=None, branch='master', stacks=None, sha=None,
+                 content=None, external_url=None, image_url=None,
+                 author_real_name=None):
         """
         Initalize article object
 
@@ -412,19 +433,23 @@ class Article(object):
         :param filename: Name of file to save article in
         :param repo_path: Path to repository to save article in
         :param branch: Branch to save article to
-        :param language: Language/stack article primarily covers
+        :param stacks: Language/stack article primarily covers
         :param sha: Git SHA of article (if article already exists in repo)
         :param content: Contents of article
         :param external_url: External URL to view article at
+        :param image_url: URL to image to show for article
+        :param author_real_name: Optional real name of author, not username
         """
 
         self.title = title
         self.author_name = author_name
-        self.language = language
+        self.stacks = stacks or []
         self.content = content
         self.external_url = external_url
         self.filename = filename
+        self.image_url = image_url
         self.last_updated = None
+        self.author_real_name = author_real_name
 
         # Only useful if article has already been saved to github
         self.sha = sha
@@ -440,10 +465,6 @@ class Article(object):
         self.branches = []
 
         self.path = '%s/%s' % (utils.slugify(self.title), self.filename)
-
-        if self.language is not None:
-            self.path = '%s/%s' % (self.language, self.path)
-
         self.published = False
 
     def __repr__(self):

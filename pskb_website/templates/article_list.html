@@ -1,22 +1,62 @@
 {% extends "layout.html" %}
 
+{% block css %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
+{% endblock %}
+
+{% block js %}
+    {{super()}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
+    <script src="/static/js/utils.js"></script>
+{% endblock %}
+
 {% block body %}
 
+    <br />
     {% block article_list %}
-        <ul>
-            {% for article in articles %}
-                <li>
-                    <a href="/review/{{article.path}}">{{article.title}}</a>
+        {% for article in articles %}
+            {% if not loop.index % 3 or loop.index == 0 %}
+                <div class="row">
+            {% endif %}
 
-                    {% if article.branches|length > 1 %}
-                        ({{article.branches|length}} suggestions)
-                    {% elif article.branches|length == 1 %}
-                        ({{article.branches|length}} suggestion)
-                    {% endif %}
+                <div class="col-xs-12 col-lg-3 article-teaser">
+                    {% for stack in article.stacks %}
+                        <span class="stack" style="display: none;">{{stack}}</span>
+                    {% endfor %}
 
-                </li>
-            {% endfor %}
-        </ul>
+                    <a href="/review/{{article.path}}">
+                        <span class="clickable"></span>
+                    </a>
+                    <div class="article-description">
+                        <!-- <p class='date'> {{article.last_updated}}</p> -->
+                        <p class='title'> {{article.title|truncate(100)}}</p>
+                    </div>
+                    <hr>
+                    <p class="article-author">
+                        {% if article.image_url %}
+                            <img src="{{article.image_url}}&amp;s=86" width="43" height="43" style="border-radius: 22px;"/>
+                        {% else %}
+                            <img src="/static/img/pluralsight_user.png" width="43" height="43" style="border-radius: 22px;"/>
+                        {% endif %}
+                        <span> {{article.author_real_name if article.author_real_name else article.author_name}} </span>
+                    </p>
+                </div>
+
+            {% if not loop.index % 3 or loop.index == 0 %}
+                </div>
+            {% endif %}
+
+        {% endfor %}
     {% endblock %}
+
+    <script type="text/javascript">
+        /*
+            Force stacks select box to hide on initial load to prevent flashing
+            of the full box before the bootstrap-select js runs and transforms
+            it.
+        */
+        $('#stacks').hide();
+    </script>
 
 {% endblock %}

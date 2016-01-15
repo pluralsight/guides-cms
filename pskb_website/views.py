@@ -9,6 +9,7 @@ from flask import redirect, url_for, session, request, render_template, flash, j
 from . import app
 from . import remote
 from . import models
+from . import forms
 
 
 def login_required(f):
@@ -31,10 +32,15 @@ def index():
     # FIXME: This should only fetch the most recent x number.
     articles = models.get_available_articles(published=True)
 
-    text = models.read_file('welcome.md', rendered_text=True)
+    file_details = models.read_file('welcome.md', rendered_text=True)
+
+    text = u''
+    if file_details is not None:
+        text = file_details.text
 
     g.index_active = True
-    return render_template('index.html', articles=articles, welcome_text=text)
+    return render_template('index.html', articles=articles, welcome_text=text,
+                           stacks=forms.STACK_OPTIONS)
 
 
 @app.route('/login')
@@ -60,8 +66,9 @@ def gh_rate_limit():
 @app.route('/faq')
 def faq():
     g.faq_active = True
-    text = models.read_file('faq.md', rendered_text=True)
-    return render_template('faq.html', body=text)
+
+    file_details = models.read_file('faq.md', rendered_text=True)
+    return render_template('faq.html', details=file_details)
 
 
 @app.route('/github_login')
@@ -131,12 +138,18 @@ def write(article_path):
     article = None
     branch_article = False
     g.write_active = True
+    selected_stack = None
 
     if article_path is not None:
         article = models.read_article(article_path, rendered_text=False)
 
         if article.sha is None:
             article.sha = ''
+
+        # Only allowing a single stack choice now but the back-end article
+        # model can handle multiple.
+        if article.stacks:
+            selected_stack = article.stacks[0]
 
         user = models.find_user(session['login'])
         if user is None:
@@ -147,7 +160,9 @@ def write(article_path):
             branch_article = True
 
     return render_template('editor.html', article=article,
-                           branch_article=branch_article)
+                           branch_article=branch_article,
+                           stacks=forms.STACK_OPTIONS,
+                           selected_stack=selected_stack)
 
 
 # Special 'hidden' URL to import articles to secondary repo
@@ -170,12 +185,13 @@ def partner_import():
 @app.route('/review/<path:article_path>', methods=['GET'])
 @app.route('/review/', defaults={'article_path': None}, methods=['GET'])
 def review(article_path):
-    if article_path is None:
-        g.review_active = True
-        articles = models.get_available_articles(published=False)
-        return render_template('review.html', articles=articles)
+    g.review_active = True
 
-    g.write_active = True
+    if article_path is None:
+        articles = models.get_available_articles(published=False)
+        return render_template('review.html', articles=articles,
+                               stacks=forms.STACK_OPTIONS)
+
     branch = request.args.get('branch', 'master')
     article = models.read_article(article_path, branch=branch)
 
@@ -197,10 +213,13 @@ def review(article_path):
     # comments.
     canonical_url = request.base_url.replace('https://', 'http://')
 
+    form = forms.SignupForm()
+
     return render_template('article.html',
                            article=article,
                            allow_edits=allow_edits,
-                           canonical_url=canonical_url)
+                           canonical_url=canonical_url,
+                           form=form)
 
 # URL for articles from hackhands blog -- these articles are not editable.
 @app.route('/partner/<path:article_path>', methods=['GET'])
@@ -230,10 +249,13 @@ def partner(article_path):
     # comments.
     canonical_url = request.base_url.replace('https://', 'http://')
 
+    form = forms.SignupForm()
+
     return render_template('article.html',
                            article=article,
                            allow_edits=False,
                            canonical_url=canonical_url,
+                           form=form,
                            disclaimer=True)
 
 
@@ -253,6 +275,13 @@ def save():
     title = request.form['title']
     sha = request.form['sha']
 
+    # Form only accepts 1 stack right now but we can handle multiple on the
+    # back-end.
+    if not request.form['stacks']:
+        stacks = None
+    else:
+        stacks = request.form.getlist('stacks')
+
     if path:
         message = 'Updates to %s' % (title)
     else:
@@ -267,7 +296,10 @@ def save():
 
     article = models.branch_or_save_article(title, path, message, content,
                                             user.login, user.email, sha,
-                                            repo_path=repo_path)
+                                            user.avatar_url,
+                                            stacks=stacks,
+                                            repo_path=repo_path,
+                                            author_real_name=user.name)
 
     # Successful creation
     if article:
@@ -282,3 +314,27 @@ def save():
 
     flash('Failed creating article on github', category='error')
     return redirect(url_for('index'))
+
+
+@app.route('/subscribe/', methods=['POST'])
+def subscribe():
+    form = forms.SignupForm()
+
+    # Note this helper automatically grabs request.form
+    if form.validate_on_submit():
+        app.logger.debug('Adding new subscriber: %s - %s' % (form.email.data,
+                                                             form.stacks.data))
+
+        sub_id = models.add_subscriber(form.email.data, form.stacks.data)
+        if not sub_id:
+            flash('Failed adding to list', category='error')
+        else:
+            flash('Thanks for subscribing!', category='info')
+
+        return redirect(request.referrer)
+    else:
+        for input_name, errors in form.errors.iteritems():
+            for error in errors:
+                flash('%s - %s' % (input_name, error), category='error')
+
+        return redirect(request.referrer)

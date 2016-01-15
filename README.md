@@ -34,12 +34,22 @@ These are not currently required, but they maybe in the future.
 5. Install requirements:
     - `pip install -r requirements.txt`
 
-### Run application locally
+### Run application locally with built-in flask webserver
 
 1. Copy example_config.py to config.py and populate config.DevelopmentConfig
    with your own data.
 2. Run `./run.py`
 3. Browse to URL mentioned at prompt
+
+### Run application locally with heroku Procfile
+
+You'll need to complete the setup below for getting things running on heroku
+before doing this, or at least setting up your heroku environment variables as
+described below.  Then:
+
+1. Run `heroku config --app <app_name>` to see all the configuration
+2. Copy all the these configuration values into a file with the `key=value` format instead of `key:value` which is the output of the heroku command.
+3. Run `heroku local --env <file_from_step_2>`
 
 ### Run application on heroku
 
@@ -64,9 +74,11 @@ The following steps assume you have the basic [heroku toolbelt installed](https:
       must be setup in your heroku config.
     - You can set heroku config variables with the following syntax:
         - `heroku config:set APP_SETTINGS=config.ProductionConfig`
+        - ... (see example_config.py for full list)
         - Or something like the following if you have multiple remotes for heroku
-        - `heroku config:set APP_SETTINGS=config.ProductionConfig --remote pro`
-        - `heroku config:set APP_SETTINGS=config.StagingConfig --remote stage`
+        - `heroku config:set APP_SETTINGS=config.ProductionConfig --app pro`
+        - `heroku config:set APP_SETTINGS=config.StagingConfig --app stage`
+        - ... (see example_config.py for full list)
 4. Deploy changes
     - `git push heroku master`
     - Or something like the following if you have multiple remotes for heroku
@@ -92,6 +104,8 @@ your the flask application.
     - Provides bigger log for debugging issues and enables easy searching
 
 #### Testing without browser
+
+1. `pip install Flask-Migrate`
 
 You can test a lot of the functionality of the application without a web
 browser.  In general, much of the interaction with the Github API can be used

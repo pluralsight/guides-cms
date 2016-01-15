@@ -12,3 +12,5 @@ from .article import get_articles_for_author
 from .file import read_file
 
 from .user import find_user
+
+from .email_list import add_subscriber

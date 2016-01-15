@@ -11,6 +11,12 @@
         needing review.
     </p>
 
-    {{super()}}
+    <div class="col-xs-12 col-md-2 navbar-left-index index-left">
+        {% include 'stack_filter.html' %}
+    </div>
+
+    <div class="col-xs-12 col-md-10">
+        {{super()}}
+    </div>
 
 {% endblock %}

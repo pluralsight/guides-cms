@@ -1,4 +1,7 @@
-Flask==0.10.1
 gunicorn==19.3.0
-Flask-OAuthlib==0.9.1
 redis==2.10.5
+mailchimp==2.0.9
+Flask==0.10.1
+Flask-OAuthlib==0.9.1
+WTForms==2.1
+Flask-WTF==0.12

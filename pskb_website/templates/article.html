@@ -3,14 +3,29 @@
 {% block css %}
     {{ super() }}
     <link href="/static/css/vendor/github.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
+{% endblock %}
+
+{% block js %}
+    {{super()}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
 {% endblock %}
 
 {% block body %}
-<div class="col-md-1 navbar-left">
+<div class="col-md-2 navbar-left-article">
+    {% include 'signup_form.html' %}
+
+    <br/><br/>
+
     <a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=Loved%20this%20article%20on%20{{article.title}}">Tweet</a>
 
     <br/> <br/>
     <div class="fb-like" data-href="{{canonical_url}}" data-layout="button_count" data-action="like" data-show-faces="false">
+    </div>
+
+    <br/> <br/>
+    <div class="create-tutorial">
+        <a href="/write/" class="emphasize">Create tutorial</a>
     </div>
 
     <!-- Load Facebook SDK for JavaScript -->
@@ -41,9 +56,14 @@
   return t;
 }(document, "script", "twitter-wjs"));</script>
 
-<div class="col-md-11 article-right">
+<div class="col-md-10 article-right">
     <h1>{{article.title}}</h1>
-    <h4><small>written by <a href="/user/{{article.author_name}}">{{article.author_name}}</a></small></h4>
+    <h4><small>written by <a href="/user/{{article.author_name}}">{{article.author_real_name if article.author_real_name else article.author_name}}</a></small></h4>
+
+    {% if article.stacks %}
+        <h5><small>Related to {{article.stacks|join(',')}}</small></h5>
+    {% endif %}
+
     <p> {{article.content|safe}} </p>
     <p>
         {% if allow_edits %}
@@ -56,7 +76,7 @@
 
     {% if article.author_name %}
         <p class="small">
-        <a href="http://github.com/{{article.author_name}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View more from {{article.author_name}} on Github</a>
+        <a href="http://github.com/{{article.author_name}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View more from {{article.author_real_name if article.author_real_name else article.author_name}} on Github</a>
         </p>
     {% endif %}
 
@@ -94,4 +114,5 @@
         </script>
         <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 </div>
+
 {% endblock %}

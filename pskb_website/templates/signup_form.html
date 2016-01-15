@@ -1,0 +1,31 @@
+        <div id="signup">
+            <p><b>FREE EMAIL UPDATES</b></p>
+            <p>The best tutorials direct to your inbox</p>
+            <form action="/subscribe/" method="POST" id="signup-form" class="form-inline">
+                <div class="form-group form-group-sm">
+                    {{ form.email(class='form-control', id='email', type='email', placeholder='Email') }}
+                </div>
+                <div class="form-group form-group-sm">
+                    {{ form.hidden_tag() }}
+                    <select id="stacks" name="stacks" class="form-control selectpicker dropup" data-header="Scroll for additional stacks" data-size="6"  data-dropup-auto="false" title="Your favorite topics" multiple>
+                        {% for stack in form.stacks %}
+                            {{ stack() }}
+                        {% endfor %}
+                    </select>
+                </div>
+            <div class="form-group form-group-sm">
+                <button type="submit" class="btn btn-primary btn-xs" form="signup-form">Keep Learning</button>
+            </div>
+            </form>
+        </div>
+
+        <!--
+          Workaround for having the 'regular' select flash open on load.
+          Previously we could see the unstyled <select> tag opened before the
+          bootstrap-select js would run and transform it.  This way we'll hide
+          it and then it'll only be visible once the transformation from
+          bootstrap-select happens.
+        -->
+        <script type="text/javascript">
+            $('#stacks').hide();
+        </script>

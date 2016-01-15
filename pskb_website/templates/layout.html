@@ -7,7 +7,11 @@
 
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     {% block title %}
+    {% if article and article.title %}
+        <title>{{article.title}} | Pluralsight Tutorials</title>
+    {% else %}
         <title>Pluralsight Tutorials</title>
+    {% endif %}
     {% endblock %}
 
     {% block css %}
@@ -17,6 +21,11 @@
     {% endblock %}
 
     <link rel="shortcut icon" type="image/png" href="/static/img/favicon.png">
+
+    {% block js %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="/static/js/vendor/bootstrap.min.js"></script>
+    {% endblock %}
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -31,36 +40,7 @@
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">
-              <img src="/static/img/logo.png" width="280" height="36">
-          </a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav navbar-right">
-          <li class="{{ 'active' if g.index_active }}"><a href="/">Home</a></li>
-
-            {% if session.github_token %}
-                <li class="{{ 'active' if g.write_active }}"><a href="/write/">Write</a></li>
-                <li class="{{ 'active' if g.review_active }}"><a href="/review/">Review</a></li>
-                <li class="{{ 'active' if g.profile_active }}"><a href="/user/">Profile</a></li>
-                <li class="{{ 'active' if g.faq_active }}"><a href="/faq">FAQ</a></li>
-                <li><a href="/logout">Logout ({{session.name}})</a></li>
-            {% else %}
-                <li class="{{ 'active' if not g.write_active and not g.faq_active and not g.index_active}}"><a href="/login">Login</a></li>
-                <li class="{{ 'active' if g.write_active }}"><a href="/write/">Write</a></li>
-                <li class="{{ 'active' if g.review_active }}"><a href="/review/">Review</a></li>
-                <li class="{{ 'active' if g.faq_active }}"><a href="/faq">FAQ</a></li>
-            {% endif %}
-
-          </ul>
-        </div><!--/.nav-collapse -->
+          {% include 'nav.html' %}
       </div>
     </nav>
 
@@ -68,9 +48,15 @@
 
     <div class="container">
 
-      <div class="starter-template">
-        <h1>Pluralsight Tutorials</h1>
-        <p class="lead">Learn more by sharing</p>
+      <div class="header">
+
+       {% if not g.write_active %}
+        <h2 class="tagline gradient-text">A community of developers bringing knowledge to the world</h2>
+       {% else %}
+        <h2 class="tagline gradient-text">You have unique expertise and this is where to share it.</h2>
+       {% endif %}
+
+       <hr>
 
         {% with messages = get_flashed_messages(category_filter=['info', 'message']) %}
             {% for message in messages %}
@@ -86,22 +72,27 @@
 
       </div>
 
+    </div><!-- /.container -->
+
+    <div id="wrap">
+        <div class="container">
       {% block body %}
 
       {% endblock %}
+      <div class="push"></div>
+    </div>
+    </div>
 
-    </div><!-- /.container -->
+    <div id="footer">
+        <nav class="navbar navbar-inverse">
+        <div class="container">
+            {% include 'footer.html' %}
+        </div>
+        </nav>
+    </div>
 
-    {% block js %}
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="/static/js/vendor/bootstrap.min.js"></script>
-        <script type="text/javascript">
-        setTimeout(function(){var a=document.createElement("script");
-        var b=document.getElementsByTagName("script")[0];
-        a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0043/7609.js?"+Math.floor(new Date().getTime()/3600000);
-        a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
-        </script>
-    {% endblock %}
+    </div>
+
   </body>
 
 <script>
@@ -111,6 +102,13 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 ga('create', 'UA-5643470-17', 'auto');
 ga('send', 'pageview');
+</script>
+
+<script type="text/javascript">
+setTimeout(function(){var a=document.createElement("script");
+var b=document.getElementsByTagName("script")[0];
+a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0043/7609.js?"+Math.floor(new Date().getTime()/3600000);
+a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
 </script>
 
 </html>

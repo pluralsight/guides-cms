@@ -1,0 +1,6 @@
+<h4>Filter by stack</h4>
+<select id="stacks" name="stacks" class="form-control selectpicker" data-header="Scroll for additional stacks" data-size="10" data-dropup-auto="false" data-title="Stacks" multiple onchange="filter()">
+    {% for stack in stacks %}
+        <option value="{{ stack }}">{{ stack }}</option>
+    {% endfor %}
+</select>

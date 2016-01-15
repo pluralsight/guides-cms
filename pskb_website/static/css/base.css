@@ -1,6 +1,11 @@
+html {
+    height: 100%;
+}
+
 body {
+  font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
   padding-top: 50px;
-  font-family: "Gotham SSm A","Gotham SSm B",sans-serif;
+  height: 100%;
   letter-spacing: -.015em;
 }
 
@@ -8,26 +13,49 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: -.045em;
 }
 
-.starter-template {
-  padding: 80px 15px;
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin-bottom: -80px;
+}
+
+.header {
+  padding: 20px 15px 0px 15px;
   text-align: center;
 }
 
-/* Push logo down simliar to Pluralsight navbar */
-.navbar-brand img {
-    margin-top: 20px;
-}
-
-
-/* Nav bar is much shorter on small screens */
-@media(max-width:767px) {
-    .navbar-brand img {
-        margin-top: -15px;
-    }
+.navbar-left-article {
+    position: fixed;
+    z-index: 1000;
 }
 
 .article-right {
-    margin-left: 140px;
+    margin-left: 195px;
+}
+
+/* Push image down just a bit to level out with links in header */
+.navbar-brand img {
+    margin-top: 15px;
+}
+
+.push {
+    height: 80px;
+}
+
+
+#signup {
+    border: 1px solid #f96816;
+    padding: 4px;
+}
+
+#signup .form-group {
+    padding-top: 15px;
+}
+
+#signup {
+    font-size: 8pt;
+    font-weight: 500;
 }
 
 /* Default color of Pluralsight buttons */
@@ -41,11 +69,6 @@ h1, h2, h3, h4, h5, h6 {
     border-color: #fb6e20;
 }
 
-.navbar-left {
-    position: fixed;
-    z-index: 1000;
-}
-
 /* Use default Pluralsight link styling */
 a,
 a:visited,
@@ -56,9 +79,33 @@ a:focus {
 }
 
 /* Make navbar height simliar to main Pluralsight navbar */
-#navbar {
-    padding-top: 25px;
-    padding-bottom: 25px;
+.navbar {
+    font-style: normal;
+    padding-bottom: 15px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.navbar-fixed-top {
+    padding-bottom: 0px;
+    height: 97px;
+}
+
+.navbar-fixed-top li a {
+    margin-top: 10px;
+}
+
+.navbar li {
+    margin-top: 10px;
+    letter-spacing: -0.23999999463558197px;
+}
+
+.navbar li a {
+    margin-left: 25px;
+}
+
+.navbar li a:hover {
+    text-decoration: underline;
 }
 
 /* Remove box around active links  */
@@ -71,4 +118,289 @@ a:focus {
 /* Give a bit of breathing room to surrounding area of message boxes */
 .bg-info, .bg-danger {
     padding: 10px;
+}
+
+.navbar-fixed-bottom {
+    height: 75px;
+}
+
+.tagline {
+    font-weight: 100;
+    margin-top: 50px;
+}
+
+.header hr {
+    border-top-color: #ddd;
+}
+
+.gradient-text {
+    font-family: sans-serif;
+    color: #fd0808;
+    background: -webkit-linear-gradient(left, #f5518a 0%, #fd0808 50%, #9f041b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.features {
+    margin-left: auto;
+    margin-right: auto;
+    color: #fd0808;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 50px;
+    font-size: 15px;
+}
+
+.features img {
+    margin-right: 10px;
+}
+
+.index-left {
+    text-align: center;
+}
+
+.index-left h3 {
+    font-size: 18px;
+    color: #555555;
+}
+
+.index-left h4 {
+    margin-top: 35px;
+    font-size: 16px;
+    color: #555555;
+}
+
+a.emphasize {
+    display: block;
+    border: 1px solid #f96816;
+    padding: 10px;
+    text-decoration: none;
+    text-align: center;
+    color: #f96816;
+    font-weight: 300;
+}
+
+a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
+    background-color: #f96816;
+    color: #ffffff;
+    border: 1px solid #f96816;
+    font-weight: 500;
+}
+
+.navbar-left-article .create-tutorial a.emphasize {
+    font-size: 12px;
+    display: block;
+    border: 1px solid #f96816;
+    padding: 3px;
+    text-decoration: none;
+    text-align: center;
+    color: #f96816;
+    font-weight: 500;
+}
+
+.index-left .checkbox {
+    line-height: 1.5em;
+    font-size: 16px;
+    color: #1a1a1a;
+}
+
+
+.article-teaser {
+    height: 280px;
+    border: 1px solid #cecece;
+    text-align: center;
+    padding: 15px 10px 15px 10px;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    color: #555555;
+    position: relative;
+}
+
+.article-teaser:hover {
+    color: #f96816;
+    -moz-box-shadow: 1px 1px 5px #333;
+    -webkit-box-shadow: 1px 1px 5px #333;
+    box-shadow: 1px 1px 5px #333;
+}
+
+/* Allow entire article teaser to be clickable */
+.article-teaser span.clickable {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.article-teaser .title {
+    font-size: 18px;
+}
+
+.article-teaser hr {
+    /* override bootstrap defaults */
+    border-top: 1px solid #cecece;
+}
+
+.article-description {
+    /* Based off of article-teaser height. Forces the hr and link inside teaser
+     * to show up in uniform place regardless of title length. */
+    height: 150px;
+    /*width: 100%;*/
+    /*position: absolute;*/
+}
+
+.article-teaser .article-author {
+    float: left;
+}
+
+.article-teaser .article-author span {
+    margin-left: 10px;
+}
+
+#editor {
+    margin-top: 50px;
+}
+
+#editor input.article-title {
+    margin-top: 50px;
+}
+
+.stacks-editor {
+    max-width: 200px;
+}
+
+#footer {
+    clear: both;
+}
+
+/* Override bootstrap margin to push footer all the way down with no bottom gap
+ * */
+#footer .navbar {
+    margin-bottom: 0px;
+    min-height: 80px;
+    margin-top: 100px;
+}
+
+#footer ul {
+    margin-top: 2px;
+    margin-left: 55px;
+}
+
+#footer ul li {
+    color: #9d9d9d;
+    font-size: 12px;
+    font-weight: 500;
+    font-style: normal;
+    margin-left: 25px;
+    padding-bottom: 0px;
+    padding-right: 0px;
+    padding-top: 10px;
+}
+
+#footer ul li a {
+    padding-left: 5px;
+    padding-top: 0px;
+    margin-left: 0px;
+}
+
+#footer .navbar-brand img {
+    margin-top: 7px;
+}
+
+.nav-footer h6 {
+    color: #ffffff;
+    font-size: 14px;
+    padding-left: 30px;
+    line-height: 17px;
+}
+
+.nav-footer li a {
+    color: #9d9d9d;
+    font-size: 12px;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.nav-footer li a:hover {
+    background-color: #222;
+}
+
+
+@media(max-width:767px) {
+    .article-teaser {
+        height: auto;
+        margin-right: 0px;
+        padding: 15px 0px 15px 0px;
+        border: 0px;
+    }
+
+    .article-teaser:hover {
+        border: 0px;
+    }
+
+    .article-teaser .article-author {
+        display:none;
+    }
+
+    .article-teaser .learning-link {
+        display: none;
+    }
+
+    .article-teaser hr {
+        display: none;
+    }
+
+    .article-teaser .title {
+        font-size: 14px;
+        color: #f96816;
+    }
+
+    .article-description {
+        height: 65%;
+    }
+
+    /* Don't show this on mobile b/c takes up space and users are not going to
+     * write tutorials on mobile anyway */
+    .create-tutorial {
+        display: none;
+    }
+
+    /* Nav bar is much shorter on small screens */
+    .navbar-brand img {
+        margin-top: -10px;
+    }
+
+
+    #footer ul {
+        padding-top: 75px;
+    }
+
+    #footer ul li {
+        margin-top: 0px;
+        padding-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        height: auto;
+    }
+
+    .article-right {
+        margin-left: 2px;
+    }
+
+    .navbar-left-index {
+        position: relative;
+    }
+
+    .navbar-left-article {
+        position: relative;
+    }
+
+    a.emphasize {
+        border: 0px;
+        text-align: left;
+    }
 }
