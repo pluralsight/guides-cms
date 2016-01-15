@@ -41,7 +41,7 @@
         Picking a stack to categorize your tutorial will help readers find it
         more easily.
     </p>
-    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-live-search="true" title="Stacks">
+    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-title="Stacks">
         {% for stack in stacks %}
             <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
         {% endfor %}
