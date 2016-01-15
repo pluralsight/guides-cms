@@ -3,12 +3,17 @@
             <p>The best tutorials direct to your inbox</p>
             <form action="/subscribe/" method="POST" id="signup-form" class="form-inline">
                 <div class="form-group form-group-sm">
-                    {{ form.email(class='form-control', id='email', type='email', placeholder='Email') }}
+                    <!--
+                      Override bootstrap width: auto so we don't overrun
+                      sidebar bounds.
+                    -->
+                    {{ form.email(class='form-control', style='width: 100%;', id='email', type='email', placeholder='Email') }}
                 </div>
                 <!--
                     Override bootstrap default of display: inline-block to
                     prevent the select box busting out of the sidebar if many
-                    stacks are selected and text grows too long for column. -->
+                    stacks are selected and text grows too long for column.
+                 -->
                 <div class="form-group form-group-sm" style="display: block;">
                     {{ form.hidden_tag() }}
                     <select id="stacks" name="stacks" class="form-control selectpicker dropup" data-header="Scroll for additional stacks" data-size="6"  data-dropup-auto="false" title="Your favorite topics" multiple>
