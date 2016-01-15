@@ -17,9 +17,6 @@ function filter() {
             $(this).hide('slow');
         }
     });
-
-    /* Force select box to close after selection is made. */
-    $('#stacks').click();
 }
 
 function should_show(article, selected_stacks) {
