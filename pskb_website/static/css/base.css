@@ -328,6 +328,12 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     background-color: #222;
 }
 
+/* Override button size for the bootstrap-select buttons to account for our
+ * font. It defaults to 14px which is a bit too big for the default dropdown
+ * text. */
+.bootstrap-select .btn {
+    font-size: 12px;
+}
 
 @media(max-width:767px) {
     .article-teaser {
