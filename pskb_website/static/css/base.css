@@ -27,7 +27,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .navbar-left-article {
     position: fixed;
-    z-index: 1000;
+    overflow: hidden;
 }
 
 /* Push image down just a bit to level out with links in header */
