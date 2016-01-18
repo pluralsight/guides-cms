@@ -30,10 +30,6 @@ h1, h2, h3, h4, h5, h6 {
     z-index: 1000;
 }
 
-.article-right {
-    margin-left: 195px;
-}
-
 /* Push image down just a bit to level out with links in header */
 .navbar-brand img {
     margin-top: 15px;
@@ -391,10 +387,6 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 
     .navbar-fixed-top {
         height: auto;
-    }
-
-    .article-right {
-        margin-left: 2px;
     }
 
     .navbar-left-index {
