@@ -106,8 +106,13 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
     if not path.endswith(FILE_EXTENSION):
         slash = '' if path.endswith('/') else '/'
         full_path = '%s%s%s' % (full_path, slash, ARTICLE_FILENAME)
+        cache_path = path
+    else:
+        # Don't cache with the filename b/c it just takes up cache space and
+        # right now it's always the same.
+        cache_path = ''.join(path.split('/')[:-1])
 
-    json_str = cache.read_article(path, branch)
+    json_str = cache.read_article(cache_path, branch)
     if json_str is not None:
         article = Article.from_json(json_str)
 
@@ -464,7 +469,7 @@ class Article(object):
         # List of branch names where this article also exists
         self.branches = []
 
-        self.path = '%s/%s' % (utils.slugify(self.title), self.filename)
+        self.path = '%s' % (utils.slugify(self.title))
         self.published = False
 
     def __repr__(self):
@@ -521,4 +526,4 @@ class Article(object):
         Get full path to article including repo information
         :returns:  Full path to article
         """
-        return '%s/%s' % (self.repo_path, self.path)
+        return '%s/%s/%s' % (self.repo_path, self.path, self.filename)
