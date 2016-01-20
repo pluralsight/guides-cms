@@ -9,9 +9,11 @@
 {% block js %}
     {{super()}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
+    <script src="/static/js/utils.js"></script>
 {% endblock %}
 
 {% block body %}
+<div class="row">
 <div class="col-md-2 navbar-left-article">
     {% include 'signup_form.html' %}
 
@@ -32,12 +34,17 @@
     <div id="fb-root"></div>
 </div>
 
-<div class="col-md-10 col-md-offset-2">
-    <h1>{{article.title}}</h1>
-    <h4><small>written by <a href="/user/{{article.author_name}}">{{article.author_real_name if article.author_real_name else article.author_name}}</a></small></h4>
+<div id="table-of-contents" class="col-md-2 col-md-offset-10 col-pull-md-10">
+    <h6>Table of Contents</h6>
+    <hr>
+</div> <!-- TOC column -->
+
+<div id="article" class="col-md-8 col-md-offset-2">
+    <h1 id="title">{{article.title}}</h1>
+    <h4 id="author"><small>written by <a href="/user/{{article.author_name}}">{{article.author_real_name if article.author_real_name else article.author_name}}</a></small></h4>
 
     {% if article.stacks %}
-        <h5><small>Related to {{article.stacks|join(',')}}</small></h5>
+        <h5 id="related"><small>Related to {{article.stacks|join(',')}}</small></h5>
     {% endif %}
 
     <p> {{article.content|safe}} </p>
@@ -72,7 +79,19 @@
     {% endif %}
 
     <div id="disqus_thread"></div>
-</div>
+</div> <!-- middle column -->
+</div> <!-- row -->
+
+<script>
+    toc = $("#table-of-contents");
+    headers = find_all_headers_without_ids($("#article"));
+    if (!headers.length) {
+        toc.css("display", "none");
+    } else {
+        new_toc = create_toc_from_headers(headers);
+        $(new_toc).appendTo(toc);
+    }
+</script>
 
 <script>
     var disqus_config = function () {
@@ -114,4 +133,5 @@ fjs.parentNode.insertBefore(js, fjs);
 
   return t;
 }(document, "script", "twitter-wjs"));</script>
+
 {% endblock %}
