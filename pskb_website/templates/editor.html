@@ -15,28 +15,48 @@
 {% block body %}
 
 <div id="editor">
+    <h3>1. Get Started</h3>
     <p>
-        Here's what you need to get started:
         <ul>
-            <li>Fill up the title and grey box below with your awesome tutorial.</li>
+            <li>Saving your tutorial will send it straight to our official <a href="https://github.com/pluralsight/tutorials/"> Github repository</a> where editors around the world can help you fullfill your article's potential.</li>
+            <li>We'll put it on our <a href="/">homepage</a> so your expertise can help educate the world once our editors feel your article is ready.</li>
+        </ul>
+    </p>
+    <h3>2. Pick a Title</h3>
+    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" value="{{article.title}}" {{'readOnly="true"' if branch_article else ""}} />
+
+    <br />
+    <h3>3. Write</h3>
+    <p>
+        <ul>
             <li>The editor supports <a href="http://daringfireball.net/projects/markdown/">markdown format</a>, which means you can create great looking tutorials with a bit of special syntax:
                 <ul>
                     <li>Surround text with ** to make this **<b>bold</b>**.</li>
                     <li>Use - in front of lines to automatically create lists.</li>
                     <li>Use # to make header text and much more.</li>
-                    <li>Get more tips <a href="http://daringfireball.net/projects/markdown/">here</a>.</li>
+                    <li>Get more tips <a
+                        href="http://daringfireball.net/projects/markdown/syntax">here</a>.</li>
                 </ul>
-            <li>Hit save and your tutorial will go straight to our official <a href="https://github.com/pluralsight/tutorials/"> Github repository</a> where editors around the world can help you fullfill your article's potential.</li>
-            <li>We'll put it on our <a href="/">homepage</a> so your expertise can help educate the world once our editors feel your article is ready.</li>
+            <li>
+                We'll automatically a create Table of Contents for your
+                tutorial based on your usage of &lt;h1&gt; through &lt;h6&gt;
+                tag.
+            </li>
+            <li>
+                Start with &lt;h1&gt; for your main point and use larger header
+                tags to nest your supporting points.
+            </li>
+            <li>
+                Use the preview button when hovering over the editor to get a
+                quick look at how your content will look once published.
+            </li>
         </ul>
     </p>
-    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" value="{{article.title}}" {{'readOnly="true"' if branch_article else ""}} />
 
-    <br />
     <div id="epiceditor"></div>
     <br />
 
-    <h3>Choose your stack</h3>
+    <h3>4. Choose your stack</h3>
     <p>
         Picking a stack to categorize your tutorial will help readers find it
         more easily.
