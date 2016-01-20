@@ -44,3 +44,45 @@ function should_show(article, selected_stacks) {
 
     return show;
 }
+
+/* Pass in a jquery div element and get list of jquery header elements back
+ * that are inside the given div. */
+function find_all_headers_without_ids(div) {
+    headers = [];
+    $(div).find("h1, h2, h3, h4, h5, h6").each(function(header_idx) {
+        if (typeof $(this).attr("id") === "undefined") {
+            headers.push(this);
+        }
+    });
+    return headers;
+}
+
+/* Pass in a list of jquery header elements and get string of HTML that
+ * represents a table of contents from those header tags. */
+function create_toc_from_headers(headers) {
+    var toc_html = "<ul>";
+
+    for (ii=0; ii < headers.length; ii++) {
+        var hdr = headers[ii];
+        var url_content = hdr.textContent.replace(/ /g, "-").toLowerCase();
+        var re = /h(\d)/i;
+        var hdr_num = parseInt(re.exec(hdr.tagName)[1]);
+
+        /* Array creats n - 1 so we add one to compensate */
+        var indent = Array(hdr_num + 1).join("&nbsp;");
+        var tag = "<li>" + indent + "<a href='#" + url_content + "'>" + hdr.textContent + "</a></li>";
+
+        /* Hack to account for the fixed position header on article page.
+         * This 97px keeps the visual position the same but makes sure we can
+         * scroll to correct location accounint for header when user clicks a
+         * link. 97px must match the height of the header! */
+        $(hdr).attr('style', 'margin-top: -97px; padding-top: 97px;');
+        $(hdr).attr('id', url_content);
+        toc_html += tag
+
+        console.log(hdr.textContent);
+    }
+
+    toc_html += "</ul>";
+    return toc_html;
+}
