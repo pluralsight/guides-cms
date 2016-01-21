@@ -425,6 +425,9 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     }
 
     #table-of-contents {
+        overflow-y: visible;
+        overflow-x: visible;
+        max-height: none;
         position: relative;
     }
 
@@ -435,6 +438,13 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 }
 
 @media (max-width: 992px) {
+    #table-of-contents {
+        overflow-y: visible;
+        overflow-x: visible;
+        max-height: none;
+        position: relative;
+    }
+
     .navbar-header {
         float: none;
     }
