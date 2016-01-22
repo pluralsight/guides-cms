@@ -107,8 +107,6 @@ function create_toc_from_headers(headers) {
         $(hdr).attr('style', 'margin-top: -97px; padding-top: 97px;');
         $(hdr).attr('id', url_content);
         toc_html += tag
-
-        console.log(hdr.textContent);
     }
 
     toc_html += "</ul>";
