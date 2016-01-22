@@ -1,11 +1,13 @@
+"use strict";
+
 /* Read headers from article as jquery object and put TOC in div_to_fill as
  * jquery object. */
 function populate_table_of_contents(article, div_to_fill) {
-    headers = find_all_headers_without_ids(article);
+    var headers = find_all_headers_without_ids(article);
     if (!headers.length) {
         div_to_fill.css("display", "none");
     } else {
-        new_toc = create_toc_from_headers(headers);
+        var new_toc = create_toc_from_headers(headers);
         $(new_toc).appendTo(div_to_fill);
     }
 }
@@ -30,15 +32,13 @@ function reorder_columns () {
 
 function filter() {
     var stacks = document.getElementById("stacks");
-
     var selected_stacks = [];
-    for (ii=0; ii < stacks.length; ii++) {
+
+    for (var ii=0; ii < stacks.length; ii++) {
         if (stacks[ii].selected) {
             selected_stacks.push(stacks[ii].value);
         }
     }
-
-    console.log('Selected ' + selected_stacks);
 
     $('.article-teaser').each(function(article_idx) {
         if (should_show($(this), selected_stacks)) {
@@ -55,7 +55,6 @@ function should_show(article, selected_stacks) {
         return true;
     }
 
-
     /* User picked specific stacks and this article has no stacks so hide
         it. */
     if (!$(article).find('.stack').length) {
@@ -64,7 +63,7 @@ function should_show(article, selected_stacks) {
 
     var show = false;
     $(article).find('.stack').each(function(stack_idx) {
-        for (ii=0; ii < selected_stacks.length; ii++) {
+        for (var ii=0; ii < selected_stacks.length; ii++) {
             if (this.textContent == selected_stacks[ii]) {
                 show = true;
                 break;
@@ -78,7 +77,7 @@ function should_show(article, selected_stacks) {
 /* Pass in a jquery div element and get list of jquery header elements back
  * that are inside the given div. */
 function find_all_headers_without_ids(div) {
-    headers = [];
+    var headers = [];
     $(div).find("h1, h2, h3, h4, h5, h6").each(function(header_idx) {
         if (typeof $(this).attr("id") === "undefined") {
             headers.push(this);
@@ -92,7 +91,7 @@ function find_all_headers_without_ids(div) {
 function create_toc_from_headers(headers) {
     var toc_html = "<ul>";
 
-    for (ii=0; ii < headers.length; ii++) {
+    for (var ii=0; ii < headers.length; ii++) {
         var hdr = headers[ii];
         var url_content = hdr.textContent.replace(/ /g, "-").toLowerCase();
         var re = /h(\d)/i;
