@@ -341,10 +341,9 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     margin-top: 7px;
 }
 
-.nav-footer h6 {
+.nav-footer li h6 {
     color: #ffffff;
     font-size: 14px;
-    padding-left: 30px;
     line-height: 17px;
 }
 
