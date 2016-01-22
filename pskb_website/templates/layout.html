@@ -50,13 +50,16 @@
 
       <div class="header">
 
-       {% if not g.write_active %}
-        <h2 class="tagline gradient-text">A community of developers bringing knowledge to the world</h2>
-       {% else %}
-        <h2 class="tagline gradient-text">You have unique expertise and this is where to share it.</h2>
-       {% endif %}
+        {% block header %}
+            {% if not g.write_active %}
+                <p class="tagline gradient-text">A community of developers bringing knowledge to the world</p>
+            {% else %}
+                <p class="tagline gradient-text">You have unique expertise and this is where to share it.</p>
+            {% endif %}
 
-       <hr>
+            <hr>
+
+        {% endblock %}
 
         {% with messages = get_flashed_messages(category_filter=['info', 'message']) %}
             {% for message in messages %}
