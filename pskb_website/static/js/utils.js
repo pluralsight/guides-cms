@@ -1,3 +1,15 @@
+/* Read headers from article as jquery object and put TOC in div_to_fill as
+ * jquery object. */
+function populate_table_of_contents(article, div_to_fill) {
+    headers = find_all_headers_without_ids(article);
+    if (!headers.length) {
+        div_to_fill.css("display", "none");
+    } else {
+        new_toc = create_toc_from_headers(headers);
+        $(new_toc).appendTo(div_to_fill);
+    }
+}
+
 /* Workaround for Safari bug preventing using bootstrap pull/push classes
  * on fixed positioned columns. We want to reorder the table of contents to
  * be on top of the article on small-ish screens.
