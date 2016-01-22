@@ -2,6 +2,7 @@
 Caching utilities
 """
 
+import functools
 import urlparse
 
 from . import app
@@ -23,6 +24,22 @@ else:
                                 password=url.password)
 
 
+def verify_redis_instance(func):
+    """
+    Decorator to verify redis instance exists and return None if missing redis
+    """
+
+    @functools.wraps(func)
+    def _wrapper(*args, **kwargs):
+        if redis_obj is None:
+            return None
+
+        return func(*args, **kwargs)
+
+    return _wrapper
+
+
+@verify_redis_instance
 def read_article(path, branch):
     """
     Look for article pointed to by given path and branch in cache
@@ -32,12 +49,10 @@ def read_article(path, branch):
     :returns: JSON representation of article or None if not found in cache
     """
 
-    if redis_obj is None:
-        return None
-
     return redis_obj.get((path, branch))
 
 
+@verify_redis_instance
 def save_article(article):
     """
     Save article JSON in cache
@@ -45,8 +60,5 @@ def save_article(article):
     :param article: model.article.Article object
     :returns: None
     """
-
-    if redis_obj is None:
-        return
 
     redis_obj.set((article.path, article.branch), article.to_json())
