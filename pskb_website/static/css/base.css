@@ -453,6 +453,7 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
         overflow-x: visible;
         max-height: none;
         position: relative;
+        text-align: center;
     }
 
     .navbar-header {
