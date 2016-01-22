@@ -35,6 +35,7 @@ h1, h2, h3, h4, h5, h6 {
     overflow-x: visible;
     font-size: 12px;
     line-height: 1.7em;
+    border-bottom: 1px solid #eee;
 }
 
 #table-of-contents h6 {
