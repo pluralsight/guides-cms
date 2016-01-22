@@ -16,6 +16,10 @@
 {% block header %}
     <h1 id="title" class="tagline gradient-text">{{article.title}}</h1>
         <h4 id="author"><small>written by <a href="/user/{{article.author_name}}">{{article.author_real_name if article.author_real_name else article.author_name}}</a></small></h4>
+
+    {% if article.stacks %}
+        <h5 id="related"><small>Related to {{article.stacks|join(',')}}</small></h5>
+    {% endif %}
     <hr>
 {% endblock %}
 
@@ -45,10 +49,6 @@
     </div> <!-- column -->
 
     <div id="article" class="col-md-8">
-        {% if article.stacks %}
-            <h5 id="related"><small>Related to {{article.stacks|join(',')}}</small></h5>
-        {% endif %}
-
         <p> {{article.content|safe}} </p>
         <p>
             {% if allow_edits %}
