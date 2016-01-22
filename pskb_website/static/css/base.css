@@ -26,7 +26,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #article {
- padding-left: 30px;
+    padding-left: 30px;
+    /* Fix to allow bootstrap-select dropdown menu on article sidebar to show
+     * up on top of article. The dropdown menu is in a column with "affix" and
+     * that seems to obscure the z-index for the dropdown. */
+    z-index: -1;
 }
 
 #table-of-contents {
