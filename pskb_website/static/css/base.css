@@ -438,6 +438,8 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 }
 
 @media (max-width: 992px) {
+    /* There's corresponding code on article.html to reorder the table of
+     * contents on this size screen. */
     #table-of-contents {
         overflow-y: visible;
         overflow-x: visible;
@@ -484,5 +486,13 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     .navbar-inverse .navbar-nav > .active > a:hover,
     .navbar-inverse .navbar-nav > .active > a:focus {
         background-color: transparent;
+    }
+
+    .navbar-left-index {
+        position: relative;
+    }
+
+    .navbar-left-article {
+        position: relative;
     }
 }

@@ -37,14 +37,7 @@
         </div><!-- affix -->
     </div> <!-- column -->
 
-    <div class="col-md-2 col-md-push-8">
-        <div id="table-of-contents" class="affix">
-            <h6>Table of Contents</h6>
-            <hr>
-        </div>
-    </div>
-
-    <div id="article" class="col-md-8 col-md-pull-2">
+    <div id="article" class="col-md-8">
         <h1 id="title">{{article.title}}</h1>
         <h4 id="author"><small>written by <a href="/user/{{article.author_name}}">{{article.author_real_name if article.author_real_name else article.author_name}}</a></small></h4>
 
@@ -85,6 +78,14 @@
 
         <div id="disqus_thread"></div>
     </div> <!-- middle column -->
+
+    <div id="toc-column" class="col-md-2">
+        <div id="table-of-contents" class="affix">
+            <h6>Table of Contents</h6>
+            <hr>
+        </div>
+    </div>
+
 </div> <!-- row -->
 
 <script>
@@ -96,6 +97,9 @@
         new_toc = create_toc_from_headers(headers);
         $(new_toc).appendTo(toc);
     }
+
+    $(window).resize(reorder_columns);
+    $(document).ready(reorder_columns);
 </script>
 
 <script>
