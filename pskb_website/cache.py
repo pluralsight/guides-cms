@@ -23,6 +23,12 @@ else:
         redis_obj = redis.Redis(host=url.hostname, port=url.port,
                                 password=url.password)
 
+# Local cache of etags from API requests for file listing. Saving these here
+# b/c they are small and can be kept in RAM without having to do http request
+# to redis.
+# Keyed by (repo, sha, filename)
+FILE_LISTING_ETAGS = {}
+
 
 def verify_redis_instance(func):
     """
@@ -62,3 +68,61 @@ def save_article(article):
     """
 
     redis_obj.set((article.path, article.branch), article.to_json())
+
+
+# These getter/setters only exist so we can move the cache location of these
+# items transparently of the other layers.
+
+def read_file_listing_etag(key):
+    """
+    Read etag from cache to do a file listing conditional API request
+
+    :param key: (repo, sha, filename)
+    :returns: etag from cache or None if no etag found
+    """
+
+    try:
+        return FILE_LISTING_ETAGS[key]
+    except KeyError:
+        return None
+
+
+def save_file_listing_etag(key, etag):
+    """
+    :param key: (repo, sha, filename)
+    :param etag: etag as returned by API request header
+    :returns: None
+    """
+
+    FILE_LISTING_ETAGS[key] = etag
+
+
+@verify_redis_instance
+def read_file_listing(key):
+    """
+    Read list of files from cache
+
+    :param key: (repo, sha, filename)
+    :returns: Iterable of file tuples or None
+
+    The key should be the same one used to save etag with
+    :func:`.save_file_listing_etag`.
+    """
+
+    return redis_obj.get(key)
+
+
+@verify_redis_instance
+def save_file_listing(key, files):
+    """
+    Save list of files to cache
+
+    :param key: (repo, sha, filename)
+    :param files: Iterable of file tuples
+    :returns: None
+
+    The key should be the same one used to save etag with
+    :func:`.save_file_listing_etag`.
+    """
+
+    redis_obj.set(key, files)
