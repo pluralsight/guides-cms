@@ -21,8 +21,10 @@ function reorder_columns () {
     /* This number corresponds to the bootstrap break point for large devices. */
     if (grid_width < 992) {
         $('#article').before($('#toc-column'));
+        $('#article').after($('#share-column'));
     } else {
         $('#article').after($('#toc-column'));
+        $('#article').before($('#share-column'));
     }
 }
 
