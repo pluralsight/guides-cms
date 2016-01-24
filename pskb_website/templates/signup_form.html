@@ -16,7 +16,7 @@
                  -->
                 <div class="form-group form-group-sm" style="display: block;">
                     {{ form.hidden_tag() }}
-                    <select id="stacks" name="stacks" class="form-control selectpicker dropup" data-header="Scroll for additional stacks" data-size="6"  data-dropup-auto="false" title="Your favorite topics" multiple>
+                    <select id="stacks" name="stacks" class="form-control selectpicker dropup" data-header="Scroll for additional stacks" data-size="6" data-selected-text-format="count > 0" data-dropup-auto="false" title="Your favorite topics" multiple>
                         {% for stack in form.stacks %}
                             {{ stack() }}
                         {% endfor %}
