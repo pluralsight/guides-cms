@@ -46,25 +46,29 @@ def get_available_articles(published=None, repo_path=None):
         repo_path = main_article_path()
 
     for file_details in remote.files_from_github(repo_path, ARTICLE_FILENAME):
-        path_info = parse_full_path(file_details.path)
-        json_str = read_meta_data_for_article_path(file_details.path)
+        # We're only caching published articles right now so don't waste a
+        # roundtrip to cache if that's not what caller wants.
+        if published:
+            article = read_article_from_cache(file_details.path)
 
-        # No meta data file available
-        if json_str is None:
-            # Cannot do anything here b/c we do not know the title.
-            app.logger.error('Failed reading meta data for "%s", file_details: %s',
-                             path_info, file_details)
-            continue
+        if article is None:
+            path_info = parse_full_path(file_details.path)
+            json_str = read_meta_data_for_article_path(file_details.path)
+            if json_str is None:
+                # Cannot do anything here b/c we do not know the title.
+                app.logger.error('Failed reading meta data for "%s", file_details: %s',
+                                 path_info, file_details)
+                continue
 
-        try:
-            article = Article.from_json(json_str)
-        except ValueError:
-            app.logger.error('Failed parsing json meta data for "%s", file_details: %s, json: %s',
-                             path_info, file_details, json_str)
-            continue
+            try:
+                article = Article.from_json(json_str)
+            except ValueError:
+                app.logger.error('Failed parsing json meta data for "%s", file_details: %s, json: %s',
+                                 path_info, file_details, json_str)
+                continue
 
-        article.filename = path_info.filename
-        article.repo_path = path_info.repo
+            article.filename = path_info.filename
+            article.repo_path = path_info.repo
 
         if published is None or article.published == published:
             yield article
@@ -106,24 +110,12 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
     if not path.endswith(FILE_EXTENSION):
         slash = '' if path.endswith('/') else '/'
         full_path = '%s%s%s' % (full_path, slash, ARTICLE_FILENAME)
-        cache_path = path
-    else:
-        # Don't cache with the filename b/c it just takes up cache space and
-        # right now it's always the same.
-        cache_path = ''.join(path.split('/')[:-1])
 
-    json_str = cache.read_article(cache_path, branch)
-    if json_str is not None:
-        article = Article.from_json(json_str)
-
-        # Only caching rendered text b/c that's the 'front-end' of the site and
-        # is more important to be fast.
-        if rendered_text:
-            return article
-
-        details = remote.file_details_from_github(full_path, branch)
-        if details is not None and details.text is not None:
-            article.content = details.text
+    # Only caching rendered text of articles since that's the 'front-end' of
+    # the site.
+    if rendered_text:
+        article = read_article_from_cache(path, branch)
+        if article is not None:
             return article
 
     details = remote.read_file_from_github(full_path, branch, rendered_text)
@@ -160,6 +152,27 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
                          path_info, full_path, branch)
 
     return article
+
+
+def read_article_from_cache(path, branch='master'):
+    """
+    Read article object from cache
+
+    :param path: Path to read file from github i.e. path it was cached with
+    :param branch: Branch to read file from
+    :returns: Article object if found in cache or None
+    """
+
+    if path.endswith(FILE_EXTENSION):
+        # Don't cache with the filename b/c it just takes up cache space and
+        # right now it's always the same.
+        path = path.split('/')[-2]
+
+    json_str = cache.read_article(path, branch)
+    if json_str is None:
+        return None
+
+    return Article.from_json(json_str)
 
 
 def save_article(title, path, message, new_content, author_name, email, sha,
