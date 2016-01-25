@@ -291,7 +291,7 @@ def contents_url_from_path(path):
     Get github API url for contents of file from full path
 
     :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
-    :returns: Url suitable for a content call with github API
+    :returns: URL suitable for a content call with github API
     """
 
     owner, repo, file_path = split_full_file_path(path)
@@ -395,3 +395,40 @@ def check_rate_limit():
         return None
 
     return resp.data
+
+
+def remove_file_from_github(path, message, name, email, branch):
+    """
+    Remove file from github repo
+
+    :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :param message: Commit message to remove file with
+    :param name: Name of author who wrote file
+    :param email: Email address of author
+    :param branch: Name of branch to delete file from
+    :returns: True if file was removed or False otherwise
+
+    Note the file is only removed from the repository, not the history of the
+    file.
+    """
+
+    # Read most recent sha which is required to remove file
+    details = file_details_from_github(path, branch)
+    if details is None:
+        return False
+
+    url = contents_url_from_path(path)
+    commit_info = {'sha': details.sha, 'branch': branch, 'message': message,
+                   'author': {'name': name, 'email': email}}
+
+    # The flask-oauthlib API expects the access token to be in a tuple or a
+    # list.  Not exactly sure why since the underlying oauthlib library has a
+    # separate kwargs for access_token.  See flask_oauthlib.client.make_client
+    # for more information.
+    token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+    resp = github.delete(url, data=commit_info, format='json', token=token)
+    if resp.status != 200:
+        log_error('Failed removing file', url, resp, file=path)
+        return False
+
+    return True

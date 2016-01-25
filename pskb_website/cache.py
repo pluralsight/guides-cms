@@ -50,3 +50,14 @@ def save_article(article):
         return
 
     redis_obj.set((article.path, article.branch), article.to_json())
+
+
+def delete_article(article):
+    """
+    Delete article from cache
+
+    :param article: model.article.Article object
+    :returns: None
+    """
+
+    redis_obj.delete((article.path, article.branch))
