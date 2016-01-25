@@ -103,6 +103,12 @@
 </div> <!-- row -->
 
 <script type="text/javascript">
+    {% if allow_delete %}
+        $('#delete-confirmation').on('shown.bs.modal', function () {
+            $('#confirm-box').focus();
+        });
+    {% endif %}
+
     populate_table_of_contents($('#article'), $('#table-of-contents'));
     $(window).resize(reorder_columns);
     $(document).ready(reorder_columns);
