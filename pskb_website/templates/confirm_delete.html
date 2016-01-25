@@ -1,0 +1,21 @@
+<div class="modal fade" id="delete-confirmation" tabindex="-1" role="dialog" aria-labelledby="deleteForm">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Type DELETE to confirm article deletion</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group form-group-sm">
+            <input id="confirm-box" name="delete" type="text" class="form-control" />
+            <input id="article-path" name="path" type="hidden" value="{{article.path}}"/>
+            <input id="article-branch" name="branch" type="hidden" value="{{article.branch}}"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" onclick="confirm_delete()">Delete article</button>
+      </div>
+    </div>
+  </div>
+</div>
