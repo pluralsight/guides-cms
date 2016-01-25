@@ -45,9 +45,26 @@ def get_available_articles(published=None, repo_path=None):
     if repo_path is None:
         repo_path = main_article_path()
 
+        if published:
+            files = cache.read_file_listing('published')
+            if files is not None:
+                for json_str in json.loads(files):
+                    try:
+                        yield Article.from_json(json_str)
+                    except ValueError:
+                        app.logger.error('Failed parsing json meta data from cache "%s"',
+                                         json_str)
+                        continue
+
+                raise StopIteration
+
+    files_to_cache = []
+
     for file_details in remote.files_from_github(repo_path, ARTICLE_FILENAME):
         # We're only caching published articles right now so don't waste a
         # roundtrip to cache if that's not what caller wants.
+        article = None
+
         if published:
             article = read_article_from_cache(file_details.path)
 
@@ -72,6 +89,12 @@ def get_available_articles(published=None, repo_path=None):
 
         if published is None or article.published == published:
             yield article
+
+        if published and article.published:
+            files_to_cache.append(article.to_json())
+
+    if files_to_cache:
+        cache.save_file_listing('published', json.dumps(files_to_cache))
 
 
 def get_articles_for_author(author_name, published=None):

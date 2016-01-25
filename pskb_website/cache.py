@@ -103,7 +103,7 @@ def read_file_listing(key):
     Read list of files from cache
 
     :param key: (repo, sha, filename)
-    :returns: Iterable of file tuples or None
+    :returns: Iterable of files
 
     The key should be the same one used to save etag with
     :func:`.save_file_listing_etag`.
@@ -118,7 +118,7 @@ def save_file_listing(key, files):
     Save list of files to cache
 
     :param key: (repo, sha, filename)
-    :param files: Iterable of file tuples
+    :param files: Iterable of files
     :returns: None
 
     The key should be the same one used to save etag with
