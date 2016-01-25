@@ -102,7 +102,7 @@
 
 </div> <!-- row -->
 
-<script>
+<script type="text/javascript">
     populate_table_of_contents($('#article'), $('#table-of-contents'));
     $(window).resize(reorder_columns);
     $(document).ready(reorder_columns);
@@ -123,7 +123,7 @@
 
 </script>
 
-<script>
+<script type="text/javascript">
     var disqus_config = function () {
         this.page.url = "{{canonical_url}}"; 
         this.page.identifier = "{{article.path}}"; 
@@ -139,7 +139,7 @@
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
-<script>(function(d, s, id) {
+<script type="text/javascript">(function(d, s, id) {
 var js, fjs = d.getElementsByTagName(s)[0];
 if (d.getElementById(id)) return;
 js = d.createElement(s); js.id = id;
