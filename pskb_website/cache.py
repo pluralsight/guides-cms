@@ -132,3 +132,15 @@ def save_file_listing(key, files):
     """
 
     redis_obj.set(key, files)
+
+
+@verify_redis_instance
+def delete_article(article):
+    """
+    Delete article from cache
+
+    :param article: model.article.Article object
+    :returns: None
+    """
+
+    redis_obj.delete((article.path, article.branch))

@@ -344,7 +344,7 @@ def branch_or_save_article(title, path, message, content, author_name, email,
 def save_article_meta_data(article, author_name, email, branch=None):
     """
     :param article: Article object
-    :param name: Name of author who wrote article
+    :param author_name: Name of author who wrote article
     :param email: Email address of author
     :param branch: Optional branch to save metadata, if not given
                    article.branch will be used
@@ -443,6 +443,48 @@ def save_branched_article_meta_data(article, author_name, email):
     # metadata from showing in up in merges. We only want to deal with article
     # text for merges.
     return save_article_meta_data(orig_article, author_name, email)
+
+
+def delete_article(article, message, name, email):
+    """
+    Delete article from repository
+
+    :param article: Article object to remove
+    :param message: Message to include as commit when removing article
+    :param name: Name of user deleting article
+    :param email: Email address of user deleting article
+    :returns: True if article was successfully removed or False otherwise
+
+    This removes the article from the repository but not the history of
+    the file.
+
+    Only original author can remove file from master branch.  Articles can be
+    removed from non-master branches only by the user who created that branch.
+    """
+
+    # User didn't write original article and user isn't trying to remove from
+    # their own branch
+    if name != article.author_name and article.branch != name:
+        app.logger.error('Cannot delete article user does not own path: %s, author: %s deleter: %s',
+                         article.full_path, article.author_name, name)
+        return False
+
+    # First remove from cache even if removing the actual file fails this will
+    # be OK b/c we'll just end up re-caching it.
+    cache.delete_article(article)
+
+    # Remove the meta data file next since that's the most important for
+    # us finding an article from the API.
+    meta_data_file = meta_data_path_for_article_path(article.full_path)
+
+    if not remote.remove_file_from_github(meta_data_file, message, name, email,
+                                          article.branch):
+        return False
+    elif not remote.remove_file_from_github(article.full_path, message,
+                                            name, email, article.branch):
+        return False
+
+    return True
 
 
 def parse_full_path(path):
