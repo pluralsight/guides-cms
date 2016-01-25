@@ -333,7 +333,6 @@ def delete():
     path = request.form['path']
     branch = request.form['branch']
 
-    import pdb;pdb.set_trace()
     article = models.read_article(path, rendered_text=False, branch=branch)
 
     if article is None:
