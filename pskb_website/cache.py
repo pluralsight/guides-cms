@@ -44,6 +44,12 @@ def verify_redis_instance(func):
 
     return _wrapper
 
+# FIXME: read_article and save_article should take arguments from same level of
+# abstraction. This setup is weird b/c this layer knows how to serialize an
+# article and the internal structure such as .path and .branch but then
+# read_article just gets back a json string.
+# - Maybe read_article should turn the json back into an article object at
+#   least then the layers are similiar.
 
 @verify_redis_instance
 def read_article(path, branch):

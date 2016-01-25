@@ -12,6 +12,11 @@ from .. import remote
 from .. import cache
 
 
+# FIXME: This file is fairly modular to the outside world but internally it's
+# very fragmented and the layers of abstraction are all mixed up.  Needs a lot
+# of TLC...
+
+
 FILE_EXTENSION = '.md'
 ARTICLE_FILENAME = 'article%s' % (FILE_EXTENSION)
 ARTICLE_METADATA_FILENAME = 'details.json'
