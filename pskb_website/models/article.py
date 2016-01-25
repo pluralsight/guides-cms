@@ -413,13 +413,16 @@ def meta_data_path_for_article_path(full_path):
     return '%s/%s' % (meta_data_path, ARTICLE_METADATA_FILENAME)
 
 
-def save_branched_article_meta_data(article, author_name, email):
+def save_branched_article_meta_data(article, author_name, email,
+                                    add_branch=True):
     """
     Save metadata for branched article
 
     :param article: Article object with branch attribute set to branch name
     :param name: Name of author who wrote branched article
     :param email: Email address of branched article author
+    :param add_branch: True if article should be saved as a branch False if
+                       article should be removed as a branch
     :returns: True if data is saved, False otherwise
 
     Metadata for branched articles should be identical to the original article.
@@ -434,10 +437,17 @@ def save_branched_article_meta_data(article, author_name, email):
                                 branch='master', repo_path=article.repo_path)
 
     # Nothing to save, we're already tracking this branch
-    if article.branch in orig_article.branches:
-        return True
+    if add_branch:
+        if article.branch in orig_article.branches:
+            return True
 
-    orig_article.branches.append(article.branch)
+        orig_article.branches.append(article.branch)
+    else:
+        try:
+            orig_article.branches.remove(article.branch)
+        except ValueError:
+            # Branch isn't being tracked anyway so nothing to remove
+            return True
 
     # Note we don't ever change metadata on the branches. This keeps the
     # metadata from showing in up in merges. We only want to deal with article
@@ -473,16 +483,27 @@ def delete_article(article, message, name, email):
     # be OK b/c we'll just end up re-caching it.
     cache.delete_article(article)
 
-    # Remove the meta data file next since that's the most important for
-    # us finding an article from the API.
-    meta_data_file = meta_data_path_for_article_path(article.full_path)
+    # We don't save meta data for branches so either remove meta data file or
+    # update original articles meta data to remove the branch link.
+    if article.branch == 'master':
+        # Remove the meta data file next since that's the most important for
+        # us finding an article from the API.
+        meta_data_file = meta_data_path_for_article_path(article.full_path)
 
-    if not remote.remove_file_from_github(meta_data_file, message, name, email,
-                                          article.branch):
+        if not remote.remove_file_from_github(meta_data_file, message, name,
+                                              email, article.branch):
+            return False
+    else:
+        if not save_branched_article_meta_data(article, name, email,
+                                               add_branch=False):
+            return False
+
+    if not remote.remove_file_from_github(article.full_path, message,
+                                          name, email, article.branch):
         return False
-    elif not remote.remove_file_from_github(article.full_path, message,
-                                            name, email, article.branch):
-        return False
+
+    # FIXME: Need to update the cache reference to the original article so we
+    # don't think this branch still exists in cache.
 
     return True
 
