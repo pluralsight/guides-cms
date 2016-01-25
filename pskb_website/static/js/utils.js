@@ -113,3 +113,26 @@ function create_toc_from_headers(headers) {
     toc_html += "</ul>";
     return toc_html;
 }
+
+
+/* Confirm user typed DELETE in form and submit request for article deletion
+ * This function works with confirm_deletion.html form.
+ */
+function confirm_delete() {
+    var confirm_box = document.getElementById("confirm-box");
+
+    if (confirm_box.value != 'DELETE') {
+        return;
+    }
+
+    var form = document.createElement("form");
+    form.action = "/delete/";
+    form.method = "POST";
+
+    var path = document.getElementById('article-path');
+    form.appendChild(path.cloneNode());
+
+    var branch = document.getElementById('article-branch');
+    form.appendChild(branch.cloneNode());
+    form.submit();
+}

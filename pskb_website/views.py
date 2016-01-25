@@ -208,6 +208,11 @@ def review(article_path):
     else:
         allow_edits = False
 
+    if login == branch or article.author_name == login:
+        allow_delete = True
+    else:
+        allow_delete = False
+
     # Use http as canonical protocol for url to avoid having two separate
     # comment threads for an article. Disqus uses this variable to save
     # comments.
@@ -218,6 +223,7 @@ def review(article_path):
     return render_template('article.html',
                            article=article,
                            allow_edits=allow_edits,
+                           allow_delete=allow_delete,
                            canonical_url=canonical_url,
                            form=form)
 
@@ -313,6 +319,33 @@ def save():
         return redirect(url)
 
     flash('Failed creating article on github', category='error')
+    return redirect(url_for('index'))
+
+
+@app.route('/delete/', methods=['POST'])
+@login_required
+def delete():
+    user = models.find_user(session['login'])
+    if user is None:
+        flash('Cannot delete unless logged in', category='error')
+        return render_template('index.html'), 404
+
+    path = request.form['path']
+    branch = request.form['branch']
+
+    import pdb;pdb.set_trace()
+    article = models.read_article(path, rendered_text=False, branch=branch)
+
+    if article is None:
+        flash('Cannot find article to delete', category='error')
+        return redirect(url_for('index'))
+
+    if not models.delete_article(article, 'Removing article', user.login,
+                                 user.email):
+        flash('Failed removing article', category='error')
+    else:
+        flash('Article successfully deleted', category='info')
+
     return redirect(url_for('index'))
 
 
