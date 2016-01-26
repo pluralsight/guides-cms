@@ -108,10 +108,10 @@ def authorized():
         if 'name' not in session:
             session['name'] = user.login
 
-    app.logger.debug('Name: "%s", login: "%s" logged in with: "%s"',
-                     '' if user.name is None else user.name,
-                     '' if user.login is None else user.login,
-                     session['github_token'])
+    app.logger.info('Name: "%s", login: "%s" logged in with: "%s"',
+                    '' if user.name is None else user.name,
+                    '' if user.login is None else user.login,
+                    session['github_token'])
 
     url = session.pop('previously_requested_page', None)
     if url is not None:
