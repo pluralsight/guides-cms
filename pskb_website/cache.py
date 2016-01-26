@@ -7,6 +7,9 @@ import urlparse
 
 from . import app
 
+# 5 minutes
+DEFAULT_CACHE_TIMEOUT = 5 * 60
+
 url = None
 redis_obj = None
 
@@ -60,17 +63,23 @@ def read_article(path, branch):
 
 
 @verify_redis_instance
-def save_article(path, branch, article):
+def save_article(path, branch, article, timeout=DEFAULT_CACHE_TIMEOUT):
     """
     Save article JSON in cache
 
     :param path: Short path to article not including repo information
     :param branch: Name of branch article belongs to
     :param article: Serialized representation of article to store in cache
+    :param timeout: Timeout in seconds to cache article, use None for no
+                    timeout
     :returns: None
     """
 
-    redis_obj.set((path, branch), article)
+    key = (path, branch)
+    redis_obj.set(key, article)
+
+    if timeout is not None:
+        redis_obj.expire(key, timeout)
 
 
 # These getter/setters only exist so we can move the cache location of these
@@ -116,12 +125,14 @@ def read_file_listing(key):
 
 
 @verify_redis_instance
-def save_file_listing(key, files):
+def save_file_listing(key, files, timeout=DEFAULT_CACHE_TIMEOUT):
     """
     Save list of files to cache
 
     :param key: (repo, sha, filename)
     :param files: Iterable of files
+    :param timeout: Timeout in seconds to cache list, use None for no
+                    timeout
     :returns: None
 
     The key should be the same one used to save etag with
@@ -129,6 +140,9 @@ def save_file_listing(key, files):
     """
 
     redis_obj.set(key, files)
+
+    if timeout is not None:
+        redis_obj.expire(key, timeout)
 
 
 @verify_redis_instance
