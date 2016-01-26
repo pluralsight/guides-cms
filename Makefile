@@ -1,8 +1,8 @@
 error_check:
-	pylint -E `find . -iname '*.py' -o -path ./migrations -prune`
+	pylint -E `find ./pskb_website -iname '*.py' -o -path ./migrations -prune`
 
 full_lint:
-	pylint --disable=bad-continuation `find . -iname '*.py' -o -path ./migrations -prune`
+	pylint --disable=bad-continuation `find ./pskb_website -iname '*.py' -o -path ./migrations -prune`
 
 clean:
 	find . -name "*.pyc" -delete
