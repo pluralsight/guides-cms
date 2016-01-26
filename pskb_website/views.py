@@ -373,3 +373,12 @@ def subscribe():
                 flash('%s - %s' % (input_name, error), category='error')
 
         return redirect(request.referrer)
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('error.html'), 500
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('error.html'), 404

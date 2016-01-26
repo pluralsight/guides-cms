@@ -144,7 +144,7 @@ a:focus {
 }
 
 /* Give a bit of breathing room to surrounding area of message boxes */
-.bg-info, .bg-danger {
+.bg-info, .bg-danger, .bg-warning {
     padding: 10px;
 }
 

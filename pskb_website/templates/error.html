@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h1>Oops</h1>
+<p class="bg-warning">
+    Looks you've run into an error.  Rest assured our engineers are looking
+    into the problem.  In the meantime, how about
+    <a href="https://www.pluralsight.com/browse">browsing for a great Pluralsight course</a>
+    or <a href="{{url_for('index')}}">taking a look at our published tutorials</a>?
+</p>
+
+{% endblock %}
