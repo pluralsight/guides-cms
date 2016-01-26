@@ -44,12 +44,6 @@ def verify_redis_instance(func):
 
     return _wrapper
 
-# FIXME: read_article and save_article should take arguments from same level of
-# abstraction. This setup is weird b/c this layer knows how to serialize an
-# article and the internal structure such as .path and .branch but then
-# read_article just gets back a json string.
-# - Maybe read_article should turn the json back into an article object at
-#   least then the layers are similiar.
 
 @verify_redis_instance
 def read_article(path, branch):
@@ -58,22 +52,25 @@ def read_article(path, branch):
 
     :param path: Short path to article not including repo information
     :param branch: Name of branch article belongs to
-    :returns: JSON representation of article or None if not found in cache
+    :returns: Serialized representation of article stored in cache or None if
+              not found in cache
     """
 
     return redis_obj.get((path, branch))
 
 
 @verify_redis_instance
-def save_article(article):
+def save_article(path, branch, article):
     """
     Save article JSON in cache
 
-    :param article: model.article.Article object
+    :param path: Short path to article not including repo information
+    :param branch: Name of branch article belongs to
+    :param article: Serialized representation of article to store in cache
     :returns: None
     """
 
-    redis_obj.set((article.path, article.branch), article.to_json())
+    redis_obj.set((path, branch), article)
 
 
 # These getter/setters only exist so we can move the cache location of these

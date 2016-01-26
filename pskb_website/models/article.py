@@ -3,13 +3,13 @@ Article related model API
 """
 
 import collections
-import copy
 import json
 
 from .. import app
-from .. import utils
-from .. import remote
 from .. import cache
+from . import lib
+from .. import remote
+from .. import utils
 
 
 # FIXME: This file is fairly modular to the outside world but internally it's
@@ -96,7 +96,7 @@ def get_available_articles(published=None, repo_path=None):
             yield article
 
         if published and article.published:
-            files_to_cache.append(article.to_json())
+            files_to_cache.append(lib.to_json(article))
 
     if files_to_cache:
         cache.save_file_listing('published', json.dumps(files_to_cache))
@@ -172,7 +172,8 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
         # We don't have a ton of cache space so reserve it for more
         # high-traffic data like published articles.
         if article.published:
-            cache.save_article(article)
+            cache.save_article(article.path, article.branch,
+                               lib.to_json(article))
     else:
         # We cannot properly show an article without metadata.
         article = None
@@ -368,7 +369,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     # stored in the path and article.
     exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', 'path',
                      'last_updated')
-    json_content = article.to_json(exclude_attrs=exclude_attrs)
+    json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
     message = 'Updating article metadata for %s' % (article.title)
 
@@ -601,28 +602,6 @@ class Article(object):
             setattr(article, attr, value)
 
         return article
-
-    def to_json(self, exclude_attrs=None):
-        """
-        Return json representation of article
-
-        :param exclude_attrs: List of attributes to exclude from serialization
-        :returns: json representation of article as a string
-        """
-
-        if exclude_attrs is None:
-            exclude_attrs = []
-
-        # This is very simple by design. We don't have a lot of crazy nested
-        # data here so just do the bare minimum without over-engineering.
-        dict_ = copy.deepcopy(self.__dict__)
-        for attr in exclude_attrs:
-            del dict_[attr]
-
-        # Print it to a string in a pretty format. Whitespace doesn't matter so
-        # might as well make it more readable.
-        return json.dumps(dict_, sort_keys=True, indent=4,
-                          separators=(',', ': '))
 
     @property
     def full_path(self):
