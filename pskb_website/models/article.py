@@ -278,6 +278,7 @@ def branch_article(article, message, new_content, author_name, email,
     """
 
     branch = author_name
+    article_sha = article.sha
 
     # Create branch if we needed to
     repo_sha = remote.read_branch(article.repo_path, branch)
@@ -291,8 +292,20 @@ def branch_article(article, message, new_content, author_name, email,
         if not remote.create_branch(article.repo_path, branch, repo_sha):
             return None
 
+    # Branch already exists
+    else:
+        # Try to read this article from the branch to update the SHA.
+        # This ensures we have the most up-to-date SHA for the file we're
+        # modifying, which is required by github API. For example, this article
+        # might already exist on the branch but the article.sha is the SHA for
+        # the ORIGINAL article, not branch.
+        branch_file = remote.file_details_from_github(article.full_path,
+                                                      branch=branch)
+        if branch_file is not None:
+            article_sha = branch_file.sha
+
     return save_article(article.title, article.path, message, new_content,
-                        author_name, email, article.sha, branch=branch,
+                        author_name, email, article_sha, branch=branch,
                         image_url=image_url, author_real_name=author_real_name,
                         stacks=article.stacks)
 
