@@ -223,12 +223,21 @@ def review(article_path):
 
     form = forms.SignupForm()
 
+    # Filter out the current branch from the list of branches
+    branches = [b for b in article.branches if b != branch]
+
+    # Always include a link to original article if this is a branched version
+    if branch != 'master':
+        branches.append('master')
+
     return render_template('article.html',
                            article=article,
                            allow_edits=allow_edits,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
-                           form=form)
+                           form=form,
+                           branches=branches,
+                           visible_branch=branch)
 
 # URL for articles from hackhands blog -- these articles are not editable.
 @app.route('/partner/<path:article_path>', methods=['GET'])
