@@ -149,7 +149,9 @@ def write(article_path):
     selected_stack = None
 
     if article_path is not None:
-        article = models.read_article(article_path, rendered_text=False)
+        branch = request.args.get('branch', 'master')
+        article = models.read_article(article_path, rendered_text=False,
+                                      branch=branch)
 
         if article.sha is None:
             article.sha = ''
