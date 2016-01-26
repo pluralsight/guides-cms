@@ -98,6 +98,9 @@ def authorized():
     session['github_token'] = (resp['access_token'], '')
 
     user = models.find_user()
+    if user is None:
+        flash('Unable to read user from Github API')
+        return redirect(url_for('index'))
 
     if user.name:
         session['name'] = user.name
