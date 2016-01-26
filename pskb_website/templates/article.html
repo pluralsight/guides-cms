@@ -79,12 +79,19 @@
             <small><a href="https://www.pluralsight.com/terms" />Content Terms</a></small>
         {% endif %}
 
-        {% if article.branches %}
-            <h3>Community suggestions</h3>
+        {% if branches %}
+            <h4>Community suggestions</h4>
             <ul>
-                {% for branch in article.branches %}
+                {% for branch in branches %}
                     <li>
-                        <a href="/review/{{article.path}}?branch={{branch}}">{{branch}} suggestions</a>
+                        See {{article.author_name if branch == 'master' else branch}}'s <a href="{{url_for('review', article_path=article.path, branch=branch)}}">version of this article</a>
+                        {% if branch != 'master' %}
+                            or
+                            <a href="https://github.com/{{article.repo_path}}/compare/{{branch}}" target="_blank">suggestions on github</a>
+                        {% else %}
+                            or
+                            <a href="https://github.com/{{article.repo_path}}/compare/{{branch}}...{{visible_branch}}" target="_blank">suggestions on github</a>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
