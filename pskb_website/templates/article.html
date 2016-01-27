@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
 
 {% block css %}
-    {{ super() }}
+    <link href="/static/css/vendor/editor/themes/preview/github.css" rel="stylesheet">
     <link href="/static/css/vendor/github.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
+    {{ super() }}
 {% endblock %}
 
 {% block js %}
