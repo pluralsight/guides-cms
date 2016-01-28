@@ -252,6 +252,21 @@ def branch_article(article, message, new_content, author_name, email,
 
     # Branch already exists
     else:
+        # To make diffs look correct and history to be maintained between
+        # branches we take into account the situation here where the branch
+        # already existed but the article we're branching is not in the branch
+        # yet.  In this case we want to merge the commits for this article into
+        # the branch. Then, any changes this branch is introducing will show up
+        # clearly in the diff instead of just adding this article to the branch
+        # as a new file.
+        if not remote.merge_branch(article.repo_path, branch, 'master',
+                                   'Merging recent changes from master'):
+            # This isn't ideal but if the merge fails we still allow the user
+            # to make their branched article.  The diff/history will be a bit
+            # weird but we'd have to manually do the merge so it's not feasible
+            # via the API.
+            app.logger.warning('Failed merging branches so commiting branched article as new/updated file to branch')
+
         # Try to read this article from the branch to update the SHA.
         # This ensures we have the most up-to-date SHA for the file we're
         # modifying, which is required by github API. For example, this article
