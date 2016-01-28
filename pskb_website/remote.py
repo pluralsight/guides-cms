@@ -543,3 +543,28 @@ def remove_file_from_github(path, message, name, email, branch):
         return False
 
     return True
+
+
+def merge_branch(repo_path, base, head, message):
+    """
+    Attempt merge between two branches
+
+    :param repo_path: Path to repo <owner>/<repo_name>
+    :param base: Name of the base branch that the head will be merged into
+    :param head: The name of the head to merge into base
+    :param message: Commit message to use for merge
+    :returns: True if merge was successful False otherwise
+    """
+
+    url = '/repos/%s/merges' % (repo_path)
+    data = {'base': base, 'head': head, 'commit_message': message}
+
+    token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+    resp = github.post(url, data=data, format='json', token=token)
+
+    # 204 means no content i.e. no merge needed
+    if resp.status in (201, 204):
+        return True
+
+    log_error('Failed merging', url, resp, repo=repo_path, base=base, head=head)
+    return False
