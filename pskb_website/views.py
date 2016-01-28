@@ -256,7 +256,7 @@ def partner(article_path):
         repo_path = '%s/%s' % (app.config['SECONDARY_REPO_OWNER'],
                                app.config['SECONDARY_REPO_NAME'])
     except KeyError:
-        flash('No secondardy article configuration', category='error')
+        flash('No secondary article configuration', category='error')
         return redirect(url_for('index'))
 
     if article_path is None:
