@@ -1,3 +1,7 @@
+"""
+Configure Flask app instance
+"""
+
 import logging
 import os
 

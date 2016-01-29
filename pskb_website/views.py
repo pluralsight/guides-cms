@@ -13,6 +13,10 @@ from . import forms
 
 
 def login_required(f):
+    """
+    Decorator to require login and save URL for redirecting user after login
+    """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'github_token' not in session:
@@ -88,6 +92,8 @@ def logout():
 
 @app.route('/github/authorized')
 def authorized():
+    """URL for Github auth callback"""
+
     resp = remote.github.authorized_response()
     if resp is None:
         flash('Access denied: reason=%s error=%s' % (
@@ -170,10 +176,11 @@ def write(article_path):
                            selected_stack=selected_stack)
 
 
-# Special 'hidden' URL to import articles to secondary repo
 @app.route('/partner/import/')
 @login_required
 def partner_import():
+    """Special 'hidden' URL to import articles to secondary repo"""
+
     article = None
     branch_article = False
     g.write_active = True
@@ -241,10 +248,14 @@ def review(article_path):
                            branches=branches,
                            visible_branch=branch)
 
-# URL for articles from hackhands blog -- these articles are not editable.
 @app.route('/partner/<path:article_path>', methods=['GET'])
 @app.route('/partner/', defaults={'article_path': None}, methods=['GET'])
 def partner(article_path):
+    """
+    URL for articles from hackhands blog -- these articles are not
+    editable.
+    """
+
     g.review_active = True
 
     try:
