@@ -25,10 +25,6 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-#article {
-    padding-left: 70px;
-}
-
 #table-of-contents {
     max-height: 500px;
     overflow-y: scroll;
@@ -367,10 +363,6 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 }
 
 @media(max-width:767px) {
-    #article {
-        padding-left: 10px;
-    }
-
     .article-teaser {
         height: auto;
         margin-right: 0px;
@@ -416,12 +408,14 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 
 
     #footer ul {
-        padding-top: 75px;
+        padding-top: 25px;
+        margin-left: 2px;
     }
 
     #footer ul li {
         margin-top: 0px;
         padding-top: 0px;
+        margin-left: 0px;
     }
 
     .navbar-fixed-top {
