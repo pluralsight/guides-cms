@@ -115,6 +115,14 @@ function create_toc_from_headers(headers) {
 }
 
 
+/* Turn any table tags in div into responsive tables by adding
+ * bootstrap-specific markup around table */
+function create_responsive_tables(div) {
+    var tables = $(div).find('table');
+    tables.wrap('<div class="table-responsive">');
+    tables.addClass('table');
+}
+
 /* Confirm user typed DELETE in form and submit request for article deletion
  * This function works with confirm_deletion.html form.
  */
