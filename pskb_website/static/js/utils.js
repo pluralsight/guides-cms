@@ -18,7 +18,7 @@ function populate_table_of_contents(article, div_to_fill) {
  * https://github.com/twbs/bootstrap/issues/16814
  */
 function reorder_columns () {
-    var grid_width = $('#wrap > .container').first().width();
+    var grid_width = $('#wrap > .container-fluid').first().width();
 
     /* This number corresponds to the bootstrap break point for large devices. */
     if (grid_width < 992) {
