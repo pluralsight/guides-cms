@@ -13,6 +13,26 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: -.045em;
 }
 
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+    padding-right: 5px;
+}
+
+/* Github markdown parser returns svg icon to create links for headers. We only
+ * want to show them on hover to be similar to how it work on github.com. */
+h1 a :first-child, h2 a :first-child, h3 a :first-child, h4 a :first-child, h5 a :first-child, h6 a :first-child {
+    visibility: hidden;
+}
+
+/* Move text over so the icons matching the above rule all line up
+ * horizontally. */
+#file p {
+    padding-left: 23px;
+}
+
+h1:hover a :first-child, h2:hover a :first-child, h3:hover a :first-child, h4:hover a :first-child, h5:hover a :first-child, h6:hover a :first-child {
+    visibility: visible;
+}
+
 #wrap {
     min-height: 100%;
     height: auto !important;
