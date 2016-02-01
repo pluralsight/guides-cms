@@ -367,6 +367,10 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 }
 
 @media(max-width:767px) {
+    #article {
+        padding-left: 10px;
+    }
+
     .article-teaser {
         height: auto;
         margin-right: 0px;
