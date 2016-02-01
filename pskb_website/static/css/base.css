@@ -335,7 +335,7 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 
 #footer ul {
     margin-top: 2px;
-    margin-left: 55px;
+    /*margin-left: 55px;*/
 }
 
 #footer ul li {
@@ -343,7 +343,6 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     font-size: 12px;
     font-weight: 500;
     font-style: normal;
-    margin-left: 25px;
     padding-bottom: 0px;
     padding-right: 0px;
     padding-top: 10px;
