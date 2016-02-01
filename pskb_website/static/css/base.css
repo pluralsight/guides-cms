@@ -52,6 +52,7 @@ h1:hover a :first-child, h2:hover a :first-child, h3:hover a :first-child, h4:ho
     font-size: 12px;
     line-height: 1.7em;
     border-bottom: 1px solid #eee;
+    padding-bottom: 45px;
 }
 
 #table-of-contents h6 {
@@ -472,6 +473,7 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
         max-height: none;
         position: relative;
         text-align: center;
+        padding-bottom: 10px;
     }
 
     .navbar-header {
