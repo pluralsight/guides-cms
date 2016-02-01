@@ -206,12 +206,9 @@ def review(article_path):
 
     login = session.get('login', None)
 
-    # Only allow editing if user is logged in and it's the master branch (i.e.
-    # they can branch from it) or it's their own branch.
-    if (login and branch == 'master') or login == branch:
-        allow_edits = True
-    else:
-        allow_edits = False
+    # Always allow editing to help illustrate to viewers they can contribute.
+    # We'll redirect them to login if they aren't already logged in.
+    allow_edits = True
 
     if login == branch or article.author_name == login:
         allow_delete = True
