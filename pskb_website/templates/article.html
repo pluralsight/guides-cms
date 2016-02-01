@@ -117,21 +117,24 @@
         });
     {% endif %}
 
-    populate_table_of_contents($('#article'), $('#table-of-contents'));
+    var article = $('#article');
+
+    populate_table_of_contents(article, $('#table-of-contents'));
     $(window).resize(reorder_columns);
     $(document).ready(reorder_columns);
 
-    var article_z = $('#article').css('z-index');
+    create_responsive_tables(article);
+    var article_z = article.css('z-index');
 
     $('#stacks').on('show.bs.select', function(e) {
         /* Fix to allow bootstrap-select dropdown menu on article sidebar to
            show up on top of article. The dropdown menu is in a column with
            "affix" and that seems to obscure the z-index for the dropdown. */
-        $('#article').css('z-index', '-1');
+        article.css('z-index', '-1');
     });
 
     $('#stacks').on('hide.bs.select', function(e) {
-        $('#article').css('z-index', article_z);
+        article.css('z-index', article_z);
     });
 
 
