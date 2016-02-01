@@ -25,7 +25,7 @@ h1 a :first-child, h2 a :first-child, h3 a :first-child, h4 a :first-child, h5 a
 
 /* Move text over so the icons matching the above rule all line up
  * horizontally. */
-#file p {
+#file {
     padding-left: 23px;
 }
 
@@ -43,6 +43,10 @@ h1:hover a :first-child, h2:hover a :first-child, h3:hover a :first-child, h4:ho
 .header {
   padding: 20px 15px 0px 15px;
   text-align: center;
+}
+
+#article {
+    padding-left: 70px;
 }
 
 #table-of-contents {
@@ -335,7 +339,6 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 
 #footer ul {
     margin-top: 2px;
-    /*margin-left: 55px;*/
 }
 
 #footer ul li {
