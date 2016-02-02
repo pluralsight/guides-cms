@@ -3,19 +3,24 @@
 {% block css %}
     {{ super() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/static/css/vendor/bootstrap-markdown.min.css">
+    <link rel="stylesheet" href="/static/css/vendor/editor/github.css">
+    <link rel="stylesheet" href="/static/css/vendor/github.css">
+    <link rel="stylesheet" href="/static/css/vendor/hljs_github.css">
 {% endblock %}
 
 {% block js %}
     {{super()}}
+    <script src="/static/js/vendor/editor/marked.js"></script>
     <script src="/static/js/vendor/editor/highlight.pack.js"></script>
-    <script src="/static/js/vendor/editor/epiceditor.min.js"></script>
+    <script src="/static/js/vendor/editor/bootstrap-markdown.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
     <script src="/static/js/editor_utils.js"></script>
 {% endblock %}
 
 {% block body %}
 
-<div id="editor">
+<div id="editor-section">
     <h3>1. Get Started</h3>
     <p>
         <ul>
@@ -54,7 +59,10 @@
         </ul>
     </p>
 
-    <div id="epiceditor"></div>
+    <div class="editor-container">
+        <textarea id="md-editor-ta" name="content">{{article.content}}</textarea>
+    </div>
+
     <br />
 
     <h3>4. Choose your stack</h3>
@@ -72,8 +80,6 @@
     <br />
 
     <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary">Save</button>
-
-    <textarea id="content" style="display:none">{{article.content}}</textarea>
 </div>
 
 <script type="text/javascript">

@@ -80,6 +80,12 @@ h1:hover a :first-child, h2:hover a :first-child, h3:hover a :first-child, h4:ho
     padding-right: 8px;
 }
 
+/* Overrides bootstrap-markdown CSS */
+.md-preview {
+    padding: 15px;
+
+}
+
 /* Push image down just a bit to level out with links in header */
 .navbar-brand img {
     margin-top: 15px;
@@ -313,12 +319,17 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     margin-left: 10px;
 }
 
-#editor {
+#editor-section {
     margin-top: 50px;
 }
 
-#editor input.article-title {
+#editor-section #title {
     margin-top: 20px;
+    width: 70%;
+}
+
+.editor-container {
+    width: 70%;
 }
 
 .stacks-editor {
