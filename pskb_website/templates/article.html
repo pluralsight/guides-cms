@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block css %}
-    <link href="/static/css/vendor/editor/themes/preview/github.css" rel="stylesheet">
+    <link href="/static/css/vendor/editor/github.css" rel="stylesheet">
     <link href="/static/css/vendor/github.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
     {{ super() }}
@@ -67,12 +67,12 @@
         {% endif %}
 
         <p>
-            <a href="{{article.external_url}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View on Github</a>
+            <a href="{{article.external_url}}" target="_blank">View on Github</a>
         </p>
 
         {% if article.author_name %}
             <p class="small">
-            <a href="http://github.com/{{article.author_name}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> View more from {{article.author_real_name if article.author_real_name else article.author_name}} on Github</a>
+            <a href="http://github.com/{{article.author_name}}" target="_blank">View more from {{article.author_real_name if article.author_real_name else article.author_name}} on Github</a>
             </p>
         {% endif %}
 
@@ -117,9 +117,12 @@
         });
     {% endif %}
 
+    create_external_links('#article');
+
     var article = $('#article');
 
     populate_table_of_contents(article, $('#table-of-contents'));
+
     $(window).resize(reorder_columns);
     $(document).ready(reorder_columns);
 
