@@ -123,6 +123,16 @@ function create_responsive_tables(div) {
     tables.addClass('table');
 }
 
+/* Change all external links to open in a new tab/window */
+function create_external_links(id) {
+    var links = $('a').filter(function() {
+        return this.hostname && this.hostname !== location.hostname;
+    });
+
+    links.append('&nbsp;<span class="glyphicon glyphicon-new-window" aria-hidden="true" style="font-size: 10px;"></span>');
+    links.attr("target", "_blank");
+}
+
 /* Confirm user typed DELETE in form and submit request for article deletion
  * This function works with confirm_deletion.html form.
  */
