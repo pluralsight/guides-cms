@@ -49,6 +49,10 @@ h1:hover a :first-child, h2:hover a :first-child, h3:hover a :first-child, h4:ho
     padding-left: 50px;
 }
 
+#share-column {
+    padding-left: 50px;
+}
+
 #table-of-contents {
     max-height: 500px;
     overflow-y: scroll;
