@@ -3,8 +3,11 @@ Main views of PSKB app
 """
 
 from functools import wraps
+import os
+import uuid
 
-from flask import redirect, url_for, session, request, render_template, flash, json, g
+from flask import redirect, Response, url_for, session, request, render_template, flash, json, jsonify, g
+from werkzeug import secure_filename
 
 from . import app
 from . import remote
@@ -378,6 +381,17 @@ def subscribe():
                 flash('%s - %s' % (input_name, error), category='error')
 
         return redirect(request.referrer)
+
+@app.route('/img_upload/', methods=['POST'])
+def img_upload():
+    file_ = request.files['file']
+    name = secure_filename(str(uuid.uuid4()))
+    path = os.path.join(app.static_folder, name)
+    url = url_for('static', filename=name)
+    file_.save(path)
+
+    return Response(response=json.dumps(url), status=200,
+                    mimetype='application/json')
 
 
 @app.errorhandler(500)

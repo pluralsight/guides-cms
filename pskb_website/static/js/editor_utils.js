@@ -12,6 +12,11 @@ function initialize_editor(name, real_name) {
         resize: 'vertical',
         height: 500,
         onPreview: add_article_header_data,
+        dropZoneOptions: {
+            url: '/img_upload/',
+            disablePreview: true,
+            maxFileSize: 3, // In Megabytes
+        }
     });
 }
 
