@@ -11,6 +11,17 @@
     {{super()}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
     <script src="/static/js/utils.js"></script>
+    <script type="text/javascript">
+        (function () {
+            var s = document.createElement('script');
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = ('https:' == document.location.protocol ? 'https://s' : 'http://i')
+            + '.po.st/static/v4/post-widget.js#publisherKey=plv5t1o0it9b73ect06v';
+            var x = document.getElementsByTagName('script')[0];
+            x.parentNode.insertBefore(s, x);
+        })();
+    </script>
 {% endblock %}
 
 
@@ -32,20 +43,10 @@
 
             <br/><br/>
 
-            <a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=Loved%20this%20article%20on%20{{article.title}}">Tweet</a>
-
-            <br/> <br/>
-
-            <div class="fb-like" data-href="{{canonical_url}}" data-layout="button_count" data-action="like" data-show-faces="false"></div>
-
-            <br/> <br/>
-
             <div class="create-tutorial">
                 <a href="/write/" class="emphasize">Create tutorial</a>
             </div>
 
-            <!-- Load Facebook SDK for JavaScript -->
-            <div id="fb-root"></div>
         </div><!-- affix -->
     </div> <!-- column -->
 
@@ -158,30 +159,5 @@
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-
-<script type="text/javascript">(function(d, s, id) {
-var js, fjs = d.getElementsByTagName(s)[0];
-if (d.getElementById(id)) return;
-js = d.createElement(s); js.id = id;
-js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5";
-fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-<script>window.twttr = (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0],
-    t = window.twttr || {};
-  if (d.getElementById(id)) return t;
-  js = d.createElement(s);
-  js.id = id;
-  js.src = "https://platform.twitter.com/widgets.js";
-  fjs.parentNode.insertBefore(js, fjs);
-
-  t._e = [];
-  t.ready = function(f) {
-    t._e.push(f);
-  };
-
-  return t;
-}(document, "script", "twitter-wjs"));</script>
 
 {% endblock %}
