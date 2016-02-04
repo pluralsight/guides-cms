@@ -3,8 +3,10 @@ Main views of PSKB app
 """
 
 from functools import wraps
+import os
+import uuid
 
-from flask import redirect, url_for, session, request, render_template, flash, json, g
+from flask import redirect, Response, url_for, session, request, render_template, flash, json, jsonify, g
 
 from . import app
 from . import remote
@@ -284,10 +286,7 @@ def save():
         flash('Cannot save unless logged in', category='error')
         return render_template('index.html'), 404
 
-    # Data is stored in form with input named content which holds json. The
-    # json has the 'real' data in the 'content' key.
-    content = json.loads(request.form['content'])['content']
-
+    content = request.form['content']
     path = request.form['path']
     title = request.form['title']
     sha = request.form['sha']
@@ -381,6 +380,34 @@ def subscribe():
                 flash('%s - %s' % (input_name, error), category='error')
 
         return redirect(request.referrer)
+
+
+@app.route('/img_upload/', methods=['POST'])
+def img_upload():
+    user = models.find_user(session['login'])
+    if user is None:
+        app.logger.error('Cannot upload image unless logged in')
+        return Response(response='', status=500, mimetype='application/json')
+
+    file_ = request.files['file']
+
+    try:
+        ext = file_.filename.split(os.extsep)[1]
+    except IndexError:
+        ext = ''
+
+    # Always save images to master branch because image uploads might happen
+    # before the article is saved so don't know the article name or branch to
+    # save alongside.
+    url = models.save_image(file_.stream, ext, 'Saving new article image',
+                            user.login, user.email, branch='master')
+
+    if url is None:
+        app.logger.error('Failed uploading image')
+        return Response(response='', status=500, mimetype='application/json')
+
+    return Response(response=json.dumps(url), status=200,
+                    mimetype='application/json')
 
 
 @app.errorhandler(500)

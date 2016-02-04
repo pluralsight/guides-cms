@@ -190,7 +190,7 @@ def file_details_from_github(path, branch='master'):
 
 
 def commit_file_to_github(path, message, content, name, email, sha=None,
-                          branch='master'):
+                          branch='master', auto_encode=True):
     """
     Save given file content to github
 
@@ -202,12 +202,16 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     :param sha: Optional SHA of file if it already exists on github
     :param branch: Name of branch to commit file to (branch must already
                    exist)
+    :param auto_encode: Boolean to automatically encode data as utf-8
 
     :returns: True if data was saved, False otherwise
     """
 
     url = contents_url_from_path(path)
-    content = base64.b64encode(content.encode('utf-8'))
+
+    if auto_encode:
+        content = base64.b64encode(content.encode('utf-8'))
+
     commit_info = {'message': message, 'content': content, 'branch': branch,
                    'author': {'name': name, 'email': email}}
 
@@ -229,6 +233,28 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
         return False
 
     return True
+
+
+def commit_image_to_github(path, message, file_, name, email, sha=None,
+                           branch='master'):
+    """
+    Save given image file content to github
+
+    :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :param message: Commit message to save file with
+    :param file_: Open file object
+    :param name: Name of author who wrote file
+    :param email: Email address of author
+    :param sha: Optional SHA of file if it already exists on github
+    :param branch: Name of branch to commit file to (branch must already
+                   exist)
+
+    :returns: True if data was saved, False otherwise
+    """
+
+    contents = base64.encodestring(file_.read())
+    return commit_file_to_github(path, message, contents, name, email, sha=sha,
+                                 branch=branch, auto_encode=False)
 
 
 def read_user_from_github(username=None):
