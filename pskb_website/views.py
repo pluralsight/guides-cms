@@ -7,7 +7,6 @@ import os
 import uuid
 
 from flask import redirect, Response, url_for, session, request, render_template, flash, json, jsonify, g
-from werkzeug import secure_filename
 
 from . import app
 from . import remote
@@ -382,13 +381,30 @@ def subscribe():
 
         return redirect(request.referrer)
 
+
 @app.route('/img_upload/', methods=['POST'])
 def img_upload():
+    user = models.find_user(session['login'])
+    if user is None:
+        app.logger.error('Cannot upload image unless logged in')
+        return Response(response='', status=500, mimetype='application/json')
+
     file_ = request.files['file']
-    name = secure_filename(str(uuid.uuid4()))
-    path = os.path.join(app.static_folder, name)
-    url = url_for('static', filename=name)
-    file_.save(path)
+
+    try:
+        ext = file_.filename.split(os.extsep)[1]
+    except IndexError:
+        ext = ''
+
+    # Always save images to master branch because image uploads might happen
+    # before the article is saved so don't know the article name or branch to
+    # save alongside.
+    url = models.save_image(file_.stream, ext, 'Saving new article image',
+                            user.login, user.email, branch='master')
+
+    if url is None:
+        app.logger.error('Failed uploading image')
+        return Response(response='', status=500, mimetype='application/json')
 
     return Response(response=json.dumps(url), status=200,
                     mimetype='application/json')
