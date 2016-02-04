@@ -44,7 +44,11 @@ def github_url_from_upload_path(path, name, branch='master'):
     assert len(tokens) == 3, 'Image path must have repo owner, name, and directory'
 
     path_w_branch = '%s/%s/%s/%s' % (tokens[0], tokens[1], branch, tokens[2])
-    return 'http://raw.githubusercontent.com/%s/%s' % (path_w_branch, name)
+
+    # Use https:// b/c with just http:// github's own file view won't render
+    # the link on pages like:
+    # https://github.com/durden/articles/blob/master/uploading-image/article.md)
+    return 'https://raw.githubusercontent.com/%s/%s' % (path_w_branch, name)
 
 
 def save_image(file_, extension, message, name, email, branch='master'):
