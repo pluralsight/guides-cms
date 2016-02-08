@@ -76,8 +76,6 @@ def files_from_github(repo, filename, limit=None):
     if resp is None:
         raise StopIteration
 
-    save_to_cache = False
-
     # Try to read articles from cache
     files = None
     if resp.status == 304:
@@ -96,15 +94,8 @@ def files_from_github(repo, filename, limit=None):
         except ValueError:
             raise StopIteration
 
-    files_to_cache = []
     for file_ in files:
         yield file_
-
-        if save_to_cache:
-            files_to_cache.append(file_)
-
-    if files_to_cache:
-        cache.save_file_listing(cache_key, files_to_cache)
 
 
 def _fetch_files_from_github_api(repo, sha, headers=None):
@@ -193,7 +184,7 @@ def _gen_files_from_github_api(repo, sha, filename, limit=None, cache_key=None):
         if limit is not None and count == limit:
             break
 
-    if files:
+    if files and cache_key:
         cache.save_file_listing(cache_key, json.dumps(files))
 
 
