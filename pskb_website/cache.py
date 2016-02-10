@@ -19,10 +19,14 @@ except ImportError:
     app.logger.warning('No caching available, missing redis module')
 else:
     try:
-        url = urlparse.urlparse(app.config['REDISCLOUD_URL'])
+        url = app.config['REDISCLOUD_URL']
     except KeyError:
+        url = None
+
+    if url is None:
         app.logger.warning('No caching available, missing REDISCLOUD_URL env var')
     else:
+        url = urlparse.urlparse(app.config['REDISCLOUD_URL'])
         redis_obj = redis.Redis(host=url.hostname, port=url.port,
                                 password=url.password)
 
