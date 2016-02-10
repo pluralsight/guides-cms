@@ -43,7 +43,6 @@ function add_article_header_data(editor) {
 
     anchor += '</a>';
     h4 += anchor + '</small></h4>';
-
     var selected_stacks = document.getElementById('stacks').selectedOptions;
     var stacks = '';
     for (ii = 0; ii < selected_stacks.length; ii++) {
@@ -52,15 +51,15 @@ function add_article_header_data(editor) {
         }
     }
 
-    var h5 = '';
     if (stacks.length) {
         if (stacks[stacks.length - 1] == ',') {
             stacks = stacks.slice(0, -1);
         }
-        var h5 = '<h5 id="related"><small>Related to ' + stacks + '</small>';
     }
 
+    var h5 = '<h5 id="related"><small>Related to ' + stacks + '</small>';
     var header = '<div class="header">' + h1 + h4 + h5 + '</div>' + '<hr>';
+
     return header + editor.parseContent();
 }
 
