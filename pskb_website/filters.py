@@ -32,7 +32,7 @@ def url_for_article(article):
     article so we can store the url in a file or render in templates.
     """
 
-    return '%s/%s' % (app.config['BASE_URL'],
+    return '%s%s' % (app.config['BASE_URL'],
                       url_for('review', article_path=article.path))
 
 
@@ -55,5 +55,5 @@ def url_for_user(user):
     except AttributeError:
         username = user
 
-    return '%s/%s' % (app.config['BASE_URL'],
+    return '%s%s' % (app.config['BASE_URL'],
                       url_for('user_profile', author_name=username))
