@@ -3,12 +3,14 @@ Article related model API
 """
 
 import collections
+import itertools
 import json
 
 from .. import app
 from .. import cache
 from . import lib
 from .. import remote
+from . import file as file_mod
 from .. import utils
 
 
@@ -24,13 +26,42 @@ ARTICLE_METADATA_FILENAME = 'details.json'
 path_details = collections.namedtuple('path_details', 'repo, filename')
 
 
-def main_article_path():
-    """Get path to main repo"""
-
-    return '%s/%s' % (app.config['REPO_OWNER'], app.config['REPO_NAME'])
-
-
 def get_available_articles(published=None, repo_path=None):
+    """
+    Get iterator for current article objects
+
+    :param published: True for only published articles, False for only drafts
+                      or None for all articles
+    :param repo_path: Optional repo path to read from (<owner>/<name>)
+
+    :returns: Iterator through article objects
+
+    Note that article objects only have path, title, author name, and stacks
+    filled out.  You'll need to call read_article() to get full article
+    details.
+    """
+
+    if published is None or repo_path is not None:
+        for article in get_available_articles_from_api(published=published,
+                                                       repo_path=repo_path):
+            yield article
+
+        raise StopIteration
+
+    # Shortcuts to read listing of files from a single file read instead of
+    # using the API to read every file
+    if published:
+        items = file_mod.published_articles()
+    else:
+        items = file_mod.unpublished_articles()
+
+    for item in items:
+        yield Article(item.title, item.author_name,
+                      author_real_name=item.author_real_name,
+                      stacks=item.stacks)
+
+
+def get_available_articles_from_api(published=None, repo_path=None):
     """
     Get iterator for current article objects
 
@@ -48,7 +79,7 @@ def get_available_articles(published=None, repo_path=None):
     # article objects.  This way the github layer only knows what's available
     # on github and doesn't have knowledge of how we organize things, etc.
     if repo_path is None:
-        repo_path = main_article_path()
+        repo_path = remote.default_repo_path()
 
         if published:
             files = cache.read_file_listing('published')
@@ -112,12 +143,21 @@ def get_articles_for_author(author_name, published=None):
     :returns: Iterator through article objects
     """
 
-    for article in get_available_articles(published=published):
+
+    if published is None:
+        articles = itertools.chain(get_available_articles(published=True),
+                                   get_available_articles(published=False))
+    elif published:
+        articles = get_available_articles(published=True)
+    else:
+        articles = get_available_articles(published=False)
+
+    for article in articles:
         if article.author_name == author_name:
             yield article
 
 
-def read_article(path, rendered_text=True, branch='master', repo_path=None):
+def read_article(path, rendered_text=True, branch=u'master', repo_path=None):
     """
     Read article
 
@@ -130,7 +170,7 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
     """
 
     if repo_path is None:
-        repo_path = main_article_path()
+        repo_path = remote.default_repo_path()
 
     full_path = '%s/%s' % (repo_path, path)
 
@@ -604,7 +644,7 @@ class Article(object):
 
         self.repo_path = repo_path
         if self.repo_path is None:
-            self.repo_path = main_article_path()
+            self.repo_path = remote.default_repo_path()
 
         # Branch this article is on
         self.branch = branch

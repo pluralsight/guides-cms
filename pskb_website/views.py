@@ -129,6 +129,8 @@ def authorized():
     return redirect(url_for('user_profile'))
 
 
+# Note this URL is directly linked to the filters.url_for_user filter.
+# These must be changed together!
 @app.route('/user/<author_name>', methods=['GET'])
 @app.route('/user/', defaults={'author_name': None})
 def user_profile(author_name):
@@ -197,6 +199,8 @@ def partner_import():
                            secondary_repo=secondary_repo)
 
 
+# Note this URL is directly linked to the filters.url_for_article filter.
+# These must be changed together!
 @app.route('/review/<path:article_path>', methods=['GET'])
 @app.route('/review/', defaults={'article_path': None}, methods=['GET'])
 def review(article_path):

@@ -29,6 +29,12 @@ github = oauth.remote_app(
 file_details = collections.namedtuple('file_details', 'path, branch, sha, last_updated, url, text')
 
 
+def default_repo_path():
+    """Get path to main repo"""
+
+    return '%s/%s' % (app.config['REPO_OWNER'], app.config['REPO_NAME'])
+
+
 def log_error(message, url, resp, **kwargs):
     """
     Log an error from a request and include URL, response status, response data
