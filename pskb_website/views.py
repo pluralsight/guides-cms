@@ -318,9 +318,9 @@ def save():
         stacks = request.form.getlist('stacks')
 
     if path:
-        message = 'Updates to %s' % (title)
+        message = 'Updates to "%s"' % (title)
     else:
-        message = 'New article %s' % (title)
+        message = 'New article, "%s"' % (title)
 
     # Hidden option for admin to save articles to our other repo that's not
     # editable
