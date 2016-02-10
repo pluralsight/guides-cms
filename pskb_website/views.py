@@ -150,7 +150,7 @@ def write(article_path):
     selected_stack = None
 
     if article_path is not None:
-        branch = request.args.get('branch', 'master')
+        branch = request.args.get('branch', u'master')
         article = models.read_article(article_path, rendered_text=False,
                                       branch=branch)
 
@@ -204,7 +204,7 @@ def review(article_path):
         return render_template('review.html', articles=articles,
                                stacks=forms.STACK_OPTIONS)
 
-    branch = request.args.get('branch', 'master')
+    branch = request.args.get('branch', u'master')
     article = models.read_article(article_path, branch=branch)
 
     if article is None:
@@ -233,8 +233,8 @@ def review(article_path):
     branches = [b for b in article.branches if b != branch]
 
     # Always include a link to original article if this is a branched version
-    if branch != 'master':
-        branches.append('master')
+    if branch != u'master':
+        branches.append(u'master')
 
     return render_template('article.html',
                            article=article,

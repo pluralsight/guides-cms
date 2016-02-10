@@ -183,7 +183,7 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
     return article
 
 
-def read_article_from_cache(path, branch='master'):
+def read_article_from_cache(path, branch=u'master'):
     """
     Read article object from cache
 
@@ -463,7 +463,7 @@ def save_branched_article_meta_data(article, author_name, email,
     """
 
     orig_article = read_article(article.path, rendered_text=False,
-                                branch='master', repo_path=article.repo_path)
+                                branch=u'master', repo_path=article.repo_path)
 
     # Nothing to save, we're already tracking this branch
     if add_branch:
@@ -560,7 +560,7 @@ class Article(object):
     """
 
     def __init__(self, title, author_name, filename=ARTICLE_FILENAME,
-                 repo_path=None, branch='master', stacks=None, sha=None,
+                 repo_path=None, branch=u'master', stacks=None, sha=None,
                  content=None, external_url=None, image_url=None,
                  author_real_name=None):
         """
