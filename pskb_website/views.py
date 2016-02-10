@@ -102,6 +102,7 @@ def authorized():
         return redirect(url_for('index'))
 
     session['github_token'] = (resp['access_token'], '')
+    session['collaborator'] = False
 
     user = models.find_user()
     if user is None:
@@ -116,6 +117,8 @@ def authorized():
 
         if 'name' not in session:
             session['name'] = user.login
+
+        session['collaborator'] = user.is_collaborator()
 
     url = session.pop('previously_requested_page', None)
     if url is not None:

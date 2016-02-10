@@ -356,6 +356,30 @@ def read_user_from_github(username=None):
     return resp.data
 
 
+def read_repo_collaborators_from_github(owner=None, repo=None):
+    """
+    Generator for collaborator login/usernames for a given repo
+
+    :param owner: Owner of repository defaults to REPO_OWNER config value
+    :param repo: Name of repository defaults to REPO_NAME config value
+    :returns: Generator through login names
+    """
+
+    owner = owner or app.config['REPO_OWNER']
+    repo = repo or app.config['REPO_NAME']
+
+    url = '/repos/%s/%s/collaborators' % (owner, repo)
+    resp = github.get(url)
+
+    if resp.status != 200:
+        log_error('Failed reading collaborators', url, resp, repo=repo,
+                  owner=owner)
+        raise StopIteration
+
+    for obj in resp.data:
+        yield obj['login']
+
+
 @github.tokengetter
 def get_github_oauth_token():
     """Read github token from session"""
