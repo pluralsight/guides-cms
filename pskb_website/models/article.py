@@ -255,6 +255,8 @@ def save_article(title, path, message, new_content, author_name, email, sha,
         # article, but not the meta data.
         return None
 
+    cache.delete_article(article)
+
     return read_article(article.path, rendered_text=True,
                         branch=article.branch, repo_path=repo_path)
 
