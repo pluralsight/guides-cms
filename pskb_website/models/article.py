@@ -390,8 +390,10 @@ def save_article_meta_data(article, author_name, email, branch=None):
     details = remote.read_file_from_github(filename, rendered_text=False,
                                            branch=branch)
     sha = None
+    text = None
     if details is not None:
         sha = details.sha
+        text = details.text
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
@@ -399,7 +401,13 @@ def save_article_meta_data(article, author_name, email, branch=None):
                      'last_updated')
     json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
-    message = 'Updating article metadata for %s' % (article.title)
+    # Nothing changed so no commit needed
+    if text is not None and json_content == text:
+        return True
+
+    message = 'Updating article metadata for "%s"' % (article.title)
+
+    cache.delete_article(article)
 
     # Article is on a branch so we have to update the master meta data file
     # with this new branch as well as the branch meta data file.
