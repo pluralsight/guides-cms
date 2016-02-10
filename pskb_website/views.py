@@ -13,6 +13,7 @@ from . import remote
 from . import models
 from . import forms
 from . import tasks
+from . import filters
 
 
 def login_required(f):
@@ -346,18 +347,21 @@ def save():
         return redirect(url_for('partner', article_path=article.path,
                                 branch=article.branch))
 
-    url = url_for('review', article_path=article.path, branch=article.branch)
-
     # Update file listing but only if the article is unpublished. Publishing an
     # article and updating that listing is a separate action.
     if not article.published:
-        author_url = url_for('user_profile', author_name=article.author_name)
+        # Use these filter wrappers so we get absolute URL instead of relative
+        # URL to this specific site.
+        url = filters.url_for_article(article)
+        author_url = filters.url_for_user(article.author_name)
+
         tasks.update_listing(url, article.title, author_url,
                              article.author_name, user.login, user.email,
                              stacks=article.stacks, branch=article.branch,
                              published=False)
 
-    return redirect(url)
+    return redirect(url_for('review', article_path=article.path,
+                            branch=article.branch))
 
 
 @app.route('/delete/', methods=['POST'])
