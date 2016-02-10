@@ -10,6 +10,7 @@ from . import app
 from . import remote
 from . import models
 from . import forms
+from . import tasks
 
 
 def login_required(f):
@@ -219,6 +220,7 @@ def review(article_path):
         return redirect(url_for('index'))
 
     login = session.get('login', None)
+    collaborator = session.get('collaborator', False)
 
     # Always allow editing to help illustrate to viewers they can contribute.
     # We'll redirect them to login if they aren't already logged in.
@@ -250,7 +252,8 @@ def review(article_path):
                            canonical_url=canonical_url,
                            form=form,
                            branches=branches,
-                           visible_branch=branch)
+                           visible_branch=branch,
+                           collaborator=collaborator)
 
 @app.route('/partner/<path:article_path>', methods=['GET'])
 @app.route('/partner/', defaults={'article_path': None}, methods=['GET'])
@@ -336,19 +339,26 @@ def save():
                                             repo_path=repo_path,
                                             author_real_name=user.name)
 
-    # Successful creation
-    if article:
-        if repo_path is not None:
-            url = url_for('partner', article_path=article.path,
-                          branch=article.branch)
-        else:
-            url = url_for('review', article_path=article.path,
-                          branch=article.branch)
+    if not article:
+        flash('Failed creating article on github', category='error')
+        return redirect(url_for('index'))
 
-        return redirect(url)
+    if repo_path is not None:
+        return redirect(url_for('partner', article_path=article.path,
+                                branch=article.branch))
 
-    flash('Failed creating article on github', category='error')
-    return redirect(url_for('index'))
+    url = url_for('review', article_path=article.path, branch=article.branch)
+
+    # Update file listing but only if the article is unpublished. Publishing an
+    # article and updating that listing is a separate action.
+    if not article.published:
+        author_url = url_for('user_profile', author_name=article.author_name)
+        tasks.update_listing(url, article.title, author_url,
+                             article.author_name, user.login, user.email,
+                             stacks=article.stacks, branch=article.branch,
+                             published=False)
+
+    return redirect(url)
 
 
 @app.route('/delete/', methods=['POST'])
@@ -374,7 +384,68 @@ def delete():
     else:
         flash('Article successfully deleted', category='info')
 
+    # This article should have only been on one of these lists but trying to
+    # remove it doesn't hurt so just forcefully remove it from both just in
+    # case.
+    published = False
+    tasks.remove_from_listing(article.title, published, user.login, user.email,
+                              branch=article.branch)
+
+    published = not published
+    tasks.remove_from_listing(article.title, published, user.login, user.email,
+                              branch=article.branch)
+
     return redirect(url_for('index'))
+
+
+@app.route('/publish/', methods=['POST'])
+@login_required
+def change_publish_status():
+    """Publish or unpublish article via POST"""
+
+    user = models.find_user(session['login'])
+    if user is None:
+        flash('Cannot change publish status unless logged in', category='error')
+        return render_template('index.html'), 404
+
+    if not user.is_collaborator():
+        flash('Only official repository collaborators can change publish status on articles', category='error')
+        return redirect('index.html')
+
+    path = request.form['path']
+    branch = request.form['branch']
+
+    # Convert to int first b/c '0' will be True by bool()!
+    publish_status = bool(int(request.form['publish_status']))
+
+    if branch != u'master':
+        flash('Cannot change publish status on articles from branches other than master', category='error')
+        return redirect(url_for('review', article_path=path, branch=branch))
+
+    article = models.read_article(path, rendered_text=False, branch=branch)
+    if article is None:
+        flash('Cannot find article to change publish status', category='error')
+        return redirect(url_for('index'))
+
+    author_url = url_for('user_profile', author_name=article.author_name)
+    article_url = url_for('review', article_path=path)
+
+    article.published = publish_status
+    if not models.save_article_meta_data(article, user.login, user.email):
+        flash('Failed updating article publish status', category='error')
+        return redirect(article_url)
+
+    tasks.update_listing(article_url, article.title, author_url,
+                         article.author_name, user.login, user.email,
+                         stacks=article.stacks, branch=article.branch,
+                         published=publish_status)
+
+    publishing = 'publish' if publish_status else 'unpublish'
+    msg = 'The article has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publishing)
+
+    flash(msg, category='info')
+
+    return redirect(article_url)
 
 
 @app.route('/subscribe/', methods=['POST'])
