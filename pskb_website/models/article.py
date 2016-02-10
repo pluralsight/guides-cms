@@ -642,7 +642,7 @@ class Article(object):
         self.filename = filename
         self.image_url = image_url
         self.last_updated = None
-        self.author_real_name = author_real_name
+        self.author_real_name = author_real_name or author_name
 
         # Only useful if article has already been saved to github
         self.sha = sha

@@ -356,7 +356,7 @@ def save():
         author_url = filters.url_for_user(article.author_name)
 
         tasks.update_listing(url, article.title, author_url,
-                             article.author_name, user.login, user.email,
+                             article.author_real_name, user.login, user.email,
                              stacks=article.stacks, branch=article.branch,
                              published=False)
 
