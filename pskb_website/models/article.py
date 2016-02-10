@@ -245,8 +245,8 @@ def read_article_from_cache(path, branch=u'master'):
 
 
 def save_article(title, path, message, new_content, author_name, email, sha,
-                 branch='master', image_url=None, repo_path=None,
-                 author_real_name=None, stacks=None):
+                 branch=u'master', image_url=None, repo_path=None,
+                 author_real_name=None, stacks=None, published=False):
     """
     Create or save new (original) article, not branched article
 
@@ -264,6 +264,7 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     :param repo_path: Optional repo path to save into (<owner>/<name>)
     :param author_real_name: Optional real name of author, not username
     :param stacks: Optional list of stacks to associate with article
+    :param published: Boolean to indicate if article is published or not
 
     :returns: Article object updated or saved
 
@@ -276,6 +277,8 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     article = Article(title, author_name, branch=branch, image_url=image_url,
                       repo_path=repo_path, author_real_name=author_real_name,
                       stacks=stacks)
+    article.published = published
+
     if path:
         article.path = path
 
@@ -364,7 +367,7 @@ def branch_article(article, message, new_content, author_name, email,
     return save_article(article.title, article.path, message, new_content,
                         author_name, email, article_sha, branch=branch,
                         image_url=image_url, author_real_name=author_real_name,
-                        stacks=article.stacks)
+                        stacks=article.stacks, published=article.published)
 
 
 def branch_or_save_article(title, path, message, content, author_name, email,
@@ -393,11 +396,13 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     :returns: Article object updated, saved, or branched
     """
 
+    article = None
+    published = False
+
     if path:
-        article = read_article(path, rendered_text=False, branch='master',
+        article = read_article(path, rendered_text=False, branch=u'master',
                                repo_path=repo_path)
-    else:
-        article = None
+        published = article.published
 
     if article and article.author_name != author_name and sha:
         # Note branching an article cannot change the stacks!
@@ -407,7 +412,7 @@ def branch_or_save_article(title, path, message, content, author_name, email,
         new = save_article(title, path, message, content, author_name, email,
                            sha, image_url=image_url, repo_path=repo_path,
                            author_real_name=author_real_name,
-                           stacks=stacks)
+                           stacks=stacks, published=published)
 
     return new
 
