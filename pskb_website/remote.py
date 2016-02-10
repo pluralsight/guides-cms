@@ -401,7 +401,11 @@ def read_repo_collaborators_from_github(owner=None, repo=None):
     repo = repo or app.config['REPO_NAME']
 
     url = '/repos/%s/%s/collaborators' % (owner, repo)
-    resp = github.get(url)
+
+    # This endpoint requires a user that has push access
+    token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+
+    resp = github.get(url, token=token)
 
     if resp.status != 200:
         log_error('Failed reading collaborators', url, resp, repo=repo,
