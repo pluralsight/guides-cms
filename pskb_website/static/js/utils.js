@@ -101,11 +101,6 @@ function create_toc_from_headers(headers) {
         var indent = Array(hdr_num + 1).join("&nbsp;");
         var tag = "<li>" + indent + "<a href='#" + url_content + "'>" + hdr.textContent + "</a></li>";
 
-        /* Hack to account for the fixed position header on article page.
-         * This 97px keeps the visual position the same but makes sure we can
-         * scroll to correct location accounint for header when user clicks a
-         * link. 97px must match the height of the header! */
-        $(hdr).attr('style', 'margin-top: -97px; padding-top: 97px;');
         $(hdr).attr('id', url_content);
         toc_html += tag
     }

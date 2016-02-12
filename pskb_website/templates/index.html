@@ -1,34 +1,33 @@
-{% extends "article_list.html" %}
+{% extends "layout.html" %}
+
+{% block header %}
+    {{super()}}
+
+    <div class="container">
+        <div id="featured">
+            <a href="#">
+                <span class="intro">Featured Guide</span>
+                <h1 class="lead">A Call for Hackers to teach. Together.</h1>
+                <h2><small>by Prateek Gupta</small></h2>
+            </a>
+        </div>
+    </div>
+
+{% endblock %}
 
 {% block body %}
-    <div class="row features">
-        <div class="col-md-4">
-            <img src="/static/img/check.png" width="31" height="23" alt="checkmark"/><span class="gradient-text">Integrated with GITHUB</span>
-        </div>
-        <div class="col-md-4">
-            <img src="/static/img/check.png" width="31" height="23" alt="checkmark"/><span class="gradient-text">Write using MARKDOWN</span>
-        </div>
-        <div class="col-md-4">
-            <img src="/static/img/check.png" width="31" height="23" alt="checkmark"/><span class="gradient-text">Engine is OPEN SOURCE</span>
-        </div>
-    </div>
+    {% include "article_list.html" %}
 
-    <div class="col-xs-12 col-md-2 navbar-left-index index-left">
-        {% include 'stack_filter.html' %}
-        <div class="create-tutorial">
-            <h4>Become an author</h4>
-            <a href="/write/" class="emphasize">Create tutorial</a>
+    <div class="row">
+        <div class="col-md-12 manifesto">
+            <h2>A developer community for writing guides</h2>
+            <p>
+                This is a community for collaborating on creating
+                great technical guides.  Our collective aim is by
+                working together, we can educate the world and improve
+                our knowledge.
+            </p>
         </div>
-    </div>
-
-    <div class="col-xs-12 col-md-10">
-        <div class="row">
-            <div class="col-xs-12 col-md-10">
-                {{welcome_text|safe}}
-            </div>
-        </div>
-
-        {{super()}}
     </div>
 
 {% endblock %}

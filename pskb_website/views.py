@@ -46,21 +46,12 @@ def index():
     if file_details is not None:
         text = file_details.text
 
-    g.index_active = True
     return render_template('index.html', articles=articles, welcome_text=text,
                            stacks=forms.STACK_OPTIONS)
 
 
-@app.route('/login')
+@app.route('/login/')
 def login():
-    prev_url = session.get('previously_requested_page')
-
-    # See if user got here from write page and highlight that tab to indicate
-    # that they're trying to write and the click succeeded in getting them
-    # closer to writing; specific suggestion from Ed.
-    if prev_url is not None and '/write/' in prev_url:
-        g.write_active = True
-
     return render_template('login.html')
 
 
@@ -71,10 +62,8 @@ def gh_rate_limit():
     return repr(remote.check_rate_limit())
 
 
-@app.route('/faq')
+@app.route('/faq/')
 def faq():
-    g.faq_active = True
-
     file_details = models.read_file('faq.md', rendered_text=True)
     return render_template('faq.html', details=file_details)
 
@@ -155,7 +144,6 @@ def user_profile(author_name):
 def write(article_path):
     article = None
     branch_article = False
-    g.write_active = True
     selected_stack = None
 
     if article_path is not None:
@@ -192,7 +180,6 @@ def partner_import():
 
     article = None
     branch_article = False
-    g.write_active = True
     secondary_repo = True
 
     flash('You are posting an article to the partner repository!',
@@ -208,8 +195,6 @@ def partner_import():
 @app.route('/review/<path:article_path>', methods=['GET'])
 @app.route('/review/', defaults={'article_path': None}, methods=['GET'])
 def review(article_path):
-    g.review_active = True
-
     if article_path is None:
         articles = models.get_available_articles(published=False)
         return render_template('review.html', articles=articles,
@@ -265,8 +250,6 @@ def partner(article_path):
     URL for articles from hackhands blog -- these articles are not
     editable.
     """
-
-    g.review_active = True
 
     try:
         repo_path = '%s/%s' % (app.config['SECONDARY_REPO_OWNER'],
