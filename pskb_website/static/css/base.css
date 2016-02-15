@@ -26,6 +26,7 @@ a, a:visited, a:hover, a:focus {
 }
 
 #header-white {
+    width: 100%;
     background-color: #ffffff;
     color: #000000;
     padding: 15px 15px 15px 15px;
@@ -46,6 +47,7 @@ a, a:visited, a:hover, a:focus {
 }
 
 #header-black {
+    width: 100%;
     background-color: #000000;
     color: #ffffff;
     padding: 15px 15px 15px 15px;
@@ -265,6 +267,7 @@ a, a:visited, a:hover, a:focus {
     background-color: #f96616;
     color: #000000;
     margin-top: 15px;
+    width: 100%;
 }
 
 #footer .emphasize {
