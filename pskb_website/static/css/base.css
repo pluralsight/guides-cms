@@ -3,7 +3,6 @@ body {
   letter-spacing: -.015em;
 }
 
-
 /* Default color of Pluralsight buttons */
 .btn-primary,
 .btn-primary:focus,
@@ -76,6 +75,11 @@ a, a:visited, a:hover, a:focus {
 
 #header-black #navbar a:hover, #header-white #navbar a:hover {
     color: #f96816;
+}
+
+/* Overwrite bootstrap default icon bar to make it show up on white background */
+#header-white .navbar-toggle .icon-bar {
+    background-color: #000000;
 }
 
 #featured {
