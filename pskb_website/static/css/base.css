@@ -329,17 +329,30 @@ a, a:visited, a:hover, a:focus {
 }
 
 #signup {
-    border: 1px solid #f96816;
     padding: 4px;
+    margin-top: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+#signup a {
+    color: #000000;
 }
 
 #signup .form-group {
     padding-top: 15px;
 }
 
-#signup {
-    font-size: 8pt;
-    font-weight: 500;
+#signup .btn-primary,
+#signup .btn-primary:focus,
+#signup .btn-primary:hover,
+#signup .btn-primary:active,
+#signup .btn-primary:active:hover,
+#signup .btn-primary:active:focus {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: #000000;
 }
 
 .load-guides {

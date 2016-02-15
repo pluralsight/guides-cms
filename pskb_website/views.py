@@ -238,8 +238,6 @@ def review(article_path):
     # comments.
     canonical_url = request.base_url.replace('https://', 'http://')
 
-    form = forms.SignupForm()
-
     # Filter out the current branch from the list of branches
     branches = [b for b in article.branches if b != branch]
 
@@ -254,7 +252,6 @@ def review(article_path):
                            allow_edits=allow_edits,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
-                           form=form,
                            branches=branches,
                            visible_branch=branch,
                            collaborator=collaborator)
@@ -504,7 +501,8 @@ def img_upload():
 
 @app.context_processor
 def template_globals():
-    return {'repo_url': remote.default_repo_url()}
+    return {'repo_url': remote.default_repo_url(),
+            'form': forms.SignupForm()}
 
 
 @app.errorhandler(500)

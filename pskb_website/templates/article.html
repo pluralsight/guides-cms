@@ -3,14 +3,11 @@
 {% block css %}
     <link href="/static/css/vendor/editor/github.css" rel="stylesheet">
     <link href="/static/css/vendor/github.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
     {{ super() }}
 {% endblock %}
 
 {% block js %}
     {{super()}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
-    <script src="/static/js/utils.js"></script>
     <script type="text/javascript">
         (function () {
             var s = document.createElement('script');
