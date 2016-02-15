@@ -51,3 +51,4 @@ import pskb_website.filters
 app.jinja_env.filters['date_string'] = filters.date_string
 app.jinja_env.filters['url_for_article'] = filters.url_for_article
 app.jinja_env.filters['url_for_user'] = filters.url_for_user
+app.jinja_env.filters['author_name'] = filters.author_name

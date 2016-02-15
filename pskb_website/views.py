@@ -502,7 +502,7 @@ def img_upload():
 @app.context_processor
 def template_globals():
     return {'repo_url': remote.default_repo_url(),
-            'form': forms.SignupForm()}
+            'form': forms.SignupForm(), 'stack_options': forms.STACK_OPTIONS}
 
 
 @app.errorhandler(500)

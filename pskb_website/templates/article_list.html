@@ -8,8 +8,11 @@
                             <li><a href="/drafts/" class="{{ 'active' if g.drafts_active }}">My Drafts</a></li>
                             {% endif %}
 
-                                <li style="float: right;"><a href="#">Filter by Stacks</a></li>
+                            <li class="stack-filter">
+                                {% include "stack_filter.html" %}
+                            </li>
                             </ul>
+                            <br style="clear: left;" />
                         </div>
                     </div>
                     {% for article in articles %}
@@ -23,12 +26,15 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="row">
+                                    <div class="row article-row">
                                         <div class="col-sm-3 col-md-offset-1 article-teaser">
                         {% else %}
                                         <div class="col-sm-3 article-teaser">
                         {% endif %}
 
+                                            {% for stack in article.stacks %}
+                                                <span class="stack" style="display: none;">{{stack}}</span>
+                                            {% endfor %}
                                             <a href="/review/{{article.path}}">
                                                 <span class="clickable"></span>
                                             </a>

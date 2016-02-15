@@ -57,3 +57,19 @@ def url_for_user(user):
 
     return '%s%s' % (app.config['BASE_URL'],
                       url_for('user_profile', author_name=username))
+
+def author_name(article):
+    """
+    Get best available name for author, preferring real name
+
+    :param article: Article object
+    :returns: Author name as string
+    """
+
+    if not article:
+        return ''
+
+    if article.author_real_name:
+        return article.author_real_name
+
+    return article.author_name

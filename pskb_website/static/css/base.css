@@ -315,8 +315,25 @@ a, a:visited, a:hover, a:focus {
     padding: 15px;
 }
 
-#article-list .nav li {
+#article-list .nav > li {
     float: left;
+}
+
+#stacks {
+    color: #696969;
+    font-size: 14px;
+}
+
+#article-list .form-control {
+    background-color: #efefef;
+}
+
+#article-list .btn-default {
+    background-color: #efefef;
+    border: none;
+    font-size: 14px;
+    color: #696969;
+    padding-top: 10px;
 }
 
 #article-list .nav li a.active, #article-list .nav li a.active:visited, #article-list .nav li a.active:focus, #article-list .nav li.active:hover {
