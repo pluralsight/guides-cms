@@ -486,6 +486,11 @@ def img_upload():
                     mimetype='application/json')
 
 
+@app.context_processor
+def template_globals():
+    return {'repo_url': remote.default_repo_url()}
+
+
 @app.errorhandler(500)
 def internal_error(error):
     return render_template('error.html'), 500
