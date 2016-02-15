@@ -216,10 +216,8 @@ a, a:visited, a:hover, a:focus {
     color: #f96816;
 }
 
-@media(max-width:992px) {
-    #article-sidebar {
-        text-align: center;
-    }
+#article-sidebar .hr-container {
+    width: 30%;
 }
 
 /* Push article text over to account for the octicon-link showing up on hover.
@@ -407,4 +405,19 @@ a.active-page {
  * text. */
 .bootstrap-select .btn {
     font-size: 12px;
+}
+
+@media(max-width:992px) {
+    #article-sidebar {
+        text-align: center;
+    }
+
+    #article-sidebar .hr-container {
+        width: 100%;
+    }
+
+    #article {
+        margin-top: 40px;
+    }
+
 }
