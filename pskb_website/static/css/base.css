@@ -213,10 +213,49 @@ a, a:visited, a:hover, a:focus {
 }
 
 @media(max-width:992px) {
-    .affix {
-        position: static;
-        margin-bottom: 30px;
+    #article-sidebar {
+        text-align: center;
     }
+}
+
+/* Push article text over to account for the octicon-link showing up on hover.
+ * Without this the headers would appear slightly indented on entire article
+ * this forces all text to left align so the octicon link can show up in the
+ * padding. */
+#article p {
+    padding-left: 21px;
+}
+
+#article pre, #article blockquote, #article form {
+    margin-left: 21px;
+}
+
+#article h1,
+#article h2,
+#article h3,
+#article h4,
+#article h5,
+#article h6 {
+}
+
+#article h1 .octicon-link,
+#article h2 .octicon-link,
+#article h3 .octicon-link,
+#article h4 .octicon-link,
+#article h5 .octicon-link,
+#article h6 .octicon-link {
+    margin-right: 5px;
+    vertical-align: middle;
+    visibility: hidden;
+}
+
+#article h1:hover .octicon-link,
+#article h2:hover .octicon-link,
+#article h3:hover .octicon-link,
+#article h4:hover .octicon-link,
+#article h5:hover .octicon-link,
+#article h6:hover .octicon-link {
+    visibility: visible;
 }
 
 #footer {

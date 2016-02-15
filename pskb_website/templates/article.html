@@ -26,7 +26,7 @@
 
 {% block body %}
 <div class="row">
-    <div id="article-sidebar" class="col-md-3 affix">
+    <div id="article-sidebar" class="col-md-3">
         <div id="table-of-contents">
             <h4>Table of Contents</h4>
             <div style="width: 30%;">
@@ -40,7 +40,7 @@
             </p>
         {% endif %}
     </div>
-    <div id="article" class="col-md-9 col-md-offset-3">
+    <div id="article" class="col-md-9">
         <div id="article-header">
             {% if article.image_url %}
                 <img id="article-img" src="{{article.image_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{article.author_name}}"/>
