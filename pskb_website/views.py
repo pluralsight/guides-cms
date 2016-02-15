@@ -102,6 +102,9 @@ def authorized():
         flash('Unable to read user from Github API')
         return redirect(url_for('index'))
 
+    if user.avatar_url:
+        session['user_image'] = user.avatar_url
+
     if user.name:
         session['name'] = user.name
 
