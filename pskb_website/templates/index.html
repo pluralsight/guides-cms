@@ -5,11 +5,13 @@
 
     <div class="container">
         <div id="featured">
-            <a href="#">
-                <span class="intro">Featured Guide</span>
-                <h1 class="lead">A Call for Hackers to teach. Together.</h1>
-                <h2><small>by Prateek Gupta</small></h2>
-            </a>
+        {% if featured_article %}
+                <a href="/review/{{featured_article.path}}">
+                    <span class="intro">Featured Guide</span>
+                    <h1 class="lead">{{featured_article.title}}</h1>
+                    <h2><small>by {{featured_article|author_name}}</small></h2>
+                </a>
+        {% endif %}
         </div>
     </div>
 

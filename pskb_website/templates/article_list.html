@@ -44,7 +44,7 @@
                                             <hr>
 
                                             <p class="article-author">
-                                                <span> {{article.author_real_name if article.author_real_name else article.author_name}} </span>
+                                                <span> {{article|author_name}} </span>
                                                 {% if article.image_url %}
                                                     <img src="{{article.image_url}}&amp;s=86" width="43" height="43" style="border-radius: 22px;" alt="{{article.user}}"/>
                                                 {% else %}

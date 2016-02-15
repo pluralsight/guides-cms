@@ -38,16 +38,20 @@ def login_required(f):
 @app.route('/')
 def index():
     # FIXME: This should only fetch the most recent x number.
-    articles = models.get_available_articles(published=True)
+    articles = list(models.get_available_articles(published=True))
+    featured = os.environ.get('FEATURED_TITLE')
+    featured_article = None
 
-    file_details = models.read_file('welcome.md', rendered_text=True)
+    if featured is not None:
+        for ii, article in enumerate(articles):
+            if article.title == featured:
+                # This is only safe b/c we won't continue iterating it after we
+                # find the featured one!
+                featured_article = articles.pop(ii)
+                break
 
-    text = u''
-    if file_details is not None:
-        text = file_details.text
-
-    return render_template('index.html', articles=articles, welcome_text=text,
-                           stacks=forms.STACK_OPTIONS)
+    return render_template('index.html', articles=articles,
+                           featured_article=featured_article)
 
 
 @app.route('/login/')
