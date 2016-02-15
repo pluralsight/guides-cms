@@ -41,8 +41,6 @@
     <body>
 
         <div id="{{'header-black' if not g.header_white else 'header-white'}}">
-            <div class="container">
-
             {% block header %}
                 {% block nav %}
                     {% if not g.header_white %}
@@ -52,7 +50,6 @@
                     {% endif %}
                 {% endblock %}
             {% endblock %}
-            </div><!-- container -->
         </div><!-- header -->
 
         {% with messages = get_flashed_messages(category_filter=['info', 'message']) %}
