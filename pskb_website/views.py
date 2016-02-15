@@ -233,6 +233,8 @@ def review(article_path):
     if branch != u'master':
         branches.append(u'master')
 
+    g.header_white = True
+
     return render_template('article.html',
                            article=article,
                            allow_edits=allow_edits,

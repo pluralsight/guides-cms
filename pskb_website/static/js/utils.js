@@ -12,24 +12,6 @@ function populate_table_of_contents(article, div_to_fill) {
     }
 }
 
-/* Workaround for Safari bug preventing using bootstrap pull/push classes
- * on fixed positioned columns. We want to reorder the table of contents to
- * be on top of the article on small-ish screens.
- * https://github.com/twbs/bootstrap/issues/16814
- */
-function reorder_columns () {
-    var grid_width = $('#wrap > .container-fluid').first().width();
-
-    /* This number corresponds to the bootstrap break point for large devices. */
-    if (grid_width < 992) {
-        $('#article').before($('#toc-column'));
-        $('#article').after($('#share-column'));
-    } else {
-        $('#article').after($('#toc-column'));
-        $('#article').before($('#share-column'));
-    }
-}
-
 function filter() {
     var stacks = document.getElementById("stacks");
     var selected_stacks = [];

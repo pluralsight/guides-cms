@@ -38,13 +38,20 @@
     <![endif]-->
     </head>
     <body>
-        <div id="header">
+
+        <div id="{{'header-black' if not g.header_white else 'header-white'}}">
+            <div class="container">
+
             {% block header %}
                 {% block nav %}
-                    {% include "nav.html" %}
+                    {% if not g.header_white %}
+                        {% include "nav_black.html" %}
+                    {% else %}
+                        {% include "nav_white.html" %}
+                    {% endif %}
                 {% endblock %}
             {% endblock %}
-
+            </div><!-- container -->
         </div><!-- header -->
 
         {% with messages = get_flashed_messages(category_filter=['info', 'message']) %}

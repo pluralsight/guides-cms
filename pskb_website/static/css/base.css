@@ -17,29 +17,65 @@ body {
 
 /* Use default Pluralsight link styling */
 a, a:visited, a:hover, a:focus {
-  color: #f96816;
-  text-decoration: none;
+    color: #f96816;
+    text-decoration: none;
 }
 
-#header {
+.emphasize {
+    border: 1px solid #ffffff;
+    border-radius: 30px;
+}
+
+#header-white {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 15px 15px 15px 15px;
+}
+
+#header-white .navbar {
+    background-color: #ffffff;
+}
+
+#header-white #navbar a, #header-white #navbar a:visited, #header-white #navbar a:focus {
+    color: #000000;
+    text-decoration: none;
+    background-color: #ffffff;
+}
+
+#header-white .emphasize {
+    border: 1px solid #000000;
+}
+
+#header-black {
     background-color: #000000;
     color: #ffffff;
     padding: 15px 15px 15px 15px;
     margin-bottom: 15px;
 }
 
-#navbar a, #navbar a:visited, #navbar a:focus {
+#header-black .navbar {
+    background-color: #000000;
+}
+
+#header-black #navbar a,
+#header-black #navbar a:visited,
+#header-black #navbar a:focus {
     color: #ffffff;
-    text-decoration: none;
-    background-color: #000000;
 }
 
-#navbar a:hover {
-    color: #f96616;
+#header-black #navbar .dropdown-menu a,
+#header-black #navbar .dropdown-menu a:visited,
+#header-black #navbar .dropdown-menu a:focus {
+    color: #000000;
+    background-color: #ffffff;
 }
 
-.navbar {
-    background-color: #000000;
+#header-black #navbar .dropdown-menu a:hover {
+    color: #f96816;
+}
+
+#header-black #navbar a:hover, #header-white #navbar a:hover {
+    color: #f96816;
 }
 
 #featured {
@@ -126,6 +162,61 @@ a, a:visited, a:hover, a:focus {
     /* Based off of article-teaser height. Forces the hr and link inside teaser
     * to show up in uniform place regardless of title length. */
     height: 150px;
+}
+
+#article-header {
+    position: relative;
+}
+
+#article-header img {
+    float: left;
+}
+
+#article-header h2 {
+    float: left;
+    margin-left: 10px;
+    margin-top: -2px;
+    font-size: 16px;
+}
+
+#article-header h3 {
+    clear: left;
+    position: absolute;
+    /* based on size of article image */
+    left: 50px;
+    top: -5px;
+    font-size: 16px;
+}
+
+#title {
+    clear: left;
+}
+
+#table-of-contents ul {
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+#table-of-contents h4 {
+    font-size: 15px;
+    color: #b0b0b0;
+}
+
+#table-of-contents a,
+#table-of-contents a:visited,
+#table-of-contents a:focus {
+    color: #b0b0b0;
+}
+
+#table-of-contents a:hover {
+    color: #f96816;
+}
+
+@media(max-width:992px) {
+    .affix {
+        position: static;
+        margin-bottom: 30px;
+    }
 }
 
 #footer {
@@ -230,12 +321,6 @@ a, a:visited, a:hover, a:focus {
     font-size: 20px;
 }
 
-.emphasize {
-    border: 1px solid #ffffff;
-    border-radius: 30px;
-}
-
-
 #share-column .emphasize {
     border: 1px solid #f96616;
     padding: 15px;
@@ -250,6 +335,7 @@ a, a:visited, a:hover, a:focus {
 /* Give a bit of breathing room to surrounding area of message boxes */
 .bg-info, .bg-danger, .bg-warning {
     padding: 10px;
+    text-align: center;
 }
 
 #editor-section {
@@ -259,6 +345,10 @@ a, a:visited, a:hover, a:focus {
 #editor-section #title {
     margin-top: 20px;
     width: 70%;
+}
+
+a.active-page {
+    text-decoration: underline;
 }
 
 .editor-container {
