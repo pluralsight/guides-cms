@@ -133,9 +133,20 @@ def user_profile(author_name):
         return redirect(url_for('index'))
 
     articles = models.get_articles_for_author(user.login)
-
-    g.profile_active = True
     return render_template('profile.html', user=user, articles=articles)
+
+@login_required
+@app.route('/drafts/')
+def drafts():
+    g.drafts_active = True
+
+    user = models.find_user(None)
+    if not user:
+        flash('Unable to find logged in user', category='error')
+        return redirect(url_for('index'))
+
+    articles = models.get_articles_for_author(user.login, published=False)
+    return render_template('index.html', articles=articles)
 
 
 @app.route('/write/<path:article_path>/', methods=['GET'])

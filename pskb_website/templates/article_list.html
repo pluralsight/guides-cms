@@ -2,9 +2,12 @@
                     <div class="row">
                         <div class="col-md-12">
                             <ul class="nav">
-                                <li><a href="/" class="active">Top Guides</a></li>
-                                <li><a href="/">My Drafts</a></li>
-                                <li><a href="/">My Drafts</a></li>
+                                <li><a href="/" class="{{ 'active' if not g.drafts_active }}">Top Guides</a></li>
+
+                            {% if session.github_token %}
+                            <li><a href="/drafts/" class="{{ 'active' if g.drafts_active }}">My Drafts</a></li>
+                            {% endif %}
+
                                 <li style="float: right;"><a href="#">Filter by Stacks</a></li>
                             </ul>
                         </div>
