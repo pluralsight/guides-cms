@@ -439,9 +439,9 @@ def change_publish_status():
         return redirect(article_url)
 
     tasks.update_listing.delay(article_url, article.title, author_url,
-                               article.author_name, user.login, user.email,
-                               stacks=article.stacks, branch=article.branch,
-                               published=publish_status)
+                               article.author_real_name, user.login,
+                               user.email, stacks=article.stacks,
+                               branch=article.branch, published=publish_status)
 
     publishing = 'publish' if publish_status else 'unpublish'
     msg = 'The article has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publishing)
