@@ -4,9 +4,8 @@ Main views of PSKB app
 
 from functools import wraps
 import os
-import uuid
 
-from flask import redirect, Response, url_for, session, request, render_template, flash, json, jsonify, g
+from flask import redirect, Response, url_for, session, request, render_template, flash, json, g
 
 from . import app
 from . import remote
