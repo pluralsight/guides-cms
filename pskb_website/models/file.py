@@ -318,7 +318,7 @@ def _file_listing_to_markdown(article_url, title, author_url, author_name,
     if stacks is None:
         stacks = []
 
-    return '[{title}]({article_url}) by [{author_name}]({author_url}) {stacks}'.format(
+    return unicode('[{title}]({article_url}) by [{author_name}]({author_url}) {stacks}').format(
             title=title, article_url=article_url, author_name=author_name,
             author_url=author_url, stacks=','.join(stacks))
 
@@ -353,20 +353,20 @@ def get_updated_file_listing_text(text, article_url, title, author_url,
             changed_line = True
 
             # Use '- ' to create markdown list
-            line = '- ' + _file_listing_to_markdown(article_url,
-                                                    title,
-                                                    author_url,
-                                                    author_name,
-                                                    stacks=stacks)
+            line = u'- ' + _file_listing_to_markdown(article_url,
+                                                     title,
+                                                     author_url,
+                                                     author_name,
+                                                     stacks=stacks)
 
         new_contents.append(line)
 
     if not changed_line:
         line = _file_listing_to_markdown(article_url, title, author_url,
                                          author_name, stacks=stacks)
-        new_contents.append('- ' + line)
+        new_contents.append(u'- ' + line)
 
-    return '\n'.join(new_contents)
+    return u'\n'.join(new_contents)
 
 
 def get_removed_file_listing_text(text, title):
@@ -387,4 +387,4 @@ def get_removed_file_listing_text(text, title):
 
         new_lines.append(line)
 
-    return '\n'.join(new_lines)
+    return u'\n'.join(new_lines)
