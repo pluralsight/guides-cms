@@ -542,11 +542,11 @@ def sync_listing():
     user = models.find_user('durden')
     if user is None:
         app.logger.error('Cannot sync listing unless logged in')
-        return Response(response='', status=500, mimetype='application/json')
+        return render_template('index.html'), 500
 
     if not user.is_collaborator():
         app.logger.error('Cannot sync listing unless collaborator')
-        return Response(response='', status=500, mimetype='application/json')
+        return render_template('index.html'), 500
 
     published = bool(int(request.args.get('published', 1)))
     tasks.synchronize_listing.delay(published, user.login, user.email)
