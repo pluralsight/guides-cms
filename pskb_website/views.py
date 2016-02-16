@@ -354,10 +354,11 @@ def save():
         url = filters.url_for_article(article)
         author_url = filters.url_for_user(article.author_name)
 
-        tasks.update_listing(url, article.title, author_url,
-                             article.author_real_name, user.login, user.email,
-                             stacks=article.stacks, branch=article.branch,
-                             published=False)
+        tasks.update_listing.delay(url, article.title, author_url,
+                                   article.author_real_name, user.login,
+                                   user.email, stacks=article.stacks,
+                                   branch=article.branch,
+                                   published=False)
 
     return redirect(url_for('review', article_path=article.path,
                             branch=article.branch))
@@ -437,10 +438,10 @@ def change_publish_status():
         flash('Failed updating article publish status', category='error')
         return redirect(article_url)
 
-    tasks.update_listing(article_url, article.title, author_url,
-                         article.author_name, user.login, user.email,
-                         stacks=article.stacks, branch=article.branch,
-                         published=publish_status)
+    tasks.update_listing.delay(article_url, article.title, author_url,
+                               article.author_name, user.login, user.email,
+                               stacks=article.stacks, branch=article.branch,
+                               published=publish_status)
 
     publishing = 'publish' if publish_status else 'unpublish'
     msg = 'The article has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publishing)
