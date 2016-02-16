@@ -346,19 +346,18 @@ def save():
         return redirect(url_for('partner', article_path=article.path,
                                 branch=article.branch))
 
-    # Update file listing but only if the article is unpublished. Publishing an
-    # article and updating that listing is a separate action.
-    if not article.published:
-        # Use these filter wrappers so we get absolute URL instead of relative
-        # URL to this specific site.
-        url = filters.url_for_article(article)
-        author_url = filters.url_for_user(article.author_name)
+    # Use these filter wrappers so we get absolute URL instead of relative URL
+    # to this specific site.
+    url = filters.url_for_article(article)
+    author_url = filters.url_for_user(article.author_name)
 
-        tasks.update_listing.delay(url, article.title, author_url,
-                                   article.author_real_name, user.login,
-                                   user.email, stacks=article.stacks,
-                                   branch=article.branch,
-                                   published=False)
+    tasks.update_listing.delay(url, article.title, author_url,
+                               article.author_real_name, user.login,
+                               user.email, stacks=article.stacks,
+                               branch=article.branch,
+                               published=article.published)
+
+    flash('Your content is being saved to github. It should appear within a few minutes', category='info')
 
     return redirect(url_for('review', article_path=article.path,
                             branch=article.branch))
