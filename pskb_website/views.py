@@ -476,6 +476,7 @@ def subscribe():
 
 
 @app.route('/img_upload/', methods=['POST'])
+@login_required
 def img_upload():
     user = models.find_user(session['login'])
     if user is None:
@@ -501,6 +502,26 @@ def img_upload():
 
     return Response(response=json.dumps(url), status=200,
                     mimetype='application/json')
+
+
+@app.route('/sync_listing/')
+def sync_listing():
+    user = models.find_user('durden')
+    if user is None:
+        app.logger.error('Cannot sync listing unless logged in')
+        return Response(response='', status=500, mimetype='application/json')
+
+    if not user.is_collaborator():
+        app.logger.error('Cannot sync listing unless collaborator')
+        return Response(response='', status=500, mimetype='application/json')
+
+    published = bool(int(request.args.get('published', 1)))
+    tasks.synchronize_listing.delay(published, user.login, user.email)
+
+    flash('Queued up %s sync' % ('published' if published else 'unpublished'),
+          category='info')
+
+    return redirect(url_for('index'))
 
 
 @app.context_processor
