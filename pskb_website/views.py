@@ -504,8 +504,9 @@ def img_upload():
 
 
 @app.route('/sync_listing/')
+@login_required
 def sync_listing():
-    user = models.find_user('durden')
+    user = models.find_user(session['login'])
     if user is None:
         app.logger.error('Cannot sync listing unless logged in')
         return render_template('index.html'), 500
