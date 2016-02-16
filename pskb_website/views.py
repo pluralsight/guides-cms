@@ -34,6 +34,42 @@ def login_required(f):
     return decorated_function
 
 
+def collaborator_required(f):
+    """
+    Decorator to require login and logged in user to be collaborator
+
+    This should be used instead of @login_required when the URL endpoint should
+    be protected by login and the logged in user being a collaborator on the
+    repo.  This will NOT redirect to login. It's meant to kick a user back to
+    the homepage if they tried something they do not have permissions for.
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'github_token' not in session or 'login' not in session:
+            flash('Must be logged in', category='error')
+
+            # Save off the page so we can redirect them to what they were
+            # trying to view after logging in.
+            session['previously_requested_page'] = request.url
+
+            return redirect(url_for('index'))
+
+        if 'collaborator' not in session or not session['collaborator']:
+            flash('Must be a repo collaborator for that functionality.',
+                  category='error')
+
+            # Save off the page so we can redirect them to what they were
+            # trying to view after logging in.
+            session['previously_requested_page'] = request.url
+
+            return redirect(url_for('index'))
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
 @app.route('/')
 def index():
     # FIXME: This should only fetch the most recent x number.
@@ -391,7 +427,7 @@ def delete():
 
 
 @app.route('/publish/', methods=['POST'])
-@login_required
+@collaborator_required
 def change_publish_status():
     """Publish or unpublish article via POST"""
 
@@ -399,10 +435,6 @@ def change_publish_status():
     if user is None:
         flash('Cannot change publish status unless logged in', category='error')
         return render_template('index.html'), 404
-
-    if not user.is_collaborator():
-        flash('Only official repository collaborators can change publish status on articles', category='error')
-        return redirect('index.html')
 
     path = request.form['path']
     branch = request.form['branch']
@@ -494,15 +526,11 @@ def img_upload():
 
 
 @app.route('/sync_listing/')
-@login_required
+@collaborator_required
 def sync_listing():
     user = models.find_user(session['login'])
     if user is None:
         app.logger.error('Cannot sync listing unless logged in')
-        return render_template('index.html'), 500
-
-    if not user.is_collaborator():
-        app.logger.error('Cannot sync listing unless collaborator')
         return render_template('index.html'), 500
 
     published = bool(int(request.args.get('published', 1)))
