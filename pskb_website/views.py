@@ -22,12 +22,48 @@ def login_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'github_token' not in session:
+        if 'github_token' not in session or 'login' not in session:
             # Save off the page so we can redirect them to what they were
             # trying to view after logging in.
             session['previously_requested_page'] = request.url
 
             return redirect(url_for('login'))
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def collaborator_required(f):
+    """
+    Decorator to require login and logged in user to be collaborator
+
+    This should be used instead of @login_required when the URL endpoint should
+    be protected by login and the logged in user being a collaborator on the
+    repo.  This will NOT redirect to login. It's meant to kick a user back to
+    the homepage if they tried something they do not have permissions for.
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'github_token' not in session or 'login' not in session:
+            flash('Must be logged in', category='error')
+
+            # Save off the page so we can redirect them to what they were
+            # trying to view after logging in.
+            session['previously_requested_page'] = request.url
+
+            return redirect(url_for('index'))
+
+        if 'collaborator' not in session or not session['collaborator']:
+            flash('Must be a repo collaborator for that functionality.',
+                  category='error')
+
+            # Save off the page so we can redirect them to what they were
+            # trying to view after logging in.
+            session['previously_requested_page'] = request.url
+
+            return redirect(url_for('index'))
 
         return f(*args, **kwargs)
 
@@ -51,6 +87,34 @@ def index():
 
     return render_template('index.html', articles=articles,
                            featured_article=featured_article)
+
+
+@app.route('/feature/', methods=['POST'])
+@collaborator_required
+def set_featured_title():
+    path = request.form['path']
+    article = models.read_article(path, branch=u'master')
+
+    error_msg = None
+    if article is None:
+        error_msg = 'Cannot find article with path "%s"' % (path)
+    elif not article.published:
+        error_msg = 'Cannot feature unpublished article'
+
+    if error_msg is not None:
+        flash(error_msg, category='error')
+
+        url = session.pop('previously_requested_page', None)
+        if url is None:
+            url = url_for('index')
+
+        return redirect(url)
+
+    os.environ['FEATURED_TITLE'] = article.title
+
+    flash('Featured article updated', category='info')
+
+    return redirect(url_for('index'))
 
 
 @app.route('/login/')
@@ -163,17 +227,12 @@ def user_profile(author_name):
     articles = models.get_articles_for_author(user.login)
     return render_template('profile.html', user=user, articles=articles)
 
-@login_required
+
 @app.route('/drafts/')
+@login_required
 def drafts():
     g.drafts_active = True
-
-    user = models.find_user(None)
-    if not user:
-        flash('Unable to find logged in user', category='error')
-        return redirect(url_for('index'))
-
-    articles = models.get_articles_for_author(user.login, published=False)
+    articles = models.get_articles_for_author(session['login'], published=False)
     return render_template('index.html', articles=articles)
 
 
@@ -198,12 +257,7 @@ def write(article_path):
         if article.stacks:
             selected_stack = article.stacks[0]
 
-        user = models.find_user(session['login'])
-        if user is None:
-            flash('Cannot save unless logged in', category='error')
-            return render_template('index.html'), 404
-
-        if user.login != article.author_name:
+        if session['login'] != article.author_name:
             branch_article = True
 
     return render_template('editor.html', article=article,
@@ -380,18 +434,18 @@ def save():
         return redirect(url_for('partner', article_path=article.path,
                                 branch=article.branch))
 
-    # Update file listing but only if the article is unpublished. Publishing an
-    # article and updating that listing is a separate action.
-    if not article.published:
-        # Use these filter wrappers so we get absolute URL instead of relative
-        # URL to this specific site.
-        url = filters.url_for_article(article)
-        author_url = filters.url_for_user(article.author_name)
+    # Use these filter wrappers so we get absolute URL instead of relative URL
+    # to this specific site.
+    url = filters.url_for_article(article)
+    author_url = filters.url_for_user(article.author_name)
 
-        tasks.update_listing(url, article.title, author_url,
-                             article.author_real_name, user.login, user.email,
-                             stacks=article.stacks, branch=article.branch,
-                             published=False)
+    tasks.update_listing.delay(url, article.title, author_url,
+                               article.author_real_name, user.login,
+                               user.email, stacks=article.stacks,
+                               branch=article.branch,
+                               published=article.published)
+
+    flash('Your content is being saved to github. It should appear within a few minutes', category='info')
 
     return redirect(url_for('review', article_path=article.path,
                             branch=article.branch))
@@ -435,7 +489,7 @@ def delete():
 
 
 @app.route('/publish/', methods=['POST'])
-@login_required
+@collaborator_required
 def change_publish_status():
     """Publish or unpublish article via POST"""
 
@@ -443,10 +497,6 @@ def change_publish_status():
     if user is None:
         flash('Cannot change publish status unless logged in', category='error')
         return render_template('index.html'), 404
-
-    if not user.is_collaborator():
-        flash('Only official repository collaborators can change publish status on articles', category='error')
-        return redirect('index.html')
 
     path = request.form['path']
     branch = request.form['branch']
@@ -471,10 +521,10 @@ def change_publish_status():
         flash('Failed updating article publish status', category='error')
         return redirect(article_url)
 
-    tasks.update_listing(article_url, article.title, author_url,
-                         article.author_name, user.login, user.email,
-                         stacks=article.stacks, branch=article.branch,
-                         published=publish_status)
+    tasks.update_listing.delay(article_url, article.title, author_url,
+                               article.author_real_name, user.login,
+                               user.email, stacks=article.stacks,
+                               branch=article.branch, published=publish_status)
 
     publishing = 'publish' if publish_status else 'unpublish'
     msg = 'The article has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publishing)
@@ -538,14 +588,11 @@ def img_upload():
 
 
 @app.route('/sync_listing/')
+@collaborator_required
 def sync_listing():
-    user = models.find_user('durden')
+    user = models.find_user(session['login'])
     if user is None:
         app.logger.error('Cannot sync listing unless logged in')
-        return render_template('index.html'), 500
-
-    if not user.is_collaborator():
-        app.logger.error('Cannot sync listing unless collaborator')
         return render_template('index.html'), 500
 
     published = bool(int(request.args.get('published', 1)))
