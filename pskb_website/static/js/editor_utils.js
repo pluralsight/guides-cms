@@ -43,11 +43,6 @@ function initialize_editor(name, real_name) {
     /* Inject header information as it would appear on a regular page since
      * this content is not directly in the editor box */
     editor.on('preview', add_article_header_data);
-    editor.on('fullscreenenter', function() {
-        /* Force top of document up so it aligns with top of the markdown text */
-        var html = editor.getElement('previewerIframe').contentDocument.firstChild;
-        html.setAttribute('style', html.getAttribute('style') + 'margin-top: -90px;');
-    });
 }
 
 function add_article_header_data() {
