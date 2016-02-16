@@ -1,3 +1,7 @@
+"""
+App forms
+"""
+
 from flask_wtf import Form
 from wtforms import StringField, SelectMultipleField, validators
 
@@ -28,6 +32,8 @@ STACK_OPTIONS = ('Java and J2EE',
 
 
 class SignupForm(Form):
+    """Signup form"""
+
     email = StringField('Email', [
         validators.required(),
         validators.Email(message=(u'Please enter a valid email address.')),

@@ -4,102 +4,7 @@ html {
 
 body {
   font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
-  padding-top: 50px;
-  height: 100%;
   letter-spacing: -.015em;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    letter-spacing: -.045em;
-}
-
-h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-    padding-right: 5px;
-}
-
-/* Github markdown parser returns svg icon to create links for headers. We only
- * want to show them on hover to be similar to how it work on github.com. */
-h1 a :first-child, h2 a :first-child, h3 a :first-child, h4 a :first-child, h5 a :first-child, h6 a :first-child {
-    visibility: hidden;
-}
-
-h1:hover a :first-child, h2:hover a :first-child, h3:hover a :first-child, h4:hover a :first-child, h5:hover a :first-child, h6:hover a :first-child {
-    visibility: visible;
-}
-
-#wrap {
-    min-height: 100%;
-    height: auto !important;
-    height: 100%;
-    margin-bottom: -80px;
-}
-
-.header {
-  padding: 20px 15px 0px 15px;
-  text-align: center;
-}
-
-#article {
-    padding-left: 70px;
-}
-
-#share-column {
-    padding-left: 50px;
-}
-
-#table-of-contents {
-    max-height: 500px;
-    overflow-y: scroll;
-    overflow-x: visible;
-    font-size: 12px;
-    line-height: 1.7em;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 155px;
-}
-
-#table-of-contents h6 {
-    text-align: center;
-}
-
-#table-of-contents hr {
-    margin-bottom: 10px;
-}
-
-#table-of-contents ul {
-    margin-left: 0px;
-    padding-left: 3px;
-    padding-right: 8px;
-    list-style-type: none;
-}
-
-#table-of-contents ul li {
-    margin-left: 0px;
-    padding-left: 3px;
-    padding-right: 8px;
-}
-
-/* Push image down just a bit to level out with links in header */
-.navbar-brand img {
-    margin-top: 15px;
-}
-
-.push {
-    height: 80px;
-}
-
-
-#signup {
-    border: 1px solid #f96816;
-    padding: 4px;
-}
-
-#signup .form-group {
-    padding-top: 15px;
-}
-
-#signup {
-    font-size: 8pt;
-    font-weight: 500;
 }
 
 /* Default color of Pluralsight buttons */
@@ -114,159 +19,121 @@ h1:hover a :first-child, h2:hover a :first-child, h3:hover a :first-child, h4:ho
 }
 
 /* Use default Pluralsight link styling */
-a,
-a:visited,
-a:hover,
-a:focus {
-  color: #f96816;
-  text-decoration: none;
-}
-
-/* Make navbar height simliar to main Pluralsight navbar */
-.navbar {
-    font-style: normal;
-    padding-bottom: 15px;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.navbar-fixed-top {
-    padding-bottom: 0px;
-
-    /* Changing this height requires changing the hard-coded padding in
-       the create_toc_from_headers function in utils.js! */
-    height: 97px;
-}
-
-.navbar-fixed-top li a {
-    margin-top: 10px;
-}
-
-.navbar li {
-    margin-top: 10px;
-    letter-spacing: -0.23999999463558197px;
-}
-
-.navbar li a {
-    margin-left: 25px;
-}
-
-.navbar li a:hover {
-    text-decoration: underline;
-}
-
-/* Remove box around active links  */
-.navbar-inverse .navbar-nav > .active > a,
-.navbar-inverse .navbar-nav > .active > a:hover,
-.navbar-inverse .navbar-nav > .active > a:focus {
-  background-color: #222;
-}
-
-/* Give a bit of breathing room to surrounding area of message boxes */
-.bg-info, .bg-danger, .bg-warning {
-    padding: 10px;
-}
-
-.navbar-fixed-bottom {
-    height: 75px;
-}
-
-.tagline {
-    font-weight: 100;
-    margin-top: 50px;
-    font-size: 30px;
-    margin-bottom: 10px;
-    line-height: 33px;
-    text-align: center;
-}
-
-.header hr {
-    border-top-color: #ddd;
-}
-
-.gradient-text {
-    font-family: sans-serif;
-    color: #fd0808;
-    background: -webkit-linear-gradient(left, #f5518a 0%, #fd0808 50%, #9f041b 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.features {
-    margin-left: auto;
-    margin-right: auto;
-    color: #fd0808;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 50px;
-    font-size: 15px;
-}
-
-.features img {
-    margin-right: 10px;
-}
-
-.index-left {
-    text-align: center;
-}
-
-.index-left h3 {
-    font-size: 18px;
-    color: #555555;
-}
-
-.index-left h4 {
-    margin-top: 35px;
-    font-size: 16px;
-    color: #555555;
-}
-
-a.emphasize {
-    display: block;
-    border: 1px solid #f96816;
-    padding: 10px;
-    text-decoration: none;
-    text-align: center;
+a, a:visited, a:hover, a:focus {
     color: #f96816;
-    font-weight: 300;
+    text-decoration: none;
 }
 
-a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
-    background-color: #f96816;
+.emphasize {
+    border: 1px solid #ffffff;
+    border-radius: 30px;
+}
+
+#header-white {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 15px 15px 15px 15px;
+}
+
+.navbar-brand {
+    padding-left: 0px;
+}
+
+#header-white .navbar {
+    background-color: #ffffff;
+}
+
+#header-white #navbar a, #header-white #navbar a:visited, #header-white #navbar a:focus {
+    color: #000000;
+    text-decoration: none;
+    background-color: #ffffff;
+}
+
+#header-white .emphasize {
+    border: 1px solid #000000;
+}
+
+#header-black {
+    background-color: #000000;
     color: #ffffff;
-    border: 1px solid #f96816;
-    font-weight: 500;
+    padding: 15px 15px 15px 15px;
+    margin-bottom: 15px;
 }
 
-.navbar-left-article .create-tutorial a.emphasize {
-    font-size: 12px;
-    display: block;
-    border: 1px solid #f96816;
-    padding: 3px;
-    text-decoration: none;
-    text-align: center;
+#header-black .navbar {
+    background-color: #000000;
+}
+
+#header-black #navbar a,
+#header-black #navbar a:visited,
+#header-black #navbar a:focus {
+    color: #ffffff;
+}
+
+#header-black #navbar .dropdown-menu a,
+#header-black #navbar .dropdown-menu a:visited,
+#header-black #navbar .dropdown-menu a:focus {
+    color: #000000;
+    background-color: #ffffff;
+}
+
+#header-black #navbar .dropdown-menu a:hover {
     color: #f96816;
-    font-weight: 500;
 }
 
-.index-left .checkbox {
-    line-height: 1.5em;
-    font-size: 16px;
-    color: #1a1a1a;
+#header-black #navbar a:hover, #header-white #navbar a:hover {
+    color: #f96816;
 }
 
+/* Overwrite bootstrap default icon bar to make it show up on white background */
+#header-white .navbar-toggle .icon-bar {
+    background-color: #000000;
+}
+
+#featured {
+    background-color: #000000;
+    padding-bottom: 250px;
+}
+
+#featured span.intro {
+    font-size: 12px;
+    border-bottom: 1px solid #ffffff;
+}
+
+#featured a, #featured a:visited, #featured a:focus #featured a:hover {
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.lead {
+    font-size: 46px;
+}
+
+#featured p {
+    font-size: 20px;
+}
+
+#body {
+    background-color: #ffffff;
+    color: #000000;
+}
 
 .article-teaser {
-    height: 280px;
-    border: 1px solid #cecece;
-    text-align: center;
-    padding: 15px 10px 15px 10px;
-    margin-right: 15px;
-    margin-bottom: 15px;
-    overflow: hidden;
-    color: #555555;
-    position: relative;
+    background-color: #ffffff;
+    height: 300px;
+    padding: 10px;
+    margin-right: 30px;
+    margin-top: 15px;
+}
+
+@media(max-width:992px) {
+    .article-teaser {
+        margin-left: 30px;
+    }
+    .load-guides {
+        margin-left: 45px;
+    }
 }
 
 .article-teaser:hover {
@@ -274,6 +141,13 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     -moz-box-shadow: 1px 1px 5px #333;
     -webkit-box-shadow: 1px 1px 5px #333;
     box-shadow: 1px 1px 5px #333;
+}
+
+.article-teaser .article-author {
+    color: #f96616;
+    font-size: 16px;
+    float: right;
+    padding-right: 10px;
 }
 
 /* Allow entire article teaser to be clickable */
@@ -284,6 +158,7 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     top: 0;
     left: 0;
     z-index: 1;
+    border: 1px solid #aeaeae;
 }
 
 .article-teaser .title {
@@ -292,88 +167,275 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
 
 .article-teaser hr {
     /* override bootstrap defaults */
-    border-top: 1px solid #cecece;
+    border-top: 1px solid #000000;
 }
 
 .article-description {
     /* Based off of article-teaser height. Forces the hr and link inside teaser
-     * to show up in uniform place regardless of title length. */
+    * to show up in uniform place regardless of title length. */
     height: 150px;
-    /*width: 100%;*/
-    /*position: absolute;*/
 }
 
-.article-teaser .article-author {
+#article-header {
+    position: relative;
+}
+
+#article-header img {
     float: left;
 }
 
-.article-teaser .article-author span {
+#article-header h2 {
+    float: left;
     margin-left: 10px;
+    margin-top: -2px;
+    font-size: 16px;
 }
 
-#editor {
+#article-header h3 {
+    clear: left;
+    position: absolute;
+    /* based on size of article image */
+    left: 50px;
+    top: -5px;
+    font-size: 16px;
+}
+
+#title {
+    clear: left;
+}
+
+#table-of-contents ul {
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+#table-of-contents h4 {
+    font-size: 15px;
+    color: #b0b0b0;
+}
+
+#table-of-contents a,
+#table-of-contents a:visited,
+#table-of-contents a:focus {
+    color: #b0b0b0;
+}
+
+#table-of-contents a:hover {
+    color: #f96816;
+}
+
+#article-sidebar .hr-container {
+    width: 30%;
+}
+
+/* Push article text over to account for the octicon-link showing up on hover.
+ * Without this the headers would appear slightly indented on entire article
+ * this forces all text to left align so the octicon link can show up in the
+ * padding. */
+#article p {
+    padding-left: 21px;
+}
+
+#article pre, #article blockquote, #article form {
+    margin-left: 21px;
+}
+
+#article h1,
+#article h2,
+#article h3,
+#article h4,
+#article h5,
+#article h6 {
+}
+
+#article h1 .octicon-link,
+#article h2 .octicon-link,
+#article h3 .octicon-link,
+#article h4 .octicon-link,
+#article h5 .octicon-link,
+#article h6 .octicon-link {
+    margin-right: 5px;
+    vertical-align: middle;
+    visibility: hidden;
+}
+
+#article h1:hover .octicon-link,
+#article h2:hover .octicon-link,
+#article h3:hover .octicon-link,
+#article h4:hover .octicon-link,
+#article h5:hover .octicon-link,
+#article h6:hover .octicon-link {
+    visibility: visible;
+}
+
+#footer {
+    padding: 15px 15px 100px 15px;
+    background-color: #f96616;
+    color: #000000;
+    margin-top: 15px;
+}
+
+#footer .emphasize {
+    padding: 15px;
+}
+
+#footer a, #footer a:focus, #footer a:visited {
+    color: #ffffff;
+}
+
+#footer a:hover {
+    color: #000000;
+    text-decoration: none;
+}
+
+#footer a.emphasize, #footer a.emphasize:focus, #footer a.emphasize:visited {
+    font-size: 18px;
+    color: #ffffff;
+}
+
+#footer a.emphasize:hover {
+    font-size: 18px;
+    color: #000000;
+    text-decoration: none;
+}
+
+#footer .features {
+    margin-bottom: 25px;
+}
+
+#footer .contact {
+    margin-top: 25px;
+    text-align: left;
+}
+
+#footer .write-guide {
+    text-align: center;
+}
+
+#footer .social-links {
+    text-align: right;
+}
+
+#article-list {
+    background-color: #efefef;
+    /* Create overlap effect with padding-bottom on featured */
+    margin-top: -170px;
+    padding: 15px;
+}
+
+#article-list .nav > li {
+    float: left;
+}
+
+#stacks {
+    color: #696969;
+    font-size: 14px;
+}
+
+#article-list .form-control {
+    background-color: #efefef;
+}
+
+#article-list .btn-default {
+    background-color: #efefef;
+    border: none;
+    font-size: 14px;
+    color: #696969;
+    padding-top: 10px;
+}
+
+#article-list .nav li a.active, #article-list .nav li a.active:visited, #article-list .nav li a.active:focus, #article-list .nav li.active:hover {
+    color: #000000;
+    text-decoration: underline;
+}
+
+#article-list .nav li a, #article-list .nav li a:visited, #article-list .nav li a:focus, #article-list .nav li:hover {
+    color: #696969;
+}
+
+#signup {
+    padding: 4px;
+    margin-top: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+#signup a {
+    color: #000000;
+}
+
+#signup .form-group {
+    padding-top: 15px;
+}
+
+#signup .btn-primary,
+#signup .btn-primary:focus,
+#signup .btn-primary:hover,
+#signup .btn-primary:active,
+#signup .btn-primary:active:hover,
+#signup .btn-primary:active:focus {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    color: #000000;
+}
+
+.load-guides {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-right: 50px;
+    background-color: #d1d1d1;
+    text-align: center;
+    font-size: 16px;
+    padding: 15px 20px 15px 20px;
+}
+
+.manifesto {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.manifesto p {
+    color: #696969;
+    font-size: 20px;
+}
+
+#share-column .emphasize {
+    border: 1px solid #f96616;
+    padding: 15px;
+}
+
+/* Overrides bootstrap-markdown CSS */
+.md-preview {
+    padding: 15px;
+
+}
+
+/* Give a bit of breathing room to surrounding area of message boxes */
+.bg-info, .bg-danger, .bg-warning {
+    padding: 10px;
+    text-align: center;
+}
+
+#editor-section {
     margin-top: 50px;
 }
 
-#editor input.article-title {
+#editor-section #title {
     margin-top: 20px;
+    width: 70%;
+}
+
+a.active-page {
+    text-decoration: underline;
+}
+
+.editor-container {
+    width: 70%;
 }
 
 .stacks-editor {
     max-width: 200px;
-}
-
-#footer {
-    clear: both;
-}
-
-/* Override bootstrap margin to push footer all the way down with no bottom gap
- * */
-#footer .navbar {
-    margin-bottom: 0px;
-    min-height: 80px;
-    margin-top: 100px;
-}
-
-#footer ul {
-    margin-top: 2px;
-}
-
-#footer ul li {
-    color: #9d9d9d;
-    font-size: 12px;
-    font-weight: 500;
-    font-style: normal;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-top: 10px;
-}
-
-#footer ul li a {
-    padding-left: 5px;
-    padding-top: 0px;
-    margin-left: 0px;
-}
-
-#footer .navbar-brand img {
-    margin-top: 7px;
-}
-
-.nav-footer li h6 {
-    color: #ffffff;
-    font-size: 14px;
-    line-height: 17px;
-}
-
-.nav-footer li a {
-    color: #9d9d9d;
-    font-size: 12px;
-    font-weight: 500;
-    font-style: normal;
-}
-
-.nav-footer li a:hover {
-    background-color: #222;
 }
 
 /* Override button size for the bootstrap-select buttons to account for our
@@ -383,149 +445,16 @@ a.emphasize:hover, .navbar-left-article .create-tutorial a.emphasize:hover {
     font-size: 12px;
 }
 
-@media(max-width:767px) {
-    #article {
-        padding-left: 10px;
-    }
-
-    .article-teaser {
-        height: auto;
-        margin-right: 0px;
-        padding: 15px 0px 15px 0px;
-        border: 0px;
-    }
-
-    .article-teaser:hover {
-        border: 0px;
-    }
-
-    .article-teaser .article-author {
-        display:none;
-    }
-
-    .article-teaser .learning-link {
-        display: none;
-    }
-
-    .article-teaser hr {
-        display: none;
-    }
-
-    .article-teaser .title {
-        font-size: 14px;
-        color: #f96816;
-    }
-
-    .article-description {
-        height: 65%;
-    }
-
-    /* Don't show this on mobile b/c takes up space and users are not going to
-     * write tutorials on mobile anyway */
-    .create-tutorial {
-        display: none;
-    }
-
-    /* Nav bar is much shorter on small screens */
-    .navbar-brand img {
-        margin-top: -10px;
-    }
-
-
-    #footer ul {
-        padding-top: 25px;
-        margin-left: 2px;
-    }
-
-    #footer ul li {
-        margin-top: 0px;
-        padding-top: 0px;
-        margin-left: 0px;
-    }
-
-    .navbar-fixed-top {
-        height: auto;
-    }
-
-    .navbar-left-index {
-        position: relative;
-    }
-
-    .navbar-left-article {
-        position: relative;
-    }
-
-    #table-of-contents {
-        overflow-y: visible;
-        overflow-x: visible;
-        max-height: none;
-        position: relative;
-    }
-
-    a.emphasize {
-        border: 0px;
-        text-align: left;
-    }
-}
-
-@media (max-width: 992px) {
-    /* There's corresponding code on article.html to reorder the table of
-     * contents on this size screen. */
-    #table-of-contents {
-        overflow-y: visible;
-        overflow-x: visible;
-        max-height: none;
-        position: relative;
+@media(max-width:992px) {
+    #article-sidebar {
         text-align: center;
-        padding-bottom: 10px;
     }
 
-    .navbar-header {
-        float: none;
-    }
-    .navbar-left,.navbar-right {
-        float: none !important;
-    }
-    .navbar-toggle {
-        display: block;
-    }
-    .navbar-collapse {
-        border-top: 1px solid transparent;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-        background-color: #333;
-    }
-    .navbar-fixed-top {
-        top: 0;
-        border-width: 0 0 1px;
-    }
-    .navbar-collapse.collapse {
-        display: none!important;
-    }
-    .navbar-nav {
-        float: none!important;
-        margin-top: 7.5px;
-    }
-    .navbar-nav>li {
-        float: none;
-    }
-    .navbar-nav>li>a {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-    .collapse.in{
-        display:block !important;
-    }
-    .navbar-inverse .navbar-nav > .active > a,
-    .navbar-inverse .navbar-nav > .active > a:hover,
-    .navbar-inverse .navbar-nav > .active > a:focus {
-        background-color: transparent;
+    #article-sidebar .hr-container {
+        width: 100%;
     }
 
-    .navbar-left-index {
-        position: relative;
-    }
-
-    .navbar-left-article {
-        position: relative;
+    #article {
+        margin-top: 40px;
     }
 }

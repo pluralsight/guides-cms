@@ -1,22 +1,21 @@
-{% extends "article_list.html" %}
+{% extends "layout.html" %}
+
+{% block header %}
+    {{super()}}
+    <div class="container">
+        <div id="featured">
+            <h1 class="lead">Give back.</h1>
+            <p>
+                You have unique expertise. Give back to the community by
+                <a href="/">writing a new guide</a> or editing one of the guides
+                needing review.
+            </p>
+        </div>
+    </div>
+{% endblock %}
 
 {% block body %}
 
-    <h2>Articles for review</h2>
-
-    <p>
-        The best way to learn is to teach, and you have unique expertise. Give
-        back to the community you learned from.  Get started now by
-        <a href="/">writing a new article</a> or editing one of the articles
-        needing review.
-    </p>
-
-    <div class="col-xs-12 col-md-2 navbar-left-index index-left">
-        {% include 'stack_filter.html' %}
-    </div>
-
-    <div class="col-xs-12 col-md-10">
-        {{super()}}
-    </div>
+    {% include "article_list.html" %}
 
 {% endblock %}

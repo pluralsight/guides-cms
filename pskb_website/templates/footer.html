@@ -1,31 +1,60 @@
-        <div class="navbar-header">
-         <ul class="nav navbar-left">
-             <li>
-                <a class="navbar-brand" href="https://www.pluralsight.com">
-                    <img src="/static/img/logo.png" width="280" height="36" alt="Pluralsight Tutorials">
-                </a>
-            </li>
-          </ul>
-          <div class="container nav-footer">
-            <ul class="nav navbar-right">
-                <li><h6>Connect</h6></li>
-                <li><a href="mailto:prateek-gupta@pluralsight.com">Email Us</a></li>
-                <li><a class="twitter-share-button" href="https://twitter.com/intent/tweet?text=Start%20learning%20today%20with%20Pluralsight%20Tutorials">Tweet</a></li>
-                <li class="fb-like" data-href="http://tutorials.pluralsight.com" data-layout="button_count" data-action="like" data-show-faces="false">
-                </li>
-                <!-- Load Facebook SDK for JavaScript -->
-                <li><div id="fb-root"></div></li>
-            </ul>
+                <div class="row features">
+                    <div class="col-md-1">
+                        <img src="/static/img/github.png" width="62" height="51" alt="Integrated with Github" />
+                    </div>
+                    <div class="col-md-3">
+                        <h4>Integrates with Github</h4>
+                        <p>Connects and automatically posts your guides to Github.</p>
+                        <p><small><a href="{{repo_url}}">View articles on Github</a></small></p>
+                    </div>
 
-            <ul class="nav navbar-right">
-                <li><h6>Information</h6></li>
-                <li><a href="https://www.pluralsight.com">Pluralsight</a></li>
-                <li><a href="https://www.pluralsight.com/privacy">Privacy Policy</a></li>
-            </ul>
-          </div>
-        </div>
+                    <div class="col-md-1">
+                        <img src="/static/img/markdown.png" width="59" height="50" alt="Write with Markdown" />
+                    </div>
+                    <div class="col-md-3">
+                        <h4>Write using Markdown</h4>
+                        <p>Focus on content not formatting with simple Markdown syntax.</p>
+                        <p><small><a href="https://guides.github.com/features/mastering-markdown/">What is Markdown?</a></small></p>
+                    </div>
 
-<script type="text/javascript">window.twttr = (function(d, s, id) {
+                    <div class="col-md-1">
+                        <img src="/static/img/open_source.png" width="53" height="50" alt="Engine is Open Source" />
+                    </div>
+                    <div class="col-md-3">
+                        <h4>Engine is Open Source</h4>
+                        <p>Easily contribute content and code.</p>
+                        <p><small><a href="https://github.com/pluralsight/guides-cms">Browse the code</a></small></p>
+                    </div>
+                </div><!-- row features -->
+                <div class="row write-guide">
+                    <div class="col-md-12">
+                        <a href="/write/" class="emphasize">Write a Guide</a>
+                    </div>
+                </div><!-- row write-guide -->
+                <div class="row signup">
+                    <div class="col-md-4">
+                        {% include "signup_form.html" %}
+                    </div>
+                </div><!-- row signup -->
+                <div class="row contact">
+                    <div class="col-md-6">
+                        <a href="http://www.pluralsight.com">
+                            <img src="/static/img/footer_logo.png" width="150" height="32" alt="Pluralsight"/>
+                        </a>
+                    </div><!-- col -->
+
+                    <div class="col-md-6 pull-right social-links">
+                        <a href="http://www.twitter.com/pluralsight">
+                            <img src="/static/img/twitter_footer.png" width="22" height="22" alt="Twitter"/>
+                        </a>
+
+                        <a href="http://www.facebook.com/pluralsight">
+                            <img src="/static/img/fb_footer.png" width="22" height="21" alt="Facebook"/>
+                        </a>
+                    </div><!-- col social links -->
+                </div><!-- row contact -->
+
+        <script type="text/javascript">window.twttr = (function(d, s, id) {
 var js, fjs = d.getElementsByTagName(s)[0],
     t = window.twttr || {};
 if (d.getElementById(id)) return t;

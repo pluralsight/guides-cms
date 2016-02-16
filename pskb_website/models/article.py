@@ -3,14 +3,20 @@ Article related model API
 """
 
 import collections
-import copy
+import itertools
 import json
 
 from .. import app
-from .. import utils
-from .. import remote
 from .. import cache
+from . import lib
+from .. import remote
+from . import file as file_mod
+from .. import utils
+from .user import find_user
 
+# FIXME: This file is fairly modular to the outside world but internally it's
+# very fragmented and the layers of abstraction are all mixed up.  Needs a lot
+# of TLC...
 
 FILE_EXTENSION = '.md'
 ARTICLE_FILENAME = 'article%s' % (FILE_EXTENSION)
@@ -19,13 +25,42 @@ ARTICLE_METADATA_FILENAME = 'details.json'
 path_details = collections.namedtuple('path_details', 'repo, filename')
 
 
-def main_article_path():
-    """Get path to main repo"""
-
-    return '%s/%s' % (app.config['REPO_OWNER'], app.config['REPO_NAME'])
-
-
 def get_available_articles(published=None, repo_path=None):
+    """
+    Get iterator for current article objects
+
+    :param published: True for only published articles, False for only drafts
+                      or None for all articles
+    :param repo_path: Optional repo path to read from (<owner>/<name>)
+
+    :returns: Iterator through article objects
+
+    Note that article objects only have path, title, author name, and stacks
+    filled out.  You'll need to call read_article() to get full article
+    details.
+    """
+
+    if published is None or repo_path is not None:
+        for article in get_available_articles_from_api(published=published,
+                                                       repo_path=repo_path):
+            yield article
+
+        raise StopIteration
+
+    # Shortcuts to read listing of files from a single file read instead of
+    # using the API to read every file
+    if published:
+        items = file_mod.published_articles()
+    else:
+        items = file_mod.unpublished_articles()
+
+    for item in items:
+        yield Article(item.title, item.author_name,
+                      author_real_name=item.author_real_name,
+                      stacks=item.stacks)
+
+
+def get_available_articles_from_api(published=None, repo_path=None):
     """
     Get iterator for current article objects
 
@@ -43,31 +78,58 @@ def get_available_articles(published=None, repo_path=None):
     # article objects.  This way the github layer only knows what's available
     # on github and doesn't have knowledge of how we organize things, etc.
     if repo_path is None:
-        repo_path = main_article_path()
+        repo_path = remote.default_repo_path()
+
+        if published:
+            files = cache.read_file_listing('published')
+            if files is not None:
+                for json_str in json.loads(files):
+                    try:
+                        yield Article.from_json(json_str)
+                    except ValueError:
+                        app.logger.error('Failed parsing json meta data from cache "%s"',
+                                         json_str)
+                        continue
+
+                raise StopIteration
+
+    files_to_cache = []
 
     for file_details in remote.files_from_github(repo_path, ARTICLE_FILENAME):
-        path_info = parse_full_path(file_details.path)
-        json_str = read_meta_data_for_article_path(file_details.path)
+        # We're only caching published articles right now so don't waste a
+        # roundtrip to cache if that's not what caller wants.
+        article = None
 
-        # No meta data file available
-        if json_str is None:
-            # Cannot do anything here b/c we do not know the title.
-            app.logger.error('Failed reading meta data for "%s", file_details: %s',
-                             path_info, file_details)
-            continue
+        if published:
+            article = read_article_from_cache(file_details.path)
 
-        try:
-            article = Article.from_json(json_str)
-        except ValueError:
-            app.logger.error('Failed parsing json meta data for "%s", file_details: %s, json: %s',
-                             path_info, file_details, json_str)
-            continue
+        if article is None:
+            path_info = parse_full_path(file_details.path)
+            json_str = read_meta_data_for_article_path(file_details.path)
+            if json_str is None:
+                # Cannot do anything here b/c we do not know the title.
+                app.logger.error('Failed reading meta data for "%s", file_details: %s',
+                                 path_info, file_details)
+                continue
 
-        article.filename = path_info.filename
-        article.repo_path = path_info.repo
+            try:
+                article = Article.from_json(json_str)
+            except ValueError:
+                app.logger.error('Failed parsing json meta data for "%s", file_details: %s, json: %s',
+                                 path_info, file_details, json_str)
+                continue
+
+            article.filename = path_info.filename
+            article.repo_path = path_info.repo
 
         if published is None or article.published == published:
             yield article
+
+        if published and article.published:
+            files_to_cache.append(lib.to_json(article))
+
+    if files_to_cache:
+        cache.save_file_listing('published', json.dumps(files_to_cache))
 
 
 def get_articles_for_author(author_name, published=None):
@@ -80,12 +142,21 @@ def get_articles_for_author(author_name, published=None):
     :returns: Iterator through article objects
     """
 
-    for article in get_available_articles(published=published):
+
+    if published is None:
+        articles = itertools.chain(get_available_articles(published=True),
+                                   get_available_articles(published=False))
+    elif published:
+        articles = get_available_articles(published=True)
+    else:
+        articles = get_available_articles(published=False)
+
+    for article in articles:
         if article.author_name == author_name:
             yield article
 
 
-def read_article(path, rendered_text=True, branch='master', repo_path=None):
+def read_article(path, rendered_text=True, branch=u'master', repo_path=None):
     """
     Read article
 
@@ -98,7 +169,7 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
     """
 
     if repo_path is None:
-        repo_path = main_article_path()
+        repo_path = remote.default_repo_path()
 
     full_path = '%s/%s' % (repo_path, path)
 
@@ -106,24 +177,12 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
     if not path.endswith(FILE_EXTENSION):
         slash = '' if path.endswith('/') else '/'
         full_path = '%s%s%s' % (full_path, slash, ARTICLE_FILENAME)
-        cache_path = path
-    else:
-        # Don't cache with the filename b/c it just takes up cache space and
-        # right now it's always the same.
-        cache_path = ''.join(path.split('/')[:-1])
 
-    json_str = cache.read_article(cache_path, branch)
-    if json_str is not None:
-        article = Article.from_json(json_str)
-
-        # Only caching rendered text b/c that's the 'front-end' of the site and
-        # is more important to be fast.
-        if rendered_text:
-            return article
-
-        details = remote.file_details_from_github(full_path, branch)
-        if details is not None and details.text is not None:
-            article.content = details.text
+    # Only caching rendered text of articles since that's the 'front-end' of
+    # the site.
+    if rendered_text:
+        article = read_article_from_cache(path, branch)
+        if article is not None:
             return article
 
     details = remote.read_file_from_github(full_path, branch, rendered_text)
@@ -152,19 +211,46 @@ def read_article(path, rendered_text=True, branch='master', repo_path=None):
         # We don't have a ton of cache space so reserve it for more
         # high-traffic data like published articles.
         if article.published:
-            cache.save_article(article)
+            cache.save_article(article.path, article.branch,
+                               lib.to_json(article))
     else:
         # We cannot properly show an article without metadata.
         article = None
         app.logger.error('Failed reading meta data for %s, full_path: %s, branch: %s',
                          path_info, full_path, branch)
 
+    if article.image_url is None:
+        user = find_user(article.author_name)
+        if user is not None:
+            article.image_url = user.avatar_url
+
     return article
 
 
+def read_article_from_cache(path, branch=u'master'):
+    """
+    Read article object from cache
+
+    :param path: Path to read file from github i.e. path it was cached with
+    :param branch: Branch to read file from
+    :returns: Article object if found in cache or None
+    """
+
+    if path.endswith(FILE_EXTENSION):
+        # Don't cache with the filename b/c it just takes up cache space and
+        # right now it's always the same.
+        path = path.split('/')[-2]
+
+    json_str = cache.read_article(path, branch)
+    if json_str is None:
+        return None
+
+    return Article.from_json(json_str)
+
+
 def save_article(title, path, message, new_content, author_name, email, sha,
-                 branch='master', image_url=None, repo_path=None,
-                 author_real_name=None, stacks=None):
+                 branch=u'master', image_url=None, repo_path=None,
+                 author_real_name=None, stacks=None, published=False):
     """
     Create or save new (original) article, not branched article
 
@@ -182,6 +268,7 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     :param repo_path: Optional repo path to save into (<owner>/<name>)
     :param author_real_name: Optional real name of author, not username
     :param stacks: Optional list of stacks to associate with article
+    :param published: Boolean to indicate if article is published or not
 
     :returns: Article object updated or saved
 
@@ -194,6 +281,8 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     article = Article(title, author_name, branch=branch, image_url=image_url,
                       repo_path=repo_path, author_real_name=author_real_name,
                       stacks=stacks)
+    article.published = published
+
     if path:
         article.path = path
 
@@ -212,6 +301,8 @@ def save_article(title, path, message, new_content, author_name, email, sha,
         # FIXME: Handle error. This is interesting b/c now we created the
         # article, but not the meta data.
         return None
+
+    cache.delete_article(article)
 
     return read_article(article.path, rendered_text=True,
                         branch=article.branch, repo_path=repo_path)
@@ -280,7 +371,7 @@ def branch_article(article, message, new_content, author_name, email,
     return save_article(article.title, article.path, message, new_content,
                         author_name, email, article_sha, branch=branch,
                         image_url=image_url, author_real_name=author_real_name,
-                        stacks=article.stacks)
+                        stacks=article.stacks, published=article.published)
 
 
 def branch_or_save_article(title, path, message, content, author_name, email,
@@ -309,11 +400,13 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     :returns: Article object updated, saved, or branched
     """
 
+    article = None
+    published = False
+
     if path:
-        article = read_article(path, rendered_text=False, branch='master',
+        article = read_article(path, rendered_text=False, branch=u'master',
                                repo_path=repo_path)
-    else:
-        article = None
+        published = article.published
 
     if article and article.author_name != author_name and sha:
         # Note branching an article cannot change the stacks!
@@ -323,7 +416,7 @@ def branch_or_save_article(title, path, message, content, author_name, email,
         new = save_article(title, path, message, content, author_name, email,
                            sha, image_url=image_url, repo_path=repo_path,
                            author_real_name=author_real_name,
-                           stacks=stacks)
+                           stacks=stacks, published=published)
 
     return new
 
@@ -348,16 +441,24 @@ def save_article_meta_data(article, author_name, email, branch=None):
     details = remote.read_file_from_github(filename, rendered_text=False,
                                            branch=branch)
     sha = None
+    text = None
     if details is not None:
         sha = details.sha
+        text = details.text
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
     exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', 'path',
                      'last_updated')
-    json_content = article.to_json(exclude_attrs=exclude_attrs)
+    json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
-    message = 'Updating article metadata for %s' % (article.title)
+    # Nothing changed so no commit needed
+    if text is not None and json_content == text:
+        return True
+
+    message = 'Updating article metadata for "%s"' % (article.title)
+
+    cache.delete_article(article)
 
     # Article is on a branch so we have to update the master meta data file
     # with this new branch as well as the branch meta data file.
@@ -421,7 +522,7 @@ def save_branched_article_meta_data(article, author_name, email,
     """
 
     orig_article = read_article(article.path, rendered_text=False,
-                                branch='master', repo_path=article.repo_path)
+                                branch=u'master', repo_path=article.repo_path)
 
     # Nothing to save, we're already tracking this branch
     if add_branch:
@@ -518,7 +619,7 @@ class Article(object):
     """
 
     def __init__(self, title, author_name, filename=ARTICLE_FILENAME,
-                 repo_path=None, branch='master', stacks=None, sha=None,
+                 repo_path=None, branch=u'master', stacks=None, sha=None,
                  content=None, external_url=None, image_url=None,
                  author_real_name=None):
         """
@@ -545,14 +646,14 @@ class Article(object):
         self.filename = filename
         self.image_url = image_url
         self.last_updated = None
-        self.author_real_name = author_real_name
+        self.author_real_name = author_real_name or author_name
 
         # Only useful if article has already been saved to github
         self.sha = sha
 
         self.repo_path = repo_path
         if self.repo_path is None:
-            self.repo_path = main_article_path()
+            self.repo_path = remote.default_repo_path()
 
         # Branch this article is on
         self.branch = branch
@@ -588,28 +689,6 @@ class Article(object):
             setattr(article, attr, value)
 
         return article
-
-    def to_json(self, exclude_attrs=None):
-        """
-        Return json representation of article
-
-        :param exclude_attrs: List of attributes to exclude from serialization
-        :returns: json representation of article as a string
-        """
-
-        if exclude_attrs is None:
-            exclude_attrs = []
-
-        # This is very simple by design. We don't have a lot of crazy nested
-        # data here so just do the bare minimum without over-engineering.
-        dict_ = copy.deepcopy(self.__dict__)
-        for attr in exclude_attrs:
-            del dict_[attr]
-
-        # Print it to a string in a pretty format. Whitespace doesn't matter so
-        # might as well make it more readable.
-        return json.dumps(dict_, sort_keys=True, indent=4,
-                          separators=(',', ': '))
 
     @property
     def full_path(self):

@@ -1,3 +1,7 @@
+"""
+Generic functions for global use
+"""
+
 import re
 from unicodedata import normalize
 

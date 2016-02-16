@@ -47,3 +47,17 @@ class User(object):
 
     def __repr__(self):
         return '<login: %s>' % (self.login)
+
+    def is_collaborator(self, owner=None, repo=None):
+        """
+        Determine if user is a collaborator on repo
+
+        :param owner: Owner of repository defaults to REPO_OWNER config value
+        :param repo: Name of repository defaults to REPO_NAME config value
+        """
+
+        for login in remote.read_repo_collaborators_from_github(owner, repo):
+            if login == self.login:
+                return True
+
+        return False

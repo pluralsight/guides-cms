@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<h1>Frequently Asked Questions</h1>
+<h1 class="lead">Frequently Asked Questions</h1>
 
 {% if details %}
     {{ details.text|safe }}
@@ -10,6 +10,5 @@
         <a href="{{details.url}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Edit FAQ on Github</a>
     </p>
 {% endif %}
-
 
 {% endblock %}

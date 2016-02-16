@@ -2,37 +2,39 @@
 
 {% block body %}
 
-<div class="col-md-8">
-    {% if user.bio %}
-        <p>{{user.bio}}</p>
-    {% endif %}
-
-    <h2>{{user.name if user.name else user.login}}'s articles</h2>
-
-    {% for article in articles %}
-        {% if loop.index0 == 0 %}
-            <ul>
+<div class="row">
+    <div class="col-md-8">
+        {% if user.bio %}
+            <p>{{user.bio}}</p>
         {% endif %}
 
-        <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
+        <h2>{{user.name if user.name else user.login}}'s articles</h2>
 
-        {% if loop.last %}
-            </ul>
+        {% for article in articles %}
+            {% if loop.index0 == 0 %}
+                <ul>
+            {% endif %}
+
+            <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
+
+            {% if loop.last %}
+                </ul>
+            {% endif %}
+        {% else %}
+            <p>No articles yet!</p>
+            <p>
+                As a next step, why not create an article? You can do so by
+                <a href="/write/">clicking here</a>.
+            </p>
+        {% endfor %}
+
+    </div>
+
+    <div class="col-md-4">
+        {% if user.avatar_url %}
+            <img height="230" src="{{user.avatar_url}}&amp;s=460" width="230" />
         {% endif %}
-    {% else %}
-        <p>No articles yet!</p>
-        <p>
-            As a next step, why not create an article? You can do so by
-            <a href="/write/">clicking here</a>.
-        </p>
-    {% endfor %}
-
-</div>
-
-<div class="col-md-4">
-    {% if user.avatar_url %}
-        <img height="230" src="{{user.avatar_url}}&amp;s=460" width="230" />
-    {% endif %}
+    </div>
 </div>
 
 {% endblock %}

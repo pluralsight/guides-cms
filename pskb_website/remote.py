@@ -4,11 +4,13 @@ Main entry point for interacting with remote service APIs
 
 import base64
 import collections
+import json
 
 from flask_oauthlib.client import OAuth
 from flask import session
 
 from . import app
+from . import cache
 
 oauth = OAuth(app)
 
@@ -25,6 +27,19 @@ github = oauth.remote_app(
 )
 
 file_details = collections.namedtuple('file_details', 'path, branch, sha, last_updated, url, text')
+
+
+def default_repo_path():
+    """Get path to main repo"""
+
+    return '%s/%s' % (app.config['REPO_OWNER'], app.config['REPO_NAME'])
+
+
+def default_repo_url():
+    """Get URL to default repo"""
+
+    return 'https://github.com/%s/%s' % (app.config['REPO_OWNER'],
+                                         app.config['REPO_NAME'])
 
 
 def log_error(message, url, resp, **kwargs):
@@ -64,26 +79,126 @@ def files_from_github(repo, filename, limit=None):
     if sha is None:
         raise StopIteration
 
-    url = 'repos/%s/git/trees/%s?recursive=1' % (repo, sha)
-    resp = github.get(url)
+    headers = {}
+    cache_key = (repo, sha, filename)
+    etag = cache.read_file_listing_etag(cache_key)
+    if etag is not None:
+        headers = {'If-None-Match': etag}
 
-    if resp.status != 200:
-        log_error('Failed reading files', url, resp)
+    resp = _fetch_files_from_github_api(repo, sha, headers=headers)
+    if resp is None:
         raise StopIteration
 
+    # Try to read articles from cache
+    files = None
+    if resp.status == 304:
+        try:
+            files = _gen_files_from_cache(cache_key, limit=limit)
+        except KeyError:
+            # Nothing in cache which is odd since we had a etag but that's ok
+            # we can do a real read
+            pass
+
+    if files is None:
+        try:
+            files = _gen_files_from_github_api(repo, sha, filename,
+                                               limit=limit,
+                                               cache_key=cache_key)
+        except ValueError:
+            raise StopIteration
+
+    for file_ in files:
+        yield file_
+
+
+def _fetch_files_from_github_api(repo, sha, headers=None):
+    """
+    Grab listing of files from github API
+
+    :param repo: Path to repo (owner/repo_name)
+    :param sha: Sha of repo to read with
+    :param headers: Optional dict of headers to use in request
+    :returns: Response object from request or None if response failed
+    """
+
+    url = 'repos/%s/git/trees/%s?recursive=1' % (repo, sha)
+    resp = github.get(url, headers=headers)
+    if resp.status not in (200, 304):
+        log_error('Failed reading files', url, resp)
+        return None
+
+    try:
+        truncated = resp.data['truncated']
+    except KeyError:
+        truncated = False
+
     # FIXME: Handle this scenario
-    if resp.data['truncated']:
+    if truncated:
         log_error('Too many files for API call', url, resp)
 
+    return resp
+
+
+def _gen_files_from_cache(cache_key, limit=None):
+    """
+    Get generator through files from cache
+
+    :param cache_key: Key to retrieve files from cache
+    :param limit: Optional limit of the number of files to return
+
+    :returns: Iterator through file_details tuples
+    :raises: KeyError if cache is a miss
+    """
+
+    files = cache.read_file_listing(cache_key)
+    if files is None:
+        raise KeyError('No files found with %s' % (cache_key))
+
     count = 0
+    for file_ in json.loads(files):
+        yield file_details(file_[0], None, file_[1], None, None, None)
+        count += 1
+
+        if limit is not None and count == limit:
+            raise StopIteration
+
+
+def _gen_files_from_github_api(repo, sha, filename, limit=None, cache_key=None):
+    """
+    Iterate through files with a specific name from github and cache files if
+    cache_key is given
+
+    :param repo: Path to repo to read files from
+    :param sha: Sha of repo to read with
+    :param filename: Name of filename to search for recursively
+    :param limit: Optional limit of the number of files to return
+    :param cache_key: Optional key to cache file listing with
+
+    :returns: Iterator through file_details tuples or None if request fails
+    """
+
+    resp = _fetch_files_from_github_api(repo, sha)
+    if resp is None:
+        raise ValueError('Failed reponse')
+
+    count = 0
+    files = []
+
     for obj in resp.data['tree']:
         if obj['path'].endswith(filename):
             full_path = '%s/%s' % (repo, obj['path'])
             yield file_details(full_path, None, obj['sha'], None, None, None)
             count += 1
 
+            if cache_key is not None:
+                # Easier to serialize a standard tuple than namedtuple
+                files.append((full_path, obj['sha']))
+
         if limit is not None and count == limit:
-            raise StopIteration
+            break
+
+    if files and cache_key:
+        cache.save_file_listing(cache_key, json.dumps(files))
 
 
 def repo_sha_from_github(repo, branch='master'):
@@ -190,7 +305,7 @@ def file_details_from_github(path, branch='master'):
 
 
 def commit_file_to_github(path, message, content, name, email, sha=None,
-                          branch='master'):
+                          branch='master', auto_encode=True):
     """
     Save given file content to github
 
@@ -202,12 +317,16 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     :param sha: Optional SHA of file if it already exists on github
     :param branch: Name of branch to commit file to (branch must already
                    exist)
+    :param auto_encode: Boolean to automatically encode data as utf-8
 
     :returns: True if data was saved, False otherwise
     """
 
     url = contents_url_from_path(path)
-    content = base64.b64encode(content.encode('utf-8'))
+
+    if auto_encode:
+        content = base64.b64encode(content.encode('utf-8'))
+
     commit_info = {'message': message, 'content': content, 'branch': branch,
                    'author': {'name': name, 'email': email}}
 
@@ -231,6 +350,28 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     return True
 
 
+def commit_image_to_github(path, message, file_, name, email, sha=None,
+                           branch='master'):
+    """
+    Save given image file content to github
+
+    :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
+    :param message: Commit message to save file with
+    :param file_: Open file object
+    :param name: Name of author who wrote file
+    :param email: Email address of author
+    :param sha: Optional SHA of file if it already exists on github
+    :param branch: Name of branch to commit file to (branch must already
+                   exist)
+
+    :returns: True if data was saved, False otherwise
+    """
+
+    contents = base64.encodestring(file_.read())
+    return commit_file_to_github(path, message, contents, name, email, sha=sha,
+                                 branch=branch, auto_encode=False)
+
+
 def read_user_from_github(username=None):
     """
     Read user information from github
@@ -252,6 +393,34 @@ def read_user_from_github(username=None):
         return {}
 
     return resp.data
+
+
+def read_repo_collaborators_from_github(owner=None, repo=None):
+    """
+    Generator for collaborator login/usernames for a given repo
+
+    :param owner: Owner of repository defaults to REPO_OWNER config value
+    :param repo: Name of repository defaults to REPO_NAME config value
+    :returns: Generator through login names
+    """
+
+    owner = owner or app.config['REPO_OWNER']
+    repo = repo or app.config['REPO_NAME']
+
+    url = '/repos/%s/%s/collaborators' % (owner, repo)
+
+    # This endpoint requires a user that has push access
+    token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+
+    resp = github.get(url, token=token)
+
+    if resp.status != 200:
+        log_error('Failed reading collaborators', url, resp, repo=repo,
+                  owner=owner)
+        raise StopIteration
+
+    for obj in resp.data:
+        yield obj['login']
 
 
 @github.tokengetter

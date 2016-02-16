@@ -1,0 +1,41 @@
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="/">
+                            <img src="/static/img/logo.png" width="280" height="36" alt="Hacker Guides">
+                        </a>
+
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+
+                    <div id="navbar" class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="/write/" class="emphasize">Write a Guide</a></li>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/review/">Review</a></li>
+                            <li><a href="/faq/">About</a></li>
+
+                            {% if session.github_token %}
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    {% if session.user_image %}
+                                        <img src="{{session.user_image}}&amp;s=86" width="30" height="30" style="border-radius: 22px;" alt="{{session.name}}"/>
+                                    {% else %}
+                                        {{session.name}}
+                                    {% endif %}
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/logout">Logout</a></li>
+                                    <li><a href="/user">My Guides</a></li>
+                                </ul>
+                            </li>
+
+                            {% else %}
+                            <li><a href="/login/">Sign in with Github</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>

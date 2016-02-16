@@ -3,90 +3,46 @@ var author_name;
 var author_real_name;
 
 function initialize_editor(name, real_name) {
-    editor = new EpicEditor({
-        clientSideStorage: false,
-        textarea: "content",
-        basePath: '/static/css/vendor/editor/',
-        autogrow: true,
-        theme: {
-            base: '/themes/base/epiceditor.css',
-            preview: '/themes/preview/github.css',
-            editor: '/themes/editor/epic-light.css'
-        },
-    }).load();
-
     author_name = name;
     author_real_name = real_name;
 
-    iframe = editor.getElement('previewerIframe');
-
-    /* Have to dynamically stuff in the correct css in the iframe for the
-     * editor */
-    css = document.createElement('link');
-    css.href = "/static/css/vendor/github.css";
-    css.rel = "stylesheet";
-    css.type = "text/css";
-    iframe.contentDocument.head.appendChild(css);
-
-    css = document.createElement('link');
-    css.href = "/static/css/vendor/bootstrap.min.css";
-    css.rel = "stylesheet";
-    css.type = "text/css";
-    iframe.contentDocument.head.appendChild(css);
-
-    css = document.createElement('link');
-    css.href = "/static/css/base.css";
-    css.rel = "stylesheet";
-    css.type = "text/css";
-    iframe.contentDocument.head.appendChild(css);
-
-    /* Inject header information as it would appear on a regular page since
-     * this content is not directly in the editor box */
-    editor.on('preview', add_article_header_data);
-    editor.on('fullscreenenter', function() {
-        /* Force top of document up so it aligns with top of the markdown text */
-        var html = editor.getElement('previewerIframe').contentDocument.firstChild;
-        html.setAttribute('style', html.getAttribute('style') + 'margin-top: -90px;');
+    var editor = $('#md-editor-ta');
+    editor.markdown({
+        autofocus: true,
+        resize: 'vertical',
+        height: 500,
+        onPreview: add_article_header_data,
+        footer: '<div id="md-footer">Upload files by dragging & dropping or <a href="#" class="upload-img">selecting them</a></div>',
+        dropZoneOptions: {
+            url: '/img_upload/',
+            disablePreview: true,
+            maxFileSize: 3, // In Megabytes
+            clickable: '.upload-img' // This points to element whose click will trigger selection of files.
+        }
     });
 }
 
-function add_article_header_data() {
-    var preview_div = editor.getElement('previewerIframe').contentDocument.getElementById('epiceditor-preview');
+function add_article_header_data(editor) {
     var title = document.getElementById('title').value;
 
-    var header = document.createElement('div');
-    header.className = 'header';
+    var h1 = '<h1 id="title" class="tagline gradient-text" style="margin-top: 5px">' + title + '</h1>';
+    var h4 = '<h4 id="author"><small>written by ';
 
-    var h1 = document.createElement('h1')
-    h1.id = 'title';
-    h1.className = 'tagline gradient-text';
-    h1.textContent = title;
-    header.appendChild(h1);
-
-    var h4 = document.createElement('h4');
-    h4.id = 'author';
-
-    var small = document.createElement('small');
-    small.textContent = 'written by ';
-
-    var anchor = document.createElement('a');
+    var anchor = '<a href="#">';
+    if (author_name != undefined && author_name != '') {
+        anchor = '<a href="/user/' + author_name + '>';
+    }
 
     if (author_real_name != undefined && author_real_name != '') {
-        anchor.textContent = author_real_name;
+        anchor += author_real_name;
     } else if (author_name != undefined && author_name != '') {
-        anchor.textContent = author_name;
+        anchor += author_name;
     } else {
-        anchor.textContent = 'you';
+        anchor += 'you';
     }
 
-    if (author_name != undefined && author_name != '') {
-        anchor.href = '/user/' + author_name;
-    }
-
-    small.appendChild(anchor);
-    h4.appendChild(small);
-    header.appendChild(h4);
-
+    anchor += '</a>';
+    h4 += anchor + '</small></h4>';
     var selected_stacks = document.getElementById('stacks').selectedOptions;
     var stacks = '';
     for (ii = 0; ii < selected_stacks.length; ii++) {
@@ -99,17 +55,12 @@ function add_article_header_data() {
         if (stacks[stacks.length - 1] == ',') {
             stacks = stacks.slice(0, -1);
         }
-        var h5 = document.createElement('h5');
-        h5.id = 'related';
-        var small = document.createElement('small');
-        small.textContent = 'Related to ' + stacks;
-
-        h5.appendChild(small);
-        header.appendChild(h5);
     }
 
-    header.appendChild(document.createElement('hr'));
-    preview_div.insertBefore(header, preview_div.firstChild);
+    var h5 = '<h5 id="related"><small>Related to ' + stacks + '</small>';
+    var header = '<div class="header">' + h1 + h4 + h5 + '</div>' + '<hr>';
+
+    return header + editor.parseContent();
 }
 
 
@@ -118,10 +69,8 @@ function save(sha, path, secondary_repo) {
     form.action = "/save/";
     form.method = "POST";
 
-    var content = document.createElement("input");
-    content.name = "content";
-    content.value = editor.exportFile("", "json");
-    form.appendChild(content.cloneNode());
+    var content = document.getElementById("md-editor-ta");
+    form.appendChild(content);
 
     var sha_elem = document.createElement("input");
     sha_elem.name = "sha";
