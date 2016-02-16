@@ -12,27 +12,6 @@ function populate_table_of_contents(article, div_to_fill) {
     }
 }
 
-<<<<<<< HEAD
-/* Workaround for Safari bug preventing using bootstrap pull/push classes
- * on fixed positioned columns. We want to reorder the table of contents to
- * be on top of the article on small-ish screens.
- * https://github.com/twbs/bootstrap/issues/16814
- */
-function reorder_columns () {
-    var grid_width = $('#wrap > .container-fluid').first().width();
-
-    /* This number corresponds to the bootstrap break point for large devices. */
-    if (grid_width < 992) {
-        $('#article').before($('#toc-column'));
-        $('#article').after($('#share-column'));
-    } else {
-        $('#article').after($('#toc-column'));
-        $('#article').before($('#share-column'));
-    }
-}
-
-=======
->>>>>>> master
 function filter() {
     var stacks = document.getElementById("stacks");
     var selected_stacks = [];
@@ -104,14 +83,6 @@ function create_toc_from_headers(headers) {
         var indent = Array(hdr_num + 1).join("&nbsp;");
         var tag = "<li>" + indent + "<a href='#" + url_content + "'>" + hdr.textContent + "</a></li>";
 
-<<<<<<< HEAD
-        /* Hack to account for the fixed position header on article page.
-         * This 97px keeps the visual position the same but makes sure we can
-         * scroll to correct location accounint for header when user clicks a
-         * link. 97px must match the height of the header! */
-        $(hdr).attr('style', 'margin-top: -97px; padding-top: 97px;');
-=======
->>>>>>> master
         $(hdr).attr('id', url_content);
         toc_html += tag
     }
