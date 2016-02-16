@@ -411,7 +411,7 @@ def save():
                                branch=article.branch,
                                published=article.published)
 
-    flash('Your content is being saved to github. It should appear within a few minutes', category='info')
+    flash('Your content is being saved to github. It should appear within a few minutes.', category='info')
 
     return redirect(url_for('review', article_path=article.path,
                             branch=article.branch))
