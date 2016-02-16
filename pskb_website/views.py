@@ -22,7 +22,7 @@ def login_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'github_token' not in session:
+        if 'github_token' not in session or 'login' not in session:
             # Save off the page so we can redirect them to what they were
             # trying to view after logging in.
             session['previously_requested_page'] = request.url
@@ -141,17 +141,12 @@ def user_profile(author_name):
     articles = models.get_articles_for_author(user.login)
     return render_template('profile.html', user=user, articles=articles)
 
-@login_required
+
 @app.route('/drafts/')
+@login_required
 def drafts():
     g.drafts_active = True
-
-    user = models.find_user(None)
-    if not user:
-        flash('Unable to find logged in user', category='error')
-        return redirect(url_for('index'))
-
-    articles = models.get_articles_for_author(user.login, published=False)
+    articles = models.get_articles_for_author(session['login'], published=False)
     return render_template('index.html', articles=articles)
 
 
@@ -176,12 +171,7 @@ def write(article_path):
         if article.stacks:
             selected_stack = article.stacks[0]
 
-        user = models.find_user(session['login'])
-        if user is None:
-            flash('Cannot save unless logged in', category='error')
-            return render_template('index.html'), 404
-
-        if user.login != article.author_name:
+        if session['login'] != article.author_name:
             branch_article = True
 
     return render_template('editor.html', article=article,
