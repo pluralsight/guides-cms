@@ -210,7 +210,7 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None):
 
         # We don't have a ton of cache space so reserve it for more
         # high-traffic data like published articles.
-        if article.published:
+        if article.published and rendered_text:
             cache.save_article(article.path, article.branch,
                                lib.to_json(article))
     else:
