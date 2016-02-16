@@ -93,6 +93,17 @@
                     {% endif %}
                 </form>
             </p>
+            {% if article.published %}
+            <p>
+                <form action="/feature/" method="POST">
+                    <input name="path" type="hidden" value="{{article.path}}"/>
+                    <button type="submit" class="btn btn-success btn-xs">
+                        Feature article
+                        <span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </p>
+            {% endif %}
         {% endif %}
 
         {% if disclaimer %}
