@@ -12,13 +12,6 @@ function initialize_editor(name, real_name) {
         resize: 'vertical',
         height: 500,
         onPreview: add_article_header_data,
-        footer: '<div id="md-footer">Upload files by dragging & dropping or <a href="#" class="upload-img">selecting them</a></div>',
-        dropZoneOptions: {
-            url: '/img_upload/',
-            disablePreview: true,
-            maxFileSize: 3, // In Megabytes
-            clickable: '.upload-img' // This points to element whose click will trigger selection of files.
-        }
     });
 }
 
