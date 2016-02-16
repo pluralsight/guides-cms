@@ -49,20 +49,22 @@
                         {% include "nav_white.html" %}
                     {% endif %}
                 {% endblock %}
+
+                {% with messages = get_flashed_messages(category_filter=['info', 'message']) %}
+                    {% for message in messages %}
+                        <p class="bg-info">{{ message|safe }} </p>
+                    {% endfor %}
+                {% endwith %}
+
+                {% with messages = get_flashed_messages(category_filter=['error']) %}
+                    {% for message in messages %}
+                        <p class="bg-danger">{{ message|safe }} </p>
+                    {% endfor %}
+                {% endwith %}
+
             {% endblock %}
+
         </div><!-- header -->
-
-        {% with messages = get_flashed_messages(category_filter=['info', 'message']) %}
-            {% for message in messages %}
-                <p class="bg-info">{{ message|safe }} </p>
-            {% endfor %}
-        {% endwith %}
-
-        {% with messages = get_flashed_messages(category_filter=['error']) %}
-            {% for message in messages %}
-                <p class="bg-danger">{{ message|safe }} </p>
-            {% endfor %}
-        {% endwith %}
 
         <div id="body">
             <div class="container">
