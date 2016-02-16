@@ -136,7 +136,6 @@
       autoQueue: true,
       addRemoveLinks: false,
       previewsContainer: null,
-      disablePreview: false,
       hiddenInputContainer: "body",
       capture: null,
       dictDefaultMessage: "Drop files here to upload",
@@ -253,7 +252,7 @@
         if (this.element === this.previewsContainer) {
           this.element.classList.add("dz-started");
         }
-        if (this.previewsContainer && !this.options.disablePreview) {
+        if (this.previewsContainer) {
           file.previewElement = Dropzone.createElement(this.options.previewTemplate.trim());
           file.previewTemplate = file.previewElement;
           this.previewsContainer.appendChild(file.previewElement);
