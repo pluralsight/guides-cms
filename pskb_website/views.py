@@ -331,7 +331,10 @@ def save():
         flash('Cannot save unless logged in', category='error')
         return render_template('index.html'), 404
 
-    content = request.form['content']
+    # Data is stored in form with input named content which holds json. The
+    # json has the 'real' data in the 'content' key.
+    content = json.loads(request.form['content'])['content']
+
     path = request.form['path']
     title = request.form['title']
     sha = request.form['sha']
