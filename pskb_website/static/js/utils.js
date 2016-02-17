@@ -22,11 +22,52 @@ function filter() {
         }
     }
 
+    var items_to_show = []
     $('.article-teaser').each(function(article_idx) {
         if (should_show($(this), selected_stacks)) {
-            $(this).show('slow');
+            items_to_show.push($(this));
         } else {
             $(this).hide('slow');
+        }
+    });
+
+    /* Now sort items by their ORIGINAL ORDER which is specified by the
+     * data-row-num.  This ensures that we don't ever reorder items, just
+     * show/hide them in their original order. */
+    items_to_show.sort(function (a, b) {
+        return a.attr('data-row-id') - b.attr('data-row-id');
+    });
+
+    shuffle_items_in_grid(items_to_show);
+}
+
+
+/* Reorganize all shown items 3 to a row in order they originally appeared. */
+function shuffle_items_in_grid(items_to_show) {
+    var item_idx = 0;
+    var item;
+    var num_on_row;
+    var max_per_row = 3;
+    var offset_class = 'col-md-offset-1';
+
+    $('.article-row').each(function(row_idx) {
+        num_on_row = 0;
+
+        while (num_on_row < max_per_row && item_idx < items_to_show.length) {
+            item = items_to_show[item_idx];
+
+            /* Only first item on the row must be indented so everything is
+             * centered. */
+            if (!num_on_row) {
+                item.addClass(offset_class);
+            } else {
+                item.removeClass(offset_class);
+            }
+
+            item.appendTo($(this));
+            item.show('slow');
+            item_idx++;
+            num_on_row++;
         }
     });
 }
