@@ -1,4 +1,4 @@
-<select id="stacks" name="stacks" class="form-control selectpicker" data-header="Scroll for additional stacks" data-size="10" data-dropup-auto="false" data-title="Filter by stacks" multiple onchange="filter()">
+<select id="stacks" name="stacks" class="form-control selectpicker" data-header="Scroll for additional stacks" data-size="10" data-dropup-auto="false" data-title="Filter by stacks" data-selected-text-format="count > 0" multiple onchange="filter()">
     {% for stack in stack_options %}
         <option value="{{ stack }}">{{ stack }}</option>
     {% endfor %}
