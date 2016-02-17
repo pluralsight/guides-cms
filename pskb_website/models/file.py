@@ -306,14 +306,37 @@ def _parse_file_listing_line(line):
     if not match:
         return None
 
-    title = unicode(match.group('title'), encoding='utf-8')
+    # Make sure everything unicode
 
-    author_name = unicode(match.group('author_url').split('/')[-1],
-                          encoding='utf-8')
+    title = match.group('title')
+    try:
+        title = unicode(title, encoding='utf-8')
+    except TypeError:
+        pass
 
-    stacks = [unicode(m.group(), encoding='utf-8') for m in STACK_RE.finditer(match.group('stacks'))]
+    author_name = match.group('author_url').split('/')[-1]
+    try:
+        author_name = unicode(author_name, encoding='utf-8')
+    except TypeError:
+        pass
 
-    author_real_name = unicode(match.group('author_real_name'), encoding='utf-8')
+    stacks = []
+    for m in STACK_RE.finditer(match.group('stacks')):
+        stack = m.group()
+
+        try:
+            stack = unicode(stack, encoding='utf-8')
+        except TypeError:
+            pass
+
+        stacks.append(stack)
+
+    author_real_name = match.group('author_real_name')
+
+    try:
+        author_real_name = unicode(author_real_name, encoding='utf-8')
+    except TypeError:
+        pass
 
     return file_listing_item(title, author_name, author_real_name, stacks)
 
