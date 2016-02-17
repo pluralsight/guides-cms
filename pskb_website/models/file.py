@@ -11,6 +11,7 @@ import re
 from .. import app
 from .. import remote
 from .. import filters
+from ..forms import STACK_OPTIONS
 
 
 PUB_FILENAME = 'published.md'
@@ -19,6 +20,10 @@ UNPUB_FILENAME = 'unpublished.md'
 # Parse a line of markdown into 2 links and list of stacks
 MD_LINE = re.compile(r'\-*\s*\[(?P<title>.*?)\]\((?P<title_url>.*?)\).*\[(?P<author_real_name>.*?)\]\((?P<author_url>.*?)\)\s+(?P<stacks>.*)')
 
+
+# The list of stacks has all sorts of special characters and commas in it so
+# parsing it requires a regex with everything escaped.
+STACK_RE = re.compile(re.compile('|'.join(re.escape(s) for s in STACK_OPTIONS)))
 
 file_listing_item = collections.namedtuple('file_listing_item',
                                 'title, author_name, author_real_name, stacks')
@@ -296,7 +301,7 @@ def _parse_file_listing_line(line):
         return None
 
     author_name = match.group('author_url').split('/')[-1]
-    stacks = match.group('stacks').split(',')
+    stacks = [m.group() for m in STACK_RE.finditer(match.group('stacks'))]
 
     return file_listing_item(match.group('title'), author_name,
                              match.group('author_real_name'), stacks)
