@@ -11,11 +11,12 @@ import re
 from .. import app
 from .. import remote
 from .. import filters
+from .. import cache
 from ..forms import STACK_OPTIONS
 
 
-PUB_FILENAME = 'published.md'
-UNPUB_FILENAME = 'unpublished.md'
+PUB_FILENAME = u'published.md'
+UNPUB_FILENAME = u'unpublished.md'
 
 # Parse a line of markdown into 2 links and list of stacks
 MD_LINE = re.compile(r'\-*\s*\[(?P<title>.*?)\]\((?P<title_url>.*?)\).*\[(?P<author_real_name>.*?)\]\((?P<author_url>.*?)\)\s+(?P<stacks>.*)')
@@ -266,11 +267,16 @@ def _read_file_listing(path_to_listing, branch=u'master'):
     :returns: Generator to iterate through file_listing_item tuples
     """
 
-    details = read_file(path_to_listing, rendered_text=False, branch=branch)
-    if details is None:
-        raise StopIteration
+    text = cache.read_article(path_to_listing, branch)
+    if text is None:
+        details = read_file(path_to_listing, rendered_text=False, branch=branch)
+        if details is None:
+            raise StopIteration
 
-    for item in _read_items_from_file_listing(details.text):
+        text = details.text
+        cache.save_article(path_to_listing, branch, text, timeout=180)
+
+    for item in _read_items_from_file_listing(text):
         yield item
 
 
