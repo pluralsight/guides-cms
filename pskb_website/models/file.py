@@ -29,7 +29,7 @@ file_listing_item = collections.namedtuple('file_listing_item',
                                 'title, author_name, author_real_name, stacks')
 
 
-def read_file(path, rendered_text=True, branch='master'):
+def read_file(path, rendered_text=True, branch=u'master'):
     """
     Read file
 
@@ -62,7 +62,7 @@ def unpublished_article_path():
     return '%s/%s' % (remote.default_repo_path(), UNPUB_FILENAME)
 
 
-def published_articles(branch='master'):
+def published_articles(branch=u'master'):
     """
     Get iterator through list of published articles from file listing
 
@@ -73,7 +73,7 @@ def published_articles(branch='master'):
     return _read_file_listing(PUB_FILENAME, branch=branch)
 
 
-def unpublished_articles(branch='master'):
+def unpublished_articles(branch=u'master'):
     """
     Get iterator through list of unpublished articles from file listing
 
@@ -86,7 +86,7 @@ def unpublished_articles(branch='master'):
 
 def update_article_listing(article_url, title, author_url, author_name,
                            committer_name, committer_email, stacks=None,
-                           branch='master', published=False):
+                           branch=u'master', published=False):
     """
     Update article file listing with given article info
 
@@ -146,7 +146,7 @@ def update_article_listing(article_url, title, author_url, author_name,
 
 
 def remove_article_from_listing(title, published, committer_name,
-                                committer_email, branch='master'):
+                                committer_email, branch=u'master'):
     """
     Remove article title from file listing
 
@@ -188,7 +188,7 @@ def remove_article_from_listing(title, published, committer_name,
 
 
 def sync_file_listing(all_articles, published, committer_name, committer_email,
-                      branch='master'):
+                      branch=u'master'):
     """
     Synchronize file listing file with contents of repo
 
@@ -257,7 +257,7 @@ def sync_file_listing(all_articles, published, committer_name, committer_email,
         app.logger.debug('Listing unchanged so no commit being made')
 
 
-def _read_file_listing(path_to_listing, branch='master'):
+def _read_file_listing(path_to_listing, branch=u'master'):
     """
     Get iterator through list of published or unpublished articles
 

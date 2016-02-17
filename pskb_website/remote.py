@@ -201,7 +201,7 @@ def _gen_files_from_github_api(repo, sha, filename, limit=None, cache_key=None):
         cache.save_file_listing(cache_key, json.dumps(files))
 
 
-def repo_sha_from_github(repo, branch='master'):
+def repo_sha_from_github(repo, branch=u'master'):
     """
     Get sha from head of given repo
 
@@ -234,7 +234,7 @@ def primary_github_email_of_logged_in():
     return None
 
 
-def read_file_from_github(path, branch='master', rendered_text=True):
+def read_file_from_github(path, branch=u'master', rendered_text=True):
     """
     Get rendered file text from github API
 
@@ -256,7 +256,7 @@ def read_file_from_github(path, branch='master', rendered_text=True):
     return details
 
 
-def rendered_markdown_from_github(path, branch='master'):
+def rendered_markdown_from_github(path, branch=u'master'):
     """
     Get rendered markdown file text from github API
 
@@ -277,7 +277,7 @@ def rendered_markdown_from_github(path, branch='master'):
     return None
 
 
-def file_details_from_github(path, branch='master'):
+def file_details_from_github(path, branch=u'master'):
     """
     Get file details from github
 
@@ -305,7 +305,7 @@ def file_details_from_github(path, branch='master'):
 
 
 def commit_file_to_github(path, message, content, name, email, sha=None,
-                          branch='master', auto_encode=True):
+                          branch=u'master', auto_encode=True):
     """
     Save given file content to github
 
@@ -351,7 +351,7 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
 
 
 def commit_image_to_github(path, message, file_, name, email, sha=None,
-                           branch='master'):
+                           branch=u'master'):
     """
     Save given image file content to github
 

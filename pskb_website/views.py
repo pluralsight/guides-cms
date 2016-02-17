@@ -543,7 +543,7 @@ def img_upload():
     # before the article is saved so don't know the article name or branch to
     # save alongside.
     url = models.save_image(file_.stream, ext, 'Saving new article image',
-                            user.login, user.email, branch='master')
+                            user.login, user.email, branch=u'master')
 
     if url is None:
         app.logger.error('Failed uploading image')
