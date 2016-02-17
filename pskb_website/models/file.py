@@ -323,9 +323,14 @@ def _file_listing_to_markdown(article_url, title, author_url, author_name,
     if stacks is None:
         stacks = []
 
+    if not stacks:
+        stacks_text = ''
+    else:
+        stacks_text = 'Related to: %s' % (','.join(stacks))
+
     return unicode('[{title}]({article_url}) by [{author_name}]({author_url}) {stacks}').format(
             title=title, article_url=article_url, author_name=author_name,
-            author_url=author_url, stacks=','.join(stacks))
+            author_url=author_url, stacks=stacks_text)
 
 
 def get_updated_file_listing_text(text, article_url, title, author_url,
