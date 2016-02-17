@@ -281,10 +281,6 @@ def review(article_path):
     login = session.get('login', None)
     collaborator = session.get('collaborator', False)
 
-    # Always allow editing to help illustrate to viewers they can contribute.
-    # We'll redirect them to login if they aren't already logged in.
-    allow_edits = True
-
     if login == branch or article.author_name == login:
         allow_delete = True
     else:
@@ -303,10 +299,10 @@ def review(article_path):
         branches.append(u'master')
 
     g.header_white = True
+    g.edit_link = True
 
     return render_template('article.html',
                            article=article,
-                           allow_edits=allow_edits,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
                            branches=branches,
