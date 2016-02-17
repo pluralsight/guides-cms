@@ -306,11 +306,16 @@ def _parse_file_listing_line(line):
     if not match:
         return None
 
-    author_name = unicode(match.group('author_url').split('/')[-1])
-    stacks = [unicode(m.group()) for m in STACK_RE.finditer(match.group('stacks'))]
+    title = unicode(match.group('title'), encoding='utf-8')
 
-    return file_listing_item(unicode(match.group('title')), author_name,
-                             unicode(match.group('author_real_name')), stacks)
+    author_name = unicode(match.group('author_url').split('/')[-1],
+                          encoding='utf-8')
+
+    stacks = [unicode(m.group(), encoding='utf-8') for m in STACK_RE.finditer(match.group('stacks'))]
+
+    author_real_name = unicode(match.group('author_real_name'), encoding='utf-8')
+
+    return file_listing_item(title, author_name, author_real_name, stacks)
 
 
 def _file_listing_to_markdown(article_url, title, author_url, author_name,
