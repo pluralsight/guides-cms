@@ -5,7 +5,7 @@ Main views of PSKB app
 from functools import wraps
 import os
 
-from flask import redirect, url_for, session, request, render_template, flash, json, g
+from flask import redirect, url_for, Response, session, request, render_template, flash, json, g
 
 from . import app
 from . import remote
