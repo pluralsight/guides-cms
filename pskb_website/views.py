@@ -154,6 +154,8 @@ def logout():
     session.pop('github_token', None)
     session.pop('login', None)
     session.pop('name', None)
+    session.pop('collaborator', None)
+    session.pop('user_image', None)
 
     return redirect(url_for('index'))
 
@@ -305,10 +307,6 @@ def review(article_path):
     login = session.get('login', None)
     collaborator = session.get('collaborator', False)
 
-    # Always allow editing to help illustrate to viewers they can contribute.
-    # We'll redirect them to login if they aren't already logged in.
-    allow_edits = True
-
     if login == branch or article.author_name == login:
         allow_delete = True
     else:
@@ -327,10 +325,10 @@ def review(article_path):
         branches.append(u'master')
 
     g.header_white = True
+    g.edit_link = True
 
     return render_template('article.html',
                            article=article,
-                           allow_edits=allow_edits,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
                            branches=branches,
@@ -445,7 +443,7 @@ def save():
                                branch=article.branch,
                                published=article.published)
 
-    flash('Your content is being saved to github. It should appear within a few minutes', category='info')
+    flash('Your content is being saved to github. It should appear within a few minutes.', category='info')
 
     return redirect(url_for('review', article_path=article.path,
                             branch=article.branch))
@@ -577,7 +575,7 @@ def img_upload():
     # before the article is saved so don't know the article name or branch to
     # save alongside.
     url = models.save_image(file_.stream, ext, 'Saving new article image',
-                            user.login, user.email, branch='master')
+                            user.login, user.email, branch=u'master')
 
     if url is None:
         app.logger.error('Failed uploading image')

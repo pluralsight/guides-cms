@@ -292,7 +292,7 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     if not saved:
         return None
 
-    if branch != 'master':
+    if branch != u'master':
         saved = save_branched_article_meta_data(article, author_name, email)
     else:
         saved = save_article_meta_data(article, author_name, email, branch)
@@ -332,7 +332,7 @@ def branch_article(article, message, new_content, author_name, email,
     # Create branch if we needed to
     repo_sha = remote.read_branch(article.repo_path, branch)
     if repo_sha is None:
-        repo_sha = remote.read_branch(article.repo_path, 'master')
+        repo_sha = remote.read_branch(article.repo_path, u'master')
         if repo_sha is None:
             app.logger.error('Cannot find master branch "%s"',
                              article.repo_path)
@@ -350,7 +350,7 @@ def branch_article(article, message, new_content, author_name, email,
         # the branch. Then, any changes this branch is introducing will show up
         # clearly in the diff instead of just adding this article to the branch
         # as a new file.
-        if not remote.merge_branch(article.repo_path, branch, 'master',
+        if not remote.merge_branch(article.repo_path, branch, u'master',
                                    'Merging recent changes from master'):
             # This isn't ideal but if the merge fails we still allow the user
             # to make their branched article.  The diff/history will be a bit
@@ -573,7 +573,7 @@ def delete_article(article, message, name, email):
 
     # We don't save meta data for branches so either remove meta data file or
     # update original articles meta data to remove the branch link.
-    if article.branch == 'master':
+    if article.branch == u'master':
         # Remove the meta data file next since that's the most important for
         # us finding an article from the API.
         meta_data_file = meta_data_path_for_article_path(article.full_path)

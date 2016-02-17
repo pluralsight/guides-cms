@@ -13,7 +13,13 @@
 
                     <div id="navbar" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav navbar-right">
+
+                            {% if g.edit_link and article %}
+                            <li><a href="{{url_for('write', article_path=article.path, branch=visible_branch if visible_branch else 'master')}}" class="emphasize">Edit Guide</a></li>
+                            {% else %}
                             <li><a href="/write/" class="emphasize">Write a Guide</a></li>
+                            {% endif %}
+
                             <li><a href="/">Home</a></li>
                             <li><a href="/review/">Review</a></li>
                             <li><a href="/faq/">About</a></li>

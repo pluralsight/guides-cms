@@ -27,9 +27,9 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="row article-row">
-                                        <div class="col-sm-3 col-md-offset-1 article-teaser">
+                                        <div class="col-sm-3 col-md-offset-1 article-teaser" data-row-id="{{loop.index0}}">
                         {% else %}
-                                        <div class="col-sm-3 article-teaser">
+                                        <div class="col-sm-3 article-teaser" data-row-id="{{loop.index0}}">
                         {% endif %}
 
                                             {% for stack in article.stacks %}

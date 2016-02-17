@@ -11,20 +11,26 @@ import re
 from .. import app
 from .. import remote
 from .. import filters
+from .. import cache
+from ..forms import STACK_OPTIONS
 
 
-PUB_FILENAME = 'published.md'
-UNPUB_FILENAME = 'unpublished.md'
+PUB_FILENAME = u'published.md'
+UNPUB_FILENAME = u'unpublished.md'
 
 # Parse a line of markdown into 2 links and list of stacks
 MD_LINE = re.compile(r'\-*\s*\[(?P<title>.*?)\]\((?P<title_url>.*?)\).*\[(?P<author_real_name>.*?)\]\((?P<author_url>.*?)\)\s+(?P<stacks>.*)')
 
 
+# The list of stacks has all sorts of special characters and commas in it so
+# parsing it requires a regex with everything escaped.
+STACK_RE = re.compile(re.compile('|'.join(re.escape(s) for s in STACK_OPTIONS)))
+
 file_listing_item = collections.namedtuple('file_listing_item',
                                 'title, author_name, author_real_name, stacks')
 
 
-def read_file(path, rendered_text=True, branch='master'):
+def read_file(path, rendered_text=True, branch=u'master'):
     """
     Read file
 
@@ -57,7 +63,7 @@ def unpublished_article_path():
     return '%s/%s' % (remote.default_repo_path(), UNPUB_FILENAME)
 
 
-def published_articles(branch='master'):
+def published_articles(branch=u'master'):
     """
     Get iterator through list of published articles from file listing
 
@@ -68,7 +74,7 @@ def published_articles(branch='master'):
     return _read_file_listing(PUB_FILENAME, branch=branch)
 
 
-def unpublished_articles(branch='master'):
+def unpublished_articles(branch=u'master'):
     """
     Get iterator through list of unpublished articles from file listing
 
@@ -81,7 +87,7 @@ def unpublished_articles(branch='master'):
 
 def update_article_listing(article_url, title, author_url, author_name,
                            committer_name, committer_email, stacks=None,
-                           branch='master', published=False):
+                           branch=u'master', published=False):
     """
     Update article file listing with given article info
 
@@ -141,7 +147,7 @@ def update_article_listing(article_url, title, author_url, author_name,
 
 
 def remove_article_from_listing(title, published, committer_name,
-                                committer_email, branch='master'):
+                                committer_email, branch=u'master'):
     """
     Remove article title from file listing
 
@@ -183,7 +189,7 @@ def remove_article_from_listing(title, published, committer_name,
 
 
 def sync_file_listing(all_articles, published, committer_name, committer_email,
-                      branch='master'):
+                      branch=u'master'):
     """
     Synchronize file listing file with contents of repo
 
@@ -252,7 +258,7 @@ def sync_file_listing(all_articles, published, committer_name, committer_email,
         app.logger.debug('Listing unchanged so no commit being made')
 
 
-def _read_file_listing(path_to_listing, branch='master'):
+def _read_file_listing(path_to_listing, branch=u'master'):
     """
     Get iterator through list of published or unpublished articles
 
@@ -261,11 +267,16 @@ def _read_file_listing(path_to_listing, branch='master'):
     :returns: Generator to iterate through file_listing_item tuples
     """
 
-    details = read_file(path_to_listing, rendered_text=False, branch=branch)
-    if details is None:
-        raise StopIteration
+    text = cache.read_article(path_to_listing, branch)
+    if text is None:
+        details = read_file(path_to_listing, rendered_text=False, branch=branch)
+        if details is None:
+            raise StopIteration
 
-    for item in _read_items_from_file_listing(details.text):
+        text = details.text
+        cache.save_article(path_to_listing, branch, text, timeout=180)
+
+    for item in _read_items_from_file_listing(text):
         yield item
 
 
@@ -295,11 +306,11 @@ def _parse_file_listing_line(line):
     if not match:
         return None
 
-    author_name = match.group('author_url').split('/')[-1]
-    stacks = match.group('stacks').split(',')
+    author_name = unicode(match.group('author_url').split('/')[-1])
+    stacks = [unicode(m.group()) for m in STACK_RE.finditer(match.group('stacks'))]
 
-    return file_listing_item(match.group('title'), author_name,
-                             match.group('author_real_name'), stacks)
+    return file_listing_item(unicode(match.group('title')), author_name,
+                             unicode(match.group('author_real_name')), stacks)
 
 
 def _file_listing_to_markdown(article_url, title, author_url, author_name,
@@ -318,9 +329,14 @@ def _file_listing_to_markdown(article_url, title, author_url, author_name,
     if stacks is None:
         stacks = []
 
+    if not stacks:
+        stacks_text = ''
+    else:
+        stacks_text = 'Related to: %s' % (','.join(stacks))
+
     return unicode('[{title}]({article_url}) by [{author_name}]({author_url}) {stacks}').format(
             title=title, article_url=article_url, author_name=author_name,
-            author_url=author_url, stacks=','.join(stacks))
+            author_url=author_url, stacks=stacks_text)
 
 
 def get_updated_file_listing_text(text, article_url, title, author_url,
