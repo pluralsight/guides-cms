@@ -120,9 +120,7 @@ function create_toc_from_headers(headers) {
         var re = /h(\d)/i;
         var hdr_num = parseInt(re.exec(hdr.tagName)[1]);
 
-        /* Array creats n - 1 so we add one to compensate */
-        var indent = Array(hdr_num + 1).join("&nbsp;");
-        var tag = "<li>" + indent + "<a href='#" + url_content + "'>" + hdr.textContent + "</a></li>";
+        var tag = "<li>" + "<a href='#" + url_content + "'>" + hdr.textContent + "</a></li>";
 
         $(hdr).attr('id', url_content);
         toc_html += tag
