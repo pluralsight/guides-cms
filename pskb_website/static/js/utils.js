@@ -202,10 +202,10 @@ function init_signup_row(scroll_pos) {
                     localStorage["ps-guides-last-shown"] = now;
                 } else {
                     // 4 hours in milliseconds
-                    var one_day = (((1000 * 60) * 60) * 60) * 4;
+                    var max_time = 1000 * 60 * 60 * 4;
                     var last_shown = parseInt(localStorage["ps-guides-last-shown"]);
 
-                    if ((now - last_shown) < one_day) {
+                    if ((now - last_shown) < max_time) {
                         shown = false;
                     } else {
                         localStorage["ps-guides-last-shown"] = now;
