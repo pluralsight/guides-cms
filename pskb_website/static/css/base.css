@@ -345,9 +345,50 @@ a, a:visited, a:hover, a:focus {
     color: #696969;
 }
 
+#signup-row {
+    background-color: rgba(41, 45, 53, 0.901961);
+    border-top-color: rgba(255, 255, 255, 0.0980392);
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    z-index: 2;
+    margin: 0px;
+}
+
+#signup-row #signup {
+    position: relative;
+}
+
+#signup-row p, #signup-row h4 {
+    text-align: center;
+}
+
+.close-btn {
+    text-shadow: 0 0 0 transparent;
+    opacity: 1;
+    color: #fff;
+    border: 2px solid #fff;
+    font-size: 16px;
+    top: 20px;
+    right: 30px;
+    width: 32px;
+    height: 32px;
+    display: block;
+    position: absolute;
+    font-weight: 600;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.close-btn:hover {
+    opacity: .5;
+    cursor: pointer;
+}
+
 #signup {
     padding: 4px;
     margin-top: 25px;
+    margin-bottom: 25px;
     font-size: 16px;
     font-weight: 500;
     color: #ffffff;
@@ -357,19 +398,17 @@ a, a:visited, a:hover, a:focus {
     color: #000000;
 }
 
-#signup .form-group {
-    padding-top: 15px;
-}
-
 #signup .btn-primary,
 #signup .btn-primary:focus,
 #signup .btn-primary:hover,
 #signup .btn-primary:active,
 #signup .btn-primary:active:hover,
 #signup .btn-primary:active:focus {
-    background-color: #ffffff;
-    border-color: #ffffff;
-    color: #000000;
+    font-size: 15px;
+    padding: 8px;
+    background-color: #a5d92b;
+    border-color: #a5d92b;
+    color: #ffffff;
 }
 
 .load-guides {
@@ -499,5 +538,10 @@ a.active-page {
     #article h5:hover .octicon-link,
     #article h6:hover .octicon-link {
         display: none;
+    }
+
+    .close-btn {
+        top: 10px;
+        right: 10px;
     }
 }

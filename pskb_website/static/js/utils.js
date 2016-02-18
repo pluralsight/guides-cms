@@ -170,3 +170,23 @@ function confirm_delete() {
     form.appendChild(branch.cloneNode());
     form.submit();
 }
+
+/* Show signup box on page if user scrolls near bottom or past specific amount */
+function init_signup_row(scroll_pos) {
+    var shown = false;
+    $(window).scroll(function() {
+        if (!shown) {
+            var win = $(window);
+            var near_bottom = $(document).height() - (win.height() + win.scrollTop()) < 50;
+            if (win.scrollTop() > scroll_pos || near_bottom) { 
+                $('#signup-row').fadeIn('slow');
+                shown = true;
+            }
+        }
+    });
+
+    $('#signup-row .close-btn').click(function(){
+        $('#signup-row').fadeOut('fast');
+        $('#signup-row').hide();
+    });
+}
