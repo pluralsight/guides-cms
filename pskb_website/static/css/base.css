@@ -200,6 +200,10 @@ a, a:visited, a:hover, a:focus {
     clear: left;
 }
 
+#table-of-contents {
+    font-size: 12px;
+}
+
 #table-of-contents ul {
     list-style-type: none;
     padding-left: 0px;
@@ -454,6 +458,10 @@ a.active-page {
 }
 
 @media(max-width:992px) {
+    .affix {
+        position: static;
+    }
+
     #article-sidebar {
         text-align: center;
     }

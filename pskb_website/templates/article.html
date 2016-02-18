@@ -23,7 +23,7 @@
 
 {% block body %}
 <div class="row">
-    <div id="article-sidebar" class="col-md-3">
+    <div id="article-sidebar" class="col-md-2 affix">
         <div id="table-of-contents">
             <h4>Table of Contents</h4>
             <div class="hr-container">
@@ -36,7 +36,7 @@
         </p>
 
     </div>
-    <div id="article" class="col-md-9">
+    <div id="article" class="col-md-10 col-md-offset-2">
         <div id="article-header">
             {% if article.image_url %}
                 <img id="article-img" src="{{article.image_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{article.author_name}}"/>
