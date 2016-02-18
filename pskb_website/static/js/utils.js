@@ -171,18 +171,52 @@ function confirm_delete() {
     form.submit();
 }
 
+function supports_html5_storage() {
+    try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
+        return false;
+    }
+}
+
 /* Show signup box on page if user scrolls near bottom or past specific amount */
 function init_signup_row(scroll_pos) {
     var shown = false;
     $(window).scroll(function() {
-        if (!shown) {
-            var win = $(window);
-            var near_bottom = $(document).height() - (win.height() + win.scrollTop()) < 50;
-            if (win.scrollTop() > scroll_pos || near_bottom) { 
+        if (shown) {
+            return;
+        }
+
+        var win = $(window);
+        var near_bottom = $(document).height() - (win.height() + win.scrollTop()) < 50;
+        if (win.scrollTop() > scroll_pos || near_bottom) { 
+            shown = true;
+
+            /* Use HTML5 local storage to avoid showing popup but once
+                * every 4 hours if HTML5 not available in browser we'll keep
+                * showing in on every page. */
+            if (supports_html5_storage()) {
+                var now = Date.now();
+
+                if (localStorage["ps-guides-last-shown"] == null) {
+                    localStorage["ps-guides-last-shown"] = now;
+                } else {
+                    // 4 hours in milliseconds
+                    var one_day = (((1000 * 60) * 60) * 60) * 4;
+                    var last_shown = parseInt(localStorage["ps-guides-last-shown"]);
+
+                    if ((now - last_shown) < one_day) {
+                        shown = false;
+                    } else {
+                        localStorage["ps-guides-last-shown"] = now;
+                    }
+                }
+
+            if (shown) {
                 $('#signup-row').fadeIn('slow');
-                shown = true;
             }
         }
+    }
     });
 
     $('#signup-row .close-btn').click(function(){
