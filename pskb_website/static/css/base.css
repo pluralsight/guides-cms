@@ -465,5 +465,39 @@ a.active-page {
     #article {
         margin-top: 40px;
     }
+}
 
+@media(max-width:767px) {
+    #title {
+        font-size: 32px;
+        padding-top: 20px;
+    }
+
+    /* Remove push on article text due to octicon link on mobile, there's no
+     * hover here. */
+    #article p {
+        padding-left: 0px;
+    }
+
+    #article pre, #article blockquote, #article form {
+        margin-left: 0px;
+    }
+
+    #article h1 .octicon-link,
+    #article h2 .octicon-link,
+    #article h3 .octicon-link,
+    #article h4 .octicon-link,
+    #article h5 .octicon-link,
+    #article h6 .octicon-link {
+        display: none;
+    }
+
+    #article h1:hover .octicon-link,
+    #article h2:hover .octicon-link,
+    #article h3:hover .octicon-link,
+    #article h4:hover .octicon-link,
+    #article h5:hover .octicon-link,
+    #article h6:hover .octicon-link {
+        display: none;
+    }
 }
