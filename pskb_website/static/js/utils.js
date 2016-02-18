@@ -120,9 +120,7 @@ function create_toc_from_headers(headers) {
         var re = /h(\d)/i;
         var hdr_num = parseInt(re.exec(hdr.tagName)[1]);
 
-        /* Array creats n - 1 so we add one to compensate */
-        var indent = Array(hdr_num + 1).join("&nbsp;");
-        var tag = "<li>" + indent + "<a href='#" + url_content + "'>" + hdr.textContent + "</a></li>";
+        var tag = "<li>" + "<a href='#" + url_content + "'>" + hdr.textContent + "</a></li>";
 
         $(hdr).attr('id', url_content);
         toc_html += tag
@@ -143,7 +141,7 @@ function create_responsive_tables(div) {
 
 /* Change all external links to open in a new tab/window */
 function create_external_links(id) {
-    var links = $('a').filter(function() {
+    var links = $(id + ' a').filter(function() {
         return this.hostname && this.hostname !== location.hostname;
     });
 
@@ -171,4 +169,24 @@ function confirm_delete() {
     var branch = document.getElementById('article-branch');
     form.appendChild(branch.cloneNode());
     form.submit();
+}
+
+/* Show signup box on page if user scrolls near bottom or past specific amount */
+function init_signup_row(scroll_pos) {
+    var shown = false;
+    $(window).scroll(function() {
+        if (!shown) {
+            var win = $(window);
+            var near_bottom = $(document).height() - (win.height() + win.scrollTop()) < 50;
+            if (win.scrollTop() > scroll_pos || near_bottom) { 
+                $('#signup-row').fadeIn('slow');
+                shown = true;
+            }
+        }
+    });
+
+    $('#signup-row .close-btn').click(function(){
+        $('#signup-row').fadeOut('fast');
+        $('#signup-row').hide();
+    });
 }

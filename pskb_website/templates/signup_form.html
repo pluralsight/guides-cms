@@ -1,10 +1,9 @@
         <div id="signup">
+            <h4>FREE EMAIL UPDATES</h4>
             <p>
-                FREE EMAIL UPDATES
-                <br />
                 The best tutorials direct to your inbox.
             </p>
-            <form action="/subscribe/" method="POST" id="signup-form" class="form-inline">
+            <form action="/subscribe/" method="POST" id="signup-form">
                 <div class="form-group form-group-sm">
                     <!--
                       Override bootstrap width: auto so we don't overrun
@@ -19,7 +18,7 @@
                  -->
                 <div class="form-group form-group-sm" style="display: block;">
                     {{ form.hidden_tag() }}
-                    <select id="stacks" name="stacks" class="form-control selectpicker dropup" data-header="Scroll for additional stacks" data-size="6" data-selected-text-format="count > 0" data-dropup-auto="false" title="Your favorite topics" multiple>
+                    <select id="stacks-select" name="stacks" class="form-control selectpicker dropup" data-header="Scroll for additional stacks" data-size="6" data-selected-text-format="count > 0" data-dropup-auto="false" title="Your favorite topics" multiple>
                         {% for stack in form.stacks %}
                             {{ stack() }}
                         {% endfor %}
@@ -39,5 +38,5 @@
           bootstrap-select happens.
         -->
         <script type="text/javascript">
-            $('#stacks').hide();
+            $('#stacks-select').hide();
         </script>

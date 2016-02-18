@@ -12,3 +12,10 @@
 {% endif %}
 
 {% endblock %}
+
+{% block footer %}
+    {{super()}}
+    <script type="text/javascript">
+        init_signup_row(800);
+    </script>
+{% endblock %}

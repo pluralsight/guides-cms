@@ -204,6 +204,10 @@ a, a:visited, a:hover, a:focus {
     clear: left;
 }
 
+#table-of-contents {
+    font-size: 12px;
+}
+
 #table-of-contents ul {
     list-style-type: none;
     padding-left: 0px;
@@ -238,14 +242,6 @@ a, a:visited, a:hover, a:focus {
 
 #article pre, #article blockquote, #article form {
     margin-left: 21px;
-}
-
-#article h1,
-#article h2,
-#article h3,
-#article h4,
-#article h5,
-#article h6 {
 }
 
 #article h1 .octicon-link,
@@ -353,9 +349,50 @@ a, a:visited, a:hover, a:focus {
     color: #696969;
 }
 
+#signup-row {
+    background-color: rgba(41, 45, 53, 0.901961);
+    border-top-color: rgba(255, 255, 255, 0.0980392);
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    z-index: 2;
+    margin: 0px;
+}
+
+#signup-row #signup {
+    position: relative;
+}
+
+#signup-row p, #signup-row h4 {
+    text-align: center;
+}
+
+.close-btn {
+    text-shadow: 0 0 0 transparent;
+    opacity: 1;
+    color: #fff;
+    border: 2px solid #fff;
+    font-size: 16px;
+    top: 20px;
+    right: 30px;
+    width: 32px;
+    height: 32px;
+    display: block;
+    position: absolute;
+    font-weight: 600;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.close-btn:hover {
+    opacity: .5;
+    cursor: pointer;
+}
+
 #signup {
     padding: 4px;
     margin-top: 25px;
+    margin-bottom: 25px;
     font-size: 16px;
     font-weight: 500;
     color: #ffffff;
@@ -365,19 +402,17 @@ a, a:visited, a:hover, a:focus {
     color: #000000;
 }
 
-#signup .form-group {
-    padding-top: 15px;
-}
-
 #signup .btn-primary,
 #signup .btn-primary:focus,
 #signup .btn-primary:hover,
 #signup .btn-primary:active,
 #signup .btn-primary:active:hover,
 #signup .btn-primary:active:focus {
-    background-color: #ffffff;
-    border-color: #ffffff;
-    color: #000000;
+    font-size: 15px;
+    padding: 8px;
+    background-color: #a5d92b;
+    border-color: #a5d92b;
+    color: #ffffff;
 }
 
 .load-guides {
@@ -390,12 +425,12 @@ a, a:visited, a:hover, a:focus {
     padding: 15px 20px 15px 20px;
 }
 
-.manifesto {
+.mission {
     text-align: center;
     margin-bottom: 25px;
 }
 
-.manifesto p {
+.mission p {
     color: #696969;
     font-size: 20px;
 }
@@ -458,6 +493,10 @@ a.active-page {
 }
 
 @media(max-width:992px) {
+    .affix {
+        position: static;
+    }
+
     #article-sidebar {
         text-align: center;
     }
@@ -468,5 +507,45 @@ a.active-page {
 
     #article {
         margin-top: 40px;
+    }
+}
+
+@media(max-width:767px) {
+    #title {
+        font-size: 32px;
+        padding-top: 20px;
+    }
+
+    /* Remove push on article text due to octicon link on mobile, there's no
+     * hover here. */
+    #article p {
+        padding-left: 0px;
+    }
+
+    #article pre, #article blockquote, #article form {
+        margin-left: 0px;
+    }
+
+    #article h1 .octicon-link,
+    #article h2 .octicon-link,
+    #article h3 .octicon-link,
+    #article h4 .octicon-link,
+    #article h5 .octicon-link,
+    #article h6 .octicon-link {
+        display: none;
+    }
+
+    #article h1:hover .octicon-link,
+    #article h2:hover .octicon-link,
+    #article h3:hover .octicon-link,
+    #article h4:hover .octicon-link,
+    #article h5:hover .octicon-link,
+    #article h6:hover .octicon-link {
+        display: none;
+    }
+
+    .close-btn {
+        top: 10px;
+        right: 10px;
     }
 }
