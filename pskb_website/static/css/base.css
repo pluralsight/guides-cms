@@ -29,6 +29,17 @@ a, a:visited, a:hover, a:focus {
     border-radius: 30px;
 }
 
+.emphasize-dark {
+    border: 1px solid #000000;
+    border-radius: 30px;
+    padding: 15px 15px 15px 15px;
+}
+
+
+a:hover.emphasize-dark  {
+    color: #000000;
+}
+
 #header-white {
     background-color: #ffffff;
     color: #000000;
