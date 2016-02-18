@@ -141,7 +141,7 @@ function create_responsive_tables(div) {
 
 /* Change all external links to open in a new tab/window */
 function create_external_links(id) {
-    var links = $('a').filter(function() {
+    var links = $(id + ' a').filter(function() {
         return this.hostname && this.hostname !== location.hostname;
     });
 
