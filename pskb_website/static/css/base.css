@@ -186,7 +186,7 @@ a:hover.emphasize-dark  {
 .article-description {
     /* Based off of article-teaser height. Forces the hr and link inside teaser
     * to show up in uniform place regardless of title length. */
-    height: 200px;
+    height: 250px;
 }
 
 #article-header {
