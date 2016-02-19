@@ -478,20 +478,20 @@ def _file_listing_to_markdown(article_url, title, author_url, author_name,
     :returns: String of markdown text
     """
 
-    title_line = _force_unicode('### {title} by {author_name}'.format(
+    title_line = _force_unicode(u'### {title} by {author_name}'.format(
                                                     title=title,
                                                     author_name=author_name))
 
-    article_link_line = _force_unicode('- [Read the guide]({article_url})'.format(
+    article_link_line = _force_unicode(u'- [Read the guide]({article_url})'.format(
                                                     article_url=article_url))
 
-    author_line = _force_unicode('- [Read more from {author_name}]({author_url})'.format(
+    author_line = _force_unicode(u'- [Read more from {author_name}]({author_url})'.format(
                                                     author_name=author_name,
                                                     author_url=author_url))
     if author_img_url is not None:
         # Github used to support specifying the image in markdown but that
         # doesn't seem to work anymore.
-        author_line = _force_unicode('{author_line} <img src="{author_img_url}" width="{width}" height="{height}" alt="{author_name}" />'.format(
+        author_line = _force_unicode(u'{author_line} <img src="{author_img_url}" width="{width}" height="{height}" alt="{author_name}" />'.format(
                                                 author_line=author_line,
                                                 author_name=author_name,
                                                 author_img_url=author_img_url,
@@ -501,12 +501,12 @@ def _file_listing_to_markdown(article_url, title, author_url, author_name,
     lines = [title_line, article_link_line, author_line]
 
     if stacks:
-        lines.append(_force_unicode('- Related to: %s' % (','.join(stacks))))
+        lines.append(_force_unicode(u'- Related to: %s' % (','.join(stacks))))
 
     if thumbnail_url is not None:
         # This is purposely NOT an image link b/c we don't want to clutter up
         # the github view of this file with big images.
-        lines.append(_force_unicode('- [Thumbnail](%s)' % (thumbnail_url)))
+        lines.append(_force_unicode(u'- [Thumbnail](%s)' % (thumbnail_url)))
 
     lines.append('\n')
 
