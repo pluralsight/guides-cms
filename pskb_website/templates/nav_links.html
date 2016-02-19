@@ -1,6 +1,10 @@
                     <div class="navbar-header">
                         <a class="navbar-brand" href="/">
-                            <img src="/static/img/logo.png" width="280" height="36" alt="Hacker Guides">
+                            {% if g.header_white %}
+                                <img src="/static/img/logo-white.png" width="200" height="30" alt="Hacker Guides">
+                            {% else %}
+                                <img src="/static/img/logo.png" width="200" height="39" alt="Hacker Guides">
+                            {% endif %}
                         </a>
 
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">

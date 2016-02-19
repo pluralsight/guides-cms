@@ -60,35 +60,36 @@ a:hover.emphasize-dark  {
     border: 1px solid #000000;
 }
 
-#header-black {
-    background-color: #000000;
+#header-dark {
+    background-color: #222222;
     color: #ffffff;
     padding: 15px 15px 15px 15px;
     margin-bottom: 15px;
 }
 
-#header-black .navbar {
-    background-color: #000000;
+#header-dark .navbar {
+    background-color: #222222;
+    border: none;
 }
 
-#header-black #navbar a,
-#header-black #navbar a:visited,
-#header-black #navbar a:focus {
+#header-dark #navbar a,
+#header-dark #navbar a:visited,
+#header-dark #navbar a:focus {
     color: #ffffff;
 }
 
-#header-black #navbar .dropdown-menu a,
-#header-black #navbar .dropdown-menu a:visited,
-#header-black #navbar .dropdown-menu a:focus {
+#header-dark #navbar .dropdown-menu a,
+#header-dark #navbar .dropdown-menu a:visited,
+#header-dark #navbar .dropdown-menu a:focus {
     color: #000000;
     background-color: #ffffff;
 }
 
-#header-black #navbar .dropdown-menu a:hover {
+#header-dark #navbar .dropdown-menu a:hover {
     color: #f96816;
 }
 
-#header-black #navbar a:hover, #header-white #navbar a:hover {
+#header-dark #navbar a:hover, #header-white #navbar a:hover {
     color: #f96816;
 }
 
@@ -98,7 +99,7 @@ a:hover.emphasize-dark  {
 }
 
 #featured {
-    background-color: #000000;
+    background-color: #222222;
     padding-bottom: 250px;
 }
 
@@ -464,15 +465,15 @@ a:hover.emphasize-dark  {
     text-align: center;
 }
 
-#header-black .bg-danger {
+#header-dark .bg-danger {
     color: #000000;
 }
 
-#header-black .bg-info {
+#header-dark .bg-info {
     color: #000000;
 }
 
-#header-black .bg-warning {
+#header-dark .bg-warning {
     color: #000000;
 }
 
