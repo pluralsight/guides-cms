@@ -11,6 +11,12 @@
                     <h1 class="lead">{{featured_article.title}}</h1>
                     <h2><small>by {{featured_article|author_name}}</small></h2>
                 </a>
+        {% else %}
+            <a href="/faq/">
+                <span class="intro">Featured Guide</span>
+                <h1 class="lead">Our Mission</h1>
+                <h2><small>by hack.guides()</small></h2>
+            </a>
         {% endif %}
         </div>
     </div>
