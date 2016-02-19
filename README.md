@@ -1,8 +1,7 @@
-# Hacker Guides
+# hack.guides()
 
-[hack.guides](http://tutorials.pluralsight.com) is a community-based website to
-help Software Developers learn new skills through writing and editing technical
-writing.
+[hack.guides()](http://hackguides.org) is a community-based website, subsidized by Pluralsight, to
+help Software Developers learn new skills through writing and editing technical writing.
 
 ## Main requirements
 
