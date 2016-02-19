@@ -28,3 +28,6 @@ prod_logs_app:
 
 html_docs:
 	cd docs; make html
+
+test:
+	py.test

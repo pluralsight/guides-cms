@@ -18,16 +18,21 @@ from ..forms import STACK_OPTIONS
 PUB_FILENAME = u'published.md'
 UNPUB_FILENAME = u'unpublished.md'
 
-# Parse a line of markdown into 2 links and list of stacks
-MD_LINE = re.compile(r'\-*\s*\[(?P<title>.*?)\]\((?P<title_url>.*?)\).*\[(?P<author_real_name>.*?)\]\((?P<author_url>.*?)\)\s+(?P<stacks>.*)')
+# Add author's image url here
 
+# Parse a line of markdown into 2 links and list of stacks
+TITLE_RE = re.compile(r'###\s+(?P<title>.*)\s+by\s+(?P<author_real_name>.*)')
+URL_RE = re.compile(r'.*?\[(?P<text>.*?)\]\((?P<url>.*?)\).*?')
+IMG_RE = re.compile(r'.*\<img src="(.*?)" .*')
 
 # The list of stacks has all sorts of special characters and commas in it so
 # parsing it requires a regex with everything escaped.
-STACK_RE = re.compile(re.compile('|'.join(re.escape(s) for s in STACK_OPTIONS)))
+STACK_RE = re.compile('|'.join(re.escape(s) for s in STACK_OPTIONS))
 
 file_listing_item = collections.namedtuple('file_listing_item',
-                                'title, author_name, author_real_name, stacks')
+                                ['title', 'url', 'author_name',
+                                 'author_real_name', 'author_img_url',
+                                 'thumbnail_url', 'stacks'])
 
 
 def read_file(path, rendered_text=True, branch=u'master'):
@@ -86,8 +91,9 @@ def unpublished_articles(branch=u'master'):
 
 
 def update_article_listing(article_url, title, author_url, author_name,
-                           committer_name, committer_email, stacks=None,
-                           branch=u'master', published=False):
+                           committer_name, committer_email,
+                           author_img_url=None, thumbnail_url=None,
+                           stacks=None, branch=u'master', published=False):
     """
     Update article file listing with given article info
 
@@ -97,6 +103,8 @@ def update_article_listing(article_url, title, author_url, author_name,
     :param author_name: Name of author (i.e. login/username)
     :param committer_name: Name of user committing change
     :param committer_email: Email of user committing change
+    :param author_img_url: Optional URL to author's image
+    :param thumbnail_url: Optional URL to thumbnail image for article
     :param stacks: Optional list of stacks article belongs to
     :param branch: Name of branch to save file listing to
     :param published: Boolean to update listing of published articles or list
@@ -127,8 +135,13 @@ def update_article_listing(article_url, title, author_url, author_name,
         sha = details.sha
         start_text = details.text
 
-    text = get_updated_file_listing_text(start_text, article_url, title,
-                                         author_url, author_name,
+    text = get_updated_file_listing_text(start_text,
+                                         article_url,
+                                         title,
+                                         author_url,
+                                         author_name,
+                                         author_img_url,
+                                         thumbnail_url,
                                          stacks=stacks)
 
     success = True
@@ -244,6 +257,8 @@ def sync_file_listing(all_articles, published, committer_name, committer_email,
                                              article.title,
                                              author_url,
                                              name,
+                                             article.image_url,
+                                             article.thumbnail_url,
                                              article.stacks)
 
     titles_to_remove = prev_titles - curr_titles
@@ -280,6 +295,31 @@ def _read_file_listing(path_to_listing, branch=u'master'):
         yield item
 
 
+def _iter_article_sections_from_file_listing(text):
+    """
+    Generator through raw lines file listing broken up by article
+
+    :param text: Raw text as read from file listing file
+    :returns: Generator to iterate through chunks of lines
+    """
+
+    lines_for_article = []
+    for line in text.splitlines():
+        line = line.strip()
+
+        # Start of new article
+        if line.startswith('### ') and lines_for_article:
+            yield lines_for_article
+
+            lines_for_article = [line]
+        elif line:
+            lines_for_article.append(line)
+
+    # Don't forget last section that won't have an ending delimeter
+    if lines_for_article:
+        yield lines_for_article
+
+
 def _read_items_from_file_listing(text):
     """
     Generator to yield parsed file_listing_item from text
@@ -288,60 +328,142 @@ def _read_items_from_file_listing(text):
     :returns: Generator to iterate through file_listing_item tuples
     """
 
-    for line in text.splitlines():
-        item = _parse_file_listing_line(line)
-        if item is not None:
+    for lines in _iter_article_sections_from_file_listing(text):
+        try:
+            item = _parse_file_listing_lines(lines)
+        except ValueError as err:
+            app.logger.error('Failed parsing file listing lines: %s (%s)',
+                             lines, err)
+        else:
             yield item
 
 
-def _parse_file_listing_line(line):
+def _parse_file_listing_lines(lines):
     """
-    Parse line from file listing
+    Parse list of lines from file listing
 
-    :param line: Line of text from file listing markdown file
+    :param lines: Lines of text from file listing markdown file
     :returns: file_listing_item tuple or None if parsing failed
     """
 
-    match = MD_LINE.match(line)
-    if not match:
-        return None
+    if len(lines) < 3:
+        raise ValueError('At least 3 lines of required information')
 
-    # Make sure everything unicode
+    # First line
+    title, author_real_name = _parse_title_line(lines[0])
+    if title is None or author_real_name is None:
+        raise ValueError('Title must be on first line')
 
-    title = match.group('title')
-    try:
-        title = unicode(title, encoding='utf-8')
-    except TypeError:
-        pass
+    # Second line
+    _, article_url = _parse_url_line(lines[1])
+    if article_url is None:
+        raise ValueError('Link to article must be on second line')
 
-    author_name = match.group('author_url').split('/')[-1]
-    try:
-        author_name = unicode(author_name, encoding='utf-8')
-    except TypeError:
-        pass
+    # Third line
+    author_name, author_img_url = _parse_author_info_line(lines[2])
+    if author_name is None:
+        raise ValueError('Missing author name on third line')
 
+    # Optional 4th line of stacks
     stacks = []
-    for m in STACK_RE.finditer(match.group('stacks')):
-        stack = m.group()
+    if len(lines) >= 4:
+        stacks = _parse_stacks_line(lines[3])
 
-        try:
-            stack = unicode(stack, encoding='utf-8')
-        except TypeError:
-            pass
+    # Optional 5th (or 4th line) of thumbnail
+    thumbnail_url = None
 
-        stacks.append(stack)
+    # No stacks but still have thumbnail
+    if not stacks and len(lines) >= 4:
+        _, thumbnail_url = _parse_url_line(lines[3])
+    elif len(lines) >= 5:
+        _, thumbnail_url = _parse_url_line(lines[4])
 
-    author_real_name = match.group('author_real_name')
+    return file_listing_item(title, article_url, author_name, author_real_name,
+                             author_img_url, thumbnail_url, stacks)
+
+
+def _parse_title_line(line):
+    """
+    Parse title line of text
+
+    :param line: Line of text to parse
+    :returns: Tuple of (title, author name) or (None, None) if no match on line
+    """
+
+    match = TITLE_RE.match(line)
+    if not match:
+        return (None, None)
+
+    title = _force_unicode(match.group('title'))
+    author_real_name = _force_unicode(match.group('author_real_name'))
+
+    return (title, author_real_name)
+
+
+def _parse_url_line(line):
+    """
+    Parse URL from line of text
+
+    :param line: Line of text to parse
+    :returns: Tuple of (text, URL) or (None, None) if no match is found on line
+    """
+
+    match = URL_RE.match(line)
+    if match is None:
+        return (None, None)
+
+    return (_force_unicode(match.group('text')),
+            _force_unicode(match.group('url')))
+
+
+def _parse_author_info_line(line):
+    """
+    Parse author name and optional image url from line
+
+    :param line: Line of text to parse
+    :returns: Tuple of (author_name, image_url) image_url can be None
+    """
+
+    author_name = None
+    match = URL_RE.match(line)
+    if match is not None:
+        author_name = _force_unicode(match.group('url').split('/')[-1])
+
+    author_img_url = None
+    match = IMG_RE.match(line)
+    if match is not None:
+        author_img_url = _force_unicode(match.group(1))
+
+    return (author_name, author_img_url)
+
+
+def _parse_stacks_line(line):
+    """
+    Parse list of stacks from line of text
+
+    :param line: Line of text to parse
+    :returns: List of stacks
+    """
+
+    return [_force_unicode(m.group()) for m in STACK_RE.finditer(line)]
+
+
+def _force_unicode(text):
+    """
+    Force text to utf-8 unicode
+
+    :param text: Text to convert
+    :returns: Unicode string
+    """
 
     try:
-        author_real_name = unicode(author_real_name, encoding='utf-8')
+        return unicode(text, encoding='utf-8')
     except TypeError:
-        pass
-
-    return file_listing_item(title, author_name, author_real_name, stacks)
+        return text
 
 
 def _file_listing_to_markdown(article_url, title, author_url, author_name,
+                              author_img_url=None, thumbnail_url=None,
                               stacks=None):
     """
     Encode details in a line of markdown for the file listing file
@@ -350,25 +472,50 @@ def _file_listing_to_markdown(article_url, title, author_url, author_name,
     :param title: Title of article to put in listing
     :param author_url: URL to author
     :param author_name: Name of author to use for author link
+    :param author_img_url: Optional URL to image for author
+    :param thumbnail_url: Optional URL to thumbnail image for article
     :param stacks: Optional list of stacks article belongs to
     :returns: String of markdown text
     """
 
-    if stacks is None:
-        stacks = []
+    title_line = unicode('### {title} by {author_name}'.format(
+                                                    title=title,
+                                                    author_name=author_name))
 
-    if not stacks:
-        stacks_text = ''
-    else:
-        stacks_text = 'Related to: %s' % (','.join(stacks))
+    article_link_line = unicode('- [Read the guide]({article_url})'.format(
+                                                    article_url=article_url))
 
-    return unicode('[{title}]({article_url}) by [{author_name}]({author_url}) {stacks}').format(
-            title=title, article_url=article_url, author_name=author_name,
-            author_url=author_url, stacks=stacks_text)
+    author_line = unicode('- [Read more from {author_name}]({author_url})'.format(
+                                                    author_name=author_name,
+                                                    author_url=author_url))
+    if author_img_url is not None:
+        # Github used to support specifying the image in markdown but that
+        # doesn't seem to work anymore.
+        author_line = unicode('{author_line} <img src="{author_img_url}" width="{width}" height="{height}" alt="{author_name}" />'.format(
+                                                author_line=author_line,
+                                                author_name=author_name,
+                                                author_img_url=author_img_url,
+                                                width=30,
+                                                height=30))
+
+    lines = [title_line, article_link_line, author_line]
+
+    if stacks:
+        lines.append(unicode('- Related to: %s' % (','.join(stacks))))
+
+    if thumbnail_url is not None:
+        # This is purposely NOT an image link b/c we don't want to clutter up
+        # the github view of this file with big images.
+        lines.append(unicode('- [Thumbnail](%s)' % (thumbnail_url)))
+
+    lines.append('\n')
+
+    return '\n'.join(lines)
 
 
 def get_updated_file_listing_text(text, article_url, title, author_url,
-                                  author_name, stacks=None):
+                                  author_name, author_img_url=None,
+                                  thumbnail_url=None, stacks=None):
     """
     Update text for new article listing
 
@@ -377,38 +524,47 @@ def get_updated_file_listing_text(text, article_url, title, author_url,
     :param title: Title of article to put in listing
     :param author_url: URL to author
     :param author_name: Name of author (i.e. login/username)
+    :param author_img_url: Optional URL to image for author
+    :param thumbnail_url: Optional URL to thumbnail image for article
     :param stacks: Optional list of stacks article belongs to
     :returns: String of text with article information updated
     """
 
     new_contents = []
-    changed_line = False
+    changed_section = False
 
-    for line in text.splitlines():
+    for lines in _iter_article_sections_from_file_listing(text):
         # Already found the line we need to replace so just copy remainder of
         # text to new contents and we'll write it out.
-        if changed_line:
-            new_contents.append(line)
+        if changed_section:
+            new_contents.append(u'\n' + u'\n'.join(lines))
             continue
 
-        item = _parse_file_listing_line(line)
+        try:
+            item = _parse_file_listing_lines(lines)
+        except ValueError as err:
+            app.logger.error('Failed parsing article section: %s (%s)',
+                             lines, err)
+            item = None
 
         if item is not None and item.title == title:
-            changed_line = True
+            changed_section = True
 
-            # Use '- ' to create markdown list
-            line = u'- ' + _file_listing_to_markdown(article_url,
-                                                     title,
-                                                     author_url,
-                                                     author_name,
-                                                     stacks=stacks)
+            new_text = _file_listing_to_markdown(article_url, title,
+                                                 author_url, author_name,
+                                                 author_img_url, thumbnail_url,
+                                                 stacks)
 
-        new_contents.append(line)
+            new_contents.append(u'\n' + new_text)
+        else:
+            new_contents.append(u'\n' + u'\n'.join(lines))
 
-    if not changed_line:
-        line = _file_listing_to_markdown(article_url, title, author_url,
-                                         author_name, stacks=stacks)
-        new_contents.append(u'- ' + line)
+    # Must be a new article section
+    if not changed_section:
+        new_text = _file_listing_to_markdown(article_url, title, author_url,
+                                             author_name, author_img_url,
+                                             thumbnail_url, stacks)
+        new_contents.append(u'\n' + new_text)
 
     return u'\n'.join(new_contents)
 
@@ -423,12 +579,17 @@ def get_removed_file_listing_text(text, title):
 
     new_lines = []
 
-    for line in text.splitlines():
-        item = _parse_file_listing_line(line)
+    for lines in _iter_article_sections_from_file_listing(text):
+        try:
+            item = _parse_file_listing_lines(lines)
+        except ValueError as err:
+            app.logger.error('Failed parsing article section: %s (%s)',
+                             lines, err)
+            item = None
 
         if item is not None and item.title == title:
             continue
 
-        new_lines.append(line)
+        new_lines.extend(lines)
 
     return u'\n'.join(new_lines)
