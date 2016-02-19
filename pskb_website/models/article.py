@@ -57,9 +57,17 @@ def get_available_articles(published=None, repo_path=None):
         items = file_mod.unpublished_articles()
 
     for item in items:
-        yield Article(item.title, item.author_name,
-                      author_real_name=item.author_real_name,
-                      stacks=item.stacks)
+        article = Article(item.title, item.author_name,
+                          author_real_name=item.author_real_name,
+                          stacks=item.stacks)
+
+        if item.thumbnail_url:
+            article.thumbnail_url = item.thumbnail_url
+
+        if item.author_img_url:
+            article.image_url = item.author_img_url
+
+        yield article
 
 
 def get_available_articles_from_api(published=None, repo_path=None):
@@ -648,6 +656,7 @@ class Article(object):
         self.filename = filename
         self.image_url = image_url
         self.last_updated = None
+        self.thumbnail_url = None
         self.author_real_name = author_real_name or author_name
 
         # Only useful if article has already been saved to github
