@@ -200,7 +200,7 @@ a:hover.emphasize-dark  {
 #article-header h2 {
     float: left;
     margin-left: 10px;
-    margin-top: -2px;
+    margin-top: 3px;
     font-size: 16px;
 }
 
@@ -209,7 +209,7 @@ a:hover.emphasize-dark  {
     position: absolute;
     /* based on size of article image */
     left: 50px;
-    top: -5px;
+    top: 0px;
     font-size: 16px;
 }
 
