@@ -1,7 +1,8 @@
-# Pluralsight Tutorials
+# Hacker Guides
 
-The Pluralsight knowledgebase is a community-based website to help Software
-Developers learn new skills through writing and editing technical writing.
+[hack.guides](http://tutorials.pluralsight.com) is a community-based website to
+help Software Developers learn new skills through writing and editing technical
+writing.
 
 ## Main requirements
 
