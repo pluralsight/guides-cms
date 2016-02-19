@@ -221,7 +221,6 @@ def drafts():
 @login_required
 def write(article_path):
     article = None
-    branch_article = False
     selected_stack = None
 
     if article_path is not None:
@@ -237,11 +236,7 @@ def write(article_path):
         if article.stacks:
             selected_stack = article.stacks[0]
 
-        if session['login'] != article.author_name:
-            branch_article = True
-
     return render_template('editor.html', article=article,
-                           branch_article=branch_article,
                            stacks=forms.STACK_OPTIONS,
                            selected_stack=selected_stack)
 

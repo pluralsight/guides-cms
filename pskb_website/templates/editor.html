@@ -42,7 +42,8 @@
         </ul>
     </p>
     <h3>2. Pick a Title</h3>
-    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" value="{{article.title}}" {{'readOnly="true"' if branch_article else ""}} />
+
+    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" value="{{article.title}}" {{'readOnly="true"' if article else ""}} />
 
     <br />
     <h3>3. Write</h3>
