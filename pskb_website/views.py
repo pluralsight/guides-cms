@@ -243,7 +243,6 @@ def drafts():
 @login_required
 def write(article_path):
     article = None
-    branch_article = False
     selected_stack = None
 
     if article_path is not None:
@@ -259,11 +258,7 @@ def write(article_path):
         if article.stacks:
             selected_stack = article.stacks[0]
 
-        if session['login'] != article.author_name:
-            branch_article = True
-
     return render_template('editor.html', article=article,
-                           branch_article=branch_article,
                            stacks=forms.STACK_OPTIONS,
                            selected_stack=selected_stack)
 
@@ -437,9 +432,15 @@ def save():
     url = filters.url_for_article(article)
     author_url = filters.url_for_user(article.author_name)
 
-    tasks.update_listing.delay(url, article.title, author_url,
-                               article.author_real_name, user.login,
-                               user.email, stacks=article.stacks,
+    tasks.update_listing.delay(url,
+                               article.title,
+                               author_url,
+                               article.author_real_name,
+                               user.login,
+                               user.email,
+                               author_img_url=article.image_url,
+                               thumbnail_url=article.thumbnail_url,
+                               stacks=article.stacks,
                                branch=article.branch,
                                published=article.published)
 
@@ -519,10 +520,17 @@ def change_publish_status():
         flash('Failed updating article publish status', category='error')
         return redirect(article_url)
 
-    tasks.update_listing.delay(article_url, article.title, author_url,
-                               article.author_real_name, user.login,
-                               user.email, stacks=article.stacks,
-                               branch=article.branch, published=publish_status)
+    tasks.update_listing.delay(article_url,
+                               article.title,
+                               author_url,
+                               article.author_real_name,
+                               user.login,
+                               user.email,
+                               author_img_url=article.image_url,
+                               thumbnail_url=article.thumbnail_url,
+                               stacks=article.stacks,
+                               branch=article.branch,
+                               published=publish_status)
 
     publishing = 'publish' if publish_status else 'unpublish'
     msg = 'The article has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publishing)

@@ -6,3 +6,4 @@ Flask-OAuthlib==0.9.1
 WTForms==2.1
 Flask-WTF==0.12
 celery==3.1.20
+pytest==2.8.7

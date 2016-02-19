@@ -64,35 +64,36 @@ a:hover.emphasize-dark  {
     border: 1px solid #000000;
 }
 
-#header-black {
-    background-color: #000000;
+#header-dark {
+    background-color: #222222;
     color: #ffffff;
     padding: 15px 15px 15px 15px;
     margin-bottom: 15px;
 }
 
-#header-black .navbar {
-    background-color: #000000;
+#header-dark .navbar {
+    background-color: #222222;
+    border: none;
 }
 
-#header-black #navbar a,
-#header-black #navbar a:visited,
-#header-black #navbar a:focus {
+#header-dark #navbar a,
+#header-dark #navbar a:visited,
+#header-dark #navbar a:focus {
     color: #ffffff;
 }
 
-#header-black #navbar .dropdown-menu a,
-#header-black #navbar .dropdown-menu a:visited,
-#header-black #navbar .dropdown-menu a:focus {
+#header-dark #navbar .dropdown-menu a,
+#header-dark #navbar .dropdown-menu a:visited,
+#header-dark #navbar .dropdown-menu a:focus {
     color: #000000;
     background-color: #ffffff;
 }
 
-#header-black #navbar .dropdown-menu a:hover {
+#header-dark #navbar .dropdown-menu a:hover {
     color: #f96816;
 }
 
-#header-black #navbar a:hover, #header-white #navbar a:hover {
+#header-dark #navbar a:hover, #header-white #navbar a:hover {
     color: #f96816;
 }
 
@@ -102,7 +103,7 @@ a:hover.emphasize-dark  {
 }
 
 #featured {
-    background-color: #000000;
+    background-color: #222222;
     padding-bottom: 250px;
 }
 
@@ -132,10 +133,14 @@ a:hover.emphasize-dark  {
 
 .article-teaser {
     background-color: #ffffff;
-    height: 300px;
     padding: 10px;
     margin-right: 30px;
     margin-top: 15px;
+}
+
+.article-teaser img.thumbnail {
+    display: block;
+    border: none;
 }
 
 @media(max-width:992px) {
@@ -174,6 +179,7 @@ a:hover.emphasize-dark  {
 
 .article-teaser .title {
     font-size: 18px;
+    height: 50px;
 }
 
 .article-teaser hr {
@@ -184,7 +190,7 @@ a:hover.emphasize-dark  {
 .article-description {
     /* Based off of article-teaser height. Forces the hr and link inside teaser
     * to show up in uniform place regardless of title length. */
-    height: 150px;
+    height: 250px;
 }
 
 #article-header {
@@ -198,7 +204,7 @@ a:hover.emphasize-dark  {
 #article-header h2 {
     float: left;
     margin-left: 10px;
-    margin-top: -2px;
+    margin-top: 3px;
     font-size: 16px;
 }
 
@@ -207,7 +213,7 @@ a:hover.emphasize-dark  {
     position: absolute;
     /* based on size of article image */
     left: 50px;
-    top: -5px;
+    top: 0px;
     font-size: 16px;
 }
 
@@ -328,6 +334,7 @@ a:hover.emphasize-dark  {
     /* Create overlap effect with padding-bottom on featured */
     margin-top: -170px;
     padding: 15px;
+    min-height: 250px;
 }
 
 #article-list .nav > li {
@@ -463,15 +470,15 @@ a:hover.emphasize-dark  {
     text-align: center;
 }
 
-#header-black .bg-danger {
+#header-dark .bg-danger {
     color: #000000;
 }
 
-#header-black .bg-info {
+#header-dark .bg-info {
     color: #000000;
 }
 
-#header-black .bg-warning {
+#header-dark .bg-warning {
     color: #000000;
 }
 
