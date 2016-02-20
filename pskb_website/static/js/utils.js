@@ -101,7 +101,7 @@ function should_show(article, selected_stacks) {
  * that are inside the given div. */
 function find_all_headers_without_ids(div) {
     var headers = [];
-    $(div).find("h1, h2, h3, h4, h5, h6").each(function(header_idx) {
+    $(div).find("h1, h2").each(function(header_idx) {
         if (typeof $(this).attr("id") === "undefined") {
             headers.push(this);
         }

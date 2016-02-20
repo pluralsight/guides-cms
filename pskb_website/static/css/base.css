@@ -162,8 +162,13 @@ a:hover.emphasize-dark  {
 .article-teaser .article-author {
     color: #f96616;
     font-size: 16px;
-    float: right;
     padding-right: 10px;
+}
+
+@media (min-width: 768px) {
+    .article-teaser .article-author {
+        float: right;
+    }
 }
 
 /* Allow entire article teaser to be clickable */
@@ -178,7 +183,7 @@ a:hover.emphasize-dark  {
 }
 
 .article-teaser .title {
-    font-size: 18px;
+    font-size: 17px;
     height: 50px;
 }
 
@@ -525,6 +530,18 @@ a.active-page {
 
     #article {
         margin-top: 40px;
+    }
+
+    .article-description {
+        height: 110px;
+    }
+
+    .article-teaser img.thumbnail {
+        display: none;
+    }
+
+    .article-teaser .article-author {
+        text-align: center;
     }
 }
 
