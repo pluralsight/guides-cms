@@ -1,5 +1,5 @@
 """
-Save and read image files from github
+Save and read image files to/from github
 """
 
 import os
