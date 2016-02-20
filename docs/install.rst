@@ -1,8 +1,10 @@
-# Hacker Guides
+# hack.guides()
 
-[hack.guides](http://tutorials.pluralsight.com) is a community-based website to
-help Software Developers learn new skills through writing and editing technical
-writing.
+[hack.guides()](http://hackguides.org) is an open-source CMS based on Markdown and Github written by-developers, for-developers.  The CMS is open-source (this repo), and all articles are also stored in an open-source Github repo.  The content can be visualized here.
+
+The aspiration of hack.guides() is to be an open-source community movement to help bring knowledge to the world.  Software developers learn new skills, and collaborate together on technical writing.  Ultimately we aspire to have this content delivered to other spoken languages through a community of volunteer translators.  Our vision is to democratize professional technology learning.
+
+hack.guides() is subsidized by Pluralsight.  It is open-sourced via the AGPL 3.0 license.
 
 ## Main requirements
 
