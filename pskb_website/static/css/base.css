@@ -158,8 +158,13 @@ a:hover.emphasize-dark  {
 .article-teaser .article-author {
     color: #f96616;
     font-size: 16px;
-    float: right;
     padding-right: 10px;
+}
+
+@media (min-width: 768px) {
+    .article-teaser .article-author {
+        float: right;
+    }
 }
 
 /* Allow entire article teaser to be clickable */
@@ -521,6 +526,18 @@ a.active-page {
 
     #article {
         margin-top: 40px;
+    }
+
+    .article-description {
+        height: 110px;
+    }
+
+    .article-teaser img.thumbnail {
+        display: none;
+    }
+
+    .article-teaser .article-author {
+        text-align: center;
     }
 }
 
