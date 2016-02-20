@@ -1,5 +1,6 @@
-Website Views
-=============
+=====
+Views
+=====
 
-The following is a listing of the different URL endpoints in the web
-application.
+.. automodule:: pskb_website.views
+    :members:

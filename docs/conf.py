@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Pluralsight Tutorials documentation build configuration file, created by
+# Hacker-guides CMS documentation build configuration file, created by
 # sphinx-quickstart on Thu Nov 19 08:51:06 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -32,6 +32,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.coverage',
+    'sphinx.ext.viewcode',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -47,8 +48,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Pluralsight Tutorials'
-copyright = u'2015, Pluralsight LLC'
+project = u'Hacker Guides CMS'
+copyright = u'2016, Pluralsight LLC'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -102,12 +103,25 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'logo': 'logo-white.png',
+    'github_user': 'pluralsight',
+    'github_repo': 'guides-cms',
+}
+
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+    ]
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
@@ -180,7 +194,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'PluralsightTutorialsdoc'
+htmlhelp_basename = 'HackerGuidesCMSdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -200,7 +214,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'PluralsightTutorials.tex', u'Pluralsight Tutorials Documentation',
+  ('index', 'HackerGuidesCMS.tex', u'Hacker Guides CMS Documentation',
    u'Pluralsight LLC', 'manual'),
 ]
 
@@ -230,7 +244,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pluralsighttutorials', u'Pluralsight Tutorials Documentation',
+    ('index', 'hackerguidescms', u'Hacker Guides CMS Documentation',
      [u'Pluralsight LLC'], 1)
 ]
 
@@ -244,8 +258,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'PluralsightTutorials', u'Pluralsight Tutorials Documentation',
-   u'Pluralsight LLC', 'PluralsightTutorials', 'One line description of project.',
+  ('index', 'HackerGuidesCMS', u'Hacker Guides CMS Documentation',
+   u'Pluralsight LLC', 'HackerGuidesCMS', 'One line description of project.',
    'Miscellaneous'),
 ]
 
