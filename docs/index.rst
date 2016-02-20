@@ -14,6 +14,7 @@ Contents:
 
    intro
    CHANGELOG
+   install
    views
    model_api
    remote_api
