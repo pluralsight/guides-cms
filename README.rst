@@ -18,3 +18,9 @@ translators. Our vision is to democratize professional technology learning.
 
 hack.guides() is subsidized by `Pluralsight <a http://www.pluralsight.com>`_.
 It is open-sourced via the AGPL 3.0 license.
+
+=============
+Documentation
+=============
+
+http://hacker-guides-cms.readthedocs.org/en/latest/
