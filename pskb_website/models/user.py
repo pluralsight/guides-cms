@@ -34,7 +34,7 @@ def find_user(username=None):
 
     # User a longer timeout b/c not anticipating user's name, bio or
     # collaborator status to change very often
-    cache.save_user(user.login, lib.to_json(user), timeout=60 * 10)
+    cache.save_user(user.login, lib.to_json(user), timeout=60 * 40)
     return user
 
 
