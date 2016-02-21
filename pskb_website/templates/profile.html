@@ -8,7 +8,7 @@
             <p>{{user.bio}}</p>
         {% endif %}
 
-        <h2>{{user.name if user.name else user.login}}'s articles</h2>
+        <h2>{{user.name if user.name else user.login}}'s guides</h2>
 
         {% for article in articles %}
             {% if loop.index0 == 0 %}

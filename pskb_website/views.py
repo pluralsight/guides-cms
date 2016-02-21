@@ -191,7 +191,7 @@ def authorized():
         if 'name' not in session:
             session['name'] = user.login
 
-        session['collaborator'] = user.is_collaborator()
+        session['collaborator'] = user.is_collaborator
 
     user = models.find_user()
     if user is None:
@@ -211,7 +211,7 @@ def authorized():
     if url is not None:
         return redirect(url)
 
-    flash('Thanks for logging in. You can now <a href="/review/"> review unpublished tutorials</a> and <a href="/write/">write new tutorials</a>.', category='info')
+    flash('Thanks for logging in. You can now <a href="/review/"> review unpublished guides</a> and <a href="/write/">write new guides</a>.', category='info')
 
     return redirect(url_for('user_profile'))
 
@@ -221,6 +221,9 @@ def authorized():
 @app.route('/user/<author_name>', methods=['GET'])
 @app.route('/user/', defaults={'author_name': None})
 def user_profile(author_name):
+    if author_name is None:
+        author_name = session.get('login', None)
+
     user = models.find_user(author_name)
     if not user:
         flash('Unable to find user "%s"' % (author_name), category='error')
