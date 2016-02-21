@@ -7,7 +7,7 @@ open-source CMS based on `Markdown <http://daringfireball.net/projects/markdown/
 and `Github <http://github.com>`_ written by-developers, for-developers. The
 CMS is open-source (this repo).  All the content i.e. hacker guides are also
 stored in an open-source Github repo located
-`here <https://github.com/pluralsight/guides`_.
+`here <https://github.com/pluralsight/guides>`_.
 See `the official hack.guides() website <http://www.pluralsight.com/guides/>`_ for an example of what a running version of this CMS looks like.
 
 The aspiration of hack.guides() is to be an open-source community movement to
