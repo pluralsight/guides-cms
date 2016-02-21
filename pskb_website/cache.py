@@ -98,6 +98,34 @@ def delete_article(article):
     redis_obj.delete((article.path, article.branch))
 
 
+@verify_redis_instance
+def save_user(username, user, timeout=DEFAULT_CACHE_TIMEOUT):
+    """
+    Save user JSON in cache
+
+    :param username: Username for user
+    :param user: Serialized representation of user to store in cache
+    :returns: None
+    """
+
+    redis_obj.set(username, user)
+
+    if timeout is not None:
+        redis_obj.expire(username, timeout)
+
+
+@verify_redis_instance
+def read_user(username):
+    """
+    Read user from cache
+
+    :param username: Username for user
+    :returns: Serialized representation of user object or None if not found
+    """
+
+    return redis_obj.get(username)
+
+
 # These getter/setters only exist so we can move the cache location of these
 # items transparently of the other layers.
 

@@ -183,7 +183,7 @@ def authorized():
         if 'name' not in session:
             session['name'] = user.login
 
-        session['collaborator'] = user.is_collaborator()
+        session['collaborator'] = user.is_collaborator
 
     url = session.pop('previously_requested_page', None)
     if url is not None:
@@ -199,6 +199,9 @@ def authorized():
 @app.route('/user/<author_name>', methods=['GET'])
 @app.route('/user/', defaults={'author_name': None})
 def user_profile(author_name):
+    if author_name is None:
+        author_name = session.get('login', None)
+
     user = models.find_user(author_name)
     if not user:
         flash('Unable to find user "%s"' % (author_name), category='error')

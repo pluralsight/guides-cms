@@ -2,7 +2,11 @@
 User related model code
 """
 
+import json
+
 from .. import remote
+from .. import cache
+from . import lib
 
 
 def find_user(username=None):
@@ -14,6 +18,10 @@ def find_user(username=None):
     :returns: User object
     """
 
+    user_info = cache.read_user(username)
+    if user_info is not None:
+        return User.from_json(user_info)
+
     user_info = remote.read_user_from_github(username)
     if not user_info:
         return None
@@ -21,8 +29,13 @@ def find_user(username=None):
     # This doesn't take a username b/c it's only accessible via the logged in
     # user, which the remote layer can tell from the session.
     email = remote.primary_github_email_of_logged_in()
-    return User(user_info['name'], user_info['login'], email,
+    user = User(user_info['name'], user_info['login'], email,
                 user_info['avatar_url'], user_info['bio'])
+
+    # User a longer timeout b/c not anticipating user's name, bio or
+    # collaborator status to change very often
+    cache.save_user(user.login, lib.to_json(user), timeout=60 * 10)
+    return user
 
 
 class User(object):
@@ -44,10 +57,12 @@ class User(object):
         self.email = email
         self.avatar_url = avatar_url
         self.bio = bio
+        self._is_collaborator = None
 
     def __repr__(self):
         return '<login: %s>' % (self.login)
 
+    @property
     def is_collaborator(self, owner=None, repo=None):
         """
         Determine if user is a collaborator on repo
@@ -56,8 +71,41 @@ class User(object):
         :param repo: Name of repository defaults to REPO_NAME config value
         """
 
+        if self._is_collaborator is not None:
+            return self._is_collaborator
+
         for login in remote.read_repo_collaborators_from_github(owner, repo):
             if login == self.login:
                 return True
 
         return False
+
+    @is_collaborator.setter
+    def is_collaborator(self, value):
+        """
+        Set if user is collaborator
+        :param value: True or False
+        """
+
+        self._is_collaborator = value
+
+    @staticmethod
+    def from_json(str_):
+        """
+        Create user object from json string
+
+        :param str_: json string representing user
+        :returns: User object
+        """
+
+        dict_ = json.loads(str_)
+
+        # Required arguments
+        name = dict_.pop('name', None)
+        login = dict_.pop('login', None)
+
+        user = User(name, login)
+        for attr, value in dict_.iteritems():
+            setattr(user, attr, value)
+
+        return user
