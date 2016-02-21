@@ -44,6 +44,7 @@ a:hover.emphasize-dark  {
 
 .navbar-brand {
     padding-left: 0px;
+    padding-top: 0px;
 }
 
 #header-white .navbar {
