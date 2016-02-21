@@ -48,6 +48,7 @@ a:hover.emphasize-dark  {
 
 .navbar-brand {
     padding-left: 0px;
+    padding-top: 0px;
 }
 
 #header-white .navbar {
@@ -183,7 +184,7 @@ a:hover.emphasize-dark  {
 }
 
 .article-teaser .title {
-    font-size: 17px;
+    font-size: 15px;
     height: 50px;
 }
 
@@ -405,6 +406,7 @@ a:hover.emphasize-dark  {
     font-weight: 600;
     border-radius: 50%;
     text-align: center;
+    padding-top: 1px;
 }
 
 .close-btn:hover {
@@ -414,8 +416,6 @@ a:hover.emphasize-dark  {
 
 #signup {
     padding: 4px;
-    margin-top: 25px;
-    margin-bottom: 25px;
     font-size: 16px;
     font-weight: 500;
     color: #ffffff;
