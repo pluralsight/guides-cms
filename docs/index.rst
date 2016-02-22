@@ -18,6 +18,8 @@ Contents:
    install
    github_setup
    deployment
+   github_api_usage
+   github_repo_layout
    views
    model_api
    remote_api
