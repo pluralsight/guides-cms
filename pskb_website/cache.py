@@ -7,8 +7,8 @@ import urlparse
 
 from . import app
 
-# 30 minutes
-DEFAULT_CACHE_TIMEOUT = 30 * 60
+# 15 minutes
+DEFAULT_CACHE_TIMEOUT = 15 * 60
 
 url = None
 redis_obj = None

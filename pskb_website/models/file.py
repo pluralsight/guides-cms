@@ -289,7 +289,7 @@ def _read_file_listing(path_to_listing, branch=u'master'):
             raise StopIteration
 
         text = details.text
-        cache.save_article(path_to_listing, branch, text, timeout=60 * 30)
+        cache.save_article(path_to_listing, branch, text, timeout=60 * 10)
 
     for item in _read_items_from_file_listing(text):
         yield item
