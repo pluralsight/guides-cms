@@ -48,11 +48,15 @@
                                             <hr>
 
                                             <p class="article-author">
-                                                <span> {{article|author_name}} </span>
                                                 {% if article.image_url %}
-                                                    <img src="{{article.image_url}}&amp;s=86" width="43" height="43" style="border-radius: 22px;" alt="{{article.user}}"/>
+                                                    <img src="{{article.image_url}}&amp;s=100" alt="{{article.user}}"/>
                                                 {% else %}
-                                                    <img src="/static/img/pluralsight_user.png" width="43" height="43" style="border-radius: 22px;" alt="Pluralsight User"/>
+                                                    <img src="/static/img/pluralsight_user.png" alt="Pluralsight User"/>
+                                                {% endif %}
+
+                                                <span class="name"> {{article|author_name}} </span>
+                                                {% if article.author_name != article.real_name %}
+                                                <span class="gh-name"> @{{article.author_name}} </span>
                                                 {% endif %}
                                             </p>
                                         </div> <!-- teaser col -->

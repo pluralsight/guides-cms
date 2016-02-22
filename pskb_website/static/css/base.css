@@ -164,12 +164,25 @@ a:hover.emphasize-dark  {
     color: #f96616;
     font-size: 16px;
     padding-right: 10px;
+    position: relative;
 }
 
-@media (min-width: 768px) {
-    .article-teaser .article-author {
-        float: right;
-    }
+.article-teaser .article-author span.name {
+    margin-right: 10px;
+    margin-top: 5px;
+    float: right;
+}
+
+.article-teaser .article-author span.gh-name {
+    position: absolute;
+    top: 25px;
+}
+
+.article-teaser .article-author img {
+    float: right;
+    width: 50px;
+    height: 50px;
+    border-radius: 26px;
 }
 
 /* Allow entire article teaser to be clickable */
@@ -515,6 +528,12 @@ a.active-page {
     font-size: 12px;
 }
 
+@media(min-width:992px) {
+    .article-teaser .article-author span.gh-name {
+        right: 70px;
+    }
+}
+
 @media(max-width:992px) {
     .affix {
         position: static;
@@ -542,7 +561,29 @@ a.active-page {
 
     .article-teaser .article-author {
         text-align: center;
+        font-size: 14px;
     }
+
+    .article-teaser .article-author span.name {
+        float: left;
+        margin-top: 0px;
+    }
+
+    .article-teaser .article-author span.gh-name {
+        position: absolute;
+        top: 25px;
+        left: 0px;
+    }
+
+    .article-teaser .article-author {
+        height: 40px;
+    }
+
+    .article-teaser .article-author img {
+        width: 35px;
+        height: 35px;
+        border-radius: 20px;
+     }
 }
 
 @media(max-width:767px) {
