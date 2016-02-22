@@ -274,6 +274,8 @@ a:hover.emphasize-dark  {
  * padding. */
 #article p {
     padding-left: 21px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 #article pre, #article blockquote, #article form {
