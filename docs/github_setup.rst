@@ -2,9 +2,9 @@
 Github Application Setup
 ========================
 
-We make heavy use of the [Github API](https://developer.github.com) since all
+We make heavy use of the `Github API <https://developer.github.com>` since all
 of the persistent storage is a Git repository.  So, you'll need to register
-your own Github [OAuth](https://en.wikipedia.org/wiki/OAuth) token to have the
+your own Github `OAuth <https://en.wikipedia.org/wiki/OAuth>` token to have the
 CMS make requests to the Github API.  The following steps will walk you through
 that setup process on github.com for an application running locally.
 
@@ -19,8 +19,8 @@ repository at this point.
 Registering a Github Application
 --------------------------------
 
-1. [Login to github.com](https://github.com/login)
-2. Go to the [OAuth applications for developers section](https://github.com/settings/developers) and click the register new application button
+1. `Login to github.com <https://github.com/login>`
+2. Go to the `OAuth applications for developers section <https://github.com/settings/developers>` and click the register new application button
 3. Set the Authorization callback URL to `127.0.0.1:5000/github/authorized`
     * You can also use `0.0.0.0:5000` if you're running locally with the
       `heroku local` command.
