@@ -179,6 +179,9 @@ def authorized():
         flash('Unable to read user from Github API')
         return redirect(url_for('index'))
 
+    # Uncomment this to see the access token for your own user
+    #app.logger.info('%s - %s:', user.name, resp['access_token')
+
     if user.avatar_url:
         session['user_image'] = user.avatar_url
 

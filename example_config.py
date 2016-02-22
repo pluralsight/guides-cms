@@ -22,13 +22,13 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
 class Config(object):
     DEBUG = False
     CSRF_ENABLED = True
-    GITHUB_CLIENT_ID = 'replace-me'
-    GITHUB_SECRET = 'replace-me'
     HEROKU = False
     SECRET_KEY = 'not-a-good-value'
 
     # Details of the repo where all articles are stored.  The GITHUB_CLIENT_ID
     # and GITHUB_SECRET should allow full-access to this database.
+    GITHUB_CLIENT_ID = 'replace-me'
+    GITHUB_SECRET = 'replace-me'
     REPO_OWNER = None
     REPO_NAME = None
     REPO_OWNER_ACCESS_TOKEN = None
