@@ -62,6 +62,15 @@
             </p>
         {% endif %}
 
+        {% if allow_delete %}
+            <p>
+                <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delete-confirmation">
+                    Delete article <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
+                {% include 'confirm_delete.html' %}
+            </p>
+        {% endif %}
+
         {% if collaborator %}
             <p>
                 <form action="/publish/" method="POST">
