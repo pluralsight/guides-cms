@@ -437,6 +437,7 @@
         this.options.url = this.element.getAttribute("action");
       }
       if (!this.options.url) {
+          return null;
         throw new Error("No URL provided.");
       }
       if (this.options.acceptedFiles && this.options.acceptedMimeTypes) {
