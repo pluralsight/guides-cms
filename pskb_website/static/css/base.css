@@ -165,6 +165,8 @@ a:hover.emphasize-dark  {
     font-size: 16px;
     padding-right: 10px;
     position: relative;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .article-teaser .article-author span.name {
@@ -210,6 +212,8 @@ a:hover.emphasize-dark  {
     /* Based off of article-teaser height. Forces the hr and link inside teaser
     * to show up in uniform place regardless of title length. */
     height: 100px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 #article-header {
