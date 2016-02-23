@@ -35,7 +35,7 @@ function add_article_header_data(editor) {
 
     var anchor = '<a href="#">';
     if (author_name != undefined && author_name != '') {
-        anchor = '<a href="/user/' + author_name + '>';
+        anchor = '<a href="/user/"' + author_name + '>';
     }
 
     if (author_real_name != undefined && author_real_name != '') {
