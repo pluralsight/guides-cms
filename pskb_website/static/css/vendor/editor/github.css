@@ -1,20 +1,3 @@
-#epiceditor-wrapper{
-	background:white;
-}
-
-#epiceditor-preview {
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-#epiceditor-preview>*:first-child{
-	margin-top:0!important;
-}
-
-#epiceditor-preview>*:last-child{
-	margin-bottom:0!important;
-}
-
 dl {
 	padding:0;
 }
