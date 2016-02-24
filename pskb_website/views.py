@@ -75,6 +75,7 @@ def index():
     # FIXME: This should only fetch the most recent x number.
     articles = list(models.get_available_articles(published=True))
     featured = os.environ.get('FEATURED_TITLE')
+    featured_article = None
 
     if featured is not None:
         for ii, article in enumerate(articles):
