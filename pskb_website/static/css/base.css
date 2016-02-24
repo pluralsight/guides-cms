@@ -425,7 +425,7 @@ a:hover.emphasize-dark  {
     font-weight: 600;
     border-radius: 50%;
     text-align: center;
-    padding-top: 1px;
+    padding-top: 2px;
 }
 
 .close-btn:hover {
