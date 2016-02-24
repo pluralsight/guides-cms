@@ -29,6 +29,7 @@ sys.path.insert(0, os.path.abspath('../'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'alabaster',
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.coverage',
@@ -110,6 +111,8 @@ html_theme = 'alabaster'
 # documentation.
 html_theme_options = {
     'logo': 'logo-white.png',
+    'github_button': True,
+    'github_banner': True,
     'github_user': 'pluralsight',
     'github_repo': 'guides-cms',
 }
