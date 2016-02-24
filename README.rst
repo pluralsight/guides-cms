@@ -19,15 +19,18 @@ translators. Our vision is to democratize professional technology learning.
 hack.guides() is subsidized by `Pluralsight <a http://www.pluralsight.com>`_.
 It is open-sourced via the AGPL 3.0 license.
 
-=============
-Documentation
-=============
+-----------------------
+Developer Documentation
+-----------------------
+
+Please see the following documentation on [Read the Docs](readthedocs.org) for
+more detailed documentation of the code of the CMS.
 
 http://hacker-guides-cms.readthedocs.org/en/latest/
 
-================
+----------------
 Getting Involved
-================
+----------------
 
 We're working to keep making this community project better.  You have great
 ideas and expertise that could help us!  Take a look at our `current issues <https://github.com/pluralsight/guides-cms/issues>`_ and let us know where we can improve.  See something you can fix? Send us a Pull Request!
