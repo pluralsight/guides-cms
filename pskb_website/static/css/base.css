@@ -35,6 +35,11 @@ a, a:visited, a:hover, a:focus {
     padding: 15px 15px 15px 15px;
 }
 
+#article-sidebar .emphasize-dark {
+    margin-bottom: 40px;
+    text-align: center;
+    padding: 8px;
+}
 
 a:hover.emphasize-dark  {
     color: #000000;
@@ -245,6 +250,7 @@ a:hover.emphasize-dark  {
 }
 
 #table-of-contents {
+    margin-top: 30px;
     font-size: 12px;
 }
 
