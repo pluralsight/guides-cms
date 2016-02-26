@@ -36,8 +36,7 @@ Setup environment variables
 
 1. Copy example_config.py to config.py and populate config.DevelopmentConfig
     with your own data.
-    * This is where you'll copy and paste your Github OAuth application's
-      credentials.
+    * This is where you'll copy and paste your Github OAuth application's credentials.
 2. Head over to the views.py file on [this specific line](https://github.com/pluralsight/guides-cms/blob/master/pskb_website/views.py#L175) and uncomment it.
     * Really need a better way to do this. Any ideas? Send us a Pull Request!
 
