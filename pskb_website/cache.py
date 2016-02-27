@@ -24,7 +24,7 @@ else:
         url = None
 
     if url is None:
-        app.logger.warning('No caching available, missing REDISCLOUD_URL env var')
+        app.logger.warning('No caching available, please set REDISCLOUD_URL environment variable to enable caching.')
     else:
         url = urlparse.urlparse(app.config['REDISCLOUD_URL'])
         redis_obj = redis.Redis(host=url.hostname, port=url.port,

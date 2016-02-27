@@ -14,7 +14,7 @@ FAVORITE_STACKS = set()
 try:
     MC = mailchimp.Mailchimp(app.config['MAILCHIMP_API_KEY'])
 except mailchimp.Error as err:
-    app.logger.warning('Unable to setup mailchimp API: %s', err)
+    app.logger.warning('Unable to setup mailchimp API if you want to use the email subscribe functionality: %s', err)
     MC = None
 
 LIST_ID = app.config['MAILCHIMP_LIST_ID']
