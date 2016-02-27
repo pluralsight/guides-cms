@@ -10,9 +10,9 @@ import os
 # config:set command. See README.md for more information.
 HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'GITHUB_SECRET', 'DATABASE_URL',
-                           'SQLALCHEMY_DATABASE_URI', 'REPO_OWNER',
-                           'REPO_NAME', 'REPO_OWNER_ACCESS_TOKEN',
-                           'REDISCLOUD_URL', 'REDIS_URL', 'MAILCHIMP_API_KEY',
+                           'REPO_OWNER', 'REPO_NAME',
+                           'REPO_OWNER_ACCESS_TOKEN', 'REDISCLOUD_URL',
+                           'REDIS_URL', 'MAILCHIMP_API_KEY',
                            'MAILCHIMP_LIST_ID', 'MAILCHIMP_STACKS_GROUP_NAME',
                            'SECONDARY_REPO_OWNER', 'SECONDARY_REPO_NAME',
                            'BASE_URL', 'CELERY_BROKER_URL',
@@ -49,14 +49,6 @@ class Config(object):
     MAILCHIMP_API_KEY = None
     MAILCHIMP_LIST_ID = None
     MAILCHIMP_STACKS_GROUP_NAME = None
-
-    # This should automatically be set by heroku if you've added a database to
-    # your app.
-    try:
-        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-    except KeyError:
-        print 'Failed finding DATABASE_URL environment variable'
-        SQLALCHEMY_DATABASE_URI = ''
 
 
 class DevelopmentConfig(Config):
