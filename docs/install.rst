@@ -6,6 +6,7 @@ Requirements
 * Web framework: `Flask <http://flask.pocoo.org>`_
 * HTTP server: `Gunicorn <http://gunicorn.org>`_
 * See requirements.txt for additional Python package requirements
+* Background jobs: `Redis <http://redis.io>`_
 
 ---------------------
 Optional requirements
@@ -43,6 +44,8 @@ Setup environment variables
         * REPO_OWNER - Name of your github user
         * REPO_NAME - Name of repository you'll store the guide content
         * REPO_OWNER_ACCESS_TOKEN - OAuth token of your github user or owner of the repository where the guide content is stored. You cannot set this until after you run the application locally and authorize it with your github account as described below.
+        * CELERY_BROKER_URL - URL of Redis (or another broker) for handling background jobs (see :ref:`instructions for Celery on heroku <celery_on_heroku>` for help).
+        * BASE_URL - Base URL where your site will be running. This can be the URL of your Heroku deployment or localhost like `127.0.0.1:5000` or `0.0.0.0:5000`.
 
 --------------------------------
 Run locally with Flask webserver
@@ -56,8 +59,11 @@ Run locally with Flask webserver
 5. You'll need to place that token in the `REPO_OWNER_ACCESS_TOKEN` environment variable.
 6. Shutdown the local flask webserver with `Ctrl-C` and run `python run.py` again
 
-Now you should be setup and ready, but you can even test things from the CLI if
-that's more your speed.
+Now you can :ref:`test things from the CLI <wo_browser>` if that's more your speed. However, there's one more step to setting up the ability to publish articles.  This requires :ref:`running a celery process for background jobs <celery_setup>`.
+
+You can try creating a guide once you have celery running locally or your `CELERY_BROKER_URL` configured to a running Redis server.
+
+.. _wo_browser:
 
 -----------------------
 Testing without browser
@@ -76,3 +82,16 @@ try the following::
     remote.read_user_from_github(username='octocat')
 
 You should now see the description of the famous Github octocat user!
+
+.. _celery_setup:
+
+-------------------------------------------
+Setting up Celery for background processing
+-------------------------------------------
+
+You already have `Celery <http://celeryproject.org>`_ installed if you used the requirements.txt file.  However, now you need `Redis <http://redis.io>`_ running to process background jobs from Celery and fully enable publishing articles.
+
+Setting up Redis locally is outside the scope of this document.  You can refer
+to the `Redis documentation <http://redis.io/documentation>`_ for that.
+However, you can easily setup Redis on `Heroku <http://heroku.com>`_ by
+following the :ref:`these instructions <celery_on_heroku>`.

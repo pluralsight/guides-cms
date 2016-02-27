@@ -28,23 +28,26 @@ The following steps assume you have the basic `Heroku toolbelt installed <https:
 3. Setup Heroku config
     * See example_config.py for a listing of the environment variables that
       must be setup in your Heroku config.
+    * **Do not forget to set HEROKU=1 in the heroku environment variables!**
     * You can set Heroku config variables with the following syntax:
-        * `heroku config:set APP_SETTINGS=config.ProductionConfig`
+        * `heroku config:set REPO_NAME=<name>`
         * ... (see example_config.py for full list)
         * Or something like the following if you have multiple remotes for Heroku
-        * `heroku config:set APP_SETTINGS=config.ProductionConfig --app pro`
-        * `heroku config:set APP_SETTINGS=config.StagingConfig --app stage`
+        * `heroku config:set REPO_NAME=<name> --app pro`
+        * `heroku config:set REPO_NAME=<name> --app stage`
         * ... (see example_config.py for full list)
-4. Deploy changes
+4. `Setup Redis add-on for background jobs <celery_on_heroku>`
+5. Deploy changes
     * `git push heroku master`
     * Or something like the following if you have multiple remotes for Heroku
     * `git push stage master` where <stage> is remote name for Heroku and
       master is local branch you want to push.
     * **Make sure your changes are committed locally first!**
+6. Go to your `heroku dashboard settings <https://dashboard.heroku.com/>` resources for your app and verify the worker task is running.
+7. Change the callback URL for your github application to the heroku URL
+    * Typically something like `http://<app_name.herokuapp.com>/github/authorized`
 
-By default the application will be served up by `Gunicorn <http://gunicorn.org>`_
-only.  This is great for testing, but gunicorn is best when run behind a proxy
-like `nginx <http://nginx.org>`_.
+By default the application will be served up by `Gunicorn <http://gunicorn.org>`_.
 
 You can slightly improve your performance on Heroku by using setting the
 `WEB_CONCURRENCY` environment variable, which gunicorn automatically honors.
@@ -66,7 +69,21 @@ described below.  Then:
 
 1. Run `heroku config --app <app_name>` to see all the configuration
 2. Copy all the these configuration values into a file with the `key=value` format instead of `key:value` which is the output of the Heroku command.
-3. Run `heroku local --env <file_from_step_2>`
+3. Change the callback URL on your github application to `http://0.0.0.0:5000/`
+4. Run `heroku local --env <file_from_step_2>`
+
+.. _celery_on_heroku:
+
+--------------------------
+Redis for background tasks
+--------------------------
+
+* Run `heroku addons:create heroku-redis:hobby-dev` to add the free Redis add-on
+* This automatically sets up your `REDIS_URL` environment variable.
+* Now run `heroku config --app <heroku_app_name>` to see the value of `REDIS_URL`
+* Copy that value to a new environment variable on heroku and set it like this:
+    * `heroku config:set CELERY_BROKER_URL=<REDIS_URL>`
+* We don't set `CELERY_BROKER_URL` directly equal to `REDIS_URL` so that you're free to setup Celery with whatever broker you choose.
 
 Adding Redis caching on Heroku
 ------------------------------
@@ -81,7 +98,8 @@ Adding Redis caching on Heroku
         * Use the same service for other things later instead of just caching
 2. Add your addon
     * `heroku addons:create rediscloud:30 --app <app_name>`
-3. See docs related to `using Python with redis on Heroku <https://devcenter.heroku.com/articles/rediscloud#using-redis-from-python>`_
+3. The application will automatically start caching if you used the redis cloud addon described above.  You can use a different Redis caching add-on, but you'll need to change the setup of the caching layer in `cache.py` appropriately.
+4. See docs related to `using Python with redis on Heroku <https://devcenter.heroku.com/articles/rediscloud#using-redis-from-python>`_
 
 Useful Heroku add-ons
 ---------------------
