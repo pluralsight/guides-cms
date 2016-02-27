@@ -22,7 +22,7 @@ if 'HEROKU' in os.environ:
             print 'Unable to find environment variable %s, defaulting to None'
             value = None
 
-            app.config.setdefault(var, value)
+        app.config.setdefault(var, value)
 
         if var == 'SECRET_KEY':
             app.secret_key = os.environ[var]
