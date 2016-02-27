@@ -6,7 +6,7 @@ The CMS expects a specific layout for the content repository, but you don't
 have to create the structure manually.  You can start with an empty repository
 and the structure will fill itself out as guides are added.  However, it's
 useful to understand how the content repository is structured and there are
-a few 'static' pages you have to create yourself.  Below isthe basic layout
+a few 'static' pages you have to create yourself.  Below is the basic layout
 from a high-level view.  You can also see a working example
 `here <http://github.com/pluralsight/guides>`_.
 
