@@ -11,7 +11,7 @@ Requirements
 Optional requirements
 ---------------------
 
-* Caching: [Redis](http://redis.io)
+* Caching: `Redis <http://redis.io>`_
 
 =============================
 Install for local development
@@ -34,21 +34,27 @@ Install for local development
 Setup environment variables
 ---------------------------
 
-1. Copy example_config.py to config.py and populate config.DevelopmentConfig
-    with your own data.
+1. Copy example_config.py to config.py and populate config.DevelopmentConfig with your own data.
     * This is where you'll copy and paste your Github OAuth application's credentials.
-2. Head over to the views.py file on [this specific line](https://github.com/pluralsight/guides-cms/blob/master/pskb_website/views.py#L175) and uncomment it.
-    * Really need a better way to do this. Any ideas? Send us a Pull Request!
+    * The defaults are all set in the config.Config so override only values you need.  The following are required:
+        * SECRET_KEY
+        * GITHUB_CLIENT_ID
+        * GITHUB_SECRET
+        * REPO_OWNER - Name of your github user
+        * REPO_NAME - Name of repository you'll store the guide content
+        * REPO_OWNER_ACCESS_TOKEN - OAuth token of your github user or owner of the repository where the guide content is stored. You cannot set this until after you run the application locally and authorize it with your github account as described below.
 
 --------------------------------
 Run locally with Flask webserver
 --------------------------------
 
 1. Run `python run.py`
-2. Browse to URL mentioned at prompt
-3. Click the Signin with github and authenticate the application
-4. Check your logs for the token printed by the code change above.
-5. You'll need to place that token in the `REPO_OWNER` environment variable.
+2. Browse to `http://127.0.0.1:5000/login/`
+3. Login with your github account and authorize your newly created application
+    * **Login with the account you set as the REPO_OWNER**
+4. Check your logs for the new token printed. This will be a CRTICAL level log message.
+5. You'll need to place that token in the `REPO_OWNER_ACCESS_TOKEN` environment variable.
+6. Shutdown the local flask webserver with `Ctrl-C` and run `python run.py` again
 
 Now you should be setup and ready, but you can even test things from the CLI if
 that's more your speed.

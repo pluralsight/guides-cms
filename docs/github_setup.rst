@@ -21,8 +21,8 @@ Registering a Github Application
 
 1. `Login to github.com <https://github.com/login>`_
 2. Go to the `OAuth applications for developers section <https://github.com/settings/developers>`_ and click the register new application button
-3. Set the Authorization callback URL to `127.0.0.1:5000/github/authorized`
-    * You can also use `0.0.0.0:5000` if you're running locally with the
+3. Set the Authorization callback URL to `http://127.0.0.1:5000/github/authorized`
+    * You can also use `http://0.0.0.0:5000` if you're running locally with the
       `heroku local` command.
     * This is the URL Github will sent requests back to once a user has allowed
       your application to access their account.
