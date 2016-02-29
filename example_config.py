@@ -9,8 +9,7 @@ import os
 # You must set each of these in your heroku environment with the heroku
 # config:set command. See README.md for more information.
 HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
-                           'GITHUB_SECRET', 'DATABASE_URL',
-                           'REPO_OWNER', 'REPO_NAME',
+                           'GITHUB_SECRET', 'REPO_OWNER', 'REPO_NAME',
                            'REPO_OWNER_ACCESS_TOKEN', 'REDISCLOUD_URL',
                            'REDIS_URL', 'MAILCHIMP_API_KEY',
                            'MAILCHIMP_LIST_ID', 'MAILCHIMP_STACKS_GROUP_NAME',
