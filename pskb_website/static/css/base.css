@@ -654,3 +654,11 @@ a.active-page {
         right: 10px;
     }
 }
+
+
+@media(min-width:1170px) {
+    #article-sidebar {
+        /* Avoid sidebar overflowing at really wide resolutions */
+        max-width: 200px;
+    }
+}
