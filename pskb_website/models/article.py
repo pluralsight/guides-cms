@@ -447,7 +447,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     # Get sha of meta data if it exists so we can update it if it already
     # exists
     details = remote.read_file_from_github(filename, rendered_text=False,
-                                           branch=branch)
+                                           branch=branch, allow_404=True)
     sha = None
     text = None
     if details is not None:

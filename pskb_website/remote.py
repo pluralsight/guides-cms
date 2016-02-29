@@ -234,17 +234,20 @@ def primary_github_email_of_logged_in():
     return None
 
 
-def read_file_from_github(path, branch=u'master', rendered_text=True):
+def read_file_from_github(path, branch=u'master', rendered_text=True,
+                          allow_404=False):
     """
     Get rendered file text from github API
 
     :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :param branch: Name of branch to read file from
     :param rendered_text: Return rendered or raw text
+    :param allow_404: False to log warning for 404 or True to allow it i.e.
+                      when you're just seeing if a file already exists
     :returns: file_details namedtuple or None if error
     """
 
-    details = file_details_from_github(path, branch)
+    details = file_details_from_github(path, branch, allow_404=allow_404)
     if details is None:
         return details
 
@@ -277,12 +280,14 @@ def rendered_markdown_from_github(path, branch=u'master'):
     return None
 
 
-def file_details_from_github(path, branch=u'master'):
+def file_details_from_github(path, branch=u'master', allow_404=False):
     """
     Get file details from github
 
     :param path: Path to file (<owner>/<repo>/<dir>/.../<filename>)
     :param branch: Name of branch to read file from
+    :param allow_404: False to log warning for 404 or True to allow it i.e.
+                      when you're just seeing if a file already exists
     :returns: file_details namedtuple or None for error
     """
 
@@ -296,8 +301,9 @@ def file_details_from_github(path, branch=u'master'):
                        encoding='utf-8')
         last_updated = resp._resp.headers.get('Last-Modified')
     else:
-        app.logger.warning('Failed reading file details at "%s", status: %d, branch: %s, data: %s',
-                           url, resp.status, branch, resp.data)
+        if resp.status == 404 and not allow_404:
+            app.logger.warning('Failed reading file details at "%s", status: %d, branch: %s, data: %s',
+                               url, resp.status, branch, resp.data)
 
         return None
 
