@@ -19,7 +19,7 @@ if 'HEROKU' in os.environ:
         try:
             value = os.environ[var]
         except KeyError:
-            print 'Unable to find environment variable %s, defaulting to None'
+            print 'Unable to find environment variable %s, defaulting to None' % (var)
             value = None
 
         app.config.setdefault(var, value)
