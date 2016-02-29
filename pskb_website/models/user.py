@@ -29,8 +29,12 @@ def find_user(username=None):
     # This doesn't take a username b/c it's only accessible via the logged in
     # user, which the remote layer can tell from the session.
     email = remote.primary_github_email_of_logged_in()
-    user = User(user_info['name'], user_info['login'], email,
-                user_info['avatar_url'], user_info['bio'])
+    user = User(user_info['name'], user_info['login'])
+    user.email = email
+    user.avatar_url = user_info['avatar_url']
+    user.bio = user_info['bio']
+    user.location = user_info['location']
+    user.blog = user_info['blog']
 
     # User a longer timeout b/c not anticipating user's name, bio or
     # collaborator status to change very often
@@ -41,22 +45,21 @@ def find_user(username=None):
 class User(object):
     """Object representing user"""
 
-    def __init__(self, name, login, email=None, avatar_url=None, bio=None):
+    def __init__(self, name, login):
         """
         Initialize user
 
         :param name: Name of user
         :param login: Login/username of user
-        :param email: Email of user
-        :param avatar_url: URL to avatar/image for user
-        :param bio: Biography text of user
         """
 
-        self.name = name
+        self.name = name or login
         self.login = login
-        self.email = email
-        self.avatar_url = avatar_url
-        self.bio = bio
+        self.email = None
+        self.avatar_url = None
+        self.bio = None
+        self.location = None
+        self.blog = None
         self._is_collaborator = None
 
     def __repr__(self):

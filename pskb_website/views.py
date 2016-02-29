@@ -72,6 +72,10 @@ def collaborator_required(f):
 
 @app.route('/')
 def index():
+    # Send to login, application not fully setup yet.
+    if app.config['REPO_OWNER_ACCESS_TOKEN'] is None:
+        return redirect(url_for('login'))
+
     # FIXME: This should only fetch the most recent x number.
     articles = list(models.get_available_articles(published=True))
     featured = os.environ.get('FEATURED_TITLE')
@@ -174,13 +178,15 @@ def authorized():
     session['github_token'] = (resp['access_token'], '')
     session['collaborator'] = False
 
+    # Workaround for the first time you setup application
+    if app.config['REPO_OWNER_ACCESS_TOKEN'] is None:
+        app.config['REPO_OWNER_ACCESS_TOKEN'] = resp['access_token']
+        app.logger.critical('Please set your REPO_OWNER_ACCESS_TOKEN environment variable to: %s', resp['access_token'])
+
     user = models.find_user()
     if user is None:
         flash('Unable to read user from Github API')
         return redirect(url_for('index'))
-
-    # Uncomment this to see the access token for your own user
-    #app.logger.info('%s - %s:', user.name, resp['access_token')
 
     if user.avatar_url:
         session['user_image'] = user.avatar_url
@@ -328,13 +334,16 @@ def review(article_path):
     g.header_white = True
     g.edit_link = True
 
+    author = models.find_user(article.author_name)
+
     return render_template('article.html',
                            article=article,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
                            branches=branches,
                            visible_branch=branch,
-                           collaborator=collaborator)
+                           collaborator=collaborator,
+                           user=author)
 
 @app.route('/partner/<path:article_path>', methods=['GET'])
 @app.route('/partner/', defaults={'article_path': None}, methods=['GET'])

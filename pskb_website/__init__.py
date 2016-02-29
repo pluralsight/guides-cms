@@ -16,7 +16,13 @@ if 'HEROKU' in os.environ:
     # example_config.py provides a blueprint for which variables to look for in
     # the environment and set in our app config.
     for var in example_config.HEROKU_ENV_REQUIREMENTS:
-        app.config.setdefault(var, os.environ[var])
+        try:
+            value = os.environ[var]
+        except KeyError:
+            print 'Unable to find environment variable %s, defaulting to None'
+            value = None
+
+        app.config.setdefault(var, value)
 
         if var == 'SECRET_KEY':
             app.secret_key = os.environ[var]

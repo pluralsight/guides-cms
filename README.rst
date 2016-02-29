@@ -16,14 +16,14 @@ collaborate together on technical writing. Ultimately we aspire to have this
 content delivered to other spoken languages through a community of volunteer
 translators. Our vision is to democratize professional technology learning.
 
-hack.guides() is subsidized by `Pluralsight <a http://www.pluralsight.com>`_.
+hack.guides() is subsidized by `Pluralsight <http://www.pluralsight.com>`_.
 It is open-sourced via the AGPL 3.0 license.
 
 -----------------------
 Developer Documentation
 -----------------------
 
-Please see the following documentation on [Read the Docs](readthedocs.org) for
+Please see the following documentation on `Read the Docs <http://readthedocs.org>`_ for
 more detailed documentation of the code of the CMS.
 
 http://hacker-guides-cms.readthedocs.org/en/latest/
