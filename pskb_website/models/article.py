@@ -227,7 +227,7 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None):
         app.logger.error('Failed reading meta data for %s, full_path: %s, branch: %s',
                          path_info, full_path, branch)
 
-    if article.image_url is None:
+    if article is not None and article.image_url is None:
         user = find_user(article.author_name)
         if user is not None:
             article.image_url = user.avatar_url
