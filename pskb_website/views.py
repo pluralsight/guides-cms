@@ -398,6 +398,10 @@ def save():
     title = request.form['title']
     sha = request.form['sha']
 
+    if not content.strip() or not title.strip():
+        flash('Must enter title and body of guide', category='error')
+        return redirect(url_for('write'))
+
     # Form only accepts 1 stack right now but we can handle multiple on the
     # back-end.
     if not request.form['stacks']:
