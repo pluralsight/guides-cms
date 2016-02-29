@@ -440,6 +440,7 @@ a:hover.emphasize-dark  {
 }
 
 #signup-row p, #signup-row h4 {
+    color: #ffffff;
     text-align: center;
 }
 
@@ -467,7 +468,6 @@ a:hover.emphasize-dark  {
 }
 
 #signup {
-    padding: 4px;
     font-size: 16px;
     font-weight: 500;
     color: #ffffff;
@@ -477,6 +477,14 @@ a:hover.emphasize-dark  {
     color: #000000;
 }
 
+#signup form {
+    margin-top: 10px;
+}
+
+#signup button {
+    padding-bottom: 10px;
+}
+
 #signup .btn-primary,
 #signup .btn-primary:focus,
 #signup .btn-primary:hover,
@@ -484,7 +492,8 @@ a:hover.emphasize-dark  {
 #signup .btn-primary:active:hover,
 #signup .btn-primary:active:focus {
     font-size: 15px;
-    padding: 8px;
+    padding: 4px 4px 8px 4px;
+    margin-top: 4px;
     background-color: #a5d92b;
     border-color: #a5d92b;
     color: #ffffff;
