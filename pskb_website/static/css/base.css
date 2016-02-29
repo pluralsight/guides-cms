@@ -294,6 +294,16 @@ a:hover.emphasize-dark  {
 
 #article pre, #article blockquote, #article form {
     margin-left: 21px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+#article code {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+
+    /* Overwrite github.css value of nowrap */
+    white-space: normal;
 }
 
 #article h1 .octicon-link,

@@ -48,7 +48,12 @@ else:
 # won't show up in the console (on heroku)
 if not app.debug:
     app.logger.setLevel(logging.INFO)
-    app.logger.addHandler(logging.StreamHandler())
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s [in %(pathname)s:%(lineno)d]: %(message)s '))
+
+    app.logger.addHandler(handler)
+
 
 import pskb_website.views
 import pskb_website.filters
