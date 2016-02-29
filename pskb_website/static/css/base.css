@@ -41,6 +41,10 @@ a, a:visited, a:hover, a:focus {
     padding: 8px;
 }
 
+#article-sidebar p {
+    margin-bottom: 40px;
+}
+
 a:hover.emphasize-dark  {
     color: #000000;
 }
