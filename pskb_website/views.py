@@ -262,6 +262,13 @@ def write(article_path):
         article = models.read_article(article_path, rendered_text=False,
                                       branch=branch)
 
+        if article is None:
+            flash('Failed reading article', category='error')
+            return render_template('editor.html', article=article,
+                                   stacks=forms.STACK_OPTIONS,
+                                   selected_stack=selected_stack), 404
+
+
         if article.sha is None:
             article.sha = ''
 
@@ -309,7 +316,7 @@ def review(article_path):
 
     if article is None:
         flash('Failed reading article', category='error')
-        return redirect(url_for('index'))
+        return render_template('error.html'), 404
 
     login = session.get('login', None)
     collaborator = session.get('collaborator', False)
