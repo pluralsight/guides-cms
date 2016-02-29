@@ -334,16 +334,13 @@ def review(article_path):
     g.header_white = True
     g.edit_link = True
 
-    author = models.find_user(article.author_name)
-
     return render_template('article.html',
                            article=article,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
                            branches=branches,
                            visible_branch=branch,
-                           collaborator=collaborator,
-                           user=author)
+                           collaborator=collaborator)
 
 @app.route('/partner/<path:article_path>', methods=['GET'])
 @app.route('/partner/', defaults={'article_path': None}, methods=['GET'])
