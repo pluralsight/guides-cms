@@ -1,0 +1,29 @@
+<h4>{{user.name}}</h4>
+
+{% if user.bio %}
+    <p>
+        {{user.bio}}
+    </p>
+{% endif %}
+
+{% if user.location and user.blog %}
+    <p>
+        {{user.name}} lives in {{user.location}} and also writes at
+        {{user.blog|urlize(target="_blank")}}.
+    </p>
+{% elif user.location %}
+    <p>
+        {{user.name}} lives in {{user.location}}.
+    </p>
+{% elif user.blog %}
+    <p>
+        {{user.name}} also writes at
+        {{user.blog|urlize(target="_blank")}}.
+    </p>
+{% endif %}
+
+<p>
+    <a href="http://github.com/{{user.login}}" target="_blank">
+        View more from @{{user.login}} on Github
+    </a>
+</p>

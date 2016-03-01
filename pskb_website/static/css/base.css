@@ -306,6 +306,10 @@ a:hover.emphasize-dark  {
     white-space: normal;
 }
 
+#article form {
+    display: inline;
+}
+
 #article h1 .octicon-link,
 #article h2 .octicon-link,
 #article h3 .octicon-link,
@@ -324,6 +328,29 @@ a:hover.emphasize-dark  {
 #article h5:hover .octicon-link,
 #article h6:hover .octicon-link {
     visibility: visible;
+}
+
+#user-info {
+    background-color: #efefef;
+    padding: 15px;
+    margin-bottom: 30px;
+}
+
+#user-info h4 {
+    margin-top: 0px;
+}
+
+#user-info p {
+    padding-left: 0px;
+}
+
+#user-info img {
+    max-width: 230px;
+    max-height: 230px;
+}
+
+#user-info .bio {
+    float: left;
 }
 
 #footer {
@@ -574,8 +601,16 @@ a.active-page {
         position: static;
     }
 
+    #user-info h4 {
+        margin-top: 20px;
+    }
+
     #article-sidebar {
         text-align: center;
+    }
+
+    #article-sidebar .emphasize-dark {
+        display: inline;
     }
 
     #article-sidebar .hr-container {

@@ -37,6 +37,10 @@
         <p>
             <a href="{{url_for('write', article_path=article.path, branch=visible_branch)}}">Edit this guide <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
         </p>
+        <p>
+            <a href="{{article.external_url}}" target="_blank">View guide on Github
+            <span class="glyphicon glyphicon-new-window" aria-hidden="true" style="font-size: 10px;"></span></a>
+        </p>
 
     </div>
     <div id="article" class="col-md-10 col-md-offset-2">
@@ -55,48 +59,47 @@
 
         {{article.content|safe}}
 
-        <p>
-            <a href="{{article.external_url}}" target="_blank">View on Github</a>
-        </p>
+        <div id="user-info" class="row">
+            <div class="col-sm-4">
+                {% if user.avatar_url %}
+                    <img src="{{user.avatar_url}}&amp;s=460" alt="{{user.author_name}}"/>
+                {% endif %}
 
-        {% if article.author_name %}
-            <p class="small">
-                <a href="http://github.com/{{article.author_name}}" target="_blank">View more from {{article.author_real_name if article.author_real_name else article.author_name}} on Github</a>
-            </p>
-        {% endif %}
+            </div>
+            <div class="col-sm-8">
+                {% include 'user_info.html' with context %}
+            </div>
+        </div> <!-- user row -->
+
 
         {% if allow_delete %}
-            <p>
-                <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delete-confirmation">
-                    Delete article <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </button>
-                {% include 'confirm_delete.html' %}
-            </p>
+            <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delete-confirmation">
+                Delete article <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            </button>
+            {% include 'confirm_delete.html' %}
         {% endif %}
 
         {% if collaborator %}
-            <p>
-                <form action="/publish/" method="POST">
-                    <input name="path" type="hidden" value="{{article.path}}"/>
-                    <input name="branch" type="hidden" value="{{article.branch}}"/>
+            <form action="/publish/" method="POST">
+                <input name="path" type="hidden" value="{{article.path}}"/>
+                <input name="branch" type="hidden" value="{{article.branch}}"/>
 
-                    {% if article.published %}
-                        <input name="publish_status" type="hidden" value="0"/>
-                        <button type="submit" class="btn btn-danger btn-xs">
-                            Unpublish article
-                            <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
-                        </button>
-                    {% else %}
-                        <input name="publish_status" type="hidden" value="1"/>
-                        <button type="submit" class="btn btn-success btn-xs">
-                            Publish article
-                            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-                        </button>
-                    {% endif %}
-                </form>
-            </p>
+                {% if article.published %}
+                    <input name="publish_status" type="hidden" value="0"/>
+                    <button type="submit" class="btn btn-danger btn-xs">
+                        Unpublish article
+                        <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+                    </button>
+                {% else %}
+                    <input name="publish_status" type="hidden" value="1"/>
+                    <button type="submit" class="btn btn-success btn-xs">
+                        Publish article
+                        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                    </button>
+                {% endif %}
+            </form>
+
             {% if article.published %}
-            <p>
                 <form action="/feature/" method="POST">
                     <input name="path" type="hidden" value="{{article.path}}"/>
                     <button type="submit" class="btn btn-success btn-xs">
@@ -104,12 +107,7 @@
                         <span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>
                     </button>
                 </form>
-            </p>
             {% endif %}
-        {% endif %}
-
-        {% if disclaimer %}
-            <small><a href="https://www.pluralsight.com/terms" />Content Terms</a></small>
         {% endif %}
 
         {% if branches %}
@@ -128,6 +126,10 @@
                     </li>
                 {% endfor %}
             </ul>
+        {% endif %}
+
+        {% if disclaimer %}
+            <small><a href="https://www.pluralsight.com/terms" />Content Terms</a></small>
         {% endif %}
 
         <div id="disqus_thread"></div>
