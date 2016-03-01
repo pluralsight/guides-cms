@@ -4,10 +4,6 @@
 
 <div class="row">
     <div class="col-md-8">
-        {% if user.bio %}
-            <p>{{user.bio}}</p>
-        {% endif %}
-
         <h2>{{user.name if user.name else user.login}}'s guides</h2>
 
         {% for article in articles %}
