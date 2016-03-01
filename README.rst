@@ -36,4 +36,4 @@ Getting Involved
 We're working to keep making this community project better.  You have great
 ideas and expertise that could help us!  Take a look at our `current issues <https://github.com/pluralsight/guides-cms/issues>`_ and let us know where we can improve.  See something you can fix? Send us a Pull Request!
 
-Please join our [Slack community](https://hackguides.herokuapp.com/) to be in touch for fastest response :)
+Please join our `Slack community <https://hackguides.herokuapp.com/>`_ to be in touch for fastest response :)
