@@ -349,10 +349,6 @@ a:hover.emphasize-dark  {
     max-height: 230px;
 }
 
-#user-info .bio {
-    float: left;
-}
-
 #footer {
     padding: 15px 15px 15px 15px;
     background-color: #f96616;
