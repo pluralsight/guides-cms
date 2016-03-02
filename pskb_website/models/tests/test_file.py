@@ -193,7 +193,7 @@ def test_get_updated_file_listing_text():
                                      thumbnail=item.thumbnail_url,
                                      stacks=','.join(item.stacks)).lstrip()
 
-    correct_text = "%s\n\n%s" % (start_text, new_article)
+    correct_text = "%s\n\n%s" % (new_article, start_text)
 
     new_text = file_mod.get_updated_file_listing_text(start_text,
                                                       item.url,

@@ -528,7 +528,9 @@ def get_updated_file_listing_text(text, article_url, title, author_url,
     :returns: String of text with article information updated
     """
 
-    new_contents = []
+    # New content goes at front i.e. top of file so need to push efficiently on
+    # both ends.
+    new_contents = collections.deque()
     changed_section = False
 
     for lines in _iter_article_sections_from_file_listing(text):
@@ -565,15 +567,15 @@ def get_updated_file_listing_text(text, article_url, title, author_url,
 
     # Must be a new article section
     if not changed_section:
-        # Make sure we already have text that we need to separate with a new
-        # line
-        if new_contents:
-            new_contents.append(u'\n\n')
-
         new_text = _file_listing_to_markdown(article_url, title, author_url,
                                              author_name, author_img_url,
                                              thumbnail_url, stacks)
-        new_contents.append(new_text)
+        # Make sure we already have text that we need to separate with a new
+        # line
+        if new_contents:
+            new_contents.appendleft(u'\n\n')
+
+        new_contents.appendleft(new_text)
 
     return u''.join(new_contents)
 
