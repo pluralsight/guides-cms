@@ -167,8 +167,7 @@ def test_get_updated_file_listing_text():
 ### JavaScript Callbacks Variable Scope Problem by Itay Grudev
 - [Read the guide](http://tutorials.pluralsight.com/review/javascript-callbacks-variable-scope-problem)
 - [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/itay-grudev)
-- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)
-"""
+- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)""".lstrip()
 
     item = file_mod.file_listing_item(
             'New article',
@@ -186,16 +185,15 @@ def test_get_updated_file_listing_text():
 - [Read the guide]({url})
 - [Read more from {author_name}]({author_url}) <img src="{author_img}" width="30" height="30" alt="{author_name}" />
 - Related to: {stacks}
-- [Thumbnail]({thumbnail})
-""".format(title=item.title,
-           author_name=item.author_name,
-           url=item.url,
-           author_url=author_url,
-           author_img=item.author_img_url,
-           thumbnail=item.thumbnail_url,
-           stacks=','.join(item.stacks))
+- [Thumbnail]({thumbnail})""".format(title=item.title,
+                                     author_name=item.author_name,
+                                     url=item.url,
+                                     author_url=author_url,
+                                     author_img=item.author_img_url,
+                                     thumbnail=item.thumbnail_url,
+                                     stacks=','.join(item.stacks)).lstrip()
 
-    correct_text = "%s%s\n" % (start_text, new_article)
+    correct_text = "%s\n\n%s" % (new_article, start_text)
 
     new_text = file_mod.get_updated_file_listing_text(start_text,
                                                       item.url,
@@ -237,30 +235,30 @@ def test_get_updated_file_listing_text_with_empty_start():
 - [Read the guide]({url})
 - [Read more from {author_name}]({author_url}) <img src="{author_img}" width="30" height="30" alt="{author_name}" />
 - Related to: {stacks}
-- [Thumbnail]({thumbnail})
-
-""".format(title=item.title,
-           author_name=item.author_name,
-           url=item.url,
-           author_url=author_url,
-           author_img=item.author_img_url,
-           thumbnail=item.thumbnail_url,
-           stacks=','.join(item.stacks))
+- [Thumbnail]({thumbnail})""".format(title=item.title,
+                                     author_name=item.author_name,
+                                     url=item.url,
+                                     author_url=author_url,
+                                     author_img=item.author_img_url,
+                                     thumbnail=item.thumbnail_url,
+                                     stacks=','.join(item.stacks)).lstrip()
 
     assert new_text == correct_text
 
 
 def test_get_updated_file_listing_text_changed_article():
-    start_text = """### A Beginners Guide to jQuery by Carl Smith
+    start_text = """
+### A Beginners Guide to jQuery by Carl Smith
 - [Read the guide](http://tutorials.pluralsight.com/review/a-beginners-guide-to-jquery)
 - [Read more from Carl Smith](http://tutorials.pluralsight.com/user/carlsmith) <img src="https://avatars.githubusercontent.com/u/7561668?v=3" />
 - Related to: Front-End JavaScript (Angular, React, Meteor, etc)
+
 ### JavaScript Callbacks Variable Scope Problem by Itay Grudev
 - [Read the guide](http://tutorials.pluralsight.com/review/javascript-callbacks-variable-scope-problem)
 - [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/itay-grudev)
-- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)"""
+- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)""".lstrip()
 
-    article_lines = start_text.splitlines()[4:]
+    article_lines = start_text.splitlines()[5:]
 
     # Use internal parsing functions for extra testing
     item = file_mod._parse_file_listing_lines(article_lines)
@@ -284,9 +282,7 @@ def test_get_updated_file_listing_text_changed_article():
 ### JavaScript Callbacks Variable Scope Problem by Itay Grudev
 - [Read the guide](http://tutorials.pluralsight.com/review/javascript-callbacks-variable-scope-problem)
 - [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/itay-grudev)
-- Related to: Python,Front-End JavaScript (Angular, React, Meteor, etc)
-
-"""
+- Related to: Python,Front-End JavaScript (Angular, React, Meteor, etc)""".lstrip()
 
     author_url = 'http://tutorials.pluralsight.com/user/itay-grudev'
     new_text = file_mod.get_updated_file_listing_text(start_text,
@@ -307,10 +303,16 @@ def test_get_removed_file_listing_text():
 - [Read the guide](http://tutorials.pluralsight.com/review/a-beginners-guide-to-jquery)
 - [Read more from Carl Smith](http://tutorials.pluralsight.com/user/carlsmith) <img src="https://avatars.githubusercontent.com/u/7561668?v=3" />
 - Related to: Front-End JavaScript (Angular, React, Meteor, etc)
+
 ### JavaScript Callbacks Variable Scope Problem by Itay Grudev
 - [Read the guide](http://tutorials.pluralsight.com/review/javascript-callbacks-variable-scope-problem)
 - [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/itay-grudev)
-- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)"""
+- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)
+
+### Guide 3
+- [Read the guide](http://tutorials.pluralsight.com/review/here)
+- [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/durden)
+- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)""".lstrip()
 
     title = 'A Beginners Guide to jQuery'
     new_text = file_mod.get_removed_file_listing_text(text, title)
@@ -319,6 +321,11 @@ def test_get_removed_file_listing_text():
 ### JavaScript Callbacks Variable Scope Problem by Itay Grudev
 - [Read the guide](http://tutorials.pluralsight.com/review/javascript-callbacks-variable-scope-problem)
 - [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/itay-grudev)
+- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)
+
+### Guide 3
+- [Read the guide](http://tutorials.pluralsight.com/review/here)
+- [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/durden)
 - [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)""".lstrip()
 
     assert new_text == correct_text

@@ -508,8 +508,6 @@ def _file_listing_to_markdown(article_url, title, author_url, author_name,
         # the github view of this file with big images.
         lines.append(u'- [Thumbnail](%s)' % (thumbnail_url))
 
-    lines.append(u'\n')
-
     return u'\n'.join(lines)
 
 
@@ -530,14 +528,22 @@ def get_updated_file_listing_text(text, article_url, title, author_url,
     :returns: String of text with article information updated
     """
 
-    new_contents = []
+    # New content goes at front i.e. top of file so need to push efficiently on
+    # both ends.
+    new_contents = collections.deque()
     changed_section = False
 
     for lines in _iter_article_sections_from_file_listing(text):
+        # Always put a newline in when we add something b/c we add 1 'section'
+        # at a time and always want those separated by a blank line b/c it
+        # renders better on github that way.
+        if new_contents:
+            new_contents.append(u'\n\n')
+
         # Already found the line we need to replace so just copy remainder of
         # text to new contents and we'll write it out.
         if changed_section:
-            new_contents.append(u'\n' + u'\n'.join(lines))
+            new_contents.append(u'\n'.join(lines))
             continue
 
         try:
@@ -555,18 +561,23 @@ def get_updated_file_listing_text(text, article_url, title, author_url,
                                                  author_img_url, thumbnail_url,
                                                  stacks)
 
-            new_contents.append(u'\n' + new_text)
+            new_contents.append(new_text)
         else:
-            new_contents.append(u'\n' + u'\n'.join(lines))
+            new_contents.append(u'\n'.join(lines))
 
     # Must be a new article section
     if not changed_section:
         new_text = _file_listing_to_markdown(article_url, title, author_url,
                                              author_name, author_img_url,
                                              thumbnail_url, stacks)
-        new_contents.append(u'\n' + new_text)
+        # Make sure we already have text that we need to separate with a new
+        # line
+        if new_contents:
+            new_contents.appendleft(u'\n\n')
 
-    return u'\n'.join(new_contents)
+        new_contents.appendleft(new_text)
+
+    return u''.join(new_contents)
 
 
 def get_removed_file_listing_text(text, title):
@@ -590,6 +601,11 @@ def get_removed_file_listing_text(text, title):
         if item is not None and item.title == title:
             continue
 
-        new_lines.extend(lines)
+        new_lines.append(u'\n'.join(lines))
+        new_lines.append(u'\n\n')
 
-    return u'\n'.join(new_lines)
+    # Don't need extra newlines at the end of file
+    if new_lines[-1] == u'\n\n':
+        new_lines.pop()
+
+    return u''.join(new_lines)
