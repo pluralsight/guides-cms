@@ -605,7 +605,7 @@ def get_removed_file_listing_text(text, title):
         new_lines.append(u'\n\n')
 
     # Don't need extra newlines at the end of file
-    if new_lines[-1] == u'\n\n':
+    if new_lines and new_lines[-1] == u'\n\n':
         new_lines.pop()
 
     return u''.join(new_lines)
