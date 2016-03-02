@@ -303,10 +303,16 @@ def test_get_removed_file_listing_text():
 - [Read the guide](http://tutorials.pluralsight.com/review/a-beginners-guide-to-jquery)
 - [Read more from Carl Smith](http://tutorials.pluralsight.com/user/carlsmith) <img src="https://avatars.githubusercontent.com/u/7561668?v=3" />
 - Related to: Front-End JavaScript (Angular, React, Meteor, etc)
+
 ### JavaScript Callbacks Variable Scope Problem by Itay Grudev
 - [Read the guide](http://tutorials.pluralsight.com/review/javascript-callbacks-variable-scope-problem)
 - [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/itay-grudev)
-- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)"""
+- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)
+
+### Guide 3
+- [Read the guide](http://tutorials.pluralsight.com/review/here)
+- [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/durden)
+- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)""".lstrip()
 
     title = 'A Beginners Guide to jQuery'
     new_text = file_mod.get_removed_file_listing_text(text, title)
@@ -315,6 +321,11 @@ def test_get_removed_file_listing_text():
 ### JavaScript Callbacks Variable Scope Problem by Itay Grudev
 - [Read the guide](http://tutorials.pluralsight.com/review/javascript-callbacks-variable-scope-problem)
 - [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/itay-grudev)
+- [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)
+
+### Guide 3
+- [Read the guide](http://tutorials.pluralsight.com/review/here)
+- [Read more from Itay Grudev](http://tutorials.pluralsight.com/user/durden)
 - [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)""".lstrip()
 
     assert new_text == correct_text
