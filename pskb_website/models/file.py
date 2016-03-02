@@ -601,6 +601,11 @@ def get_removed_file_listing_text(text, title):
         if item is not None and item.title == title:
             continue
 
-        new_lines.extend(lines)
+        new_lines.append(u'\n'.join(lines))
+        new_lines.append(u'\n\n')
 
-    return u'\n'.join(new_lines)
+    # Don't need extra newlines at the end of file
+    if new_lines[-1] == u'\n\n':
+        new_lines.pop()
+
+    return u''.join(new_lines)
