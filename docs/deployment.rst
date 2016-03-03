@@ -28,14 +28,13 @@ The following steps assume you have the basic `Heroku toolbelt installed <https:
 3. Setup Heroku config
     * See example_config.py for a listing of the environment variables that
       must be setup in your Heroku config.
+    * You'll have to wait to setup the `REPO_OWNER_TOKEN` variable until the application is fully running.
     * **Do not forget to set HEROKU=1 in the heroku environment variables!**
     * You can set Heroku config variables with the following syntax:
         * `heroku config:set REPO_NAME=<name>`
-        * ... (see example_config.py for full list)
         * Or something like the following if you have multiple remotes for Heroku
         * `heroku config:set REPO_NAME=<name> --app pro`
         * `heroku config:set REPO_NAME=<name> --app stage`
-        * ... (see example_config.py for full list)
 4. `Setup Redis add-on for background jobs <celery_on_heroku>`
 5. Deploy changes
     * `git push heroku master`
@@ -46,6 +45,14 @@ The following steps assume you have the basic `Heroku toolbelt installed <https:
 6. Go to your `heroku dashboard settings <https://dashboard.heroku.com/>` resources for your app and verify the worker task is running.
 7. Change the callback URL for your github application to the heroku URL
     * Typically something like `http://<app_name.herokuapp.com>/github/authorized`
+8. Visit your running heroku application in the browser
+    * URL will be something like `http://<app_name.herokuapp.com>/`
+9. Login with your github account and authorize your newly created application
+    * **Login with the account you set as the REPO_OWNER**
+10. Check your logs for the new token printed. This will be a CRTICAL level log message.
+11. Set the printed token equal to the `REPO_OWNER_ACCESS_TOKEN` environment
+    variable
+    * `heroku config:set REPO_OWNER_ACCESS_TOKEN=<token>`
 
 By default the application will be served up by `Gunicorn <http://gunicorn.org>`_.
 
