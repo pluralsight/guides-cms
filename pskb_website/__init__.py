@@ -10,7 +10,7 @@ from flask import Flask
 app = Flask(__name__)
 
 # Running on heroku
-if 'HEROKU' in os.environ:
+if 'HEROKU' in os.environ and os.environ['HEROKU'].lower() in ('true', 'yes', '1'):
     import example_config
 
     # example_config.py provides a blueprint for which variables to look for in
