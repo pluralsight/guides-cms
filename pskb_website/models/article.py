@@ -7,6 +7,7 @@ import itertools
 import json
 
 from .. import app
+from .. import PUBLISHED, IN_REVIEW, DRAFT
 from .. import cache
 from . import lib
 from .. import remote
@@ -25,12 +26,11 @@ ARTICLE_METADATA_FILENAME = 'details.json'
 path_details = collections.namedtuple('path_details', 'repo, filename')
 
 
-def get_available_articles(published=None, repo_path=None):
+def get_available_articles(status=None, repo_path=None):
     """
     Get iterator for current article objects
 
-    :param published: True for only published articles, False for only drafts
-                      or None for all articles
+    :param status: PUBLISHED, IN_REVIEW, DRAFT, or None to read all articles
     :param repo_path: Optional repo path to read from (<owner>/<name>)
 
     :returns: Iterator through article objects
@@ -40,8 +40,8 @@ def get_available_articles(published=None, repo_path=None):
     details.
     """
 
-    if published is None or repo_path is not None:
-        for article in get_available_articles_from_api(published=published,
+    if status is None or repo_path is not None:
+        for article in get_available_articles_from_api(status=status,
                                                        repo_path=repo_path):
             yield article
 
@@ -49,15 +49,18 @@ def get_available_articles(published=None, repo_path=None):
 
     # Shortcuts to read listing of files from a single file read instead of
     # using the API to read every file
-    if published:
+    if status == PUBLISHED:
         items = file_mod.published_articles()
-    else:
-        items = file_mod.unpublished_articles()
+    elif status == IN_REVIEW:
+        items = file_mod.in_review_articles()
+    elif status == DRAFT:
+        items = file_mod.draft_articles()
 
     for item in items:
         article = Article(item.title, item.author_name,
                           author_real_name=item.author_real_name,
                           stacks=item.stacks)
+        article.publish_status = status
 
         if item.thumbnail_url:
             article.thumbnail_url = item.thumbnail_url
@@ -68,12 +71,11 @@ def get_available_articles(published=None, repo_path=None):
         yield article
 
 
-def get_available_articles_from_api(published=None, repo_path=None):
+def get_available_articles_from_api(status=None, repo_path=None):
     """
     Get iterator for current article objects
 
-    :param published: True for only published articles, False for only drafts
-                      or None for all articles
+    :param status: PUBLISHED, IN_REVIEW, DRAFT, or None to read all articles
     :param repo_path: Optional repo path to read from (<owner>/<name>)
 
     :returns: Iterator through article objects
@@ -88,18 +90,12 @@ def get_available_articles_from_api(published=None, repo_path=None):
     if repo_path is None:
         repo_path = remote.default_repo_path()
 
-        if published:
-            files = cache.read_file_listing('published')
-            if files is not None:
-                for json_str in json.loads(files):
-                    try:
-                        yield Article.from_json(json_str)
-                    except ValueError:
-                        app.logger.error('Failed parsing json meta data from cache "%s"',
-                                         json_str)
-                        continue
+        articles = cache.read_file_listing(status)
+        if articles is not None:
+            for article in articles_from_json(articles):
+                yield article
 
-                raise StopIteration
+            raise StopIteration
 
     files_to_cache = []
 
@@ -108,56 +104,62 @@ def get_available_articles_from_api(published=None, repo_path=None):
         # roundtrip to cache if that's not what caller wants.
         article = None
 
-        if published:
+        if status == PUBLISHED:
             article = read_article_from_cache(file_details.path)
 
         if article is None:
-            path_info = parse_full_path(file_details.path)
-            json_str = read_meta_data_for_article_path(file_details.path)
-            if json_str is None:
-                # Cannot do anything here b/c we do not know the title.
-                app.logger.error('Failed reading meta data for "%s", file_details: %s',
-                                 path_info, file_details)
+            article = read_article_from_metadata(file_details)
+            if article is None:
                 continue
 
-            try:
-                article = Article.from_json(json_str)
-            except ValueError:
-                app.logger.error('Failed parsing json meta data for "%s", file_details: %s, json: %s',
-                                 path_info, file_details, json_str)
-                continue
+            article.filename = ARTICLE_FILENAME
+            article.repo_path = repo_path
 
-            article.filename = path_info.filename
-            article.repo_path = path_info.repo
-
-        if published is None or article.published == published:
+        if status is None or article.publish_status == status:
             yield article
 
-        if published and article.published:
+        if status == PUBLISHED and article.publish_status == PUBLISHED:
             files_to_cache.append(lib.to_json(article))
 
     if files_to_cache:
         cache.save_file_listing('published', json.dumps(files_to_cache))
 
 
-def get_articles_for_author(author_name, published=None):
+def articles_from_json(json_str):
+    """
+    Generator to iterate through list of article objects in json format
+
+    :param json_str: JSON string
+    :returns: Generator through article objects
+    """
+
+    for json_str in json.loads(json_str):
+        try:
+            yield Article.from_json(json_str)
+        except ValueError:
+            app.logger.error('Failed parsing json meta data from cache "%s"',
+                             json_str)
+            continue
+
+    raise StopIteration
+
+
+def get_articles_for_author(author_name, status=None):
     """
     Get iterator for articles from given author
 
     :param author_name: Name of author to find articles for
-    :param published: True for only published articles, False for only drafts
-                      or None for all articles
+    :param status: PUBLISHED, IN_REVIEW, DRAFT, or None to read all articles
     :returns: Iterator through article objects
     """
 
 
-    if published is None:
-        articles = itertools.chain(get_available_articles(published=True),
-                                   get_available_articles(published=False))
-    elif published:
-        articles = get_available_articles(published=True)
+    if status is None:
+        articles = itertools.chain(get_available_articles(status=PUBLISHED),
+                                   get_available_articles(status=IN_REVIEW),
+                                   get_available_articles(status=DRAFT))
     else:
-        articles = get_available_articles(published=False)
+        articles = get_available_articles(status=status)
 
     for article in articles:
         if article.author_name == author_name:
@@ -256,9 +258,35 @@ def read_article_from_cache(path, branch=u'master'):
     return Article.from_json(json_str)
 
 
+def read_article_from_metadata(file_details):
+    """
+    Read article object from json metadata
+
+    :param file_details: remote.file_details object
+    :returns: Article object with metadata filled out or None
+
+    Note the article contents are NOT filled out here!
+    """
+
+    path_info = parse_full_path(file_details.path)
+    json_str = read_meta_data_for_article_path(file_details.path)
+    if json_str is None:
+        # Cannot do anything here b/c we do not know the title.
+        app.logger.error('Failed reading meta data for "%s", file_details: %s',
+                         path_info, file_details)
+        return None
+
+    try:
+        return Article.from_json(json_str)
+    except ValueError:
+        app.logger.error('Failed parsing json meta data for "%s", file_details: %s, json: %s',
+                         path_info, file_details, json_str)
+        return None
+
+
 def save_article(title, path, message, new_content, author_name, email, sha,
                  branch=u'master', image_url=None, repo_path=None,
-                 author_real_name=None, stacks=None, published=False):
+                 author_real_name=None, stacks=None, status=DRAFT):
     """
     Create or save new (original) article, not branched article
 
@@ -276,7 +304,7 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     :param repo_path: Optional repo path to save into (<owner>/<name>)
     :param author_real_name: Optional real name of author, not username
     :param stacks: Optional list of stacks to associate with article
-    :param published: Boolean to indicate if article is published or not
+    :param status: PUBLISHED, IN_REVIEW, or DRAFT
 
     :returns: Article object updated or saved
 
@@ -289,10 +317,7 @@ def save_article(title, path, message, new_content, author_name, email, sha,
     article = Article(title, author_name, branch=branch, image_url=image_url,
                       repo_path=repo_path, author_real_name=author_real_name,
                       stacks=stacks)
-    article.published = published
-
-    if path:
-        article.path = path
+    article.publish_status = status
 
     saved = remote.commit_file_to_github(article.full_path, message,
                                          new_content, author_name, email, sha,
@@ -379,7 +404,7 @@ def branch_article(article, message, new_content, author_name, email,
     return save_article(article.title, article.path, message, new_content,
                         author_name, email, article_sha, branch=branch,
                         image_url=image_url, author_real_name=author_real_name,
-                        stacks=article.stacks, published=article.published)
+                        stacks=article.stacks, status=article.publish_status)
 
 
 def branch_or_save_article(title, path, message, content, author_name, email,
@@ -409,12 +434,12 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     """
 
     article = None
-    published = False
+    status = DRAFT
 
     if path:
         article = read_article(path, rendered_text=False, branch=u'master',
                                repo_path=repo_path)
-        published = article.published
+        status = article.publish_status
 
     if article and article.author_name != author_name and sha:
         # Note branching an article cannot change the stacks!
@@ -424,7 +449,7 @@ def branch_or_save_article(title, path, message, content, author_name, email,
         new = save_article(title, path, message, content, author_name, email,
                            sha, image_url=image_url, repo_path=repo_path,
                            author_real_name=author_real_name,
-                           stacks=stacks, published=published)
+                           stacks=stacks, status=status)
 
     return new
 
@@ -456,7 +481,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
-    exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', 'path',
+    exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', '_path',
                      'last_updated')
     json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
@@ -464,7 +489,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     if text is not None and json_content == text:
         return True
 
-    message = 'Updating article metadata for "%s"' % (article.title)
+    message = u'Updating article metadata for "%s"' % (article.title)
 
     cache.delete_article(article)
 
@@ -621,6 +646,22 @@ def parse_full_path(path):
     return path_details(repo_path, filename)
 
 
+def find_article_by_title(articles, title):
+    """
+    Search through list of article objects looking for article with given title
+
+    :param articles: List of article objects
+    :param title: Title to search for
+    :returns: article object or None if not found
+    """
+
+    for article in articles:
+        if utils.slugify(article.title) == title:
+            return article
+
+    return None
+
+
 class Article(object):
     """
     Object representing article
@@ -648,7 +689,7 @@ class Article(object):
 
         self.title = title
         self.author_name = author_name
-        self.stacks = stacks or []
+        self.stacks = stacks or [u'other']
         self.content = content
         self.external_url = external_url
         self.filename = filename
@@ -670,13 +711,19 @@ class Article(object):
         # List of branch names where this article also exists
         self.branches = []
 
-        self.path = '%s' % (utils.slugify(self.title))
-        self.published = False
+        self._path = None
+        self.publish_status = DRAFT
+
+    @property
+    def path(self):
+        return u'%s/%s/%s' % (self.publish_status,
+                              utils.slugify_stack(self.stacks[0]),
+                              utils.slugify(self.title))
 
     def __repr__(self):
-        return '<author_name: %s title: %s published: %s>' % (self.author_name,
-                                                              self.title,
-                                                              self.published)
+        return '<author_name: %s title: %s status: %s>' % (self.author_name,
+                                                           self.title,
+                                                           self.publish_status)
 
     @staticmethod
     def from_json(str_):
@@ -695,6 +742,20 @@ class Article(object):
 
         article = Article(title, author_name)
         for attr, value in dict_.iteritems():
+
+            # Backwards-compatability, this field was renamed
+            if attr == 'published':
+                attr = 'publish_status'
+
+                if value:
+                    value = PUBLISHED
+                else:
+                    value = DRAFT
+
+            # This field used to be optional
+            if attr == 'stacks' and not value:
+                value = [u'other']
+
             setattr(article, attr, value)
 
         return article

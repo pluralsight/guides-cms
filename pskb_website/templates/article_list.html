@@ -5,7 +5,7 @@
                                 <li><a href="/" class="{{ 'active' if not g.drafts_active }}">Top Guides</a></li>
 
                             {% if session.github_token %}
-                            <li><a href="/drafts/" class="{{ 'active' if g.drafts_active }}">My Drafts</a></li>
+                            <li><a href="/my-drafts/" class="{{ 'active' if g.drafts_active }}">My Drafts</a></li>
                             {% endif %}
 
                             <li class="stack-filter">
@@ -35,7 +35,7 @@
                                             {% for stack in article.stacks %}
                                                 <span class="stack" style="display: none;">{{stack}}</span>
                                             {% endfor %}
-                                            <a href="/review/{{article.path}}">
+                                            <a href="/{{article.path}}">
                                                 <span class="clickable"></span>
                                             </a>
                                             <div class="article-description">

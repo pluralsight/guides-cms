@@ -25,10 +25,10 @@
                             {% endif %}
 
                             <li><a href="/">Home</a></li>
-                            <li><a href="/review/">Review</a></li>
-                            <li><a href="/faq/">Our Mission</a></li>
+                            <li><a href="/in-review/">Review</a></li>
 
                             {% if session.github_token %}
+                            <li><a href="/faq/">Our Mission</a></li>
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                     {% if session.user_image %}
@@ -45,6 +45,7 @@
                             </li>
 
                             {% else %}
+                            <li><a href="/faq/">Our Mission</a></li>
                             <li><a href="/login/">Sign in with Github</a></li>
                             {% endif %}
                         </ul>

@@ -5,6 +5,7 @@ Misc. filter tags for templates
 from flask import url_for
 
 from . import app
+from . import utils
 
 
 def date_string(dt, fmt_str):
@@ -18,7 +19,7 @@ def date_string(dt, fmt_str):
     return dt.strftime(fmt_str)
 
 
-def url_for_article(article):
+def url_for_article(article, base_url=app.config['BASE_URL']):
     """
     Get URL for article object
 
@@ -32,8 +33,11 @@ def url_for_article(article):
     article so we can store the url in a file or render in templates.
     """
 
-    return '%s%s' % (app.config['BASE_URL'],
-                      url_for('review', article_path=article.path))
+    title = utils.slugify(article.title)
+    stack = utils.slugify_stack(article.stacks[0])
+
+    return u'%s%s' % (base_url,
+                      url_for(article.publish_status, title=title, stack=stack))
 
 
 def url_for_user(user):
@@ -55,7 +59,7 @@ def url_for_user(user):
     except AttributeError:
         username = user
 
-    return '%s%s' % (app.config['BASE_URL'],
+    return u'%s%s' % (app.config['BASE_URL'],
                       url_for('user_profile', author_name=username))
 
 def author_name(article):

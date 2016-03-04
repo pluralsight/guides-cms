@@ -70,12 +70,11 @@ def remove_from_listing(*args, **kwargs):
 
 
 @celery.task()
-def synchronize_listing(published, committer_name, committer_email):
+def synchronize_listing(status, committer_name, committer_email):
     """
     Synchronize file listing with the articles that exist via the API
 
-    :param published: True to update published listing or False to update
-                      unpublished listing
+    :param status: PUBLISHED, IN_REVIEW, or DRAFT
     :param committer_name: Name of user making change
     :param committer_email: Email of user making change
 
@@ -84,6 +83,6 @@ def synchronize_listing(published, committer_name, committer_email):
     """
 
     with app.test_request_context():
-        articles = get_available_articles_from_api(published)
-        file_mod.sync_file_listing(articles, published, committer_name,
+        articles = get_available_articles_from_api(status)
+        file_mod.sync_file_listing(articles, status, committer_name,
                                    committer_email)
