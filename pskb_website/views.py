@@ -276,7 +276,7 @@ def write(article_path):
                                       branch=branch)
 
         if article is None:
-            flash('Failed reading article', category='error')
+            flash('Failed reading guide', category='error')
             return render_template('editor.html', article=article,
                                    stacks=forms.STACK_OPTIONS,
                                    selected_stack=selected_stack), 404
@@ -304,7 +304,7 @@ def partner_import():
     branch_article = False
     secondary_repo = True
 
-    flash('You are posting an article to the partner repository!',
+    flash('You are posting an guide to the partner repository!',
           category='info')
 
     return render_template('editor.html', article=article,
@@ -454,17 +454,17 @@ def partner(article_path):
         repo_path = '%s/%s' % (app.config['SECONDARY_REPO_OWNER'],
                                app.config['SECONDARY_REPO_NAME'])
     except KeyError:
-        flash('No secondary article configuration', category='error')
+        flash('No secondary guide configuration', category='error')
         return redirect(url_for('index'))
 
     if article_path is None:
-        articles = models.get_available_articles(published=True,
+        articles = models.get_available_articles(status=PUBLISHED,
                                                  repo_path=repo_path)
         return render_template('review.html', articles=articles)
 
     article = models.read_article(article_path, repo_path=repo_path)
     if article is None:
-        flash('Failed reading article', category='error')
+        flash('Failed reading guide', category='error')
         return redirect(url_for('index'))
 
     # Use http as canonical protocol for url to avoid having two separate
@@ -509,7 +509,7 @@ def save():
     if path:
         message = 'Updates to "%s"' % (title)
     else:
-        message = 'New article, "%s"' % (title)
+        message = 'New guide, "%s"' % (title)
 
     # Hidden option for admin to save articles to our other repo that's not
     # editable
@@ -533,7 +533,7 @@ def save():
                                             author_real_name=user.name)
 
     if not article:
-        flash('Failed creating article on github', category='error')
+        flash('Failed creating guide on github', category='error')
         return redirect(url_for('index'))
 
     if repo_path is not None:
@@ -698,7 +698,7 @@ def img_upload():
     # Always save images to master branch because image uploads might happen
     # before the article is saved so don't know the article name or branch to
     # save alongside.
-    url = models.save_image(file_.stream, ext, 'Saving new article image',
+    url = models.save_image(file_.stream, ext, 'Saving new guide image',
                             user.login, user.email, branch=u'master')
 
     if url is None:
