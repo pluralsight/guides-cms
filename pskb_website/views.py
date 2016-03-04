@@ -126,13 +126,15 @@ def set_featured_title():
 
     os.environ['FEATURED_TITLE'] = article.title
 
-    flash('Featured article updated', category='info')
+    flash('Featured guide updated', category='info')
 
     return redirect(url_for('index'))
 
 
 @app.route('/login/')
 def login():
+    """Login page"""
+
     prev_url = session.get('previously_requested_page')
 
     # See if user got here from write page and highlight that tab to indicate
@@ -153,18 +155,24 @@ def gh_rate_limit():
 
 @app.route('/faq/')
 def faq():
+    """FAQ page"""
+
     file_details = models.read_file('faq.md', rendered_text=True)
     return render_template('faq.html', details=file_details)
 
 
 @app.route('/github_login')
 def github_login():
+    """Callback for github oauth"""
+
     return remote.github.authorize(callback=url_for('authorized', _external=True))
 
 
 @app.route('/logout')
 @login_required
 def logout():
+    """Logout page"""
+
     session.pop('github_token', None)
     session.pop('login', None)
     session.pop('name', None)
@@ -240,6 +248,8 @@ def authorized():
 @app.route('/user/<author_name>', methods=['GET'])
 @app.route('/user/', defaults={'author_name': None})
 def user_profile(author_name):
+    """Profile page"""
+
     if author_name is None:
         author_name = session.get('login', None)
 
@@ -267,6 +277,8 @@ def my_drafts():
 @app.route('/write/', defaults={'article_path': None})
 @login_required
 def write(article_path):
+    """Editor page"""
+
     article = None
     selected_stack = None
 
@@ -485,6 +497,8 @@ def partner(article_path):
 @app.route('/save/', methods=['POST'])
 @login_required
 def save():
+    """Form POST save"""
+
     user = models.find_user(session['login'])
     if user is None:
         flash('Cannot save unless logged in', category='error')
@@ -658,6 +672,8 @@ def change_publish_status():
 
 @app.route('/subscribe/', methods=['POST'])
 def subscribe():
+    """Subscribe POST page"""
+
     form = forms.SignupForm()
 
     # Note this helper automatically grabs request.form
@@ -683,6 +699,8 @@ def subscribe():
 @app.route('/img_upload/', methods=['POST'])
 @login_required
 def img_upload():
+    """Image upload POST page"""
+
     user = models.find_user(session['login'])
     if user is None:
         app.logger.error('Cannot upload image unless logged in')
@@ -709,33 +727,45 @@ def img_upload():
                     mimetype='application/json')
 
 
-@app.route('/sync_listing/')
+@app.route('/sync_listing/<publish_status>')
 @collaborator_required
-def sync_listing():
+def sync_listing(publish_status):
+    """Sync listing page"""
+
     user = models.find_user(session['login'])
     if user is None:
         app.logger.error('Cannot sync listing unless logged in')
         return render_template('index.html'), 500
 
-    published = bool(int(request.args.get('published', 1)))
-    tasks.synchronize_listing.delay(published, user.login, user.email)
+    states = (PUBLISHED, IN_REVIEW, DRAFT)
+    if publish_status not in states:
+        flash('Invalid publish status, must be one of "%s"' % (states),
+              category='error')
+        return render_template('index.html')
 
-    flash('Queued up %s sync' % ('published' if published else 'unpublished'),
-          category='info')
+    tasks.synchronize_listing.delay(publish_status, user.login, user.email)
+
+    flash('Queued up %s sync' % publish_status, category='info')
 
     return redirect(url_for('index'))
 
 
 @app.context_processor
 def template_globals():
+    """Global variables available to all responses"""
+
     return {'repo_url': remote.default_repo_url(),
             'form': forms.SignupForm(), 'stack_options': forms.STACK_OPTIONS}
 
 
 @app.errorhandler(500)
 def internal_error(error):
+    """Unknown error page"""
+
     return render_template('error.html'), 500
+
 
 @app.errorhandler(404)
 def not_found(error):
+    """Not found error page"""
     return render_template('error.html'), 404
