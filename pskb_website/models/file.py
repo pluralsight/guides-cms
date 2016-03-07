@@ -29,7 +29,7 @@ IMG_RE = re.compile(r'.*\<img src="(.*?)" .*')
 
 # The list of stacks has all sorts of special characters and commas in it so
 # parsing it requires a regex with everything escaped.
-STACK_RE = re.compile('|'.join(re.escape(s) for s in STACK_OPTIONS))
+STACK_RE = re.compile('|'.join(re.escape(s.lower()) for s in STACK_OPTIONS))
 
 file_listing_item = collections.namedtuple('file_listing_item',
                                 ['title', 'url', 'author_name',
@@ -482,7 +482,7 @@ def _parse_stacks_line(line):
     :returns: List of stacks
     """
 
-    return [_force_unicode(m.group()) for m in STACK_RE.finditer(line)]
+    return [_force_unicode(m.group()) for m in STACK_RE.finditer(line.lower())]
 
 
 def _force_unicode(text):
