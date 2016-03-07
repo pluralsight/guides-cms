@@ -14,7 +14,14 @@ from . import models
 from . import forms
 from . import tasks
 from . import filters
-from . import utils
+
+STATUSES = (PUBLISHED, IN_REVIEW, DRAFT)
+
+
+def is_logged_in():
+    """Determine if user is logged in or not"""
+
+    return 'github_token' in session and 'login' in session
 
 
 def login_required(func):
@@ -26,7 +33,7 @@ def login_required(func):
     def decorated_function(*args, **kwargs):
         """decorator args"""
 
-        if 'github_token' not in session or 'login' not in session:
+        if not is_logged_in():
             # Save off the page so we can redirect them to what they were
             # trying to view after logging in.
             session['previously_requested_page'] = request.url
@@ -52,7 +59,7 @@ def collaborator_required(func):
     def decorated_function(*args, **kwargs):
         """decorator args"""
 
-        if 'github_token' not in session or 'login' not in session:
+        if not is_logged_in():
             flash('Must be logged in', category='error')
 
             # Save off the page so we can redirect them to what they were
@@ -374,12 +381,12 @@ def review(title):
 
     branch = request.args.get('branch', u'master')
 
-    for status in (PUBLISHED, IN_REVIEW, DRAFT):
+    for status in STATUSES:
         articles = models.get_available_articles(status=status)
         article = models.find_article_by_title(articles, title)
 
         if article is not None:
-            return render_article_view(request, article, status=301)
+            return redirect(filters.url_for_article(article, branch=branch), 301)
 
     return render_template('error.html'), 404
 
@@ -584,7 +591,7 @@ def save():
     title = utils.slugify(article.title)
     stack = utils.slugify(article.stacks[0])
 
-    return redirect(url_for(article.publish_status, title=title, stack=stack))
+    return redirect(filters.url_for_article(article))
 
 
 @app.route('/delete/', methods=['POST'])
@@ -615,7 +622,7 @@ def delete():
     # This article should have only been on one of these lists but trying to
     # remove it doesn't hurt so just forcefully remove it from both just in
     # case.
-    for status in (PUBLISHED, IN_REVIEW, DRAFT):
+    for status in STATUSES:
         tasks.remove_from_listing(article.title, status, user.login,
                                   user.email, branch=article.branch)
 
@@ -636,9 +643,8 @@ def change_publish_status():
     branch = request.form['branch']
 
     publish_status = request.form['publish_status']
-    states = (PUBLISHED, IN_REVIEW, DRAFT)
-    if publish_status not in states:
-        flash('Invalid publish status, must be one of "%s"' % (states),
+    if publish_status not in STATUSES:
+        flash('Invalid publish status, must be one of "%s"' % (STATUSES),
               category='error')
         return render_template('index.html')
 
@@ -745,9 +751,8 @@ def sync_listing(publish_status):
         app.logger.error('Cannot sync listing unless logged in')
         return render_template('index.html'), 500
 
-    states = (PUBLISHED, IN_REVIEW, DRAFT)
-    if publish_status not in states:
-        flash('Invalid publish status, must be one of "%s"' % (states),
+    if publish_status not in STATUSES:
+        flash('Invalid publish status, must be one of "%s"' % (STATUSES),
               category='error')
         return render_template('index.html')
 
