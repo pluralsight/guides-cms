@@ -4,6 +4,7 @@ Misc. filter tags for templates
 
 from flask import url_for
 
+from . import PUBLISHED
 from . import app
 from . import utils
 
@@ -36,13 +37,15 @@ def url_for_article(article, base_url=app.config['BASE_URL'], branch=u'master'):
     title = utils.slugify(article.title)
     stack = utils.slugify_stack(article.stacks[0])
 
-    # The '-' is better for URL SEO but '_' is better for a function name
-    status = article.publish_status.replace('-', '_')
+    url = u'%s%s' % (base_url,
+                     url_for(u'article_view', title=title, stack=stack))
 
-    url = u'%s%s' % (base_url, url_for(status, title=title, stack=stack))
+    if article.publish_status != PUBLISHED:
+        url = u'%s?status=%s' % (url, article.publish_status)
 
     if branch != u'master':
-        url = u'%s?branch=%s' % (branch)
+        query_str_arg = '&' if '?' in url else '?'
+        url = u'%s%sbranch=%s' % (url, query_str_arg, branch)
 
     return url
 

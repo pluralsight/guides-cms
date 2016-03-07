@@ -35,7 +35,7 @@
                                             {% for stack in article.stacks %}
                                                 <span class="stack" style="display: none;">{{stack}}</span>
                                             {% endfor %}
-                                            <a href="/{{article.path}}">
+                                            <a href="{{article|url_for_article}}">
                                                 <span class="clickable"></span>
                                             </a>
                                             <div class="article-description">

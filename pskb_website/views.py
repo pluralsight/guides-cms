@@ -331,45 +331,11 @@ def partner_import():
                            secondary_repo=secondary_repo)
 
 
-# Note this URL is directly linked to the filters.url_for_article filter.
-# These must be changed together!
-@app.route('/draft/<stack>/<title>', methods=['GET'])
-@login_required
-def draft(stack, title):
-    """Draft page"""
-
-    if stack is None or title is None:
-        return render_article_list_view(DRAFT)
-
-    path = u'draft/%s/%s' % (stack, title)
-    branch = request.args.get('branch', u'master')
-
-    article = models.read_article(path, branch=branch)
-    if article is None:
-        return render_template('error.html'), 404
-
-    return render_article_view(request, article,
-                               only_visible_by_user=session['login'])
-
-
-# Note this URL is directly linked to the filters.url_for_article filter.
-# These must be changed together!
-@app.route('/in-review/<stack>/<title>', methods=['GET'])
-@app.route('/in-review/', defaults={'title': None, 'stack': None}, methods=['GET'])
-def in_review(stack, title):
+@app.route('/in-review/', methods=['GET'])
+def in_review():
     """In review page"""
 
-    if stack is None or title is None:
-        return render_article_list_view(IN_REVIEW)
-
-    path = u'in-review/%s/%s' % (stack, title)
-    branch = request.args.get('branch', u'master')
-
-    article = models.read_article(path, branch=branch)
-    if article is None:
-        return render_template('error.html'), 404
-
-    return render_article_view(request, article)
+    return render_article_list_view(IN_REVIEW)
 
 
 @app.route('/review/<title>', methods=['GET'])
@@ -394,17 +360,38 @@ def review(title):
 # Note this URL is directly linked to the filters.url_for_article filter.
 # These must be changed together!
 @app.route('/<stack>/<title>', methods=['GET'])
-def published(stack, title):
-    """Published page"""
+def article_view(stack, title):
+    """Article page"""
 
-    path = u'published/%s/%s' % (stack, title)
     branch = request.args.get('branch', u'master')
 
-    article = models.read_article(path, branch=branch)
-    if article is None:
-        return render_template('error.html'), 404
+    # Search all status so an article's canonical URL can always stay the same
+    # regardless of the status, i.e we use the status argument as a hint on
+    # which file listing to use first but we always search the others until we
+    # find article.
+    status = request.args.get('status', PUBLISHED)
 
-    return render_article_view(request, article)
+    # draft articles are only visible by logged in users
+    if status == DRAFT and not is_logged_in():
+        session['previously_requested_page'] = request.url
+        return redirect(url_for('login'))
+
+    # Using a list here because we specifically want to check in this order but
+    # we don't want to check a single status more than once so don't want dups
+    # either.
+    statuses_to_check = [status]
+    for possible_status in STATUSES:
+        if possible_status not in statuses_to_check:
+            statuses_to_check.append(possible_status)
+
+    for status in statuses_to_check:
+        path = u'%s/%s/%s' % (status, stack, title)
+        article = models.read_article(path, branch=branch)
+
+        if article is not None:
+            return render_article_view(request, article)
+
+    return render_template('error.html'), 404
 
 
 def render_article_list_view(status):
@@ -419,15 +406,13 @@ def render_article_list_view(status):
                             stacks=forms.STACK_OPTIONS)
 
 
-def render_article_view(request_obj, article, status=200,
-                        only_visible_by_user=None):
+def render_article_view(request_obj, article, only_visible_by_user=None):
     """
     Render article view
 
     :param request_obj: Request object
     :param article: Article object to render view for
     :param branch: Branch of article to read
-    :param status: HTTP status code
     :param only_visible_by_user: Name of user that is allowed to view article
                                  or None to allow anyone to read it
     """
@@ -445,6 +430,7 @@ def render_article_view(request_obj, article, status=200,
     # comment threads for an article. Disqus uses this variable to save
     # comments.
     canonical_url = request_obj.base_url.replace('https://', 'http://')
+    article_identifier = u'%s/%s' % (article.stacks[0], article.title)
 
     # Filter out the current branch from the list of branches
     branches = [b for b in article.branches if b != article.branch]
@@ -464,9 +450,10 @@ def render_article_view(request_obj, article, status=200,
                            article=article,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
+                           article_identifier=article_identifier,
                            branches=branches,
                            collaborator=collaborator,
-                           user=user), status
+                           user=user)
 
 
 @app.route('/partner/<path:article_path>', methods=['GET'])
