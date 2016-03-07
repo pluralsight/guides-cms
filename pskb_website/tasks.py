@@ -135,11 +135,17 @@ def move_article(article_path, title, curr_status, new_status,
 
     url = u'https://%s:%s@github.com/%s.git' % (user, pwd, url)
 
-    clone_cmd = u'git clone %s %s' % (url, clone_dir)
-    subprocess.check_call(clone_cmd.split())
+    cmd = u'git clone %s %s' % (url, clone_dir)
+    subprocess.check_call(cmd.split())
 
     cwd = os.getcwd()
     os.chdir(clone_dir)
+
+    cmd = u'git config user.name %s' % (committer_name)
+    subprocess.check_call(cmd.split())
+
+    cmd = u'git config user.email %s' % (committer_email)
+    subprocess.check_call(cmd.split())
 
     try:
         curr_path = u'%s/%s' % (curr_status, article_path)
@@ -158,11 +164,11 @@ def move_article(article_path, title, curr_status, new_status,
         md_file = os.path.join(clone_dir, new_path, u'details.json')
         change_publish_metadata(md_file, new_status)
 
-        ga_cmd = u'git add %s' % (md_file)
-        subprocess.check_call(ga_cmd.split(), cwd=clone_dir)
+        cmd = u'git add %s' % (md_file)
+        subprocess.check_call(cmd.split(), cwd=clone_dir)
 
-        gc_cmd = [u'git', u'commit', u'-m', u'"Moving \'%s\' to %s"' % (title, new_status)]
-        subprocess.check_call(gc_cmd, cwd=clone_dir)
+        cmd = [u'git', u'commit', u'-m', u'"Moving \'%s\' to %s"' % (title, new_status)]
+        subprocess.check_call(cmd, cwd=clone_dir)
 
         # Race condition here where we need to make sure to do a pull before a
         # push and the app itself could sneak commits in between.
