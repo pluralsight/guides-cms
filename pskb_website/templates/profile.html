@@ -11,7 +11,7 @@
                 <ul>
             {% endif %}
 
-            <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
+            <li><a href="{{article|url_for_article}}">{{article.title}}</a></li>
 
             {% if loop.last %}
                 </ul>

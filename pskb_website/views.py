@@ -449,7 +449,6 @@ def render_article_view(request_obj, path, branch, status=200,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
                            branches=branches,
-                           visible_branch=branch,
                            collaborator=collaborator,
                            user=user), status
 

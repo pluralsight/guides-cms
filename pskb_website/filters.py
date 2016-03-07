@@ -19,7 +19,7 @@ def date_string(dt, fmt_str):
     return dt.strftime(fmt_str)
 
 
-def url_for_article(article, base_url=app.config['BASE_URL']):
+def url_for_article(article, base_url=app.config['BASE_URL'], branch=u'master'):
     """
     Get URL for article object
 
@@ -36,8 +36,15 @@ def url_for_article(article, base_url=app.config['BASE_URL']):
     title = utils.slugify(article.title)
     stack = utils.slugify_stack(article.stacks[0])
 
-    return u'%s%s' % (base_url,
-                      url_for(article.publish_status, title=title, stack=stack))
+    # The '-' is better for URL SEO but '_' is better for a function name
+    status = article.publish_status.replace('-', '_')
+
+    url = u'%s%s' % (base_url, url_for(status, title=title, stack=stack))
+
+    if branch != u'master':
+        url = u'%s?branch=%s' % (branch)
+
+    return url
 
 
 def url_for_user(user):
