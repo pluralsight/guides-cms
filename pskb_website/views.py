@@ -575,9 +575,6 @@ def save():
 
     flash('Your content is being saved to github. It should appear within a few minutes.', category='info')
 
-    title = utils.slugify(article.title)
-    stack = utils.slugify(article.stacks[0])
-
     return redirect(filters.url_for_article(article))
 
 
