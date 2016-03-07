@@ -725,6 +725,10 @@ class Article(object):
                                                            self.title,
                                                            self.publish_status)
 
+    @property
+    def published(self):
+        return self.publish_status == PUBLISHED
+
     @staticmethod
     def from_json(str_):
         """

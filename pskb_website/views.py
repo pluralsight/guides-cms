@@ -421,10 +421,19 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     login = session.get('login', None)
     collaborator = session.get('collaborator', False)
 
+    publish_statuses = []
+
     if login == article.branch or article.author_name == login:
         allow_delete = True
+
+        # Regular users cannot directly publish
+        publish_statuses = (IN_REVIEW, DRAFT)
     else:
         allow_delete = False
+
+    # Collaborators aka editors can use all statuses
+    if collaborator:
+        publish_statuses = STATUSES
 
     # Use http as canonical protocol for url to avoid having two separate
     # comment threads for an article. Disqus uses this variable to save
@@ -453,7 +462,8 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
                            article_identifier=article_identifier,
                            branches=branches,
                            collaborator=collaborator,
-                           user=user)
+                           user=user,
+                           publish_statuses=publish_statuses)
 
 
 @app.route('/partner/<path:article_path>', methods=['GET'])
@@ -644,10 +654,8 @@ def change_publish_status():
     author_url = url_for('user_profile', author_name=article.author_name)
     article_url = filters.url_for_article(article)
 
+    orig_status = article.publish_status
     article.publish_status = publish_status
-    if not models.save_article_meta_data(article, user.login, user.email):
-        flash('Failed updating guide publish status', category='error')
-        return redirect(article_url)
 
     tasks.update_listing.delay(article_url,
                                article.title,
@@ -659,7 +667,14 @@ def change_publish_status():
                                thumbnail_url=article.thumbnail_url,
                                stacks=article.stacks,
                                branch=article.branch,
-                               status=publish_status)
+                               status=article.publish_status)
+
+    # This task doesn't need the path including the publish status since it's
+    # dealing with two statuses
+    path = '/'.join(path.split('/')[1:])
+
+    tasks.move_article.delay(path, article.title, orig_status,
+                             article.publish_status, user.login, user.email)
 
     msg = 'The guide has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publish_status)
 
@@ -736,13 +751,13 @@ def sync_listing(publish_status):
         return render_template('index.html'), 500
 
     if publish_status not in STATUSES:
-        flash('Invalid publish status, must be one of "%s"' % (STATUSES),
+        flash('Invalid publish status, must be one of "%s"' % (u','.join(STATUSES)),
               category='error')
         return render_template('index.html')
 
     tasks.synchronize_listing.delay(publish_status, user.login, user.email)
 
-    flash('Queued up %s sync' % publish_status, category='info')
+    flash('Queued up %s sync' % (publish_status), category='info')
 
     return redirect(url_for('index'))
 

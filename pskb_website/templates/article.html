@@ -79,26 +79,24 @@
             {% include 'confirm_delete.html' %}
         {% endif %}
 
+        {% if publish_statuses %}
+        <form action="/publish/" method="POST">
+            <input name="path" type="hidden" value="{{article.path}}"/>
+            <input name="branch" type="hidden" value="{{article.branch}}"/>
+
+            <select name="publish_status">
+            {% for status in publish_statuses %}
+                <option value="{{status}}" {{"selected" if status == article.publish_status else ""}}>{{status}}</option>
+            {% endfor %}
+            </select>
+
+            <button type="submit" class="btn btn-success btn-xs">
+                Change publish status
+            </button>
+        </form>
+        {% endif %}
+
         {% if collaborator %}
-            <form action="/publish/" method="POST">
-                <input name="path" type="hidden" value="{{article.path}}"/>
-                <input name="branch" type="hidden" value="{{article.branch}}"/>
-
-                {% if article.published %}
-                    <input name="publish_status" type="hidden" value="0"/>
-                    <button type="submit" class="btn btn-danger btn-xs">
-                        Unpublish article
-                        <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
-                    </button>
-                {% else %}
-                    <input name="publish_status" type="hidden" value="1"/>
-                    <button type="submit" class="btn btn-success btn-xs">
-                        Publish article
-                        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-                    </button>
-                {% endif %}
-            </form>
-
             {% if article.published %}
                 <form action="/feature/" method="POST">
                     <input name="path" type="hidden" value="{{article.path}}"/>

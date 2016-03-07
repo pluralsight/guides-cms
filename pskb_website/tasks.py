@@ -2,12 +2,21 @@
 Configure and define tasks for use with Celery
 """
 
+import codecs
+import os
+import shutil
+import subprocess
+import tempfile
+import json
+
 from celery import Celery
 
 from . import app
+from . import remote
 from .models import file as file_mod
 from .models.article import get_available_articles_from_api
 
+RETRIES = 5
 
 def make_celery(app):
     celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
@@ -86,3 +95,86 @@ def synchronize_listing(status, committer_name, committer_email):
         articles = get_available_articles_from_api(status)
         file_mod.sync_file_listing(articles, status, committer_name,
                                    committer_email)
+
+
+def change_publish_metadata(path, new_status):
+    """
+    Change publish_status in JSON metadata file
+    """
+
+    with codecs.open(path, 'r', encoding='utf-8') as file_obj:
+        metadata = json.loads(file_obj.read(), encoding='utf-8')
+
+    metadata['publish_status'] = new_status
+
+    with codecs.open(path, 'w', encoding='utf-8') as file_obj:
+        file_obj.write(json.dumps(metadata, sort_keys=True, indent=4,
+                                  separators=(',', ': ')))
+
+
+@celery.task()
+def move_article(article_path, title, curr_status, new_status,
+                 committer_name, committer_email):
+    """
+    Move article from one publish status to another
+
+    :param article_path: Path to article w/o repo owner and name (eg.
+                         python/title)
+    :param title: Title of article being moved
+    :param curr_status: PUBLISHED, IN_REVIEW, or DRAFT
+    :param new_status: PUBLISHED, IN_REVIEW, or DRAFT
+    :param committer_name: Name of user making change
+    :param committer_email: Email of user making change
+    """
+
+    url = remote.default_repo_path()
+    clone_dir = tempfile.mkdtemp()
+
+    user = app.config['REPO_OWNER']
+    pwd = app.config['REPO_OWNER_ACCESS_TOKEN']
+
+    url = u'https://%s:%s@github.com/%s.git' % (user, pwd, url)
+
+    clone_cmd = u'git clone %s %s' % (url, clone_dir)
+    subprocess.check_call(clone_cmd.split())
+
+    cwd = os.getcwd()
+    os.chdir(clone_dir)
+
+    try:
+        curr_path = u'%s/%s' % (curr_status, article_path)
+        new_path = u'%s/%s' % (new_status, article_path)
+
+        dirname = os.path.dirname(new_path)
+        try:
+            os.makedirs(dirname)
+        except OSError:
+            if not os.path.isdir(dirname):
+                raise
+
+        mv_cmd = u'git mv %s %s' % (curr_path, new_path)
+        subprocess.check_call(mv_cmd.split(), cwd=clone_dir)
+
+        md_file = os.path.join(clone_dir, new_path, u'details.json')
+        change_publish_metadata(md_file, new_status)
+
+        ga_cmd = u'git add %s' % (md_file)
+        subprocess.check_call(ga_cmd.split(), cwd=clone_dir)
+
+        gc_cmd = [u'git', u'commit', u'-m', u'"Moving \'%s\' to %s"' % (title, new_status)]
+        subprocess.check_call(gc_cmd, cwd=clone_dir)
+
+        # Race condition here where we need to make sure to do a pull before a
+        # push and the app itself could sneak commits in between.
+        for cnt in xrange(RETRIES):
+            try:
+                subprocess.check_call(u'git push origin master'.split(), cwd=clone_dir)
+                break
+            except subprocess.CalledProcessError:
+                if cnt >= RETRIES:
+                    raise
+
+                subprocess.check_call(u'git pull origin master --commit --no-edit'.split(), cwd=clone_dir)
+    finally:
+        os.chdir(cwd)
+        shutil.rmtree(clone_dir)
