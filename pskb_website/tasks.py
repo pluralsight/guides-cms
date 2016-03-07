@@ -180,7 +180,10 @@ def move_article(article_path, title, curr_status, new_status,
                 if cnt >= RETRIES:
                     raise
 
-                subprocess.check_call(u'git pull origin master --commit --no-edit'.split(), cwd=clone_dir)
+                # Must do this in 2 steps b/c heroku git version doesn't have
+                # the --commit option in git pull.
+                subprocess.check_call(u'git fetch'.split(), cwd=clone_dir)
+                subprocess.check_call(u'git merge origin/master'.split(), cwd=clone_dir)
     finally:
         os.chdir(cwd)
         shutil.rmtree(clone_dir)
