@@ -566,26 +566,29 @@ def save():
         return redirect(url_for('partner', article_path=article.path,
                                 branch=article.branch))
 
-    # Use these filter wrappers so we get absolute URL instead of relative URL
-    # to this specific site.
-    url = filters.url_for_article(article)
-    author_url = filters.url_for_user(article.author_name)
+    # We only have to worry about this on the master branch because we never
+    # actually use file listings on other branches.
+    if article.branch == u'master':
+        # Use these filter wrappers so we get absolute URL instead of relative
+        # URL to this specific site.
+        url = filters.url_for_article(article)
+        author_url = filters.url_for_user(article.author_name)
 
-    tasks.update_listing.delay(url,
-                               article.title,
-                               author_url,
-                               article.author_real_name,
-                               user.login,
-                               user.email,
-                               author_img_url=article.image_url,
-                               thumbnail_url=article.thumbnail_url,
-                               stacks=article.stacks,
-                               branch=article.branch,
-                               status=article.publish_status)
+        tasks.update_listing.delay(url,
+                                   article.title,
+                                   author_url,
+                                   article.author_real_name,
+                                   user.login,
+                                   user.email,
+                                   author_img_url=article.image_url,
+                                   thumbnail_url=article.thumbnail_url,
+                                   stacks=article.stacks,
+                                   branch=article.branch,
+                                   status=article.publish_status)
 
     flash('Your content is being saved to github. It should appear within a few minutes.', category='info')
 
-    return redirect(filters.url_for_article(article))
+    return redirect(filters.url_for_article(article, branch=article.branch))
 
 
 @app.route('/delete/', methods=['POST'])

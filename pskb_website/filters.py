@@ -25,10 +25,17 @@ def url_for_article(article, base_url=app.config['BASE_URL'], branch=u'master'):
     Get URL for article object
 
     :param article: Article object
+    :param base_url: Base URL i.e domain, etc. to use
+    :param branch: Branch
     :returns: URL as string
 
-    Note this filter is directly linked to the views.review URL.  These must be
-    changed together!
+    Note this filter is directly linked to the views.article_view URL.  These
+    must be changed together!
+
+    Also note the branch argument is optional even though it's included in the
+    article object.  This is for extra flexibility so callers can generate urls
+    for several branches without having to read that branch specifically and
+    creating an article object.
 
     This filter only exists to centralize the ability to create a url for an
     article so we can store the url in a file or render in templates.
