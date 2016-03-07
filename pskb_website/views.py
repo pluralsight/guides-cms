@@ -337,7 +337,11 @@ def draft(stack, title):
     path = u'draft/%s/%s' % (stack, title)
     branch = request.args.get('branch', u'master')
 
-    return render_article_view(request, path, branch,
+    article = models.read_article(path, branch=branch)
+    if article is None:
+        return render_template('error.html'), 404
+
+    return render_article_view(request, article,
                                only_visible_by_user=session['login'])
 
 
@@ -354,7 +358,11 @@ def in_review(stack, title):
     path = u'in-review/%s/%s' % (stack, title)
     branch = request.args.get('branch', u'master')
 
-    return render_article_view(request, path, branch)
+    article = models.read_article(path, branch=branch)
+    if article is None:
+        return render_template('error.html'), 404
+
+    return render_article_view(request, article)
 
 
 @app.route('/review/<title>', methods=['GET'])
@@ -371,7 +379,7 @@ def review(title):
         article = models.find_article_by_title(articles, title)
 
         if article is not None:
-            return render_article_view(request, article, branch, status=301)
+            return render_article_view(request, article, status=301)
 
     return render_template('error.html'), 404
 
@@ -384,7 +392,12 @@ def published(stack, title):
 
     path = u'published/%s/%s' % (stack, title)
     branch = request.args.get('branch', u'master')
-    return render_article_view(request, path, branch)
+
+    article = models.read_article(path, branch=branch)
+    if article is None:
+        return render_template('error.html'), 404
+
+    return render_article_view(request, article)
 
 
 def render_article_list_view(status):
@@ -399,28 +412,24 @@ def render_article_list_view(status):
                             stacks=forms.STACK_OPTIONS)
 
 
-def render_article_view(request_obj, path, branch, status=200,
+def render_article_view(request_obj, article, status=200,
                         only_visible_by_user=None):
     """
     Render article view
 
     :param request_obj: Request object
-    :param path: Path to article to render
+    :param article: Article object to render view for
     :param branch: Branch of article to read
     :param status: HTTP status code
     :param only_visible_by_user: Name of user that is allowed to view article
                                  or None to allow anyone to read it
     """
 
-    article = models.read_article(path, branch=branch)
-    if article is None:
-        return render_template('error.html'), 404
-
     g.review_active = True
     login = session.get('login', None)
     collaborator = session.get('collaborator', False)
 
-    if login == branch or article.author_name == login:
+    if login == article.branch or article.author_name == login:
         allow_delete = True
     else:
         allow_delete = False
@@ -431,10 +440,10 @@ def render_article_view(request_obj, path, branch, status=200,
     canonical_url = request_obj.base_url.replace('https://', 'http://')
 
     # Filter out the current branch from the list of branches
-    branches = [b for b in article.branches if b != branch]
+    branches = [b for b in article.branches if b != article.branch]
 
     # Always include a link to original article if this is a branched version
-    if branch != u'master':
+    if article.branch != u'master':
         branches.append(u'master')
 
     g.header_white = True
