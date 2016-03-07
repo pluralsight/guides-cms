@@ -87,7 +87,7 @@ function should_show(article, selected_stacks) {
     var show = false;
     $(article).find('.stack').each(function(stack_idx) {
         for (var ii=0; ii < selected_stacks.length; ii++) {
-            if (this.textContent == selected_stacks[ii]) {
+            if (this.textContent.toLowerCase() == selected_stacks[ii].toLowerCase()) {
                 show = true;
                 break;
             }
