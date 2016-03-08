@@ -421,7 +421,7 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     login = session.get('login', None)
     collaborator = session.get('collaborator', False)
 
-    publish_statuses = []
+    publish_statuses = ()
 
     if login == article.branch or article.author_name == login:
         allow_delete = True
