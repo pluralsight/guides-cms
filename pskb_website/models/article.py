@@ -284,15 +284,13 @@ def read_article_from_metadata(file_details):
         return None
 
 
-def save_article(title, path, message, new_content, author_name, email, sha,
+def save_article(title, message, new_content, author_name, email, sha,
                  branch=u'master', image_url=None, repo_path=None,
                  author_real_name=None, stacks=None, status=DRAFT):
     """
     Create or save new (original) article, not branched article
 
     :param title: Title of article
-    :param path: Short path to article, not including repo or owner, or empty
-                  for a new article
     :param message: Commit message to save article with
     :param content: Content of article
     :param author_name: Name of author who wrote article
@@ -401,9 +399,9 @@ def branch_article(article, message, new_content, author_name, email,
         if branch_file is not None:
             article_sha = branch_file.sha
 
-    return save_article(article.title, article.path, message, new_content,
-                        author_name, email, article_sha, branch=branch,
-                        image_url=image_url, author_real_name=author_real_name,
+    return save_article(article.title, message, new_content, author_name,
+                        email, article_sha, branch=branch, image_url=image_url,
+                        author_real_name=author_real_name,
                         stacks=article.stacks, status=article.publish_status)
 
 
@@ -446,7 +444,7 @@ def branch_or_save_article(title, path, message, content, author_name, email,
         new = branch_article(article, message, content, author_name, email,
                              image_url, author_real_name=author_real_name)
     else:
-        new = save_article(title, path, message, content, author_name, email,
+        new = save_article(title, message, content, author_name, email,
                            sha, image_url=image_url, repo_path=repo_path,
                            author_real_name=author_real_name,
                            stacks=stacks, status=status)
