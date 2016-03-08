@@ -57,13 +57,13 @@ the metadata.
 article.md
 ^^^^^^^^^^
 
-This file is the raw content in the [markdown](http://daringfireball.net/projects/markdown/) format.
+This file is the raw content in the `markdown <http://daringfireball.net/projects/markdown/>`_ format.
 
 ^^^^^^^^^^^^
 details.json
 ^^^^^^^^^^^^
 
-This is the metadata for the guide in the [json format](https://en.wikipedia.org/wiki/JSON).  We chose JSON because it's fairly readable and easy to use with lots of languages.
+This is the metadata for the guide in the `json format <https://en.wikipedia.org/wiki/JSON>`_.  We chose JSON because it's fairly readable and easy to use withlots of languages.
 
 Why two files?
 ^^^^^^^^^^^^^^
