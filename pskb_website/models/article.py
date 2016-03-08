@@ -755,7 +755,7 @@ class Article(object):
                     value = DRAFT
 
             # This field used to be optional
-            if attr == 'stacks' and not value:
+            elif attr == 'stacks' and not value:
                 value = [u'other']
 
             setattr(article, attr, value)
