@@ -334,7 +334,8 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
         content = base64.b64encode(content.encode('utf-8'))
 
     commit_info = {'message': message, 'content': content, 'branch': branch,
-                   'author': {'name': name, 'email': email}}
+                   'author': {'name': name, 'email': email},
+                   'committer': {'name': name, 'email': email}}
 
     if sha:
         commit_info['sha'] = sha
@@ -594,7 +595,8 @@ def remove_file_from_github(path, message, name, email, branch):
 
     url = contents_url_from_path(path)
     commit_info = {'sha': details.sha, 'branch': branch, 'message': message,
-                   'author': {'name': name, 'email': email}}
+                   'author': {'name': name, 'email': email},
+                   'committer': {'name': name, 'email': email}}
 
     # The flask-oauthlib API expects the access token to be in a tuple or a
     # list.  Not exactly sure why since the underlying oauthlib library has a
