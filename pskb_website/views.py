@@ -627,7 +627,7 @@ def delete():
 
 
 @app.route('/publish/', methods=['POST'])
-@collaborator_required
+@login_required
 def change_publish_status():
     """Publish or unpublish article via POST"""
 
@@ -653,6 +653,16 @@ def change_publish_status():
     if article is None:
         flash('Cannot find guide to change publish status', category='error')
         return redirect(url_for('index'))
+
+    if not user.is_collaborator:
+        if article.author_name != user.login:
+            flash('Only collaborators can change publish status on guides they do not start',
+                  category='error')
+            return redirect(url_for('index'))
+
+        if publish_status == PUBLISHED:
+            flash('Only collaborators can publish guides')
+            return redirect(url_for('index'))
 
     author_url = url_for('user_profile', author_name=article.author_name)
     article_url = filters.url_for_article(article)
