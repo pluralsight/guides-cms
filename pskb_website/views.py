@@ -610,8 +610,8 @@ def delete():
         flash('Cannot find guide to delete', category='error')
         return redirect(url_for('index'))
 
-    if not models.delete_article(article, 'Removing guide', user.login,
-                                 user.email):
+    msg = u'Removing guide "%s"' % (article.title)
+    if not models.delete_article(article, msg, user.login, user.email):
         flash('Failed removing guide', category='error')
     else:
         flash('Article successfully deleted', category='info')
