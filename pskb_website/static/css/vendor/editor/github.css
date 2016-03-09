@@ -187,7 +187,6 @@ code,
 tt{
 	margin:0 2px;
 	padding:0 5px;
-	white-space:nowrap;
 	border:1px solid #eaeaea;
 	background-color:#f8f8f8;
 	border-radius:3px;
@@ -205,4 +204,6 @@ pre code,
 pre tt{
 	background-color:transparent;
 	border:none;
+	white-space:normal;
+    word-wrap:normal;
 }

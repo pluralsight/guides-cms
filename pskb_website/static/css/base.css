@@ -301,9 +301,6 @@ a:hover.emphasize-dark  {
 #article code {
     word-wrap: break-word;
     overflow-wrap: break-word;
-
-    /* Overwrite github.css value of nowrap */
-    white-space: normal;
 }
 
 #article form {
