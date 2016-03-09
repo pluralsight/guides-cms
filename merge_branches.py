@@ -31,9 +31,9 @@ def remote_branches():
         yield line.strip()
 
 
-def merge_branches():
+def merge_branches(merge_branch):
     """
-    Merge all remote branches with master
+    Merge all remote branches with given branch
 
     Assumes the current working directory is root of git repo.
     """
@@ -41,7 +41,7 @@ def merge_branches():
     subprocess.check_call(u'git fetch --all'.split())
 
     for branch in remote_branches():
-        if branch.endswith(u'master'):
+        if branch.endswith(merge_branch):
             continue
 
         # Name with out origin/
@@ -55,11 +55,12 @@ def merge_branches():
             cmd = u'git checkout %s' % (branch_name)
             subprocess.check_call(cmd.split())
 
+        cmd = u'git merge %s' % (merge_branch)
         try:
-            subprocess.check_call(u'git merge master'.split())
+            subprocess.check_call(cmd.split())
         except subprocess.CalledProcessError as err:
             print u'Error: %s' % (err)
-            print u'Problem merging master into %s, handle the conflicts and hit enter to continue or ctrl-D to quit' % (branch)
+            print u'Problem merging %s into %s, handle the conflicts and hit enter to continue or ctrl-D to quit' % (merge_branch, branch)
             _ = raw_input()
 
         print u'Would you like to push the %s remote branch now (y/n)?' % (branch)
@@ -69,12 +70,13 @@ def merge_branches():
             subprocess.check_call(cmd.split())
 
 
-def main(content_dir):
+def main(content_dir, branch):
     """
     Merge all remote branches with master
 
     :param content_dir: Directory of git repository serving as the
                         content/database for hack.guides() CMS content
+    :param branch: Branch to merge with
     """
 
     orig_cwd = os.getcwd()
@@ -82,21 +84,26 @@ def main(content_dir):
 
     try:
         setup_repo()
-        merge_branches()
+        merge_branches(branch)
     finally:
         os.chdir(orig_cwd)
 
 
 def _parse_args():
-    parser = argparse.ArgumentParser(description='Merge remote branches with master')
+    parser = argparse.ArgumentParser(description='Merge remote branches with another branch')
 
     parser.add_argument('-d', '--content-dir', action='store',
                         dest='content_dir', required=True,
                         help='Directory containing git repo for hack.guides() CMS content')
+
+    parser.add_argument('-b', '--branch', action='store',
+                        dest='branch',
+                        required=True,
+                        help='Name of branch to merge all other branches with')
 
     return vars(parser.parse_args())
 
 
 if __name__ == '__main__':
     args = _parse_args()
-    main(args['content_dir'])
+    main(args['content_dir'], args['branch'])
