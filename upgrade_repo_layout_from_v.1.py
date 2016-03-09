@@ -16,6 +16,7 @@ remote repository.
 import argparse
 import codecs
 import os
+import shutil
 import subprocess
 import json
 
@@ -146,8 +147,8 @@ def move_guides():
 
 def upgrade_metadata():
     """
-    Upgrade all metadata files in content_dir with new fields and renamed
-    fields
+    Upgrade all metadata files in current working directory with new fields and
+    renamed fields
 
     The following modifications are made to metadata:
         1. The 'published' field field is removed if it exists in favor of the
@@ -240,9 +241,11 @@ def remote_branches():
         yield line.strip()
 
 
-def upgrade_branches():
+def upgrade_branches(merge_branch):
     """
     Merge all remote branches with master to upgrade their layout
+
+    :param merge_branch: Branch to merge all other branches with
 
     Assumes the current working directory is root of git repo.
     """
@@ -250,7 +253,7 @@ def upgrade_branches():
     subprocess.check_call(u'git fetch --all'.split())
 
     for branch in remote_branches():
-        if branch.endswith(u'master'):
+        if branch.endswith(u'master') or branch == merge_branch:
             continue
 
         cmd = u'git checkout --track %s' % (branch)
@@ -261,24 +264,41 @@ def upgrade_branches():
             cmd = u'git checkout %s' % (branch.split(os.sep)[1])
             subprocess.check_call(cmd.split())
 
+        cmd = u'git merge %s' % (merge_branch)
+
         try:
-            subprocess.check_call(u'git merge upgrade_from_v.1'.split())
+            subprocess.check_call(cmd.split())
         except subprocess.CalledProcessError as err:
             print u'Error: %s' % (err)
             print u'Problem merging master into %s, handle the conflicts and hit enter to continue or ctrl-D to quit' % (branch)
             _ = raw_input()
 
 
-def setup_repo(branch, force):
+def setup_repo(clone_url, branch, force):
     """
     Setup repo for upgrade by updating from origin and creating branch
 
+    :param clone_url: URL to clone into current working directory
+    :param branch: Branch to checkout/create for changes
     :param force: Remove the branch if it already exists and start fresh
-
-    Assumes current working directory is root level of repo
+    :returns: Directory name of repo cloned or None of user decided to quit
     """
 
+    repo_dir = os.path.abspath(clone_url.split(os.sep)[-1])
+
+    if os.path.isdir(repo_dir):
+        answer = raw_input('The %s directory already exists. Want to overwrite with checkout? (y/n)' % (repo_dir))
+        if answer.lower() != 'y':
+            return None
+
+        shutil.rmtree(repo_dir)
+
     # Make sure we're up to date and we branch from master
+    cmd = u'git clone %s' % (clone_url)
+    subprocess.check_call(cmd.split())
+
+    os.chdir(repo_dir)
+
     subprocess.check_call(u'git pull origin master'.split())
     subprocess.check_call(u'git checkout master'.split())
 
@@ -297,25 +317,29 @@ def setup_repo(branch, force):
 
         subprocess.check_call(checkout_branch.split())
 
+    return repo_dir
 
 
-def main(content_dir, branch='upgrade_from_v.1', force=False,
+def main(clone_url, branch='upgrade_from_v.1', force=False,
          upgrade_remote_branches=False):
     """
     Upgrade repository in given directory using given branch
 
-    :param content_dir: Directory of git repository serving as the
-                        content/database for hack.guides() CMS content
+    :param clone_url: URL of git repository serving as the content/database for
+                      hack.guides() CMS content
     :param branch: Name of branch to make all changes in
     :param force: Remove the branch if it already exists and start fresh
     :param upgrade_remote_branches: Upgrade remote branches (interactive)
     """
 
     orig_cwd = os.getcwd()
-    os.chdir(content_dir)
 
     try:
-        setup_repo(branch, force)
+        content_dir = setup_repo(clone_url, branch, force)
+        if content_dir is None:
+            return
+
+        os.chdir(content_dir)
 
         create_required_directories()
         upgrade_metadata()
@@ -323,7 +347,7 @@ def main(content_dir, branch='upgrade_from_v.1', force=False,
         move_guides()
 
         if upgrade_remote_branches:
-            upgrade_branches()
+            upgrade_branches(branch)
     finally:
         os.chdir(orig_cwd)
 
@@ -335,9 +359,9 @@ def main(content_dir, branch='upgrade_from_v.1', force=False,
 def _parse_args():
     parser = argparse.ArgumentParser(description='Upgrade repository layout from version .1 layout')
 
-    parser.add_argument('-d', '--content-dir', action='store',
-                        dest='content_dir', required=True,
-                        help='Directory containing git repo for hack.guides() CMS content')
+    parser.add_argument('-c', '--clone-url', action='store',
+                        dest='clone_url', required=True,
+                        help='URL to clone git repo for hack.guides() CMS content')
 
     parser.add_argument('-b', '--branch', action='store',
                         default='upgrade_from_v.1', dest='branch',
@@ -357,5 +381,5 @@ def _parse_args():
 
 if __name__ == '__main__':
     args = _parse_args()
-    main(args['content_dir'], args['branch'], args['force'],
+    main(args['clone_url'], args['branch'], args['force'],
          args['upgrade_branches'])
