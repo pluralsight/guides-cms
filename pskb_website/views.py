@@ -689,7 +689,7 @@ def change_publish_status():
             flash('Only collaborators can publish guides')
             return redirect(url_for('index'))
 
-    author_url = url_for('user_profile', author_name=article.author_name)
+    author_url = filters.url_for_user(article.author_name)
     article_url = filters.url_for_article(article)
 
     curr_path = article.path
