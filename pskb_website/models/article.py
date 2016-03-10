@@ -681,7 +681,7 @@ def change_article_stack(orig_path, orig_stack, new_stack, title, author_name,
     :param new_stack: New stack
     :param author_name: Name of author who wrote article
     :param email: Email address of author
-    :returns New path of article or None if error
+    :returns: New path of article or None if error
     """
 
     # Ugly circular imports

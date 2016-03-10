@@ -18,6 +18,7 @@ Contents:
    install
    github_setup
    deployment
+   publish_workflow
    github_api_usage
    github_repo_layout
    views
