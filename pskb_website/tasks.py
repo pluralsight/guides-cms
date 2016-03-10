@@ -183,7 +183,10 @@ def move_article(article_path, title, curr_status, new_status,
                 # Must do this in 2 steps b/c heroku git version doesn't have
                 # the --commit option in git pull.
                 subprocess.check_call(u'git fetch'.split(), cwd=clone_dir)
-                subprocess.check_call(u'git merge origin/master --no-edit'.split(), cwd=clone_dir)
+                cmd = [u'git', u'merge', u'origin/master',
+                       u'-m', u'"Merged moving \'%s\' to %s' % (title, new_status),
+                       u'--no-edit']
+                subprocess.check_call(cmd, cwd=clone_dir)
     finally:
         os.chdir(cwd)
         shutil.rmtree(clone_dir)
