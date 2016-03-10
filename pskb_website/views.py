@@ -676,7 +676,7 @@ def change_publish_status():
     author_url = url_for('user_profile', author_name=article.author_name)
     article_url = filters.url_for_article(article)
 
-    orig_status = article.publish_status
+    curr_path = article.path
     article.publish_status = publish_status
 
     tasks.update_listing.delay(article_url,
@@ -691,12 +691,9 @@ def change_publish_status():
                                branch=article.branch,
                                status=article.publish_status)
 
-    # This task doesn't need the path including the publish status since it's
-    # dealing with two statuses
-    path = '/'.join(path.split('/')[1:])
-
-    tasks.move_article.delay(path, article.title, orig_status,
-                             article.publish_status, user.login, user.email)
+    tasks.move_article.delay(curr_path, article.path, article.title,
+                             user.login, user.email,
+                             new_publish_status=article.publish_status)
 
     msg = 'The guide has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publish_status)
 

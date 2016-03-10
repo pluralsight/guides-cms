@@ -12,6 +12,7 @@ import json
 from celery import Celery
 
 from . import app
+from . import PUBLISHED, IN_REVIEW, DRAFT
 from . import remote
 from .models import file as file_mod
 from .models.article import get_available_articles_from_api
@@ -113,19 +114,25 @@ def change_publish_metadata(path, new_status):
 
 
 @celery.task()
-def move_article(article_path, title, curr_status, new_status,
-                 committer_name, committer_email):
+def move_article(curr_path, new_path, title, committer_name, committer_email,
+                 new_publish_status=None):
     """
     Move article from one publish status to another
 
-    :param article_path: Path to article w/o repo owner and name (eg.
-                         python/title)
+    :param curr_path: Current path to article w/o repo owner and name (eg.
+                      in-review/python/title)
+    :param new_path: Current path to article w/o repo owner and name (eg.
+                     published/python/title)
     :param title: Title of article being moved
-    :param curr_status: PUBLISHED, IN_REVIEW, or DRAFT
-    :param new_status: PUBLISHED, IN_REVIEW, or DRAFT
     :param committer_name: Name of user making change
     :param committer_email: Email of user making change
+    :param new_publish_status: Optional new publish status if the article
+                               should be moved and publish status changed
+                               argument should be PUBLISHED, IN_REVIEW, or
+                               DRAFT
     """
+
+    app.logger.info(u'Moving %s from %s to %s', title, curr_path, new_path)
 
     url = remote.default_repo_path()
     clone_dir = tempfile.mkdtemp()
@@ -148,9 +155,6 @@ def move_article(article_path, title, curr_status, new_status,
     subprocess.check_call(cmd.split())
 
     try:
-        curr_path = u'%s/%s' % (curr_status, article_path)
-        new_path = u'%s/%s' % (new_status, article_path)
-
         dirname = os.path.dirname(new_path)
         try:
             os.makedirs(dirname)
@@ -161,13 +165,17 @@ def move_article(article_path, title, curr_status, new_status,
         mv_cmd = u'git mv %s %s' % (curr_path, new_path)
         subprocess.check_call(mv_cmd.split(), cwd=clone_dir)
 
-        md_file = os.path.join(clone_dir, new_path, u'details.json')
-        change_publish_metadata(md_file, new_status)
+        if new_publish_status in (PUBLISHED, IN_REVIEW, DRAFT):
+            md_file = os.path.join(clone_dir, new_path, u'details.json')
+            change_publish_metadata(md_file, new_publish_status)
 
-        cmd = u'git add %s' % (md_file)
-        subprocess.check_call(cmd.split(), cwd=clone_dir)
+            cmd = u'git add %s' % (md_file)
+            subprocess.check_call(cmd.split(), cwd=clone_dir)
 
-        cmd = [u'git', u'commit', u'-m', u'"Moving \'%s\' to %s"' % (title, new_status)]
+        move_msg = u'"Moving \'%s\' from %s to %s"' % (title, curr_path,
+                                                       new_path)
+        cmd = [u'git', u'commit', u'-m', move_msg]
+
         subprocess.check_call(cmd, cwd=clone_dir)
 
         # Race condition here where we need to make sure to do a pull before a
@@ -184,7 +192,7 @@ def move_article(article_path, title, curr_status, new_status,
                 # the --commit option in git pull.
                 subprocess.check_call(u'git fetch'.split(), cwd=clone_dir)
                 cmd = [u'git', u'merge', u'origin/master',
-                       u'-m', u'"Merged moving \'%s\' to %s' % (title, new_status),
+                       u'-m', u'"Merged %s' % (move_msg),
                        u'--no-edit']
                 subprocess.check_call(cmd, cwd=clone_dir)
     finally:
