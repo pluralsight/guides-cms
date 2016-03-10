@@ -295,7 +295,9 @@ def save_article(title, message, new_content, author_name, email, sha,
     :param content: Content of article
     :param author_name: Name of author who wrote article
     :param email: Email address of author
-    :param sha: Optional SHA of article if it already exists on github
+    :param sha: Optional SHA of article if it already exists on github (This
+                must be the SHA of the current version of the article that is
+                being replaced.)
     :param branch: Name of branch to commit file to (branch must already
                    exist)
     :param image_url: Image to use for article
@@ -304,7 +306,7 @@ def save_article(title, message, new_content, author_name, email, sha,
     :param stacks: Optional list of stacks to associate with article
     :param status: PUBLISHED, IN_REVIEW, or DRAFT
 
-    :returns: Article object updated or saved
+    :returns: Article object updated or saved or None for failure
 
     This function is not suitable for saving branched articles.  The article
     created here will be attributed to the given author_name whereas branched
@@ -317,21 +319,21 @@ def save_article(title, message, new_content, author_name, email, sha,
                       stacks=stacks)
     article.publish_status = status
 
-    saved = remote.commit_file_to_github(article.full_path, message,
-                                         new_content, author_name, email, sha,
-                                         branch)
-    if not saved:
-        return None
+    commit_sha = remote.commit_file_to_github(article.full_path, message,
+                                              new_content, author_name, email,
+                                              sha, branch)
+    if commit_sha is None:
+        return commit_sha
 
     if branch != u'master':
-        saved = save_branched_article_meta_data(article, author_name, email)
+        commit_sha = save_branched_article_meta_data(article, author_name, email)
     else:
-        saved = save_article_meta_data(article, author_name, email, branch)
+        commit_sha = save_article_meta_data(article, author_name, email, branch)
 
-    if not saved:
+    if commit_sha is None:
         # FIXME: Handle error. This is interesting b/c now we created the
         # article, but not the meta data.
-        return None
+        return commit_sha
 
     cache.delete_article(article)
 
@@ -459,7 +461,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     :param email: Email address of author
     :param branch: Optional branch to save metadata, if not given
                    article.branch will be used
-    :returns: True if meta data is saved, False otherwise
+    :returns: SHA of commit or None if commit failed
     """
 
     filename = meta_data_path_for_article_path(article.full_path)
@@ -542,7 +544,7 @@ def save_branched_article_meta_data(article, author_name, email,
     :param email: Email address of branched article author
     :param add_branch: True if article should be saved as a branch False if
                        article should be removed as a branch
-    :returns: True if data is saved, False otherwise
+    :returns: SHA of commit or None if commit failed
 
     Metadata for branched articles should be identical to the original article.
     This makes it easier for automatically merging changes because metadata

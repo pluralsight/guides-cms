@@ -166,13 +166,13 @@ def update_article_listing(article_url, title, author_url, author_name,
                                          thumbnail_url,
                                          stacks=stacks)
 
-    success = True
     if start_text != text:
-        success = remote.commit_file_to_github(path_to_listing, message, text,
-                                               committer_name, committer_email,
-                                               sha=sha, branch=branch)
-    if not success:
-        return success
+        commit_sha = remote.commit_file_to_github(path_to_listing, message,
+                                                  text, committer_name,
+                                                  committer_email, sha=sha,
+                                                  branch=branch)
+        if commit_sha is None:
+            return False
 
     # Now update the opposite files so the article is only on 1 file at a time
     results = []
@@ -226,13 +226,15 @@ def remove_article_from_listing(title, status, committer_name,
 
     text = get_removed_file_listing_text(start_text, title)
 
-    success = True
     if start_text != text:
-        success = remote.commit_file_to_github(path_to_listing, message, text,
-                                               committer_name, committer_email,
-                                               sha=sha, branch=branch)
+        commit_sha = remote.commit_file_to_github(path_to_listing, message,
+                                                  text, committer_name,
+                                                  committer_email, sha=sha,
+                                                  branch=branch)
+        if commit_sha is None:
+            return False
 
-    return success
+    return True
 
 
 def sync_file_listing(all_articles, status, committer_name, committer_email,
@@ -303,11 +305,16 @@ def sync_file_listing(all_articles, status, committer_name, committer_email,
         text = get_removed_file_listing_text(text, title)
 
     if text != start_text:
-        return remote.commit_file_to_github(path_to_listing, message, text,
-                                            committer_name, committer_email,
-                                            sha=sha, branch=branch)
+        commit_sha = remote.commit_file_to_github(path_to_listing, message,
+                                                  text, committer_name,
+                                                  committer_email, sha=sha,
+                                                  branch=branch)
+        if commit_sha is None:
+            return False
     else:
         app.logger.debug('Listing unchanged so no commit being made')
+
+    return True
 
 
 def _read_file_listing(path_to_listing, branch=u'master'):
