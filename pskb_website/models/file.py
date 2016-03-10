@@ -282,7 +282,7 @@ def sync_file_listing(all_articles, status, committer_name, committer_email,
     # Get listing of all the titles currently in the file so we know which ones
     # to remove and we'll try to remove them in order so the diff of the file
     # is sane.
-    prev_titles = {item.title for item in _read_items_from_file_listing(text)}
+    prev_titles = {item.title for item in read_items_from_file_listing(text)}
     curr_titles = set()
 
     for article in all_articles:
@@ -335,7 +335,7 @@ def _read_file_listing(path_to_listing, branch=u'master'):
         text = details.text
         cache.save_article(path_to_listing, branch, text, timeout=60 * 3)
 
-    for item in _read_items_from_file_listing(text):
+    for item in read_items_from_file_listing(text):
         yield item
 
 
@@ -364,7 +364,7 @@ def _iter_article_sections_from_file_listing(text):
         yield lines_for_article
 
 
-def _read_items_from_file_listing(text):
+def read_items_from_file_listing(text):
     """
     Generator to yield parsed file_listing_item from text
 
