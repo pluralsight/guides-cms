@@ -325,6 +325,10 @@ def save_article(title, message, new_content, author_name, email, sha,
     if commit_sha is None:
         return commit_sha
 
+    # Had no previous SHA so this must be the first time we're saving it
+    if not sha:
+        article.first_commit = commit_sha
+
     if branch != u'master':
         commit_sha = save_branched_article_meta_data(article, author_name, email)
     else:
@@ -697,6 +701,7 @@ class Article(object):
         self.last_updated = None
         self.thumbnail_url = None
         self.author_real_name = author_real_name or author_name
+        self.first_commit = None
 
         # Only useful if article has already been saved to github
         self.sha = sha

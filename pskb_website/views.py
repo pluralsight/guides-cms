@@ -14,6 +14,7 @@ from . import models
 from . import forms
 from . import tasks
 from . import filters
+from . import utils
 
 STATUSES = (PUBLISHED, IN_REVIEW, DRAFT)
 
@@ -439,7 +440,15 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     # comment threads for an article. Disqus uses this variable to save
     # comments.
     canonical_url = request_obj.base_url.replace('https://', 'http://')
-    article_identifier = u'%s/%s' % (article.stacks[0], article.title)
+
+    article_identifier = article.first_commit
+    if article_identifier is None:
+        # Backwards compatability for disqus comments. We didn't track the
+        # first commit before version .2 and all disqus comments used the
+        # slugified title for the unique id.  Disqus doesn't allow for changing
+        # this so we're stuck with it if we want to maintain the comments
+        # before version .2.
+        article_identifier = utils.slugify(article.title)
 
     # Filter out the current branch from the list of branches
     branches = [b for b in article.branches if b != article.branch]
