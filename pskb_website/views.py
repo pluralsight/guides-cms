@@ -529,6 +529,7 @@ def save():
     path = request.form['path']
     title = request.form['title']
     sha = request.form['sha']
+    orig_stack = request.form['original_stack']
 
     if not content.strip() or not title.strip():
         flash('Must enter title and body of guide', category='error')
@@ -540,6 +541,21 @@ def save():
         stacks = None
     else:
         stacks = request.form.getlist('stacks')
+
+        # FIXME: This is not the best solution. We're making this task
+        # synchronous but it's just a few git commands so hoping it will be
+        # quick. Also it only happens in the rare case where a stack is
+        # changed.  We need to wait for the file move so we can maintain the
+        # history of the article through the move.
+        if path and orig_stack and stacks[0] != orig_stack:
+            new_path = models.change_article_stack(path, orig_stack, stacks[0],
+                                                   title, user.login,
+                                                   user.email)
+
+            if new_path is None:
+                flash('Failed changing guide stack', category='error')
+            else:
+                path = new_path
 
     if path:
         message = 'Updates to "%s"' % (title)

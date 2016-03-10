@@ -5,15 +5,16 @@ Article related model API
 import collections
 import itertools
 import json
+import subprocess
 
+from . import lib
+from . import file as file_mod
+from .user import find_user
 from .. import app
 from .. import PUBLISHED, IN_REVIEW, DRAFT
 from .. import cache
-from . import lib
 from .. import remote
-from . import file as file_mod
 from .. import utils
-from .user import find_user
 
 # FIXME: This file is fairly modular to the outside world but internally it's
 # very fragmented and the layers of abstraction are all mixed up.  Needs a lot
@@ -443,6 +444,10 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     if path:
         article = read_article(path, rendered_text=False, branch=u'master',
                                repo_path=repo_path)
+        if article is None:
+            app.logger.error('Failed reading article from %s to update', path)
+            return None
+
         status = article.publish_status
 
     if article and article.author_name != author_name and sha:
@@ -664,6 +669,33 @@ def find_article_by_title(articles, title):
             return article
 
     return None
+
+
+def change_article_stack(orig_path, orig_stack, new_stack, title, author_name,
+                         email):
+    """
+    Change article stack
+
+    :param orig_path: Current path to article without repo or owner
+    :param orig_stack: Original stack
+    :param new_stack: New stack
+    :param author_name: Name of author who wrote article
+    :param email: Email address of author
+    :returns New path of article or None if error
+    """
+
+    # Ugly circular imports
+    from .. import tasks
+
+    new_path = orig_path.replace(utils.slugify_stack(orig_stack),
+                                 utils.slugify_stack(new_stack))
+    try:
+        tasks.move_article(orig_path, new_path, title, author_name, email)
+    except subprocess.CalledProcessError as err:
+        app.logger.error(err)
+        return None
+
+    return new_path
 
 
 class Article(object):
