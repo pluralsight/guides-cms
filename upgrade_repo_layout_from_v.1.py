@@ -21,7 +21,13 @@ import subprocess
 import json
 
 from pskb_website import utils
+from pskb_website.models import file as file_mod
 
+
+# Base url of your site. This is a copy of the BASE_URL environment variable
+# just to keep the depenencies down and could be useful if you want to
+# transition from one base_url to another.
+BASE_URL = u'https://tutorials.pluralsight.com'
 
 DEFAULT_STACK = u'other'
 
@@ -207,7 +213,7 @@ def upgrade_metadata():
         subprocess.check_call(cmd)
 
 
-def rename_file_listings():
+def rename_file_listing():
     """
     Rename file listing files at top-level of repo to new names reflecting the
     new publish workflow
@@ -226,6 +232,46 @@ def rename_file_listings():
 
     cmd = u'git commit -m'.split()
     cmd.append(u'unpublished.md is now %s' % (draft_file))
+    subprocess.check_call(cmd)
+
+
+def upgrade_file_listing_urls(status):
+    filename = '%s.md' % (status)
+
+    articles = []
+    with codecs.open(filename, 'r', encoding='utf-8') as file_obj:
+        articles = file_mod.read_items_from_file_listing(file_obj.read())
+
+    new_sections = []
+    for article in articles:
+        stacks = article.stacks if article.stacks else [u'other']
+        name = article.author_real_name or article.author_name
+
+        query_str = u'' if status == PUBLISHED else u'?status=%s' % (status)
+        url = u'%s/%s/%s%s' % (BASE_URL, utils.slugify_stack(stacks[0]),
+                               utils.slugify(article.title), query_str)
+
+        author_url = u'%s/user/%s' % (BASE_URL, article.author_name)
+
+        section = file_mod.get_updated_file_listing_text(u'',
+                                                         url,
+                                                         article.title,
+                                                         author_url,
+                                                         name,
+                                                         article.author_img_url,
+                                                         article.thumbnail_url,
+                                                         stacks)
+
+        new_sections.append(section)
+
+    with codecs.open(filename, 'w', encoding='utf-8') as file_obj:
+        file_obj.write(u'\n\n'.join(new_sections))
+
+    cmd = u'git add %s' % (filename)
+    subprocess.check_call(cmd.split())
+
+    cmd = u'git commit -m'.split()
+    cmd.append(u'Updating URLs in %s' % (filename))
     subprocess.check_call(cmd)
 
 
@@ -343,7 +389,12 @@ def main(clone_url, branch='upgrade_from_v.1', force=False,
 
         create_required_directories()
         upgrade_metadata()
-        rename_file_listings()
+        rename_file_listing()
+
+        # Remember, we don't have anything in-review during upgrade
+        for status in (PUBLISHED, DRAFT):
+            upgrade_file_listing_urls(status)
+
         move_guides()
 
         if upgrade_remote_branches:
