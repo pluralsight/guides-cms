@@ -14,7 +14,35 @@ from a high-level view.  You can also see a working example
 Layout components
 -----------------
 
-.. image:: _static/repo_layout.png
+::
+
+    |---- faq.md
+    |---- published.md
+    |---+ published
+    |----   + c-c++
+    |----   + ruby-ruby-on-rails
+    |----   + python
+    |----   +   + guide-1
+    |----   +       article.md
+    |----   +       details.json
+    |
+    |---- in-review.md
+    |---+ in-review
+    |----   + c-c++
+    |----   +   + guide-2
+    |----   +       article.md
+    |----   +       details.json
+    |----   + ruby-ruby-on-rails
+    |----   + python
+    |
+    |---- draft.md
+    |---+ draft
+    |----   + c-c++
+    |----   + ruby-ruby-on-rails
+    |----   +   + guide-3
+    |----   +       article.md
+    |----   +       details.json
+    |----   + python
 
 The layout consists of a the following 'types' of files/objects:
 
@@ -30,17 +58,23 @@ automatically be rendered at the `/faq.md` URL.
 Guide Listing
 ^^^^^^^^^^^^^
 
-The guide listing files are meant to be an easy way to reading the listing of
-published and unpublished or 'in-review' guides.  These files make it much
-faster to render the contents of the `/` and `/review/` URLs.  Currently there
-is no other persistent storage other than the Github repository.  So, these
-files aggregate the base-essentials of a list of guides into a single file.
-This way listing guides only results in 1 Github API call instead of several to
-search the entire repository.
+The guide listing files are meant to be an easy way to read the listing of the
+guides in the various :doc:`publish workflow stages <publish_workflow>`,
+published, draft, or in-review.  These files make it much faster to render the
+contents of the `/` and `/in-review/` URLs.  Currently there is no other
+persistent storage other than the Github repository.  So, these files aggregate
+the base-essentials of a list of guides into a single file.  This way listing
+guides only results in 1 Github API call instead of several to search the
+entire repository.
 
-The two listing files currently used are `published.md` for the listing of
-published files appearing on the homepage and `unpublished.md` for the listing
-of files appearing on the `/review/` page.
+The three listing files currently used are `published.md` for the listing of
+published files appearing on the homepage, `in-review.md` for the listing
+of files appearing on the `/in-review/` page, and `draft.md`.  The `draft.md`
+file is not currently used by the reference website implementation.  This is
+because guides in the draft stage are considered *private* by the web
+application.  However, all guides are easily visible on github.com.  So, the
+`draft.md` file provides an easy way to browse the draft guides solely for
+the github.com repository view.
 
 Listing file structure
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -57,13 +91,13 @@ the metadata.
 article.md
 ^^^^^^^^^^
 
-This file is the raw content in the [markdown](http://daringfireball.net/projects/markdown/) format.
+This file is the raw content in the `markdown <http://daringfireball.net/projects/markdown/>`_ format.
 
 ^^^^^^^^^^^^
 details.json
 ^^^^^^^^^^^^
 
-This is the metadata for the guide in the [json format](https://en.wikipedia.org/wiki/JSON).  We chose JSON because it's fairly readable and easy to use with lots of languages.
+This is the metadata for the guide in the `json format <https://en.wikipedia.org/wiki/JSON>`_.  We chose JSON because it's fairly readable and easy to use withlots of languages.
 
 Why two files?
 ^^^^^^^^^^^^^^

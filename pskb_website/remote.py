@@ -325,7 +325,7 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
                    exist)
     :param auto_encode: Boolean to automatically encode data as utf-8
 
-    :returns: True if data was saved, False otherwise
+    :returns: SHA of commit or None for failure
     """
 
     url = contents_url_from_path(path)
@@ -334,7 +334,8 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
         content = base64.b64encode(content.encode('utf-8'))
 
     commit_info = {'message': message, 'content': content, 'branch': branch,
-                   'author': {'name': name, 'email': email}}
+                   'author': {'name': name, 'email': email},
+                   'committer': {'name': name, 'email': email}}
 
     if sha:
         commit_info['sha'] = sha
@@ -351,9 +352,9 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
         log_error('Failed saving file', url, resp, commit_msg=message,
                   content=content, name=name, email=email, sha=sha,
                   branch=branch)
-        return False
+        return None
 
-    return True
+    return resp.data['commit']['sha']
 
 
 def commit_image_to_github(path, message, file_, name, email, sha=None,
@@ -370,7 +371,7 @@ def commit_image_to_github(path, message, file_, name, email, sha=None,
     :param branch: Name of branch to commit file to (branch must already
                    exist)
 
-    :returns: True if data was saved, False otherwise
+    :returns: SHA of commit or None for failure
     """
 
     contents = base64.encodestring(file_.read())
@@ -594,7 +595,8 @@ def remove_file_from_github(path, message, name, email, branch):
 
     url = contents_url_from_path(path)
     commit_info = {'sha': details.sha, 'branch': branch, 'message': message,
-                   'author': {'name': name, 'email': email}}
+                   'author': {'name': name, 'email': email},
+                   'committer': {'name': name, 'email': email}}
 
     # The flask-oauthlib API expects the access token to be in a tuple or a
     # list.  Not exactly sure why since the underlying oauthlib library has a

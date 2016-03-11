@@ -7,34 +7,46 @@ import os
 
 from flask import redirect, Response, url_for, session, request, render_template, flash, json, g
 
+from . import PUBLISHED, IN_REVIEW, DRAFT
 from . import app
 from . import remote
 from . import models
 from . import forms
 from . import tasks
 from . import filters
+from . import utils
+
+STATUSES = (PUBLISHED, IN_REVIEW, DRAFT)
 
 
-def login_required(f):
+def is_logged_in():
+    """Determine if user is logged in or not"""
+
+    return 'github_token' in session and 'login' in session
+
+
+def login_required(func):
     """
     Decorator to require login and save URL for redirecting user after login
     """
 
-    @wraps(f)
+    @wraps(func)
     def decorated_function(*args, **kwargs):
-        if 'github_token' not in session or 'login' not in session:
+        """decorator args"""
+
+        if not is_logged_in():
             # Save off the page so we can redirect them to what they were
             # trying to view after logging in.
             session['previously_requested_page'] = request.url
 
             return redirect(url_for('login'))
 
-        return f(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return decorated_function
 
 
-def collaborator_required(f):
+def collaborator_required(func):
     """
     Decorator to require login and logged in user to be collaborator
 
@@ -44,9 +56,11 @@ def collaborator_required(f):
     the homepage if they tried something they do not have permissions for.
     """
 
-    @wraps(f)
+    @wraps(func)
     def decorated_function(*args, **kwargs):
-        if 'github_token' not in session or 'login' not in session:
+        """decorator args"""
+
+        if not is_logged_in():
             flash('Must be logged in', category='error')
 
             # Save off the page so we can redirect them to what they were
@@ -65,19 +79,21 @@ def collaborator_required(f):
 
             return redirect(url_for('index'))
 
-        return f(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return decorated_function
 
 
 @app.route('/')
 def index():
+    """Homepage"""
+
     # Send to login, application not fully setup yet.
     if app.config['REPO_OWNER_ACCESS_TOKEN'] is None:
         return redirect(url_for('login'))
 
     # FIXME: This should only fetch the most recent x number.
-    articles = list(models.get_available_articles(published=True))
+    articles = list(models.get_available_articles(status=PUBLISHED))
     featured = os.environ.get('FEATURED_TITLE')
     featured_article = None
 
@@ -96,14 +112,16 @@ def index():
 @app.route('/feature/', methods=['POST'])
 @collaborator_required
 def set_featured_title():
+    """Form POST to update featured title"""
+
     path = request.form['path']
     article = models.read_article(path, branch=u'master')
 
     error_msg = None
     if article is None:
-        error_msg = 'Cannot find article with path "%s"' % (path)
-    elif not article.published:
-        error_msg = 'Cannot feature unpublished article'
+        error_msg = 'Cannot find guide with path "%s"' % (path)
+    elif article.publish_status != PUBLISHED:
+        error_msg = 'Cannot feature unpublished guide'
 
     if error_msg is not None:
         flash(error_msg, category='error')
@@ -116,13 +134,15 @@ def set_featured_title():
 
     os.environ['FEATURED_TITLE'] = article.title
 
-    flash('Featured article updated', category='info')
+    flash('Featured guide updated', category='info')
 
     return redirect(url_for('index'))
 
 
 @app.route('/login/')
 def login():
+    """Login page"""
+
     prev_url = session.get('previously_requested_page')
 
     # See if user got here from write page and highlight that tab to indicate
@@ -143,18 +163,24 @@ def gh_rate_limit():
 
 @app.route('/faq/')
 def faq():
+    """FAQ page"""
+
     file_details = models.read_file('faq.md', rendered_text=True)
     return render_template('faq.html', details=file_details)
 
 
 @app.route('/github_login')
 def github_login():
+    """Callback for github oauth"""
+
     return remote.github.authorize(callback=url_for('authorized', _external=True))
 
 
 @app.route('/logout')
 @login_required
 def logout():
+    """Logout page"""
+
     session.pop('github_token', None)
     session.pop('login', None)
     session.pop('name', None)
@@ -220,7 +246,7 @@ def authorized():
     if url is not None:
         return redirect(url)
 
-    flash('Thanks for logging in. You can now <a href="/review/"> review unpublished guides</a> and <a href="/write/">write new guides</a>.', category='info')
+    flash('Thanks for logging in. You can now browse guides <a href="/in-review/"> in review</a> or <a href="/write/">write new guides</a>.', category='info')
 
     return redirect(url_for('user_profile'))
 
@@ -230,6 +256,8 @@ def authorized():
 @app.route('/user/<author_name>', methods=['GET'])
 @app.route('/user/', defaults={'author_name': None})
 def user_profile(author_name):
+    """Profile page"""
+
     if author_name is None:
         author_name = session.get('login', None)
 
@@ -242,11 +270,14 @@ def user_profile(author_name):
     return render_template('profile.html', user=user, articles=articles)
 
 
-@app.route('/drafts/')
+@app.route('/my-drafts/')
 @login_required
-def drafts():
+def my_drafts():
+    """Users drafts"""
+
     g.drafts_active = True
-    articles = models.get_articles_for_author(session['login'], published=False)
+    articles = models.get_articles_for_author(session['login'],
+                                              status=DRAFT)
     return render_template('index.html', articles=articles)
 
 
@@ -254,6 +285,8 @@ def drafts():
 @app.route('/write/', defaults={'article_path': None})
 @login_required
 def write(article_path):
+    """Editor page"""
+
     article = None
     selected_stack = None
 
@@ -263,7 +296,7 @@ def write(article_path):
                                       branch=branch)
 
         if article is None:
-            flash('Failed reading article', category='error')
+            flash('Failed reading guide', category='error')
             return render_template('editor.html', article=article,
                                    stacks=forms.STACK_OPTIONS,
                                    selected_stack=selected_stack), 404
@@ -291,7 +324,7 @@ def partner_import():
     branch_article = False
     secondary_repo = True
 
-    flash('You are posting an article to the partner repository!',
+    flash('You are posting an guide to the partner repository!',
           category='info')
 
     return render_template('editor.html', article=article,
@@ -299,58 +332,148 @@ def partner_import():
                            secondary_repo=secondary_repo)
 
 
-# Note this URL is directly linked to the filters.url_for_article filter.
-# These must be changed together!
-@app.route('/review/<path:article_path>', methods=['GET'])
-@app.route('/review/', defaults={'article_path': None}, methods=['GET'])
-def review(article_path):
-    g.review_active = True
+@app.route('/in-review/', methods=['GET'])
+def in_review():
+    """In review page"""
 
-    if article_path is None:
-        articles = models.get_available_articles(published=False)
-        return render_template('review.html', articles=articles,
-                               stacks=forms.STACK_OPTIONS)
+    return render_article_list_view(IN_REVIEW)
+
+
+@app.route('/review/<title>', methods=['GET'])
+def review(title):
+    """
+    This URL only exists for legacy reasons so try to find the article where
+    it is in the new scheme and return 301 to indicate moved.
+    """
 
     branch = request.args.get('branch', u'master')
-    article = models.read_article(article_path, branch=branch)
 
-    if article is None:
-        flash('Failed reading article', category='error')
-        return render_template('error.html'), 404
+    for status in STATUSES:
+        articles = models.get_available_articles(status=status)
+        article = models.find_article_by_title(articles, title)
 
+        if article is not None:
+            return redirect(filters.url_for_article(article, branch=branch), 301)
+
+    return render_template('error.html'), 404
+
+
+# Note this URL is directly linked to the filters.url_for_article filter.
+# These must be changed together!
+@app.route('/<stack>/<title>', methods=['GET'])
+def article_view(stack, title):
+    """Article page"""
+
+    branch = request.args.get('branch', u'master')
+
+    # Search all status so an article's canonical URL can always stay the same
+    # regardless of the status, i.e we use the status argument as a hint on
+    # which file listing to use first but we always search the others until we
+    # find article.
+    status = request.args.get('status', PUBLISHED)
+
+    # draft articles are only visible by logged in users
+    if status == DRAFT and not is_logged_in():
+        session['previously_requested_page'] = request.url
+        return redirect(url_for('login'))
+
+    # Using a list here because we specifically want to check in this order but
+    # we don't want to check a single status more than once so don't want dups
+    # either.
+    statuses_to_check = [status]
+    for possible_status in STATUSES:
+        if possible_status not in statuses_to_check:
+            statuses_to_check.append(possible_status)
+
+    for status in statuses_to_check:
+        path = u'%s/%s/%s' % (status, stack, title)
+        article = models.read_article(path, branch=branch)
+
+        if article is not None:
+            return render_article_view(request, article)
+
+    return render_template('error.html'), 404
+
+
+def render_article_list_view(status):
+    """
+    Render list of articles with given status
+
+    :param status: PUBLISHED, IN_REVIEW, or DRAFT
+    """
+
+    articles = models.get_available_articles(status=status)
+    return render_template('review.html', articles=articles,
+                            stacks=forms.STACK_OPTIONS)
+
+
+def render_article_view(request_obj, article, only_visible_by_user=None):
+    """
+    Render article view
+
+    :param request_obj: Request object
+    :param article: Article object to render view for
+    :param branch: Branch of article to read
+    :param only_visible_by_user: Name of user that is allowed to view article
+                                 or None to allow anyone to read it
+    """
+
+    g.review_active = True
     login = session.get('login', None)
     collaborator = session.get('collaborator', False)
 
-    if login == branch or article.author_name == login:
+    publish_statuses = ()
+
+    if login == article.branch or article.author_name == login:
         allow_delete = True
+
+        # Regular users cannot directly publish
+        publish_statuses = (IN_REVIEW, DRAFT)
     else:
         allow_delete = False
+
+    # Collaborators aka editors can use all statuses
+    if collaborator:
+        publish_statuses = STATUSES
 
     # Use http as canonical protocol for url to avoid having two separate
     # comment threads for an article. Disqus uses this variable to save
     # comments.
-    canonical_url = request.base_url.replace('https://', 'http://')
+    canonical_url = request_obj.base_url.replace('https://', 'http://')
+
+    article_identifier = article.first_commit
+    if article_identifier is None:
+        # Backwards compatability for disqus comments. We didn't track the
+        # first commit before version .2 and all disqus comments used the
+        # slugified title for the unique id.  Disqus doesn't allow for changing
+        # this so we're stuck with it if we want to maintain the comments
+        # before version .2.
+        article_identifier = utils.slugify(article.title)
 
     # Filter out the current branch from the list of branches
-    branches = [b for b in article.branches if b != branch]
+    branches = [b for b in article.branches if b != article.branch]
 
     # Always include a link to original article if this is a branched version
-    if branch != u'master':
+    if article.branch != u'master':
         branches.append(u'master')
 
     g.header_white = True
     g.edit_link = True
 
-    author = models.find_user(article.author_name)
+    user = models.find_user(article.author_name)
+    if only_visible_by_user is not None and only_visible_by_user != user.login:
+        return redirect(url_for('index'))
 
     return render_template('article.html',
                            article=article,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
+                           article_identifier=article_identifier,
                            branches=branches,
-                           visible_branch=branch,
                            collaborator=collaborator,
-                           user=author)
+                           user=user,
+                           publish_statuses=publish_statuses)
+
 
 @app.route('/partner/<path:article_path>', methods=['GET'])
 @app.route('/partner/', defaults={'article_path': None}, methods=['GET'])
@@ -364,17 +487,17 @@ def partner(article_path):
         repo_path = '%s/%s' % (app.config['SECONDARY_REPO_OWNER'],
                                app.config['SECONDARY_REPO_NAME'])
     except KeyError:
-        flash('No secondary article configuration', category='error')
+        flash('No secondary guide configuration', category='error')
         return redirect(url_for('index'))
 
     if article_path is None:
-        articles = models.get_available_articles(published=True,
+        articles = models.get_available_articles(status=PUBLISHED,
                                                  repo_path=repo_path)
         return render_template('review.html', articles=articles)
 
     article = models.read_article(article_path, repo_path=repo_path)
     if article is None:
-        flash('Failed reading article', category='error')
+        flash('Failed reading guide', category='error')
         return redirect(url_for('index'))
 
     # Use http as canonical protocol for url to avoid having two separate
@@ -395,6 +518,8 @@ def partner(article_path):
 @app.route('/save/', methods=['POST'])
 @login_required
 def save():
+    """Form POST save"""
+
     user = models.find_user(session['login'])
     if user is None:
         flash('Cannot save unless logged in', category='error')
@@ -404,6 +529,7 @@ def save():
     path = request.form['path']
     title = request.form['title']
     sha = request.form['sha']
+    orig_stack = request.form['original_stack']
 
     if not content.strip() or not title.strip():
         flash('Must enter title and body of guide', category='error')
@@ -416,10 +542,25 @@ def save():
     else:
         stacks = request.form.getlist('stacks')
 
+        # FIXME: This is not the best solution. We're making this task
+        # synchronous but it's just a few git commands so hoping it will be
+        # quick. Also it only happens in the rare case where a stack is
+        # changed.  We need to wait for the file move so we can maintain the
+        # history of the article through the move.
+        if path and orig_stack and stacks[0] != orig_stack:
+            new_path = models.change_article_stack(path, orig_stack, stacks[0],
+                                                   title, user.login,
+                                                   user.email)
+
+            if new_path is None:
+                flash('Failed changing guide stack', category='error')
+            else:
+                path = new_path
+
     if path:
         message = 'Updates to "%s"' % (title)
     else:
-        message = 'New article, "%s"' % (title)
+        message = 'New guide, "%s"' % (title)
 
     # Hidden option for admin to save articles to our other repo that's not
     # editable
@@ -443,39 +584,43 @@ def save():
                                             author_real_name=user.name)
 
     if not article:
-        flash('Failed creating article on github', category='error')
+        flash('Failed creating guide on github', category='error')
         return redirect(url_for('index'))
 
     if repo_path is not None:
         return redirect(url_for('partner', article_path=article.path,
                                 branch=article.branch))
 
-    # Use these filter wrappers so we get absolute URL instead of relative URL
-    # to this specific site.
-    url = filters.url_for_article(article)
-    author_url = filters.url_for_user(article.author_name)
+    # We only have to worry about this on the master branch because we never
+    # actually use file listings on other branches.
+    if article.branch == u'master':
+        # Use these filter wrappers so we get absolute URL instead of relative
+        # URL to this specific site.
+        url = filters.url_for_article(article)
+        author_url = filters.url_for_user(article.author_name)
 
-    tasks.update_listing.delay(url,
-                               article.title,
-                               author_url,
-                               article.author_real_name,
-                               user.login,
-                               user.email,
-                               author_img_url=article.image_url,
-                               thumbnail_url=article.thumbnail_url,
-                               stacks=article.stacks,
-                               branch=article.branch,
-                               published=article.published)
+        tasks.update_listing.delay(url,
+                                   article.title,
+                                   author_url,
+                                   article.author_real_name,
+                                   user.login,
+                                   user.email,
+                                   author_img_url=article.image_url,
+                                   thumbnail_url=article.thumbnail_url,
+                                   stacks=article.stacks,
+                                   branch=article.branch,
+                                   status=article.publish_status)
 
     flash('Your content is being saved to github. It should appear within a few minutes.', category='info')
 
-    return redirect(url_for('review', article_path=article.path,
-                            branch=article.branch))
+    return redirect(filters.url_for_article(article, branch=article.branch))
 
 
 @app.route('/delete/', methods=['POST'])
 @login_required
 def delete():
+    """Delete POST page"""
+
     user = models.find_user(session['login'])
     if user is None:
         flash('Cannot delete unless logged in', category='error')
@@ -487,31 +632,27 @@ def delete():
     article = models.read_article(path, rendered_text=False, branch=branch)
 
     if article is None:
-        flash('Cannot find article to delete', category='error')
+        flash('Cannot find guide to delete', category='error')
         return redirect(url_for('index'))
 
-    if not models.delete_article(article, 'Removing article', user.login,
-                                 user.email):
-        flash('Failed removing article', category='error')
+    msg = u'Removing guide "%s"' % (article.title)
+    if not models.delete_article(article, msg, user.login, user.email):
+        flash('Failed removing guide', category='error')
     else:
         flash('Article successfully deleted', category='info')
 
     # This article should have only been on one of these lists but trying to
     # remove it doesn't hurt so just forcefully remove it from both just in
     # case.
-    published = False
-    tasks.remove_from_listing(article.title, published, user.login, user.email,
-                              branch=article.branch)
-
-    published = not published
-    tasks.remove_from_listing(article.title, published, user.login, user.email,
-                              branch=article.branch)
+    for status in STATUSES:
+        tasks.remove_from_listing(article.title, status, user.login,
+                                  user.email, branch=article.branch)
 
     return redirect(url_for('index'))
 
 
 @app.route('/publish/', methods=['POST'])
-@collaborator_required
+@login_required
 def change_publish_status():
     """Publish or unpublish article via POST"""
 
@@ -523,25 +664,36 @@ def change_publish_status():
     path = request.form['path']
     branch = request.form['branch']
 
-    # Convert to int first b/c '0' will be True by bool()!
-    publish_status = bool(int(request.form['publish_status']))
+    publish_status = request.form['publish_status']
+    if publish_status not in STATUSES:
+        flash('Invalid publish status, must be one of "%s"' % (STATUSES),
+              category='error')
+        return render_template('index.html')
 
     if branch != u'master':
-        flash('Cannot change publish status on articles from branches other than master', category='error')
-        return redirect(url_for('review', article_path=path, branch=branch))
+        flash('Cannot change publish status on guides from branches other than master', category='error')
+        return redirect(url_for('index'))
 
     article = models.read_article(path, rendered_text=False, branch=branch)
     if article is None:
-        flash('Cannot find article to change publish status', category='error')
+        flash('Cannot find guide to change publish status', category='error')
         return redirect(url_for('index'))
 
-    author_url = url_for('user_profile', author_name=article.author_name)
-    article_url = url_for('review', article_path=path)
+    if not user.is_collaborator:
+        if article.author_name != user.login:
+            flash('Only collaborators can change publish status on guides they do not start',
+                  category='error')
+            return redirect(url_for('index'))
 
-    article.published = publish_status
-    if not models.save_article_meta_data(article, user.login, user.email):
-        flash('Failed updating article publish status', category='error')
-        return redirect(article_url)
+        if publish_status == PUBLISHED:
+            flash('Only collaborators can publish guides')
+            return redirect(url_for('index'))
+
+    author_url = filters.url_for_user(article.author_name)
+    article_url = filters.url_for_article(article)
+
+    curr_path = article.path
+    article.publish_status = publish_status
 
     tasks.update_listing.delay(article_url,
                                article.title,
@@ -553,10 +705,13 @@ def change_publish_status():
                                thumbnail_url=article.thumbnail_url,
                                stacks=article.stacks,
                                branch=article.branch,
-                               published=publish_status)
+                               status=article.publish_status)
 
-    publishing = 'publish' if publish_status else 'unpublish'
-    msg = 'The article has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publishing)
+    tasks.move_article.delay(curr_path, article.path, article.title,
+                             user.login, user.email,
+                             new_publish_status=article.publish_status)
+
+    msg = 'The guide has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publish_status)
 
     flash(msg, category='info')
 
@@ -565,6 +720,8 @@ def change_publish_status():
 
 @app.route('/subscribe/', methods=['POST'])
 def subscribe():
+    """Subscribe POST page"""
+
     form = forms.SignupForm()
 
     # Note this helper automatically grabs request.form
@@ -590,6 +747,8 @@ def subscribe():
 @app.route('/img_upload/', methods=['POST'])
 @login_required
 def img_upload():
+    """Image upload POST page"""
+
     user = models.find_user(session['login'])
     if user is None:
         app.logger.error('Cannot upload image unless logged in')
@@ -605,7 +764,7 @@ def img_upload():
     # Always save images to master branch because image uploads might happen
     # before the article is saved so don't know the article name or branch to
     # save alongside.
-    url = models.save_image(file_.stream, ext, 'Saving new article image',
+    url = models.save_image(file_.stream, ext, 'Saving new guide image',
                             user.login, user.email, branch=u'master')
 
     if url is None:
@@ -616,33 +775,44 @@ def img_upload():
                     mimetype='application/json')
 
 
-@app.route('/sync_listing/')
+@app.route('/sync_listing/<publish_status>')
 @collaborator_required
-def sync_listing():
+def sync_listing(publish_status):
+    """Sync listing page"""
+
     user = models.find_user(session['login'])
     if user is None:
         app.logger.error('Cannot sync listing unless logged in')
         return render_template('index.html'), 500
 
-    published = bool(int(request.args.get('published', 1)))
-    tasks.synchronize_listing.delay(published, user.login, user.email)
+    if publish_status not in STATUSES:
+        flash('Invalid publish status, must be one of "%s"' % (u','.join(STATUSES)),
+              category='error')
+        return render_template('index.html')
 
-    flash('Queued up %s sync' % ('published' if published else 'unpublished'),
-          category='info')
+    tasks.synchronize_listing.delay(publish_status, user.login, user.email)
+
+    flash('Queued up %s sync' % (publish_status), category='info')
 
     return redirect(url_for('index'))
 
 
 @app.context_processor
 def template_globals():
+    """Global variables available to all responses"""
+
     return {'repo_url': remote.default_repo_url(),
             'form': forms.SignupForm(), 'stack_options': forms.STACK_OPTIONS}
 
 
 @app.errorhandler(500)
 def internal_error(error):
+    """Unknown error page"""
+
     return render_template('error.html'), 500
+
 
 @app.errorhandler(404)
 def not_found(error):
+    """Not found error page"""
     return render_template('error.html'), 404

@@ -69,7 +69,7 @@ def save_image(file_, extension, message, name, email, branch='master'):
     url = None
 
     if commit_image_to_github(path, message, file_, name, email,
-                              branch=branch):
+                              branch=branch) is not None:
 
         url = github_url_from_upload_path(path, name, branch=branch)
 

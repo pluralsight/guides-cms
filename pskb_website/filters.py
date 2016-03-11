@@ -4,7 +4,9 @@ Misc. filter tags for templates
 
 from flask import url_for
 
+from . import PUBLISHED
 from . import app
+from . import utils
 
 
 def date_string(dt, fmt_str):
@@ -18,22 +20,41 @@ def date_string(dt, fmt_str):
     return dt.strftime(fmt_str)
 
 
-def url_for_article(article):
+def url_for_article(article, base_url=app.config['BASE_URL'], branch=u'master'):
     """
     Get URL for article object
 
     :param article: Article object
+    :param base_url: Base URL i.e domain, etc. to use
+    :param branch: Branch
     :returns: URL as string
 
-    Note this filter is directly linked to the views.review URL.  These must be
-    changed together!
+    Note this filter is directly linked to the views.article_view URL.  These
+    must be changed together!
+
+    Also note the branch argument is optional even though it's included in the
+    article object.  This is for extra flexibility so callers can generate urls
+    for several branches without having to read that branch specifically and
+    creating an article object.
 
     This filter only exists to centralize the ability to create a url for an
     article so we can store the url in a file or render in templates.
     """
 
-    return '%s%s' % (app.config['BASE_URL'],
-                      url_for('review', article_path=article.path))
+    title = utils.slugify(article.title)
+    stack = utils.slugify_stack(article.stacks[0])
+
+    url = u'%s%s' % (base_url,
+                     url_for(u'article_view', title=title, stack=stack))
+
+    if article.publish_status != PUBLISHED:
+        url = u'%s?status=%s' % (url, article.publish_status)
+
+    if branch != u'master':
+        query_str_arg = '&' if '?' in url else '?'
+        url = u'%s%sbranch=%s' % (url, query_str_arg, branch)
+
+    return url
 
 
 def url_for_user(user):
@@ -55,7 +76,7 @@ def url_for_user(user):
     except AttributeError:
         username = user
 
-    return '%s%s' % (app.config['BASE_URL'],
+    return u'%s%s' % (app.config['BASE_URL'],
                       url_for('user_profile', author_name=username))
 
 def author_name(article):

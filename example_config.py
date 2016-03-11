@@ -49,6 +49,8 @@ class Config(object):
     MAILCHIMP_LIST_ID = None
     MAILCHIMP_STACKS_GROUP_NAME = None
 
+    BASE_URL = ''
+
 
 class DevelopmentConfig(Config):
     DEBUG = True

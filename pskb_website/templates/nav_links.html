@@ -19,16 +19,16 @@
                         <ul class="nav navbar-nav navbar-right">
 
                             {% if g.edit_link and article %}
-                            <li><a href="{{url_for('write', article_path=article.path, branch=visible_branch if visible_branch else 'master')}}" class="emphasize">Edit Guide</a></li>
+                            <li><a href="{{url_for('write', article_path=article.path, branch=article.branch)}}" class="emphasize">Edit Guide</a></li>
                             {% else %}
                             <li><a href="/write/" class="emphasize">Write a Guide</a></li>
                             {% endif %}
 
                             <li><a href="/">Home</a></li>
-                            <li><a href="/review/">Review</a></li>
-                            <li><a href="/faq/">Our Mission</a></li>
+                            <li><a href="/in-review/">Review</a></li>
 
                             {% if session.github_token %}
+                            <li><a href="/faq/">Our Mission</a></li>
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                     {% if session.user_image %}
@@ -45,6 +45,7 @@
                             </li>
 
                             {% else %}
+                            <li><a href="/faq/">Our Mission</a></li>
                             <li><a href="/login/">Sign in with Github</a></li>
                             {% endif %}
                         </ul>

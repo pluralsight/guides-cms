@@ -8,6 +8,7 @@ can easily be switched if needed while keeping the API the same.
 import collections
 import re
 
+from .. import PUBLISHED, IN_REVIEW, DRAFT
 from .. import app
 from .. import remote
 from .. import filters
@@ -16,7 +17,8 @@ from ..forms import STACK_OPTIONS
 
 
 PUB_FILENAME = u'published.md'
-UNPUB_FILENAME = u'unpublished.md'
+IN_REVIEW_FILENAME = u'in_review.md'
+DRAFT_FILENAME = u'draft.md'
 
 # Add author's image url here
 
@@ -27,7 +29,7 @@ IMG_RE = re.compile(r'.*\<img src="(.*?)" .*')
 
 # The list of stacks has all sorts of special characters and commas in it so
 # parsing it requires a regex with everything escaped.
-STACK_RE = re.compile('|'.join(re.escape(s) for s in STACK_OPTIONS))
+STACK_RE = re.compile('|'.join(re.escape(s.lower()) for s in STACK_OPTIONS))
 
 file_listing_item = collections.namedtuple('file_listing_item',
                                 ['title', 'url', 'author_name',
@@ -58,14 +60,24 @@ def published_article_path():
     return '%s/%s' % (remote.default_repo_path(), PUB_FILENAME)
 
 
-def unpublished_article_path():
+def in_review_article_path():
     """
-    Get path to unpublished article file listing
+    Get path to in-review article file listing
 
-    :returns: Path to unpublished article file listing file
+    :returns: Path to in-review article file listing file
     """
 
-    return '%s/%s' % (remote.default_repo_path(), UNPUB_FILENAME)
+    return '%s/%s' % (remote.default_repo_path(), IN_REVIEW_FILENAME)
+
+
+def draft_article_path():
+    """
+    Get path to draft article file listing
+
+    :returns: Path to draft article file listing file
+    """
+
+    return '%s/%s' % (remote.default_repo_path(), DRAFT_FILENAME)
 
 
 def published_articles(branch=u'master'):
@@ -79,21 +91,32 @@ def published_articles(branch=u'master'):
     return _read_file_listing(PUB_FILENAME, branch=branch)
 
 
-def unpublished_articles(branch=u'master'):
+def in_review_articles(branch=u'master'):
     """
-    Get iterator through list of unpublished articles from file listing
+    Get iterator through list of in-review articles from file listing
 
     :param branch: Name of branch to save file listing to
     :returns: Generator to iterate through file_listing_item tuples
     """
 
-    return _read_file_listing(UNPUB_FILENAME, branch=branch)
+    return _read_file_listing(IN_REVIEW_FILENAME, branch=branch)
+
+
+def draft_articles(branch=u'master'):
+    """
+    Get iterator through list of draft articles from file listing
+
+    :param branch: Name of branch to save file listing to
+    :returns: Generator to iterate through file_listing_item tuples
+    """
+
+    return _read_file_listing(DRAFT_FILENAME, branch=branch)
 
 
 def update_article_listing(article_url, title, author_url, author_name,
                            committer_name, committer_email,
                            author_img_url=None, thumbnail_url=None,
-                           stacks=None, branch=u'master', published=False):
+                           stacks=None, branch=u'master', status=DRAFT):
     """
     Update article file listing with given article info
 
@@ -107,26 +130,25 @@ def update_article_listing(article_url, title, author_url, author_name,
     :param thumbnail_url: Optional URL to thumbnail image for article
     :param stacks: Optional list of stacks article belongs to
     :param branch: Name of branch to save file listing to
-    :param published: Boolean to update listing of published articles or list
-                      of unpublished articles
-
-                      If published is True then the artitle title is removed
-                      from the unpublished listing (if it exists).
-
-                      If published is False then the article title is removed
-                      from the published listing (if it exists).
+    :param status: PUBLISHED, IN_REVIEW, or DRAFT to add article to file
+                   listing.  All other file listings will also be updated to
+                   remove this article if it exists there.
 
     :returns: True or False if file listing was updated
     """
 
-    if published:
+    if status == PUBLISHED:
         path_to_listing = published_article_path()
         filename = PUB_FILENAME
-        message = 'Adding "%s" to published articles' % (title)
+        message = u'Adding "%s" to published' % (title)
+    elif status == IN_REVIEW:
+        path_to_listing = in_review_article_path()
+        filename = IN_REVIEW_FILENAME
+        message = u'Adding "%s" to in-review' % (title)
     else:
-        path_to_listing = unpublished_article_path()
-        filename = UNPUB_FILENAME
-        message = 'Adding "%s" to unpublished articles' % (title)
+        path_to_listing = draft_article_path()
+        filename = DRAFT_FILENAME
+        message = u'Adding "%s" to draft' % (title)
 
     sha = None
     start_text = ''
@@ -144,43 +166,55 @@ def update_article_listing(article_url, title, author_url, author_name,
                                          thumbnail_url,
                                          stacks=stacks)
 
-    success = True
     if start_text != text:
-        success = remote.commit_file_to_github(path_to_listing, message, text,
-                                               committer_name, committer_email,
-                                               sha=sha, branch=branch)
-    if not success:
-        return success
+        commit_sha = remote.commit_file_to_github(path_to_listing, message,
+                                                  text, committer_name,
+                                                  committer_email, sha=sha,
+                                                  branch=branch)
+        if commit_sha is None:
+            return False
 
-    # Now update the opposite file so the article is only on 1 file at a time
-    published = not published
+    # Now update the opposite files so the article is only on 1 file at a time
+    results = []
+    for possible_status in (PUBLISHED, IN_REVIEW, DRAFT):
+        if possible_status == status:
+            continue
 
-    return remove_article_from_listing(title, published, committer_name,
-                                       committer_email, branch=branch)
+        # Don't care about status here we need to try all the possible files
+        # and lower levels will log anything useful
+        res = remove_article_from_listing(title, possible_status,
+                                          committer_name, committer_email,
+                                          branch=branch)
+        results.append(res)
+
+    return all(results)
 
 
-def remove_article_from_listing(title, published, committer_name,
+def remove_article_from_listing(title, status, committer_name,
                                 committer_email, branch=u'master'):
     """
     Remove article title from file listing
 
     :param title: Title of article to remove from listing
+    :param status: PUBLISHED, IN_REVIEW, or DRAFT
     :param committer_name: Name of user committing change
     :param committer_email: Email of user committing change
     :param branch: Name of branch to save file listing to
-    :param published: Boolean to update listing of published articles or list
-                      of unpublished articles
     :returns: True or False if file listing was updated
     """
 
-    if published:
+    if status == PUBLISHED:
         path_to_listing = published_article_path()
         filename = PUB_FILENAME
-        message = 'Removing "%s" from published articles' % (title)
+        message = u'Removing "%s" from published' % (title)
+    elif status == IN_REVIEW:
+        path_to_listing = in_review_article_path()
+        filename = IN_REVIEW_FILENAME
+        message = u'Removing "%s" from in-review' % (title)
     else:
-        path_to_listing = unpublished_article_path()
-        filename = UNPUB_FILENAME
-        message = 'Removing "%s" from unpublished articles' % (title)
+        path_to_listing = draft_article_path()
+        filename = DRAFT_FILENAME
+        message = u'Removing "%s" from draft' % (title)
 
     sha = None
     start_text = ''
@@ -192,24 +226,25 @@ def remove_article_from_listing(title, published, committer_name,
 
     text = get_removed_file_listing_text(start_text, title)
 
-    success = True
     if start_text != text:
-        success = remote.commit_file_to_github(path_to_listing, message, text,
-                                               committer_name, committer_email,
-                                               sha=sha, branch=branch)
+        commit_sha = remote.commit_file_to_github(path_to_listing, message,
+                                                  text, committer_name,
+                                                  committer_email, sha=sha,
+                                                  branch=branch)
+        if commit_sha is None:
+            return False
 
-    return success
+    return True
 
 
-def sync_file_listing(all_articles, published, committer_name, committer_email,
+def sync_file_listing(all_articles, status, committer_name, committer_email,
                       branch=u'master'):
     """
     Synchronize file listing file with contents of repo
 
     :param all_articles: Iterable of article objects that should be synced to
                          listing
-    :param published: True to sync published articles or False to sync
-                      unpublished articles
+    :param status: PUBLISHED, IN_REVIEW, or DRAFT
     :param committer_name: Name of user committing change
     :param committer_email: Email of user committing change
     :param branch: Name of branch to save file listing to
@@ -220,18 +255,22 @@ def sync_file_listing(all_articles, published, committer_name, committer_email,
     this should at least be run as some kind of background process.
     """
 
-    if published:
+    if status == PUBLISHED:
         path_to_listing = published_article_path()
         filename = PUB_FILENAME
-        message = 'Synchronizing published articles'
+        message = u'Synchronizing published'
+    elif status == IN_REVIEW:
+        path_to_listing = in_review_article_path()
+        filename = IN_REVIEW_FILENAME
+        message = u'Synchronizing in-review'
     else:
-        path_to_listing = unpublished_article_path()
-        filename = UNPUB_FILENAME
-        message = 'Synchronizing unpublished articles'
+        path_to_listing = draft_article_path()
+        filename = DRAFT_FILENAME
+        message = u'Synchronizing draft'
 
     details = read_file(filename, rendered_text=False, branch=branch)
 
-    text = ''
+    text = u''
     sha = None
 
     if details is not None:
@@ -243,7 +282,7 @@ def sync_file_listing(all_articles, published, committer_name, committer_email,
     # Get listing of all the titles currently in the file so we know which ones
     # to remove and we'll try to remove them in order so the diff of the file
     # is sane.
-    prev_titles = {item.title for item in _read_items_from_file_listing(text)}
+    prev_titles = {item.title for item in read_items_from_file_listing(text)}
     curr_titles = set()
 
     for article in all_articles:
@@ -266,16 +305,21 @@ def sync_file_listing(all_articles, published, committer_name, committer_email,
         text = get_removed_file_listing_text(text, title)
 
     if text != start_text:
-        return remote.commit_file_to_github(path_to_listing, message, text,
-                                            committer_name, committer_email,
-                                            sha=sha, branch=branch)
+        commit_sha = remote.commit_file_to_github(path_to_listing, message,
+                                                  text, committer_name,
+                                                  committer_email, sha=sha,
+                                                  branch=branch)
+        if commit_sha is None:
+            return False
     else:
         app.logger.debug('Listing unchanged so no commit being made')
+
+    return True
 
 
 def _read_file_listing(path_to_listing, branch=u'master'):
     """
-    Get iterator through list of published or unpublished articles
+    Get iterator through list of articles from file
 
     :param path_to_listing: Path to file containing file listing
     :param branch: Name of branch to save file listing to
@@ -289,9 +333,9 @@ def _read_file_listing(path_to_listing, branch=u'master'):
             raise StopIteration
 
         text = details.text
-        cache.save_article(path_to_listing, branch, text, timeout=60 * 5)
+        cache.save_article(path_to_listing, branch, text, timeout=60 * 3)
 
-    for item in _read_items_from_file_listing(text):
+    for item in read_items_from_file_listing(text):
         yield item
 
 
@@ -320,7 +364,7 @@ def _iter_article_sections_from_file_listing(text):
         yield lines_for_article
 
 
-def _read_items_from_file_listing(text):
+def read_items_from_file_listing(text):
     """
     Generator to yield parsed file_listing_item from text
 
@@ -445,7 +489,7 @@ def _parse_stacks_line(line):
     :returns: List of stacks
     """
 
-    return [_force_unicode(m.group()) for m in STACK_RE.finditer(line)]
+    return [_force_unicode(m.group()) for m in STACK_RE.finditer(line.lower())]
 
 
 def _force_unicode(text):

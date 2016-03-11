@@ -90,6 +90,9 @@ function save(sha, path, secondary_repo) {
     var title = document.getElementById("title");
     form.appendChild(title.cloneNode());
 
+    var orig_stack = document.getElementById("original_stack");
+    form.appendChild(orig_stack.cloneNode());
+
     var stacks_select = document.getElementById("stacks");
     var stacks = document.createElement("input");
     stacks.name = "stacks";

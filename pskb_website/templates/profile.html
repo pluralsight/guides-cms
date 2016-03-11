@@ -11,15 +11,15 @@
                 <ul>
             {% endif %}
 
-            <li><a href="/review/{{article.path}}">{{article.title}}</a></li>
+            <li><a href="{{article|url_for_article}}">{{article.title}}</a></li>
 
             {% if loop.last %}
                 </ul>
             {% endif %}
         {% else %}
-            <p>No articles yet!</p>
+            <p>No guides yet!</p>
             <p>
-                As a next step, why not create an article? You can do so by
+                As a next step, why not create an guide? You can do so by
                 <a href="/write/">clicking here</a>.
             </p>
         {% endfor %}

@@ -7,6 +7,11 @@ import os
 
 from flask import Flask
 
+# Possible publish statuses
+DRAFT = u'draft'
+IN_REVIEW = u'in-review'
+PUBLISHED = u'published'
+
 app = Flask(__name__)
 
 # Running on heroku

@@ -20,3 +20,11 @@ def slugify(text, delim=u'-'):
             result.append(word)
 
     return unicode(delim.join(result))
+
+
+def slugify_stack(stack):
+    """Generates an ASCII-only slug version of the stack"""
+
+    # Just take anything before the '('. Some of our stacks are really long and
+    # would make for ugly URLs and folders.
+    return slugify(stack.split('(')[0])
