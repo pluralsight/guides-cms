@@ -6,7 +6,7 @@
     <div class="container">
         <div id="featured">
         {% if featured_article %}
-                <a href="/review/{{featured_article.path}}">
+                <a href="{{featured_article|url_for_article}}">
                     <span class="intro">Featured Guide</span>
                     <h1 class="lead">{{featured_article.title}}</h1>
                     <h2><small>by {{featured_article|author_name}}</small></h2>
