@@ -689,11 +689,14 @@ def change_publish_status():
             flash('Only collaborators can publish guides')
             return redirect(url_for('index'))
 
-    author_url = filters.url_for_user(article.author_name)
-    article_url = filters.url_for_article(article)
-
     curr_path = article.path
     article.publish_status = publish_status
+
+    author_url = filters.url_for_user(article.author_name)
+
+    # Create this link AFTER changing the status b/c the URL will have the
+    # status in it if the article is not published yet.
+    article_url = filters.url_for_article(article)
 
     tasks.update_listing.delay(article_url,
                                article.title,
