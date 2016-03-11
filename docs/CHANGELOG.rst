@@ -3,6 +3,18 @@ CHANGELOG
 =========
 
 --------------------
+version .3 - 11/3/16
+--------------------
+
+Bug Fixes
+---------
+
+- Fix bug with not checking for article existence on editor page
+- Fix link for featured article after redesign
+- Fix bug with file listing getting updated with publish status before it changed
+
+
+--------------------
 version .2 - 11/3/16
 --------------------
 
