@@ -442,6 +442,7 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     canonical_url = request_obj.base_url.replace('https://', 'http://')
 
     article_identifier = article.first_commit
+    redirect_url = None
     if article_identifier is None:
         # Backwards compatability for disqus comments. We didn't track the
         # first commit before version .2 and all disqus comments used the
@@ -449,6 +450,11 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
         # this so we're stuck with it if we want to maintain the comments
         # before version .2.
         article_identifier = utils.slugify(article.title)
+
+        # Hack to save our old social shares. The po.st service doesn't handle
+        # 301 redirects so need to share with the old url to keep the counts.
+        redirect_url = u'%s%s' % (app.config['BASE_URL'],
+                                  url_for('review', title=article_identifier))
 
     # Filter out the current branch from the list of branches
     branches = [b for b in article.branches if b != article.branch]
@@ -472,7 +478,8 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
                            branches=branches,
                            collaborator=collaborator,
                            user=user,
-                           publish_statuses=publish_statuses)
+                           publish_statuses=publish_statuses,
+                           redirect_url=redirect_url)
 
 
 @app.route('/partner/<path:article_path>', methods=['GET'])

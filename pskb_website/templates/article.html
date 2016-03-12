@@ -9,6 +9,12 @@
 {% block js %}
     {{super()}}
     <script type="text/javascript">
+        {% if redirect_url %}
+            /* Share with old URL to maintain the share counts */
+            window.pwidget_config = {
+                defaults: { url: "{{redirect_url}}"}
+            };
+        {% endif %}
         (function () {
             var s = document.createElement('script');
             s.type = 'text/javascript';
