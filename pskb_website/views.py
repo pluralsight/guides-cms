@@ -228,20 +228,6 @@ def authorized():
 
         session['collaborator'] = user.is_collaborator
 
-    user = models.find_user()
-    if user is None:
-        flash('Unable to read user from Github API')
-        return redirect(url_for('index'))
-
-    if user.name:
-        session['name'] = user.name
-
-    if user.login:
-        session['login'] = user.login
-
-        if 'name' not in session:
-            session['name'] = user.login
-
     url = session.pop('previously_requested_page', None)
     if url is not None:
         return redirect(url)
@@ -568,13 +554,6 @@ def save():
         message = 'Updates to "%s"' % (title)
     else:
         message = 'New guide, "%s"' % (title)
-
-    # Hidden option for admin to save articles to our other repo that's not
-    # editable
-    repo_path = None
-    if request.form.get('secondary_repo', None) is not None:
-        repo_path = '%s/%s' % (app.config['SECONDARY_REPO_OWNER'],
-                               app.config['SECONDARY_REPO_NAME'])
 
     # Hidden option for admin to save articles to our other repo that's not
     # editable
