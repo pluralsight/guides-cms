@@ -488,6 +488,17 @@ def save_article_meta_data(article, author_name, email, branch=None):
         sha = details.sha
         text = details.text
 
+        orig_article = Article.from_json(details.text)
+
+        # Merge the original article metadata with the new version.  Currently
+        # the only thing that can change here is the list of branches. We only
+        # modify the list of branches when saving a branched article so we
+        # merge the two lists of branches here since removal of a branch should
+        # happen elsewhere.
+        for branch in orig_article.branches:
+            if branch not in article.branches:
+                article.branches.append(branch)
+
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
     exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', '_path',
