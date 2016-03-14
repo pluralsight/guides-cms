@@ -361,6 +361,15 @@ def article_view(stack, title):
     if title == 'article.md':
         return redirect(url_for('review', title=stack))
 
+    # We don't allow any of these characters in stack or title so go ahead and
+    # reject this without doing any github API requests.  This especially
+    # prevents issues when articles have bad image links in them that do not
+    # have a path, which would end up making requests to this URL. For example,
+    # <img src="test.png"/> on a /python/my-article page would try to find the
+    # image at /python/test.png.
+    if '.' in stack or '.' in title:
+        return render_template('error.html'), 404
+
     branch = request.args.get('branch', u'master')
 
     # Search all status so an article's canonical URL can always stay the same
