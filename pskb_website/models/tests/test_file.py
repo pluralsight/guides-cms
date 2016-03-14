@@ -41,8 +41,9 @@ def test_parse_author_info_line():
 def test_parse_stacks_line():
     line = 'Related to: Front-End JavaScript (Angular, React, Meteor, etc), Python, C/C++'
 
-    stacks = ['Front-End JavaScript (Angular, React, Meteor, etc)', 'Python',
-              'C/C++']
+    # Everything is returned lower case to normalize things for callers
+    stacks = ['front-end javascript (angular, react, meteor, etc)', 'python',
+              'c/c++']
     assert file_mod._parse_stacks_line(line) == stacks
 
 
@@ -96,7 +97,7 @@ def test_parsing_listing_text():
 - [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)
 """
 
-    test_articles = list(file_mod._read_items_from_file_listing(text))
+    test_articles = list(file_mod.read_items_from_file_listing(text))
     correct_articles = [
         file_mod.file_listing_item(
             'A Beginners Guide to jQuery',
@@ -105,7 +106,7 @@ def test_parsing_listing_text():
             'Carl Smith',
             'https://avatars.githubusercontent.com/u/7561668?v=3',
             None,
-            ['Front-End JavaScript (Angular, React, Meteor, etc)']),
+            ['front-end javascript (angular, react, meteor, etc)']),
 
         file_mod.file_listing_item(
             'JavaScript Callbacks Variable Scope Problem',
@@ -114,7 +115,7 @@ def test_parsing_listing_text():
             'Itay Grudev',
             None,
             'https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg',
-            ['Front-End JavaScript (Angular, React, Meteor, etc)']),
+            ['front-end javascript (angular, react, meteor, etc)']),
     ]
 
     assert test_articles == correct_articles
@@ -133,7 +134,7 @@ def test_parsing_listing_text_without_stacks():
 - [Thumbnail](https://raw.githubusercontent.com/durden/articles/master/images/dc622a2f-673c-4466-ade3-3b1122dc7d6d.jpg)
 """
 
-    test_articles = list(file_mod._read_items_from_file_listing(text))
+    test_articles = list(file_mod.read_items_from_file_listing(text))
     correct_articles = [
         file_mod.file_listing_item(
             'A Beginners Guide to jQuery',
@@ -142,7 +143,7 @@ def test_parsing_listing_text_without_stacks():
             'Carl Smith',
             'https://avatars.githubusercontent.com/u/7561668?v=3',
             None,
-            ['Front-End JavaScript (Angular, React, Meteor, etc)']),
+            ['front-end javascript (angular, react, meteor, etc)']),
 
         file_mod.file_listing_item(
             'JavaScript Callbacks Variable Scope Problem',
