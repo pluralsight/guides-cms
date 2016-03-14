@@ -18,19 +18,22 @@ def find_user(username=None):
     :returns: User object
     """
 
-    user_info = cache.read_user(username)
-    if user_info is not None:
-        return User.from_json(user_info)
+    if username is not None:
+        user_info = cache.read_user(username)
+        if user_info is not None:
+            return User.from_json(user_info)
 
     user_info = remote.read_user_from_github(username)
     if not user_info:
         return None
 
-    # This doesn't take a username b/c it's only accessible via the logged in
-    # user, which the remote layer can tell from the session.
-    email = remote.primary_github_email_of_logged_in()
     user = User(user_info['name'], user_info['login'])
-    user.email = email
+
+    # Request is for logged in user only
+    if username is None:
+        email = remote.primary_github_email_of_logged_in()
+        user.email = email
+
     user.avatar_url = user_info['avatar_url']
     user.location = user_info['location']
     user.blog = user_info['blog']

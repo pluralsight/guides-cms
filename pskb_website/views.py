@@ -518,6 +518,12 @@ def save():
         flash('Cannot save unless logged in', category='error')
         return render_template('index.html'), 404
 
+    # User could have been cached previously without an email
+    if user.email is None:
+        user.email = remote.primary_github_email_of_logged_in()
+        if user.email is None:
+            flash('Unable to read email address from Github API to properly attribute your commit to your account. Please make sure you have authorized the application to access your email.', category='warning')
+
     content = request.form['content']
     path = request.form['path']
     title = request.form['title']
