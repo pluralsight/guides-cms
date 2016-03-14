@@ -456,6 +456,10 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     if only_visible_by_user is not None and only_visible_by_user != user.login:
         return redirect(url_for('index'))
 
+    # Don't allow comments when we're testing b/c disqus will create a
+    # 'discussion' for every article and there's no way to delete them!
+    allow_comments = not app.debug
+
     return render_template('article.html',
                            article=article,
                            allow_delete=allow_delete,
@@ -465,7 +469,8 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
                            collaborator=collaborator,
                            user=user,
                            publish_statuses=publish_statuses,
-                           redirect_url=redirect_url)
+                           redirect_url=redirect_url,
+                           allow_comments=allow_comments)
 
 
 @app.route('/partner/<path:article_path>', methods=['GET'])
