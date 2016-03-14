@@ -16,6 +16,10 @@ def find_user(username=None):
     :param username: Optional username to search for, if no username given the
                      currently logged in user will be returned (if any)
     :returns: User object
+
+    Note the email field on the returned user object is only valid when reading
+    the logged in user (i.e. when NOT passing a username). We cannot read email
+    information for users who have not authenticated the application.
     """
 
     if username is not None:

@@ -518,16 +518,13 @@ def partner(article_path):
 def save():
     """Form POST save"""
 
-    user = models.find_user(session['login'])
+    user = models.find_user()
     if user is None:
         flash('Cannot save unless logged in', category='error')
         return render_template('index.html'), 404
 
-    # User could have been cached previously without an email
     if user.email is None:
-        user.email = remote.primary_github_email_of_logged_in()
-        if user.email is None:
-            flash('Unable to read email address from Github API to properly attribute your commit to your account. Please make sure you have authorized the application to access your email.', category='warning')
+        flash('Unable to read email address from Github API to properly attribute your commit to your account. Please make sure you have authorized the application to access your email.', category='warning')
 
     content = request.form['content']
     path = request.form['path']
@@ -618,7 +615,7 @@ def save():
 def delete():
     """Delete POST page"""
 
-    user = models.find_user(session['login'])
+    user = models.find_user()
     if user is None:
         flash('Cannot delete unless logged in', category='error')
         return render_template('index.html'), 404
@@ -653,7 +650,7 @@ def delete():
 def change_publish_status():
     """Publish or unpublish article via POST"""
 
-    user = models.find_user(session['login'])
+    user = models.find_user()
     if user is None:
         flash('Cannot change publish status unless logged in', category='error')
         return render_template('index.html'), 404
@@ -749,7 +746,7 @@ def subscribe():
 def img_upload():
     """Image upload POST page"""
 
-    user = models.find_user(session['login'])
+    user = models.find_user()
     if user is None:
         app.logger.error('Cannot upload image unless logged in')
         return Response(response='', status=500, mimetype='application/json')
@@ -780,7 +777,7 @@ def img_upload():
 def sync_listing(publish_status):
     """Sync listing page"""
 
-    user = models.find_user(session['login'])
+    user = models.find_user()
     if user is None:
         app.logger.error('Cannot sync listing unless logged in')
         return render_template('index.html'), 500
