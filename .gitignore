@@ -6,3 +6,6 @@ VimballRecord
 tags
 *.netrwhist
 config.py
+env/*
+docs/_build/*
+.cache/*
