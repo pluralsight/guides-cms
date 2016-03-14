@@ -246,6 +246,9 @@ def user_profile(author_name):
 
     if author_name is None:
         author_name = session.get('login', None)
+        # Must pass author name via URL if not logged in
+        if author_name is None:
+            return redirect(url_for('index'))
 
     user = models.find_user(author_name)
     if not user:
