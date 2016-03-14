@@ -357,6 +357,10 @@ def review(title):
 def article_view(stack, title):
     """Article page"""
 
+    # Support for old URL /title/article.md
+    if title == 'article.md':
+        return redirect(url_for('review', title=stack))
+
     branch = request.args.get('branch', u'master')
 
     # Search all status so an article's canonical URL can always stay the same
