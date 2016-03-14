@@ -384,10 +384,17 @@ def article_view(stack, title):
 
     for status in statuses_to_check:
         path = u'%s/%s/%s' % (status, stack, title)
-        article = models.read_article(path, branch=branch)
+
+        # allow_missing is a workaround when we're looking for an article from
+        # old /review/ URL b/c we don't know what the status is we have to
+        # check them all.  We don't want to log things as missing if we didn't
+        # know where they were and had to check all locations.
+        article = models.read_article(path, branch=branch, allow_missing=True)
 
         if article is not None:
             return render_article_view(request, article)
+
+    app.logger.error('Failed finding guide - stack: "%s", title: "%s"', stack, title)
 
     return render_template('error.html'), 404
 

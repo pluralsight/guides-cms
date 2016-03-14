@@ -167,7 +167,8 @@ def get_articles_for_author(author_name, status=None):
             yield article
 
 
-def read_article(path, rendered_text=True, branch=u'master', repo_path=None):
+def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
+                 allow_missing=False):
     """
     Read article
 
@@ -175,6 +176,8 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None):
     :param rendered_text: Boolean to read rendered or raw text
     :param branch: Name of branch to read file from
     :param repo_path: Optional repo path to read from (<owner>/<name>)
+    :param allow_missing: False to log warning for missing or True to allow it
+                          i.e.  when you're just seeing if an article exists
 
     :returns: Article object
     """
@@ -196,10 +199,12 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None):
         if article is not None:
             return article
 
-    details = remote.read_file_from_github(full_path, branch, rendered_text)
+    details = remote.read_file_from_github(full_path, branch, rendered_text,
+                                           allow_404=allow_missing)
     if details is None or None in (details.text, details.sha):
-        app.logger.error('Failed reading path: "%s" branch: %s', full_path,
-                         branch)
+        if not allow_missing:
+            app.logger.error('Failed reading path: "%s" branch: %s', full_path,
+                             branch)
         return None
 
     # Parse path to get article information but replace it with improved json
