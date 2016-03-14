@@ -152,7 +152,7 @@ function create_external_links(id) {
 /* Confirm user typed DELETE in form and submit request for article deletion
  * This function works with confirm_deletion.html form.
  */
-function confirm_delete() {
+function confirm_delete(action_url) {
     var confirm_box = document.getElementById("confirm-box");
 
     if (confirm_box.value != 'DELETE') {
@@ -160,7 +160,7 @@ function confirm_delete() {
     }
 
     var form = document.createElement("form");
-    form.action = "/delete/";
+    form.action = action_url;
     form.method = "POST";
 
     var path = document.getElementById('article-path');

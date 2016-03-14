@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 
 {% block css %}
-    <link href="/static/css/vendor/editor/github.css" rel="stylesheet">
-    <link href="/static/css/vendor/github.css" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/vendor/editor/github.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/vendor/github.css')}}" rel="stylesheet">
     {{ super() }}
 {% endblock %}
 
@@ -54,7 +54,7 @@
             {% if article.image_url %}
                 <img id="article-img" src="{{article.image_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{article.author_name}}"/>
             {% endif %}
-                <h2 id="author"><a href="/user/{{article.author_name}}">{{article.author_real_name if article.author_real_name else article.author_name}}</a></h2>
+                <h2 id="author"><a href="{{url_for('user_profile', author_name=article.author_name)}}">{{article.author_real_name if article.author_real_name else article.author_name}}</a></h2>
             {% if article.stacks %}
                 <br />
                 <h3 id="related"><small>Related to {{article.stacks|join(',')}}</small></h3>
@@ -86,7 +86,7 @@
         {% endif %}
 
         {% if publish_statuses %}
-        <form action="/publish/" method="POST">
+        <form action="{{url_for('change_publish_status')}}" method="POST">
             <input name="path" type="hidden" value="{{article.path}}"/>
             <input name="branch" type="hidden" value="{{article.branch}}"/>
 
@@ -104,7 +104,7 @@
 
         {% if collaborator %}
             {% if article.published %}
-                <form action="/feature/" method="POST">
+                <form action="{{url_for('set_featured_title')}}" method="POST">
                     <input name="path" type="hidden" value="{{article.path}}"/>
                     <button type="submit" class="btn btn-success btn-xs">
                         Feature article

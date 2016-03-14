@@ -2,10 +2,10 @@
                     <div class="row">
                         <div class="col-md-12">
                             <ul class="nav">
-                                <li><a href="/" class="{{ 'active' if not g.drafts_active }}">Top Guides</a></li>
+                                <li><a href="{{url_for('index')}}" class="{{ 'active' if not g.drafts_active }}">Top Guides</a></li>
 
                             {% if session.github_token %}
-                            <li><a href="/my-drafts/" class="{{ 'active' if g.drafts_active }}">My Drafts</a></li>
+                            <li><a href="{{url_for('my_drafts')}}" class="{{ 'active' if g.drafts_active }}">My Drafts</a></li>
                             {% endif %}
 
                             <li class="stack-filter">
@@ -51,7 +51,7 @@
                                                 {% if article.image_url %}
                                                     <img src="{{article.image_url}}&amp;s=100" alt="{{article.user}}"/>
                                                 {% else %}
-                                                    <img src="/static/img/pluralsight_user.png" alt="Pluralsight User"/>
+                                                    <img src="{{url_for('static', filename='img/pluralsight_user.png')}}" alt="Pluralsight User"/>
                                                 {% endif %}
 
                                                 <span class="name"> {{article|author_name}} </span>

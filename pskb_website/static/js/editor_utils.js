@@ -2,7 +2,7 @@ var editor;
 var author_name;
 var author_real_name;
 
-function initialize_editor(name, real_name) {
+function initialize_editor(name, real_name, img_upload_url) {
     author_name = name;
     author_real_name = real_name;
 
@@ -15,7 +15,7 @@ function initialize_editor(name, real_name) {
         footer: '<div id="md-footer">Upload files by dragging & dropping</div>',
         //or <a href="#" class="upload-img">selecting them</a></div>',
         dropZoneOptions: {
-            url: '/img_upload/',
+            url: img_upload_url,
             disablePreview: true,
             maxFileSize: 3, // In Megabytes
 
@@ -69,9 +69,9 @@ function add_article_header_data(editor) {
 }
 
 
-function save(sha, path, secondary_repo) {
+function save(sha, path, secondary_repo, action_url) {
     var form = document.createElement("form");
-    form.action = "/save/";
+    form.action = action_url;
     form.method = "POST";
 
     var content = document.getElementById("md-editor-ta");

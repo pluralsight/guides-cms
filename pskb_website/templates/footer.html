@@ -1,6 +1,6 @@
                 <div class="row features">
                     <div class="col-md-1">
-                        <img src="/static/img/github.png" width="62" height="51" alt="Integrated with Github" />
+                        <img src="{{url_for('static', filename='img/github.png')}}" width="62" height="51" alt="Integrated with Github" />
                     </div>
                     <div class="col-md-3">
                         <h4>Integrates with Github</h4>
@@ -9,7 +9,7 @@
                     </div>
 
                     <div class="col-md-1">
-                        <img src="/static/img/markdown.png" width="59" height="50" alt="Write with Markdown" />
+                        <img src="{{url_for('static', filename='img/markdown.png')}}" width="59" height="50" alt="Write with Markdown" />
                     </div>
                     <div class="col-md-3">
                         <h4>Write using Markdown</h4>
@@ -18,7 +18,7 @@
                     </div>
 
                     <div class="col-md-1">
-                        <img src="/static/img/open_source.png" width="53" height="50" alt="Engine is Open Source" />
+                        <img src="{{url_for('static', filename='img/open_source.png')}}" width="53" height="50" alt="Engine is Open Source" />
                     </div>
                     <div class="col-md-3">
                         <h4>Engine is Open Source</h4>
@@ -28,23 +28,23 @@
                 </div><!-- row features -->
                 <div class="row write-guide">
                     <div class="col-md-12">
-                        <a href="/write/" class="emphasize">Write a Guide</a>
+                        <a href="{{url_for('write')}}" class="emphasize">Write a Guide</a>
                     </div>
                 </div><!-- row write-guide -->
                 <div class="row contact">
                     <div class="col-md-6">
                         <a href="http://www.pluralsight.com">
-                            <img src="/static/img/footer_logo.png" width="150" height="32" alt="Pluralsight"/>
+                            <img src="{{url_for('static', filename='img/footer_logo.png')}}" width="150" height="32" alt="Pluralsight"/>
                         </a>
                     </div><!-- col -->
 
                     <div class="col-md-6 pull-right social-links">
                         <a href="http://www.twitter.com/pluralsight">
-                            <img src="/static/img/twitter_footer.png" width="22" height="22" alt="Twitter"/>
+                            <img src="{{url_for('static', filename='img/twitter_footer.png')}}" width="22" height="22" alt="Twitter"/>
                         </a>
 
                         <a href="http://www.facebook.com/pluralsight">
-                            <img src="/static/img/fb_footer.png" width="22" height="21" alt="Facebook"/>
+                            <img src="{{url_for('static', filename='img/fb_footer.png')}}" width="22" height="21" alt="Facebook"/>
                         </a>
                     </div><!-- col social links -->
                 </div><!-- row contact -->

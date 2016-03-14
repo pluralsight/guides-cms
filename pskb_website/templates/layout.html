@@ -15,11 +15,11 @@
 
         {% endblock %}
 
-        <link rel="shortcut icon" type="image/png" href="/static/img/favicon.png">
+        <link rel="shortcut icon" type="image/png" href="{{url_for('static', filename='img/favicon.png')}}">
 
         {% block css %}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-        <link href="/static/css/base.css" rel="stylesheet">
+        <link href="{{url_for('static', filename='css/base.css')}}" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="//cloud.typography.com/6966154/691568/css/fonts.css"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
         {% endblock %}
@@ -28,7 +28,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
-        <script src="/static/js/utils.js"></script>
+        <script src="{{url_for('static', filename='js/utils.js')}}"></script>
         {% endblock %}
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->

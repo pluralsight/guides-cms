@@ -232,7 +232,7 @@ def authorized():
     if url is not None:
         return redirect(url)
 
-    flash('Thanks for logging in. You can now browse guides <a href="/in-review/"> in review</a> or <a href="/write/">write new guides</a>.', category='info')
+    flash('Thanks for logging in. You can now browse guides <a href="%s"> in review</a> or <a href="%s">write new guides</a>.' % (url_for('in_review'), url_for('write')), category='info')
 
     return redirect(url_for('user_profile', author_name=user.login))
 
