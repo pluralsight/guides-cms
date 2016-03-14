@@ -234,13 +234,17 @@ def authorized():
 
     flash('Thanks for logging in. You can now browse guides <a href="/in-review/"> in review</a> or <a href="/write/">write new guides</a>.', category='info')
 
-    return redirect(url_for('user_profile'))
+    return redirect(url_for('user_profile', author_name=user.login))
+
+
+@app.route('/user/<author_name>', methods=['GET'])
+def old_profile(author_name):
+        return redirect(url_for('user_profile', author_name=author_name), 301)
 
 
 # Note this URL is directly linked to the filters.url_for_user filter.
 # These must be changed together!
-@app.route('/user/<author_name>', methods=['GET'])
-@app.route('/user/', defaults={'author_name': None})
+@app.route('/author/<author_name>', methods=['GET'])
 def user_profile(author_name):
     """Profile page"""
 
