@@ -500,9 +500,9 @@ def save_article_meta_data(article, author_name, email, branch=None):
         # modify the list of branches when saving a branched article so we
         # merge the two lists of branches here since removal of a branch should
         # happen elsewhere.
-        for branch in orig_article.branches:
-            if branch not in article.branches:
-                article.branches.append(branch)
+        for orig_branch in orig_article.branches:
+            if orig_branch not in article.branches:
+                article.branches.append(orig_branch)
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
