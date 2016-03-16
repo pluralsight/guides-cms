@@ -2,21 +2,24 @@
 
 {% block css %}
     {{ super() }}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/vendor/bootstrap-markdown.min.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/vendor/editor/github.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/vendor/github.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/vendor/hljs_github.css')}}">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='/css/vendor/hljs_github.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='/css/vendor/editor/epic/base/hackguides.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='/css/vendor/editor/epic/editor/hackguides.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='/css/vendor/editor/epic/design.css')}}">
 {% endblock %}
 
 {% block js %}
-    {{super()}}
-    <script src="{{url_for('static', filename='js/vendor/editor/marked.js')}}"></script>
-    <script src="{{url_for('static', filename='js/vendor/editor/highlight.pack.js')}}"></script>
-    <script src="{{url_for('static', filename='js/vendor/editor/bootstrap-markdown.js')}}"></script>
-    <script src="{{url_for('static', filename='js/vendor/editor/dropzone.js')}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
-    <script src="{{url_for('static', filename='js/editor_utils.js')}}"></script>
+    {{ super() }}
+    <script src="{{url_for('static', filename='/js/vendor/editor/highlight.pack.js')}}"></script>
+    <script src="{{url_for('static', filename='/js/vendor/editor/dropzone.js')}}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
+    <script src="{{url_for('static', filename='/js/vendor/editor/epic/epiceditor.min.js')}}"></script>
+    <script src="{{url_for('static', filename='/js/editor_utils.js')}}"></script>
 {% endblock %}
 
 {% block body %}
@@ -71,14 +74,27 @@
                 tags to nest your supporting points.
             </li>
             <li>
-                Use the preview button when hovering over the editor to get a
-                quick look at how your content will look once published.
+                You can see the preview in the right side of the editor.
             </li>
         </ul>
     </p>
 
-    <div class="editor-container">
-        <textarea id="md-editor-ta" name="content">{{article.content}}</textarea>
+
+    <div class="row editor-preview-wrapper">
+        <div class="col-xs-12 col-sm-6 editor-column">
+            <div class="editor-header">
+                <img class="editor-ps-logo" src="/static/img/pluralsight-draft.png"/>
+                <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown-help" target="_blank">Markdown <span class="fa fa-question-circle"></span></a>
+            </div>
+            <div id="epiceditor"></div>
+        </div>
+
+        <div class="col-xs-12 col-sm-6 preview-column">
+            <div class="preview-header">
+                <span class="preview-text">PREVIEW</span>
+            </div>
+            <div id="epiceditor-preview"></div>
+        </div>
     </div>
 
     <br />
@@ -97,9 +113,16 @@
     <br />
 
     <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}', '{{url_for('save')}}')" class="btn btn-primary">Save</button>
+
+    <textarea id="content" style="display:none">{{article.content}}</textarea>
+
 </div>
 
 <script type="text/javascript">
-    initialize_editor('{{'' if not article.author_name else article.author_name}}', '{{'' if not article.author_real_name else article.author_real_name}}', '{{url_for('img_upload')}}');
+    $(document).ready(function() {
+        var editor = initialize_editor('{{article.sha or "hack.guides-draft"}}', '{{'' if not article.author_name else article.author_name}}', '{{'' if not article.author_real_name else article.author_real_name}}', '{{url_for('img_upload')}}');
+        $("#title").change(function() { editor.emit('update') });
+        $("#stacks").change(function() { editor.emit('update') });
+    });
 </script>
 {% endblock %}

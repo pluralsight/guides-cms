@@ -2,32 +2,52 @@ var editor;
 var author_name;
 var author_real_name;
 
-function initialize_editor(name, real_name, img_upload_url) {
+function initialize_editor(local_filename, name, real_name, img_upload_url) {
     author_name = name;
     author_real_name = real_name;
 
-    var editor = $('#md-editor-ta');
-    editor.markdown({
-        autofocus: true,
-        resize: 'vertical',
-        height: 500,
-        onPreview: add_article_header_data,
-        footer: '<div id="md-footer">Upload files by dragging & dropping</div>',
-        //or <a href="#" class="upload-img">selecting them</a></div>',
-        dropZoneOptions: {
-            url: img_upload_url,
-            disablePreview: true,
-            maxFileSize: 3, // In Megabytes
-
-            /* Disabled temporarily because unable to correctly get position of
-             * cursor when clicking this. The image is always inserted at the
-             * top of the text box, not the cursor position. */
-            //clickable: '.upload-img' // This points to element whose click will trigger selection of files.
-        }
+    editor = new EpicEditor({
+        container: 'epiceditor',
+        textarea: "content",
+        buttons: false,
+        basePath: '/static/css/vendor/editor/epic',
+        theme: {
+            base: '/base/hackguides.css',
+            editor: '/editor/hackguides.css',
+            preview: '/preview/github.css',
+        },
+        button: {
+            preview: false,
+            fullscreen: false,
+            bar: "auto"
+        },
+        localStorageName: 'epiceditor',
+        parser: marked,
+        clientSideStorage: true,
+        file: {
+            name: local_filename,
+            defaultContent: '',
+            autoSave: 100,
+            defaultContent: '# Untitled \n\nStart writing your tutorial!',
+        },
+        focusOnLoad: false,
+        useNativeFullscreen: false,
+        autogrow: false
+        }).load(
+    function () {
     });
+
+    editor.on('update', function () {
+        /* Inject header information as it would appear on a regular page since
+         * this content is not directly in the editor box */
+        var header = get_article_header_data();
+        document.querySelector('#epiceditor-preview').innerHTML = header + this.exportFile(null, 'html');
+        $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+    }).emit('update');
+    return editor;
 }
 
-function add_article_header_data(editor) {
+function get_article_header_data() {
     var title = document.getElementById('title').value;
 
     var h1 = '<h1 id="title" class="tagline gradient-text" style="margin-top: 5px">' + title + '</h1>';
@@ -65,7 +85,7 @@ function add_article_header_data(editor) {
     var h5 = '<h5 id="related"><small>Related to ' + stacks + '</small>';
     var header = '<div class="header">' + h1 + h4 + h5 + '</div>' + '<hr>';
 
-    return header + editor.parseContent();
+    return header;
 }
 
 
@@ -74,8 +94,10 @@ function save(sha, path, secondary_repo, action_url) {
     form.action = action_url;
     form.method = "POST";
 
-    var content = document.getElementById("md-editor-ta");
-    form.appendChild(content);
+    var content = document.createElement("input");
+    content.name = "content";
+    content.value = editor.exportFile("", "json");
+    form.appendChild(content.cloneNode());
 
     var sha_elem = document.createElement("input");
     sha_elem.name = "sha";
