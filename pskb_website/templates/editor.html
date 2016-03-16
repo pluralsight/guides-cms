@@ -51,7 +51,7 @@
         130 characters.
             </li>
         </ul>
-    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" maxlength="130" value="{{article.title}}" {{'readOnly="true"' if article else ""}} />
+    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" maxlength="130" value="{{article.title}}" {{'readOnly="true"' if article else ""}} autofocus/>
     <input id="original_stack" name="original_stack" type="hidden" value="{{article.stacks[0] if article else ''}}" />
 
     <br />
