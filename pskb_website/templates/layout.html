@@ -55,6 +55,12 @@
                     {% endfor %}
                 {% endwith %}
 
+                {% with messages = get_flashed_messages(category_filter=['warning']) %}
+                    {% for message in messages %}
+                        <p class="bg-warning">{{ message|safe }} </p>
+                    {% endfor %}
+                {% endwith %}
+
                 {% with messages = get_flashed_messages(category_filter=['error']) %}
                     {% for message in messages %}
                         <p class="bg-danger">{{ message|safe }} </p>

@@ -700,6 +700,11 @@ def change_publish_status():
         flash('Cannot find guide to change publish status', category='error')
         return redirect(url_for('index'))
 
+    if article.publish_status == publish_status:
+        flash('Guide already in %s publish status' % (publish_status),
+              category='warning')
+        return redirect(filters.url_for_article(article))
+
     if not user.is_collaborator:
         if article.author_name != user.login:
             flash('Only collaborators can change publish status on guides they do not start',
@@ -711,6 +716,10 @@ def change_publish_status():
             return redirect(url_for('index'))
 
     curr_path = article.path
+
+    app.logger.info(u'Requesting publish change for "%s" from "%s" to "%s"',
+                    article.title, article.publish_status, publish_status)
+
     article.publish_status = publish_status
 
     author_url = filters.url_for_user(article.author_name)
