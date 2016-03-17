@@ -11,7 +11,7 @@ from . import lib
 from . import file as file_mod
 from .user import find_user
 from .. import app
-from .. import PUBLISHED, IN_REVIEW, DRAFT
+from .. import PUBLISHED, IN_REVIEW, DRAFT, STATUSES
 from .. import cache
 from .. import remote
 from .. import utils
@@ -765,7 +765,7 @@ class Article(object):
         self.branches = []
 
         self._path = None
-        self.publish_status = DRAFT
+        self._publish_status = DRAFT
 
     @property
     def path(self):
@@ -777,6 +777,17 @@ class Article(object):
         return '<author_name: %s title: %s status: %s>' % (self.author_name,
                                                            self.title,
                                                            self.publish_status)
+
+    @property
+    def publish_status(self):
+        return self._publish_status
+
+    @publish_status.setter
+    def publish_status(self, new_status):
+        if new_status not in STATUSES:
+            raise ValueError('publish_status must be one of %s' % (STATUSES,))
+
+        self._publish_status = new_status
 
     @property
     def published(self):
@@ -802,16 +813,23 @@ class Article(object):
 
             # Backwards-compatability, this field was renamed
             if attr == 'published':
-                attr = 'publish_status'
+                attr = '_publish_status'
 
                 if value:
                     value = PUBLISHED
                 else:
                     value = DRAFT
 
+            # Another rename so we could use a property
+            elif attr == 'publish_status':
+                attr = '_publish_status'
+
             # This field used to be optional
             elif attr == 'stacks' and not value:
                 value = [u'other']
+
+            if attr == '_publish_status' and value not in STATUSES:
+                raise ValueError('publish_status must be one of %s' % (STATUSES,))
 
             setattr(article, attr, value)
 

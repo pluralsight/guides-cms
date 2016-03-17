@@ -7,7 +7,7 @@ import os
 
 from flask import redirect, Response, url_for, session, request, render_template, flash, json, g
 
-from . import PUBLISHED, IN_REVIEW, DRAFT
+from . import PUBLISHED, IN_REVIEW, DRAFT, STATUSES
 from . import app
 from . import remote
 from . import models
@@ -15,8 +15,6 @@ from . import forms
 from . import tasks
 from . import filters
 from . import utils
-
-STATUSES = (PUBLISHED, IN_REVIEW, DRAFT)
 
 
 def is_logged_in():
