@@ -44,7 +44,50 @@ function initialize_editor(local_filename, name, real_name, img_upload_url) {
         document.querySelector('#epiceditor-preview').innerHTML = header + this.exportFile(null, 'html');
         $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
     }).emit('update');
+
+    configure_dropzone_area(img_upload_url);
+
     return editor;
+}
+
+function configure_dropzone_area(img_upload_url) {
+    Dropzone.autoDiscover = false;
+    var dropZoneOptions = {
+        url: img_upload_url,
+        paramName: 'file',
+        maxFilesize: 3, // MB
+        uploadMultiple: false,
+        disablePreview: false,
+        createImageThumbnails: false,
+        addRemoveLinks: false,
+        previewTemplate: document.querySelector('#preview-template').innerHTML,
+        accept: function(file, done) {
+            if (file.name.endsWith('.exe') || file.name.endsWith('.bin') || file.name.endsWith('.bat')) {
+                done("File not supported");
+            }
+            else {
+                done();
+            }
+        }
+    };
+    var myDropzone = new Dropzone("div#droppable-area", dropZoneOptions);
+    myDropzone.on('success', function(file, path) {
+        // Add Markdown reference into the editor
+        var fileMarkdown = '\n![description](' + path + ')\n';
+        editor.getElement('editor').body.innerHTML += fileMarkdown;
+        // Scroll editor to bottom
+        var body = editor.getElement('editor').body;
+        body.scrollTop = body.scrollHeight;
+        // Scroll preview to bottom
+        var preview = document.getElementById('epiceditor-preview');
+        preview.scrollTop = preview.scrollHeight;
+    });
+
+    myDropzone.on("complete", function(file) {
+        myDropzone.removeFile(file);
+    });
+
+    return myDropzone;
 }
 
 function get_article_header_data() {

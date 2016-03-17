@@ -81,12 +81,31 @@
 
 
     <div class="row editor-preview-wrapper">
-        <div class="col-xs-12 col-sm-6 editor-column">
+        <div class="col-xs-12 col-sm-6 editor-column" id="droppable-area">
             <div class="editor-header">
                 <img class="editor-ps-logo" src="/static/img/pluralsight-draft.png"/>
                 <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown-help" target="_blank">Markdown <span class="fa fa-question-circle"></span></a>
             </div>
-            <div id="epiceditor"></div>
+
+            <div id="epiceditor">
+            </div>
+            <textarea id="content" style="display:none">{{article.content}}</textarea>
+
+            <div class="editor-footer">
+                <span>Upload files by dragging & dropping here</span>
+                <div class="dz-preview dz-file-preview" id="preview-template" style="display: none;">
+                    <div class="dz-details" style="display: none;">
+                    <div class="dz-filename" style="display: none;"><span data-dz-name></span></div>
+                    <div class="dz-size" data-dz-size style="display: none;"></div>
+                        <img data-dz-thumbnail />
+                    </div>
+                    <div class="dz-progress" style="display: none;"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                    <div class="dz-success-mark" style="display: none;"><span>✔</span></div>
+                    <div class="dz-error-mark" style="display: none;"><span>✘</span></div>
+                    <div class="dz-error-message"><span data-dz-errormessage></span></div>
+                </div>
+
+            </div>
         </div>
 
         <div class="col-xs-12 col-sm-6 preview-column">
@@ -113,8 +132,6 @@
     <br />
 
     <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}', '{{url_for('save')}}')" class="btn btn-primary">Save</button>
-
-    <textarea id="content" style="display:none">{{article.content}}</textarea>
 
 </div>
 
