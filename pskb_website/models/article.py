@@ -154,13 +154,28 @@ def get_articles_for_author(author_name, status=None):
     :returns: Iterator through article objects
     """
 
-
     if status is None:
         articles = itertools.chain(get_available_articles(status=PUBLISHED),
                                    get_available_articles(status=IN_REVIEW),
                                    get_available_articles(status=DRAFT))
     else:
         articles = get_available_articles(status=status)
+
+    for article in articles:
+        if article.author_name == author_name:
+            yield article
+
+
+def get_public_articles_for_author(author_name):
+    """
+    Get iterator for all public i.e. non-draft articles from given author
+
+    :param author_name: Name of author to find articles for
+    :returns: Iterator through article objects
+    """
+
+    articles = itertools.chain(get_available_articles(status=PUBLISHED),
+                               get_available_articles(status=IN_REVIEW))
 
     for article in articles:
         if article.author_name == author_name:
