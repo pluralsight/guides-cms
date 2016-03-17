@@ -109,36 +109,6 @@ def index():
                            featured_article=featured_article)
 
 
-@app.route('/feature/', methods=['POST'])
-@collaborator_required
-def set_featured_title():
-    """Form POST to update featured title"""
-
-    path = request.form['path']
-    article = models.read_article(path, branch=u'master')
-
-    error_msg = None
-    if article is None:
-        error_msg = 'Cannot find guide with path "%s"' % (path)
-    elif article.publish_status != PUBLISHED:
-        error_msg = 'Cannot feature unpublished guide'
-
-    if error_msg is not None:
-        flash(error_msg, category='error')
-
-        url = session.pop('previously_requested_page', None)
-        if url is None:
-            url = url_for('index')
-
-        return redirect(url)
-
-    os.environ['FEATURED_TITLE'] = article.title
-
-    flash('Featured guide updated', category='info')
-
-    return redirect(url_for('index'))
-
-
 @app.route('/login/')
 def login():
     """Login page"""

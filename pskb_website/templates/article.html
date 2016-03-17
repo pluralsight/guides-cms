@@ -106,18 +106,6 @@
         </form>
         {% endif %}
 
-        {% if collaborator %}
-            {% if article.published %}
-                <form action="/feature/" method="POST">
-                    <input name="path" type="hidden" value="{{article.path}}"/>
-                    <button type="submit" class="btn btn-success btn-xs">
-                        Feature article
-                        <span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>
-                    </button>
-                </form>
-            {% endif %}
-        {% endif %}
-
         {% if branches %}
             <h5>Community suggestions</h5>
             <ul>
