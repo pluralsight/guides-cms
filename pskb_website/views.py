@@ -227,7 +227,12 @@ def user_profile(author_name):
         flash('Unable to find user "%s"' % (author_name), category='error')
         return redirect(url_for('index'))
 
-    articles = models.get_articles_for_author(user.login)
+    # Only owners can see their own drafts
+    if is_logged_in() and user.login == session['login']:
+        articles = models.get_articles_for_author(user.login)
+    else:
+        articles = models.get_public_articles_for_author(user.login)
+
     return render_template('profile.html', user=user, articles=articles)
 
 
