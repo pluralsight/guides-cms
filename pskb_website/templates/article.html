@@ -90,28 +90,20 @@
             <input name="path" type="hidden" value="{{article.path}}"/>
             <input name="branch" type="hidden" value="{{article.branch}}"/>
 
+            <strong> Change publish status to: </strong>
             <select name="publish_status">
             {% for status in publish_statuses %}
-                <option value="{{status}}" {{"selected" if status == article.publish_status else ""}}>{{status}}</option>
+                {% if article.publish_status != status %}
+                    <option value="{{status}}">{{status}}</option>
+                {% endif %}
             {% endfor %}
             </select>
 
             <button type="submit" class="btn btn-success btn-xs">
-                Change publish status
+                Submit
             </button>
-        </form>
-        {% endif %}
 
-        {% if collaborator %}
-            {% if article.published %}
-                <form action="{{url_for('set_featured_title')}}" method="POST">
-                    <input name="path" type="hidden" value="{{article.path}}"/>
-                    <button type="submit" class="btn btn-success btn-xs">
-                        Feature article
-                        <span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>
-                    </button>
-                </form>
-            {% endif %}
+        </form>
         {% endif %}
 
         {% if branches %}

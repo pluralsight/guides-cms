@@ -12,6 +12,8 @@ DRAFT = u'draft'
 IN_REVIEW = u'in-review'
 PUBLISHED = u'published'
 
+STATUSES = (PUBLISHED, IN_REVIEW, DRAFT)
+
 app = Flask(__name__)
 
 # Running on heroku
