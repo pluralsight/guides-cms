@@ -450,7 +450,6 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
         branches.append(u'master')
 
     g.header_white = True
-    g.edit_link = True
 
     user = models.find_user(article.author_name)
     if only_visible_by_user is not None and only_visible_by_user != user.login:
