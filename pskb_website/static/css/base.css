@@ -35,14 +35,14 @@ a, a:visited, a:hover, a:focus {
     padding: 15px 15px 15px 15px;
 }
 
-#article-sidebar .emphasize-dark {
-    margin-bottom: 40px;
-    text-align: center;
-    padding: 8px;
+#article-sidebar {
+    /* Allow this secondary content fall behind other stuff */
+    z-index: 1;
 }
 
-#article-sidebar p {
-    margin-bottom: 40px;
+#article-sidebar .emphasize-dark {
+    text-align: center;
+    padding: 8px;
 }
 
 a:hover.emphasize-dark  {
@@ -347,10 +347,13 @@ a:hover.emphasize-dark  {
 }
 
 #footer {
+    /* Necessary to make sure table of contents z-index flows behind this. */
+    position: relative;
+    z-index: 2;
+    margin-top: 0px;
     padding: 15px 15px 15px 15px;
     background-color: #f96616;
     color: #000000;
-    margin-top: 15px;
 }
 
 #footer .row {
@@ -537,8 +540,12 @@ a:hover.emphasize-dark  {
 }
 
 .mission {
+    /* Necessary to make sure table of contents z-index flows behind this. */
+    position: relative;
+    z-index: 2;
     text-align: center;
-    margin-bottom: 25px;
+    padding-bottom: 25px;
+    background-color: #ffffff;
 }
 
 .mission p {

@@ -33,12 +33,8 @@
         <p>
             <a href="{{url_for('faq')}}" class="emphasize-dark">What is this site?</a>
         </p>
-        <div id="table-of-contents">
-            <h4>Table of Contents</h4>
-            <div class="hr-container">
-                <hr>
-            </div>
-        </div>
+
+        <br />
 
         <p>
             <a href="{{url_for('write', article_path=article.path, branch=article.branch)}}">Edit this guide <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
@@ -47,6 +43,13 @@
             <a href="{{article.external_url}}" target="_blank">View guide on Github
             <span class="glyphicon glyphicon-new-window" aria-hidden="true" style="font-size: 10px;"></span></a>
         </p>
+
+        <div id="table-of-contents">
+            <h4>Table of Contents</h4>
+            <div class="hr-container">
+                <hr>
+            </div>
+        </div>
 
     </div>
     <div id="article" class="col-md-10 col-md-offset-2">
