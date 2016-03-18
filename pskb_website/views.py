@@ -4,6 +4,9 @@ Main views of PSKB app
 
 from functools import wraps
 import os
+import re
+
+import requests
 
 from flask import redirect, Response, url_for, session, request, render_template, flash, json, g
 
@@ -133,7 +136,18 @@ def gh_rate_limit():
 def faq():
     """FAQ page"""
 
+    g.slack_url = u'https://hackguides.herokuapp.com'
     file_details = models.read_file('faq.md', rendered_text=True)
+
+    # Screen-scrape slack signup app since it's dynamic with node.js and grabs
+    # from slack API.
+
+    resp = requests.get(g.slack_url)
+    if resp.status_code == 200:
+        user_count = re.search(r'<p class="status">(.*?)</p>', resp.content)
+        if user_count is not None:
+            g.slack_stats = user_count.group(1)
+
     return render_template('faq.html', details=file_details)
 
 

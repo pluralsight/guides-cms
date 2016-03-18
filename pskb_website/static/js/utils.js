@@ -180,7 +180,7 @@ function supports_html5_storage() {
 }
 
 /* Show signup box on page if user scrolls near bottom or past specific amount */
-function init_signup_row(scroll_pos) {
+function init_signup_row(scroll_pos, signup_type) {
     var shown = false;
     $(window).scroll(function() {
         if (shown) {
@@ -198,17 +198,18 @@ function init_signup_row(scroll_pos) {
             if (supports_html5_storage()) {
                 var now = Date.now();
 
-                if (localStorage["ps-guides-last-shown"] == null) {
-                    localStorage["ps-guides-last-shown"] = now;
+                var key = "ps-guides-last-shown-" + signup_type;
+                if (localStorage[key] == null) {
+                    localStorage[key] = now;
                 } else {
                     // 4 hours in milliseconds
                     var max_time = 1000 * 60 * 60 * 4;
-                    var last_shown = parseInt(localStorage["ps-guides-last-shown"]);
+                    var last_shown = parseInt(localStorage[key]);
 
                     if ((now - last_shown) < max_time) {
                         shown = false;
                     } else {
-                        localStorage["ps-guides-last-shown"] = now;
+                        localStorage[key] = now;
                     }
                 }
 
