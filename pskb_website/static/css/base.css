@@ -353,6 +353,10 @@ a:hover.emphasize-dark  {
     margin-top: 15px;
 }
 
+#footer .row {
+    margin-top: 50px;
+}
+
 #footer .emphasize {
     padding: 15px;
 }
@@ -378,7 +382,7 @@ a:hover.emphasize-dark  {
 }
 
 #footer .features {
-    margin-bottom: 25px;
+    margin-top: 10px;
 }
 
 #footer .contact {
