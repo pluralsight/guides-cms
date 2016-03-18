@@ -351,7 +351,7 @@ a:hover.emphasize-dark  {
     position: relative;
     z-index: 2;
     margin-top: 0px;
-    padding: 15px 15px 110px 15px;
+    padding: 15px 15px 125px 15px;
     background-color: #f96616;
     color: #000000;
 }
