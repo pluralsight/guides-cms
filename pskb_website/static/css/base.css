@@ -440,12 +440,13 @@ a:hover.emphasize-dark  {
 }
 
 #signup-row {
+    position: relative;
+    z-index: 3;
     background-color: rgba(41, 45, 53, 0.901961);
     border-top-color: rgba(255, 255, 255, 0.0980392);
     position: fixed;
     bottom: 0px;
     width: 100%;
-    z-index: 2;
     margin: 0px;
 }
 
