@@ -15,7 +15,7 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'MAILCHIMP_LIST_ID', 'MAILCHIMP_STACKS_GROUP_NAME',
                            'SECONDARY_REPO_OWNER', 'SECONDARY_REPO_NAME',
                            'BASE_URL', 'CELERY_BROKER_URL',
-                           'CELERY_TASK_SERIALIZER')
+                           'CELERY_TASK_SERIALIZER', 'HOSTING_SUBDIRECTORY')
 
 
 class Config(object):
@@ -50,6 +50,11 @@ class Config(object):
     MAILCHIMP_STACKS_GROUP_NAME = None
 
     BASE_URL = ''
+
+    # Set this to something like '/guides' if your hosting this application on
+    # a subdirectory with a proxy pass rule that sends all /guides/* requests
+    # to this app.  Thus, this app responds to '/guides' with the '/' rule.
+    HOSTING_SUBDIRECTORY = ''
 
 
 class DevelopmentConfig(Config):

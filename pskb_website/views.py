@@ -453,8 +453,8 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
 
         # Hack to save our old social shares. The po.st service doesn't handle
         # 301 redirects so need to share with the old url to keep the counts.
-        redirect_url = u'%s%s' % (app.config['BASE_URL'],
-                                  url_for('review', title=article_identifier))
+        redirect_url = u'%s/review/%s' % (app.config['BASE_URL'],
+                                          article_identifier)
 
     # Filter out the current branch from the list of branches
     branches = [b for b in article.branches if b != article.branch]

@@ -62,6 +62,22 @@ if not app.debug:
     app.logger.addHandler(handler)
 
 
+# Hack to work-around the quirk that we're hosted on a subdirectory but the
+# main server is setup with proxy pass rules to only give us the part of the
+# URL that is AFTER that prefix. The PrefixRule allows us to use url_for and
+# always generate URLs with that prefix even though our actual routes do not
+# respond to that prefix.
+from werkzeug.routing import Rule
+class PrefixRule(Rule):
+    def build(self, *args, **kwargs):
+        domain_part, url = super(PrefixRule, self).build(*args, **kwargs)
+
+        return domain_part, u'%s%s' % (app.config['HOSTING_SUBDIRECTORY'], url)
+
+
+app.url_rule_class = PrefixRule
+
+
 import pskb_website.views
 import pskb_website.filters
 
