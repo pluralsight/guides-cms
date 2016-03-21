@@ -20,7 +20,7 @@ def date_string(dt, fmt_str):
     return dt.strftime(fmt_str)
 
 
-def url_for_article(article, base_url=app.config['BASE_URL'], branch=u'master'):
+def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master'):
     """
     Get URL for article object
 
@@ -76,7 +76,7 @@ def url_for_user(user):
     except AttributeError:
         username = user
 
-    return u'%s%s' % (app.config['BASE_URL'],
+    return u'%s%s' % (app.config['DOMAIN'],
                       url_for('user_profile', author_name=username))
 
 def author_name(article):

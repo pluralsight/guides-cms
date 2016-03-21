@@ -45,7 +45,7 @@ Setup environment variables
         * REPO_NAME - Name of repository you'll store the guide content
         * REPO_OWNER_ACCESS_TOKEN - OAuth token of your github user or owner of the repository where the guide content is stored. You cannot set this until after you run the application locally and authorize it with your github account as described below.
         * CELERY_BROKER_URL - URL of Redis (or another broker) for handling background jobs (see :ref:`instructions for Celery on heroku <celery_on_heroku>` for help).
-        * BASE_URL - Base URL where your site will be running. This can be the URL of your Heroku deployment or localhost like `127.0.0.1:5000` or `0.0.0.0:5000`.
+        * DOMAIN - Base URL where your site will be running. This can be the URL of your Heroku deployment or localhost like `127.0.0.1:5000` or `0.0.0.0:5000`.
 
 --------------------------------
 Run locally with Flask webserver
