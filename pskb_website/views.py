@@ -390,7 +390,8 @@ def article_view(stack, title):
         if article is not None:
             return render_article_view(request, article)
 
-    app.logger.error('Failed finding guide - stack: "%s", title: "%s"', stack, title)
+    app.logger.error('Failed finding guide - stack: "%s", title: "%s", branch: "%s"',
+                     stack, title, branch)
 
     return render_template('error.html'), 404
 
