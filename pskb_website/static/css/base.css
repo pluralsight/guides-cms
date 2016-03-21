@@ -35,14 +35,14 @@ a, a:visited, a:hover, a:focus {
     padding: 15px 15px 15px 15px;
 }
 
-#article-sidebar .emphasize-dark {
-    margin-bottom: 40px;
-    text-align: center;
-    padding: 8px;
+#article-sidebar {
+    /* Allow this secondary content fall behind other stuff */
+    z-index: 1;
 }
 
-#article-sidebar p {
-    margin-bottom: 40px;
+#article-sidebar .emphasize-dark {
+    text-align: center;
+    padding: 8px;
 }
 
 a:hover.emphasize-dark  {
@@ -347,10 +347,17 @@ a:hover.emphasize-dark  {
 }
 
 #footer {
+    /* Necessary to make sure table of contents z-index flows behind this. */
+    position: relative;
+    z-index: 2;
+    margin-top: 0px;
     padding: 15px 15px 15px 15px;
     background-color: #f96616;
     color: #000000;
-    margin-top: 15px;
+}
+
+#footer .row {
+    margin-top: 50px;
 }
 
 #footer .emphasize {
@@ -378,7 +385,7 @@ a:hover.emphasize-dark  {
 }
 
 #footer .features {
-    margin-bottom: 25px;
+    margin-top: 10px;
 }
 
 #footer .contact {
@@ -433,12 +440,13 @@ a:hover.emphasize-dark  {
 }
 
 #signup-row {
+    position: relative;
+    z-index: 3;
     background-color: rgba(41, 45, 53, 0.901961);
     border-top-color: rgba(255, 255, 255, 0.0980392);
     position: fixed;
     bottom: 0px;
     width: 100%;
-    z-index: 2;
     margin: 0px;
 }
 
@@ -506,6 +514,22 @@ a:hover.emphasize-dark  {
     color: #ffffff;
 }
 
+.slack-signup a,
+.slack-signup a:active,
+.slack-signup a:hover,
+.slack-signup a:visited,
+.slack-signup a:focus {
+    font-size: 16px;
+    padding: 10px 65px;
+    background-color: #a5d92b;
+    border-color: #a5d92b;
+    color: #ffffff;
+}
+
+.slack-signup p {
+    margin-bottom: 25px;
+}
+
 .load-guides {
     margin-top: 15px;
     margin-bottom: 15px;
@@ -517,8 +541,12 @@ a:hover.emphasize-dark  {
 }
 
 .mission {
+    /* Necessary to make sure table of contents z-index flows behind this. */
+    position: relative;
+    z-index: 2;
     text-align: center;
-    margin-bottom: 25px;
+    padding-bottom: 25px;
+    background-color: #ffffff;
 }
 
 .mission p {

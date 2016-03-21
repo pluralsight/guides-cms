@@ -18,3 +18,12 @@
     {% include "article_list.html" %}
     {% include "mission.html" %}
 {% endblock %}
+
+{% block footer %}
+
+{{super()}}
+
+    <script type="text/javascript">
+        init_signup_row(800, "newsletter");
+    </script>
+{% endblock %}
