@@ -574,6 +574,20 @@ def save():
     else:
         message = 'New guide, "%s"' % (title)
 
+        # Go ahead and make sure we don't have an article with the same stack
+        # and title.  This would lead to duplicate URLs and we want to
+        # prevent users from ever creating a clash instead of detecting this
+        # change
+        article = models.search_for_article(title, stacks=stacks)
+        if article is not None:
+            if stacks is None:
+                msg = u'Please try choosing a stack. The title "%s" is already used by a guide.' % (title)
+            else:
+                msg = u'Please try choosing a different stack/title combination.  The title "%s" is already used by a guide with the stack "%s".' % (title, ','.join(stacks))
+
+            flash(msg, category='error')
+            return redirect(url_for('write'))
+
     # Hidden option for admin to save articles to our other repo that's not
     # editable
     repo_path = None
