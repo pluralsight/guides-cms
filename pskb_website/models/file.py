@@ -174,6 +174,8 @@ def update_article_listing(article_url, title, author_url, author_name,
         if commit_sha is None:
             return False
 
+    cache.delete_file(filename, branch)
+
     # Now update the opposite files so the article is only on 1 file at a time
     results = []
     for possible_status in (PUBLISHED, IN_REVIEW, DRAFT):
@@ -233,6 +235,8 @@ def remove_article_from_listing(title, status, committer_name,
                                                   branch=branch)
         if commit_sha is None:
             return False
+
+    cache.delete_file(filename, branch)
 
     return True
 
@@ -314,26 +318,29 @@ def sync_file_listing(all_articles, status, committer_name, committer_email,
     else:
         app.logger.debug('Listing unchanged so no commit being made')
 
+    cache.delete_file(filename, branch)
+
     return True
 
 
-def _read_file_listing(path_to_listing, branch=u'master'):
+def _read_file_listing(filename, branch=u'master'):
     """
     Get iterator through list of articles from file
 
-    :param path_to_listing: Path to file containing file listing
+    :param filename: Short status path to file not including repo or owner
     :param branch: Name of branch to save file listing to
     :returns: Generator to iterate through file_listing_item tuples
     """
 
-    text = cache.read_file(path_to_listing, branch)
+    text = cache.read_file(filename, branch)
     if text is None:
-        details = read_file(path_to_listing, rendered_text=False, branch=branch)
+        details = read_file(filename, rendered_text=False, branch=branch)
         if details is None:
             raise StopIteration
 
         text = details.text
-        cache.save_file(path_to_listing, branch, text, timeout=60 * 3)
+
+        cache.save_file(filename, branch, text)
 
     for item in read_items_from_file_listing(text):
         yield item
