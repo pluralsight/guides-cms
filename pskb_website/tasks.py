@@ -106,7 +106,13 @@ def change_publish_metadata(path, new_status):
     with codecs.open(path, 'r', encoding='utf-8') as file_obj:
         metadata = json.loads(file_obj.read(), encoding='utf-8')
 
-    metadata['publish_status'] = new_status
+    metadata['_publish_status'] = new_status
+
+    # This was renamed so handle 'upgrading' when we see this old ref.
+    try:
+        del metadata['publish_status']
+    except KeyError:
+        pass
 
     with codecs.open(path, 'w', encoding='utf-8') as file_obj:
         file_obj.write(json.dumps(metadata, sort_keys=True, indent=4,
