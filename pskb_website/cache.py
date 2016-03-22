@@ -1,5 +1,13 @@
 """
 Caching utilities
+
+There are some quirks to be aware of when caching in this system.  Typically
+you wouldn't want to set a timeout on the cache key and instead just flush it
+from cache when things changed.  We cannot do this because we can get changes
+from 2 places, the website application and github.com.  So, anything that can
+change on github.com should have a reasonable cache timeout.  This way even if
+our application doesn't see it change we will refresh from github periodically
+just in case it changed there too.
 """
 
 import functools
