@@ -326,14 +326,14 @@ def _read_file_listing(path_to_listing, branch=u'master'):
     :returns: Generator to iterate through file_listing_item tuples
     """
 
-    text = cache.read_article(path_to_listing, branch)
+    text = cache.read_file(path_to_listing, branch)
     if text is None:
         details = read_file(path_to_listing, rendered_text=False, branch=branch)
         if details is None:
             raise StopIteration
 
         text = details.text
-        cache.save_article(path_to_listing, branch, text, timeout=60 * 3)
+        cache.save_file(path_to_listing, branch, text, timeout=60 * 3)
 
     for item in read_items_from_file_listing(text):
         yield item

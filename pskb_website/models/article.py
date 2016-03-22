@@ -280,8 +280,7 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
         # We don't have a ton of cache space so reserve it for more
         # high-traffic data like the rendered view of the articles.
         if rendered_text:
-            cache.save_article(article.path, article.branch,
-                               lib.to_json(article))
+            cache.save_file(article.path, article.branch, lib.to_json(article))
     else:
         # We cannot properly show an article without metadata.
         article = None
@@ -310,7 +309,7 @@ def read_article_from_cache(path, branch=u'master'):
         # right now it's always the same.
         path = path.split('/')[-2]
 
-    json_str = cache.read_article(path, branch)
+    json_str = cache.read_file(path, branch)
     if json_str is None:
         return None
 
@@ -398,7 +397,7 @@ def save_article(title, message, new_content, author_name, email, sha,
         # article, but not the meta data.
         return commit_sha
 
-    cache.delete_article(article)
+    cache.delete_file(article.path, article.branch)
 
     return read_article(article.path, rendered_text=True,
                         branch=article.branch, repo_path=repo_path)
@@ -569,7 +568,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
 
     message = u'Updating article metadata for "%s"' % (article.title)
 
-    cache.delete_article(article)
+    cache.delete_file(article.path, article.branch)
 
     # Article is on a branch so we have to update the master meta data file
     # with this new branch as well as the branch meta data file.
@@ -680,7 +679,7 @@ def delete_article(article, message, name, email):
 
     # First remove from cache even if removing the actual file fails this will
     # be OK b/c we'll just end up re-caching it.
-    cache.delete_article(article)
+    cache.delete_file(article.path, article.branch)
 
     # We don't save meta data for branches so either remove meta data file or
     # update original articles meta data to remove the branch link.

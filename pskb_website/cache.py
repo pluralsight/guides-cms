@@ -53,48 +53,48 @@ def verify_redis_instance(func):
 
 
 @verify_redis_instance
-def read_article(path, branch):
+def read_file(path, branch):
     """
-    Look for article pointed to by given path and branch in cache
+    Look for text pointed to by given path and branch in cache
 
-    :param path: Short path to article not including repo information
-    :param branch: Name of branch article belongs to
-    :returns: JSON representation of article or None if not found in cache
+    :param path: Short path to file not including repo information
+    :param branch: Name of branch file belongs to
+    :returns: Text saved to cache or None if not found
     """
 
     return redis_obj.get((path, branch))
 
 
 @verify_redis_instance
-def save_article(path, branch, article, timeout=DEFAULT_CACHE_TIMEOUT):
+def save_file(path, branch, text, timeout=DEFAULT_CACHE_TIMEOUT):
     """
-    Save article JSON in cache
+    Save file text in cache
 
-    :param path: Short path to article not including repo information
-    :param branch: Name of branch article belongs to
-    :param article: Serialized representation of article to store in cache
-    :param timeout: Timeout in seconds to cache article, use None for no
-                    timeout
+    :param path: Short path to file not including repo information
+    :param branch: Name of branch file belongs to
+    :param text: Raw text to save
+    :param timeout: Timeout in seconds to cache text, use None for no timeout
     :returns: None
     """
 
     key = (path, branch)
-    redis_obj.set(key, article)
+    redis_obj.set(key, text)
 
     if timeout is not None:
         redis_obj.expire(key, timeout)
 
 
 @verify_redis_instance
-def delete_article(article):
+def delete_file(path, branch):
     """
-    Delete article from cache
+    Delete file from cache
 
-    :param article: model.article.Article object
+    :param path: Short path to file not including repo information
+    :param branch: Name of branch file belongs to
     :returns: None
     """
 
-    redis_obj.delete((article.path, article.branch))
+    redis_obj.delete((path, branch))
 
 
 @verify_redis_instance
