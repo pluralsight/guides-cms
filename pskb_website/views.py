@@ -221,7 +221,7 @@ def authorized():
 
 @app.route('/user/<author_name>', methods=['GET'])
 def old_profile(author_name):
-        return redirect(url_for('user_profile', author_name=author_name), 301)
+    return redirect(url_for('user_profile', author_name=author_name), 301)
 
 
 # Note this URL is directly linked to the filters.url_for_user filter.
