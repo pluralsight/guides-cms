@@ -20,12 +20,11 @@ def date_string(dt, fmt_str):
     return dt.strftime(fmt_str)
 
 
-def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master'):
+def url_for_article(article, branch=u'master'):
     """
     Get URL for article object
 
     :param article: Article object
-    :param base_url: Base URL i.e domain, etc. to use
     :param branch: Branch
     :returns: URL as string
 
@@ -44,8 +43,7 @@ def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master'):
     title = utils.slugify(article.title)
     stack = utils.slugify_stack(article.stacks[0])
 
-    url = u'%s%s' % (base_url,
-                     url_for(u'article_view', title=title, stack=stack))
+    url = u'%s' % (url_for(u'article_view', title=title, stack=stack))
 
     if article.publish_status != PUBLISHED:
         url = u'%s?status=%s' % (url, article.publish_status)
@@ -76,8 +74,8 @@ def url_for_user(user):
     except AttributeError:
         username = user
 
-    return u'%s%s' % (app.config['DOMAIN'],
-                      url_for('user_profile', author_name=username))
+    return u'%s' % (url_for('user_profile', author_name=username))
+
 
 def author_name(article):
     """
