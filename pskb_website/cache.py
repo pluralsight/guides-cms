@@ -157,11 +157,8 @@ def read_file_listing(key):
     """
     Read list of files from cache
 
-    :param key: (repo, sha, filename)
+    :param key: Key to read listing with
     :returns: Iterable of files
-
-    The key should be the same one used to save etag with
-    :func:`.save_file_listing_etag`.
     """
 
     return redis_obj.get(key)
@@ -172,14 +169,11 @@ def save_file_listing(key, files, timeout=DEFAULT_CACHE_TIMEOUT):
     """
     Save list of files to cache
 
-    :param key: (repo, sha, filename)
+    :param key: Key to save listing with
     :param files: Iterable of files
     :param timeout: Timeout in seconds to cache list, use None for no
                     timeout
     :returns: None
-
-    The key should be the same one used to save etag with
-    :func:`.save_file_listing_etag`.
     """
 
     redis_obj.set(key, files)
