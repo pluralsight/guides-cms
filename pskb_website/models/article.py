@@ -144,7 +144,7 @@ def get_available_articles_from_api(status=None, repo_path=None):
         article = None
 
         if status == PUBLISHED:
-            article = read_article_from_cache(file_details.path)
+            article = _read_article_from_cache(file_details.path)
 
         if article is None:
             article = read_article_from_metadata(file_details)
@@ -248,7 +248,7 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
     # Only caching rendered text of articles since that's the 'front-end' of
     # the site.
     if rendered_text:
-        article = read_article_from_cache(path, branch)
+        article = _read_article_from_cache(path, branch)
         if article is not None:
             return article
 
@@ -293,27 +293,6 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
             article.image_url = user.avatar_url
 
     return article
-
-
-def read_article_from_cache(path, branch=u'master'):
-    """
-    Read article object from cache
-
-    :param path: Path to read file from github i.e. path it was cached with
-    :param branch: Branch to read file from
-    :returns: Article object if found in cache or None
-    """
-
-    if path.endswith(FILE_EXTENSION):
-        # Don't cache with the filename b/c it just takes up cache space and
-        # right now it's always the same.
-        path = path.split('/')[-2]
-
-    json_str = cache.read_file(path, branch)
-    if json_str is None:
-        return None
-
-    return Article.from_json(json_str)
 
 
 def read_article_from_metadata(file_details):
@@ -766,6 +745,27 @@ def change_article_stack(orig_path, orig_stack, new_stack, title, author_name,
         return None
 
     return new_path
+
+
+def _read_article_from_cache(path, branch=u'master'):
+    """
+    Read article object from cache
+
+    :param path: Path to read file from github i.e. path it was cached with
+    :param branch: Branch to read file from
+    :returns: Article object if found in cache or None
+    """
+
+    if path.endswith(FILE_EXTENSION):
+        # Don't cache with the filename b/c it just takes up cache space and
+        # right now it's always the same.
+        path = path.split('/')[-2]
+
+    json_str = cache.read_file(path, branch)
+    if json_str is None:
+        return None
+
+    return Article.from_json(json_str)
 
 
 class Article(object):
