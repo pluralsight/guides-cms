@@ -376,7 +376,7 @@ def save_article(title, message, new_content, author_name, email, sha,
         # article, but not the meta data.
         return commit_sha
 
-    cache.delete_file(article.path, article.branch)
+    _delete_article_from_cache(article)
 
     return read_article(article.path, rendered_text=True,
                         branch=article.branch, repo_path=repo_path)
@@ -547,7 +547,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
 
     message = u'Updating article metadata for "%s"' % (article.title)
 
-    cache.delete_file(article.path, article.branch)
+    _delete_article_from_cache(article)
 
     # Article is on a branch so we have to update the master meta data file
     # with this new branch as well as the branch meta data file.
@@ -658,7 +658,7 @@ def delete_article(article, message, name, email):
 
     # First remove from cache even if removing the actual file fails this will
     # be OK b/c we'll just end up re-caching it.
-    cache.delete_file(article.path, article.branch)
+    _delete_article_from_cache(article)
 
     # We don't save meta data for branches so either remove meta data file or
     # update original articles meta data to remove the branch link.
@@ -731,6 +731,8 @@ def change_article_stack(orig_path, orig_stack, new_stack, title, author_name,
     :param author_name: Name of author who wrote article
     :param email: Email address of author
     :returns: New path of article or None if error
+
+    Note this function only makes changes to articles on the master branch!
     """
 
     # Ugly circular imports
@@ -744,7 +746,23 @@ def change_article_stack(orig_path, orig_stack, new_stack, title, author_name,
         app.logger.error(err)
         return None
 
+    cache.delete_file(orig_path, u'master')
+
     return new_path
+
+
+def _delete_article_from_cache(article):
+    """
+    Delete given article from cache if it exists
+
+    :param article: Article object to delete
+
+    Note this function is harmless if the article does not exist in the cache.
+    """
+
+    # The point of this function is so outside article.py there is no knowledge
+    # of what the cache key is or how we cache it.
+    cache.delete_file(article.path, article.branch)
 
 
 def _read_article_from_cache(path, branch=u'master'):
@@ -840,6 +858,10 @@ class Article(object):
     def publish_status(self, new_status):
         if new_status not in STATUSES:
             raise ValueError('publish_status must be one of %s' % (STATUSES,))
+
+        # Lets go ahead and delete it b/c cached publish status would be out of
+        # date now
+        _delete_article_from_cache(self)
 
         self._publish_status = new_status
 
