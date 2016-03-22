@@ -72,6 +72,9 @@ class PrefixRule(Rule):
     def build(self, *args, **kwargs):
         domain_part, url = super(PrefixRule, self).build(*args, **kwargs)
 
+        if app.config['DOMAIN']:
+            domain_part = app.config['DOMAIN']
+
         return domain_part, u'%s%s' % (app.config['HOSTING_SUBDIRECTORY'], url)
 
 
