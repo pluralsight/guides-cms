@@ -2,6 +2,7 @@
 Public model API
 """
 
+from .article import search_for_article
 from .article import get_available_articles
 from .article import read_article
 from .article import save_article

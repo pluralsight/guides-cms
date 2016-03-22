@@ -328,12 +328,9 @@ def review(title):
 
     branch = request.args.get('branch', u'master')
 
-    for status in STATUSES:
-        articles = models.get_available_articles(status=status)
-        article = models.find_article_by_title(articles, title)
-
-        if article is not None:
-            return redirect(filters.url_for_article(article, branch=branch), 301)
+    article = models.search_for_article(title)
+    if article is not None:
+        return redirect(filters.url_for_article(article, branch=branch), 301)
 
     return render_template('error.html'), 404
 

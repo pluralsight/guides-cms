@@ -72,6 +72,44 @@ def get_available_articles(status=None, repo_path=None):
         yield article
 
 
+def search_for_article(title, stacks=None, status=None):
+    """
+    Search for an article by the title and optionally stack and status
+
+    :param title: Title of article to search for
+    :param stacks: Optional list of stacks to search All stacks are searched if
+                   None is given
+    :param status: Optional status to search for All possible statuses are
+                   searched if None is given
+    :returns: Article object if found or None if not found
+    """
+
+    statuses = [status] if status is not None else STATUSES
+
+    if stacks is None:
+        stacks = []
+    else:
+        # Normalize so we don't have to deal with case issues
+        stacks = [s.lower() for s in stacks]
+
+    for status in statuses:
+        articles = get_available_articles(status=status)
+        article = find_article_by_title(articles, title)
+
+        if article is None:
+            continue
+
+        if not stacks:
+            return article
+
+        for requested_stack in stacks:
+            for article_stack in article.stacks:
+                if article_stack.lower() == requested_stack:
+                    return article
+
+    return None
+
+
 def get_available_articles_from_api(status=None, repo_path=None):
     """
     Get iterator for current article objects
@@ -694,6 +732,8 @@ def find_article_by_title(articles, title):
     :param title: Title to search for
     :returns: article object or None if not found
     """
+
+    title = utils.slugify(title)
 
     for article in articles:
         if utils.slugify(article.title) == title:
