@@ -5,19 +5,19 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
     <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css" rel="stylesheet" crossorigin="anonymous">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{{url_for('static', filename='/css/vendor/hljs_github.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='/css/vendor/editor/epic/design.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/editor/epic/design.css') }}">
 {% endblock %}
 
 {% block js %}
     {{ super() }}
-    <script src="{{url_for('static', filename='/js/vendor/editor/highlight.pack.js')}}"></script>
-    <script src="{{url_for('static', filename='/js/vendor/editor/dropzone.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/editor/highlight.pack.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/editor/dropzone.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-    <script src="{{url_for('static', filename='/js/vendor/editor/epic/epiceditor.min.js')}}"></script>
-    <script src="{{url_for('static', filename='/js/editor_utils.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/editor/epic/epiceditor.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/editor_utils.js') }}"></script>
 {% endblock %}
 
 {% block body %}
