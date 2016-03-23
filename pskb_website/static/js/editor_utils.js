@@ -10,6 +10,7 @@ function initialize_editor(local_filename, name, real_name, img_upload_url) {
         container: 'epiceditor',
         textarea: "content",
         basePath: '/static/css/vendor/editor/epic',
+        parser: marked,
         theme: {
             base: '/base/hackguides.css',
             editor: '/editor/hackguides.css',
@@ -22,12 +23,11 @@ function initialize_editor(local_filename, name, real_name, img_upload_url) {
             bar: "auto"
         },
         localStorageName: 'articles',
-        parser: marked,
         clientSideStorage: true,
         file: {
             name: local_filename,
             defaultContent: '',
-            autoSave: 500,
+            autoSave: 200,
             defaultContent: '# Untitled \n\nStart writing your tutorial!',
         },
         focusOnLoad: false,
