@@ -571,6 +571,10 @@ a:hover.emphasize-dark  {
     text-align: center;
 }
 
+.bg-success {
+    padding: 10px;
+}
+
 #header-dark .bg-danger {
     color: #000000;
 }
@@ -602,6 +606,20 @@ a.active-page {
 
 .stacks-editor {
     max-width: 200px;
+}
+
+#workflow-help {
+    clear: left;
+    margin-bottom: 35px;
+}
+
+#workflow-help p {
+    font-size: 16px;
+    text-align: left;
+}
+
+#workflow-help h1, #workflow-help h2 {
+    text-align: center;
 }
 
 /* Override button size for the bootstrap-select buttons to account for our

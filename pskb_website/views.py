@@ -19,6 +19,7 @@ from . import tasks
 from . import filters
 from . import utils
 
+SLACK_URL = u'https://hackguides.herokuapp.com'
 
 def is_logged_in():
     """Determine if user is logged in or not"""
@@ -136,7 +137,7 @@ def gh_rate_limit():
 def faq():
     """FAQ page"""
 
-    g.slack_url = u'https://hackguides.herokuapp.com'
+    g.slack_url = SLACK_URL
     file_details = models.read_file('faq.md', rendered_text=True)
 
     # Screen-scrape slack signup app since it's dynamic with node.js and grabs
@@ -420,6 +421,9 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     login = session.get('login', None)
     collaborator = session.get('collaborator', False)
 
+    recently_saved = request.args.get('saved', 0)
+    status = request.args.get('status', PUBLISHED)
+
     publish_statuses = ()
 
     if login == article.branch or article.author_name == login:
@@ -481,7 +485,9 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
                            user=user,
                            publish_statuses=publish_statuses,
                            redirect_url=redirect_url,
-                           allow_comments=allow_comments)
+                           allow_comments=allow_comments,
+                           recently_saved=recently_saved,
+                           status=status)
 
 
 @app.route('/partner/<path:article_path>', methods=['GET'])
@@ -528,6 +534,8 @@ def partner(article_path):
 @login_required
 def save():
     """Form POST save"""
+
+    g.slack_url = SLACK_URL
 
     user = models.find_user()
     if user is None:
@@ -630,9 +638,8 @@ def save():
                                    branch=article.branch,
                                    status=article.publish_status)
 
-    flash('Your content is being saved to github. It should appear within a few minutes.', category='info')
-
-    return redirect(filters.url_for_article(article, branch=article.branch))
+    return redirect(filters.url_for_article(article, branch=article.branch,
+                                            saved=1))
 
 
 @app.route('/delete/', methods=['POST'])
@@ -724,7 +731,7 @@ def change_publish_status():
 
     # Create this link AFTER changing the status b/c the URL will have the
     # status in it if the article is not published yet.
-    article_url = filters.url_for_article(article)
+    article_url = filters.url_for_article(article, saved=1)
 
     tasks.update_listing.delay(article_url,
                                article.title,
@@ -741,10 +748,6 @@ def change_publish_status():
     tasks.move_article.delay(curr_path, article.path, article.title,
                              user.login, user.email,
                              new_publish_status=article.publish_status)
-
-    msg = 'The guide has been queued up to %s. Please <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> if the change does not show up within a few minutes.' % (publish_status)
-
-    flash(msg, category='info')
 
     return redirect(article_url)
 

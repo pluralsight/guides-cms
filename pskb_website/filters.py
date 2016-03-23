@@ -20,13 +20,15 @@ def date_string(dt, fmt_str):
     return dt.strftime(fmt_str)
 
 
-def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master'):
+def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master',
+                    **kwargs):
     """
     Get URL for article object
 
     :param article: Article object
     :param base_url: Base URL i.e domain, etc. to use
     :param branch: Branch
+    :param kwargs: Passed directly into flask.url_for
     :returns: URL as string
 
     Note this filter is directly linked to the views.article_view URL.  These
@@ -45,13 +47,15 @@ def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master'):
     stack = utils.slugify_stack(article.stacks[0])
 
     url = u'%s%s' % (base_url,
-                     url_for(u'article_view', title=title, stack=stack))
+                     url_for(u'article_view', title=title, stack=stack,
+                             **kwargs))
+
+    query_str_arg = '&' if '?' in url else '?'
 
     if article.publish_status != PUBLISHED:
-        url = u'%s?status=%s' % (url, article.publish_status)
+        url = u'%s%sstatus=%s' % (url, query_str_arg, article.publish_status)
 
     if branch != u'master':
-        query_str_arg = '&' if '?' in url else '?'
         url = u'%s%sbranch=%s' % (url, query_str_arg, branch)
 
     return url

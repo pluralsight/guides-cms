@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 
+{% block metatags %}
+    <!-- FB share/like are really bad at picking up the right info without these -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="{{article.title}}" />
+    <meta property="og:site_name" content="hack.guides()" />
+    <meta property="og:url" content="{{canonical_url}}" />
+    {{ super() }}
+{% endblock %}
+
 {% block css %}
     <link href="{{url_for('static', filename='css/vendor/editor/github.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/vendor/github.css')}}" rel="stylesheet">
@@ -53,6 +62,10 @@
 
     </div>
     <div id="article" class="col-md-10 col-md-offset-2">
+        {% if recently_saved %}
+            {% include 'publish_workflow.html' with context %}
+        {% endif %}
+
         <div id="article-header">
             {% if article.image_url %}
                 <img id="article-img" src="{{article.image_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{article.author_name}}"/>

@@ -1,0 +1,123 @@
+<div id="workflow-help" class="bg-success">
+{% if status == 'draft' %}
+    <h1 id="thanks">Thanks for posting your new guide!</h1>
+    <p>
+        The guide is now in <strong>draft</strong> status, which means it's
+        only visible by you on this site.  You can browse to
+        <a href="{{session.login|url_for_user}}">your profile page</a> to find
+        the guide and continue improving it.
+    </p>
+    <h2 id="whats-next">What's next?</h2>
+    <p>
+        Keep improving your guide and mark it as <strong>in-review</strong>
+        using the form below when you're ready for help from our community
+        editors!  Feel free to ask editors questions on our
+        <a href="{{g.slack_url}}">Slack channel</a> or
+        <a href="mailto: prateek-gupta@pluralsight.com">contact us directly</a>.
+    </p>
+{% elif status == 'in-review' %}
+    <h1 id="thanks">Thanks for posting your new guide!</h1>
+    <p>
+        The guide is now in <strong>in-review</strong> status, which means it
+        will show up on our
+        <a href="{{url_for('in_review')}}">Review page</a> within a few
+        minutes.
+    </p>
+    <h2 id="whats-next">What's next</h2>
+    <p>
+        Our community editors will start helping get your guide ready for
+        publishing.  Feel free to ask editors questions on our
+        <a href="{{g.slack_url}}">Slack channel</a> or
+        <a href="mailto: prateek-gupta@pluralsight.com">contact us directly</a>.
+        You can keep editing your guide and check the
+        <a href="{{g.repo_url}}">guides Github repo</a> for more help.
+    </p>
+    <p>
+        In the meantime, try sharing your guide to help recruit editors!
+    </p>
+
+    <div class="row">
+        <div class="col-md-2 col-sm-2 col-xs-12 col-xs-offset-1 col-sm-offset-4 col-md-offset-4">
+            <a class="twitter-share-button"
+                href="https://twitter.com/intent/tweet?text={{['Help me edit new hack.guide() - ', article.title]|join|urlencode|truncate(100)}}"
+                data-size="large"
+                data-url="{{canonical_url}}"
+                data-via="pluralsight">
+                Tweet
+            </a>
+        </div>
+
+        <div class="col-md-2 col-sm-3 col-xs-12 col-xs-offset-1">
+            <span id="fb-root"></span>
+            <span class="fb-like"
+                data-href="{{canonical_url}}"
+                data-layout="button" 
+                data-action="like"
+                data-share="true"
+                data-show-faces="false">
+            </span>
+        </div>
+    </div>
+
+{% elif status == 'published' %}
+    <h1 id="thanks">This guide is now published!</h1>
+    <p>
+        Your content is being saved to Github. It should appear within a few
+        minutes.  Please
+        <a href="mailto: prateek-gupta@pluralsight.com">contact us</a> directly
+        if you have any questions.
+    </p>
+    <p style="text-align: center;">
+        How about sharing with your network to get feedback?
+    </p>
+
+    <div class="row">
+        <div class="col-md-2 col-sm-2 col-xs-12 col-xs-offset-1 col-sm-offset-4 col-md-offset-4">
+            <a class="twitter-share-button"
+                href="https://twitter.com/intent/tweet?text={{['New hack.guide() - ', article.title]|join|urlencode|truncate(100)}}"
+                data-size="large"
+                data-size="large"
+                data-url="{{canonical_url}}"
+                data-via="pluralsight">
+                Tweet
+            </a>
+        </div>
+
+        <div class="col-md-2 col-sm-3 col-xs-12 col-xs-offset-1">
+            <span id="fb-root"></span>
+            <span class="fb-like"
+                data-href="{{canonical_url}}"
+                data-layout="button"
+                data-action="like"
+                data-share="true"
+                data-show-faces="false">
+            </span>
+        </div>
+    </div>
+{% endif %}
+</div>
+
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<script>window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+ 
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+ 
+  return t;
+}(document, "script", "twitter-wjs"));</script>
