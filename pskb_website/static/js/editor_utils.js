@@ -9,25 +9,25 @@ function initialize_editor(local_filename, name, real_name, img_upload_url) {
     editor = new EpicEditor({
         container: 'epiceditor',
         textarea: "content",
-        buttons: false,
         basePath: '/static/css/vendor/editor/epic',
         theme: {
             base: '/base/hackguides.css',
             editor: '/editor/hackguides.css',
             preview: '/preview/github.css',
         },
+        buttons: false,
         button: {
             preview: false,
             fullscreen: false,
             bar: "auto"
         },
-        localStorageName: 'epiceditor',
+        localStorageName: 'articles',
         parser: marked,
         clientSideStorage: true,
         file: {
             name: local_filename,
             defaultContent: '',
-            autoSave: 100,
+            autoSave: 500,
             defaultContent: '# Untitled \n\nStart writing your tutorial!',
         },
         focusOnLoad: false,
