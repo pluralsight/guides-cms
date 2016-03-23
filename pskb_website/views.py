@@ -340,7 +340,23 @@ def review(title):
 # These must be changed together!
 @app.route('/<stack>/<title>', methods=['GET'])
 def article_view(stack, title):
-    """Article page"""
+    """
+    Find article with given stack/stack combination and display it
+
+    Note all publish statuses are searched and the first one found is returned.
+    This allows us to keep the same URL through the publish workflow process
+    since the status is only a 'hint' and query string.
+
+    By default, the statuses are searched in the order of importance:
+    published, in-review, and finally draft.
+
+    GET parameters used:
+        - status: Hint on what publish status to search for FIRST
+            - Default is 'published' which makes the published articles have
+              clean URLs without any query string.
+        - branch: Branch of article to display
+            - Default is master
+    """
 
     # Support for old URL /title/article.md
     if title == 'article.md':
