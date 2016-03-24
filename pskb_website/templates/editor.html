@@ -6,7 +6,7 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css" rel="stylesheet" crossorigin="anonymous">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/editor/epic/design.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/editor/design.css') }}">
 {% endblock %}
 
 {% block js %}
@@ -15,8 +15,8 @@
     <script src="{{ url_for('static', filename='js/vendor/editor/dropzone.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script>
-    <script src="{{ url_for('static', filename='js/vendor/editor/epic/epiceditor.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='ace/ace.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/editor/marked.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/editor_utils.js') }}"></script>
 {% endblock %}
 
@@ -81,15 +81,14 @@
         <div class="col-xs-12 col-sm-6 editor-column" id="droppable-area">
             <div class="editor-header">
                 <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo">
+                <button id="btn-scroll-sync" class="btn btn-default btn-xs">Scroll Sync</button>
                 <a href="http://daringfireball.net/projects/markdown/syntax" class="markdown-help" target="_blank">Markdown <span class="fa fa-question-circle"></span></a>
             </div>
 
-            <div id="epiceditor">
-            </div>
-            <textarea id="content" style="display:none">{{article.content}}</textarea>
+            <div id="editor"></div>
 
             <div class="editor-footer">
-                <span>Upload files by dragging & dropping here</span>
+                <span>Upload files by dragging & dropping into the editor or click <a href="#" class="btn-dropzone">here</a></span>
                 <div class="dz-preview dz-file-preview" id="preview-template" style="display: none;">
                     <div class="dz-details" style="display: none;">
                     <div class="dz-filename" style="display: none;"><span data-dz-name></span></div>
@@ -109,7 +108,7 @@
             <div class="preview-header">
                 <span class="preview-text">PREVIEW</span>
             </div>
-            <div id="epiceditor-preview"></div>
+            <div id="preview"></div>
         </div>
     </div>
 
@@ -130,13 +129,20 @@
 
     <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}', '{{url_for('save')}}')" class="btn btn-primary">Save</button>
 
+    <br />
+    <br />
 </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
-        var editor = initialize_editor('{{article.sha or "hack.guides-draft"}}', '{{'' if not article.author_name else article.author_name}}', '{{'' if not article.author_real_name else article.author_real_name}}', '{{url_for('img_upload')}}');
-        $("#title").change(function() { editor.emit('update') });
-        $("#stacks").change(function() { editor.emit('update') });
+        var editor = initialize_editor('{{article.sha or "hack.guides-draft"}}', '{{article.content}}', '{{'' if not article.author_name else article.author_name}}', '{{'' if not article.author_real_name else article.author_real_name}}', '{{url_for('img_upload')}}');
+        $("#title").change(function() { previewUpdated(); });
+        $("#stacks").change(function() { previewUpdated(); });
+
+        $("#btn-scroll-sync").click(function() {
+            toggleScrollSync();
+            $("#btn-scroll-sync").toggleClass('active');
+        });
     });
 </script>
 {% endblock %}

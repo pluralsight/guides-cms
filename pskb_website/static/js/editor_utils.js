@@ -2,52 +2,67 @@ var editor;
 var author_name;
 var author_real_name;
 
-function initialize_editor(local_filename, name, real_name, img_upload_url) {
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+};
+
+var previewUpdated = debounce(function() {
+    var header = get_article_header_data();
+    var content_as_markdown = header + editor.getSession().getValue();
+    var content_as_html = marked(content_as_markdown);
+    var preview = $('#preview');
+    preview.html(content_as_html);
+    $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+}, 200);
+
+function initialize_editor(local_filename, content, name, real_name, img_upload_url) {
     author_name = name;
     author_real_name = real_name;
 
-    editor = new EpicEditor({
-        container: 'epiceditor',
-        textarea: "content",
-        basePath: '/static/css/vendor/editor/epic',
-        parser: marked,
-        theme: {
-            base: '/base/hackguides.css',
-            editor: '/editor/hackguides.css',
-            preview: '/preview/github.css',
-        },
-        buttons: false,
-        button: {
-            preview: false,
-            fullscreen: false,
-            bar: "auto"
-        },
-        localStorageName: 'articles',
-        clientSideStorage: true,
-        file: {
-            name: local_filename,
-            defaultContent: '',
-            autoSave: 200,
-            defaultContent: '# Untitled \n\nStart writing your tutorial!',
-        },
-        focusOnLoad: false,
-        useNativeFullscreen: false,
-        autogrow: false
-        }).load(
-    function () {
+    editor = ace.edit("editor");
+    editor.setTheme("ace/theme/github");
+    editor.getSession().setMode("ace/mode/markdown");
+    // editor.renderer.setShowGutter(false);
+    // editor.renderer.setOption('showLineNumbers', false);
+
+    var placeholder = '# Untitled \n\nStart writing your tutorial!';
+    editor.setValue(content || placeholder);
+
+    editor.getSession().on('change', function(e) {
+        previewUpdated();
     });
 
-    editor.on('update', function () {
-        /* Inject header information as it would appear on a regular page since
-         * this content is not directly in the editor box */
-        var header = get_article_header_data();
-        document.querySelector('#epiceditor-preview').innerHTML = header + this.exportFile(null, 'html');
-        $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-    }).emit('update');
 
     configure_dropzone_area(img_upload_url);
 
     return editor;
+}
+
+var scrollSyncEnabled = false;
+var scrollSyncFunction = function(scroll) { $("#preview").scrollTop(scroll); };
+
+function toggleScrollSync() {
+    if (scrollSyncEnabled) {
+        editor.getSession().on('changeScrollTop', scrollSyncFunction);
+    } else {
+        editor.getSession().off('changeScrollTop', scrollSyncFunction);
+    }
+    scrollSyncEnabled = ! scrollSyncEnabled;
 }
 
 function configure_dropzone_area(img_upload_url) {
@@ -61,6 +76,7 @@ function configure_dropzone_area(img_upload_url) {
         createImageThumbnails: false,
         addRemoveLinks: false,
         previewTemplate: document.querySelector('#preview-template').innerHTML,
+        clickable: '.btn-dropzone',
         accept: function(file, done) {
             if (file.name.endsWith('.exe') || file.name.endsWith('.bin') || file.name.endsWith('.bat')) {
                 done("File not supported");
@@ -74,13 +90,7 @@ function configure_dropzone_area(img_upload_url) {
     myDropzone.on('success', function(file, path) {
         // Add Markdown reference into the editor
         var fileMarkdown = '\n![description](' + path + ')\n';
-        editor.getElement('editor').body.innerHTML += fileMarkdown;
-        // Scroll editor to bottom
-        var body = editor.getElement('editor').body;
-        body.scrollTop = body.scrollHeight;
-        // Scroll preview to bottom
-        var preview = document.getElementById('epiceditor-preview');
-        preview.scrollTop = preview.scrollHeight;
+        editor.insert(fileMarkdown);
     });
 
     myDropzone.on("complete", function(file) {
