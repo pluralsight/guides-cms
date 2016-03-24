@@ -149,7 +149,7 @@ function save(sha, path, secondary_repo, action_url) {
 
     var content = document.createElement("input");
     content.name = "content";
-    content.value = editor.exportFile("", "json");
+    content.value = editor.getValue();
     form.appendChild(content.cloneNode());
 
     var sha_elem = document.createElement("input");

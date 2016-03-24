@@ -561,9 +561,7 @@ def save():
     if user.email is None:
         flash('Unable to read email address from Github API to properly attribute your commit to your account. Please make sure you have authorized the application to access your email.', category='warning')
 
-    # Data is stored in form with input named content which holds json. The
-    # json has the 'real' data in the 'content' key.
-    content = json.loads(request.form['content'])['content']
+    content = request.form['content']
 
     path = request.form['path']
     title = request.form['title']
