@@ -40,8 +40,71 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     // editor.renderer.setShowGutter(false);
     // editor.renderer.setOption('showLineNumbers', false);
 
-    var placeholder = '# Untitled \n\nStart writing your tutorial!';
+    var placeholder = "\n\
+# Markdown tutorial by example\
+\n\n\
+Read this if you need to check the Markdown syntax. Otherwise, erase this text and start writing your guide.\
+\n\n\
+# Headers \
+\n\n\
+## Header's Subsection \
+\n\n\
+### Header's Subsection \
+\n\n\
+#### Header's Subsection \
+\n\n\
+##### Header's Subsection \
+\n\n\
+# Text Format \
+\n\n\
+normal, *italic*, **bold**, _emphasis_, __bold__, http://link.com, ùníçõd&, `code`, \*escaping special chars\*, &copy; \
+\n\n\
+## Bloquote \
+\n\n\
+> You can put some warning or important messages in bloquotes. \n\
+Check that a bloquote can have multiple lines. \
+\n\n\
+# Code \
+\n\n\
+```\n\
+print('test')\n\
+```\
+\n\n\
+```javascript\n\
+$(function(){\n\
+  $('div').html('I am a div.');\n\
+});\n\
+```\
+\n\n\
+### Lists\
+\n\n\
+#### Unordered list\
+\n\n\
+- item 1\n\
+- item 2\n\
+\n\
+or\n\
+\n\
+* item 1\n\
+* item 2\
+\n\n\
+#### Ordered list\
+\n\
+1. item 1\n\
+1. item 2\n\
+\n\
+or\n\
+\n\
+1. item 1\n\
+2. item 2\n\
+\n\
+### Images and Files\
+\n\n\
+![alt text](http://tutorials.pluralsight.com/static/img/dark-logo.png 'Logo Title')\
+\n\n\
+";
     editor.setValue(content || placeholder);
+    previewUpdated();
 
     editor.getSession().on('change', function(e) {
         previewUpdated();
