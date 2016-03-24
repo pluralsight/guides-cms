@@ -57,7 +57,7 @@ Read this if you need to check the Markdown syntax. Otherwise, erase this text a
 \n\n\
 # Text Format \
 \n\n\
-normal, *italic*, **bold**, _emphasis_, __bold__, http://link.com, ùníçõd&, `code`, \*escaping special chars\*, &copy; \
+normal, *italic*, **bold**, __bold__, _emphasis_, ùníçõd&, `code`, \*escaping special chars\*, &copy; \
 \n\n\
 ## Bloquote \
 \n\n\
@@ -98,6 +98,11 @@ or\n\
 1. item 1\n\
 2. item 2\n\
 \n\
+### Links\
+\n\n\
+* [text of the link](http://hackguides.org)\n\
+* http://hackguides.org\
+\n\n\
 ### Images and Files\
 \n\n\
 ![alt text](http://tutorials.pluralsight.com/static/img/dark-logo.png 'Logo Title')\
