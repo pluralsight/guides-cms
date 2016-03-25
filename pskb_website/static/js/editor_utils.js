@@ -38,6 +38,7 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     editor.setTheme("ace/theme/github");
     editor.getSession().setMode("ace/mode/markdown");
     editor.getSession().setUseWrapMode(true);
+    // editor.getSession().setNewLineMode("unix");
     editor.setShowPrintMargin(false);
     editor.setOption('maxLines', 99999);
     // editor.renderer.setShowGutter(false);
@@ -230,10 +231,10 @@ function save(sha, path, secondary_repo, action_url) {
     form.action = action_url;
     form.method = "POST";
 
-    var content = document.createElement("input");
-    content.name = "content";
-    content.value = editor.getValue();
-    form.appendChild(content.cloneNode());
+    var textarea = document.createElement("textarea");
+    textarea.name = "content";
+    $(textarea).val(editor.getSession().getValue());
+    form.appendChild(textarea);
 
     var sha_elem = document.createElement("input");
     sha_elem.name = "sha";
