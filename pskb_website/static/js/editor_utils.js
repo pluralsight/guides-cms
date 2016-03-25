@@ -23,7 +23,7 @@ function debounce(func, wait, immediate) {
 
 var previewUpdated = debounce(function() {
     var header = get_article_header_data();
-    var content_as_markdown = header + editor.getSession().getValue();
+    var content_as_markdown = header + '\n' + editor.getSession().getValue();
     var content_as_html = marked(content_as_markdown);
     var preview = $('#preview');
     preview.html(content_as_html);
