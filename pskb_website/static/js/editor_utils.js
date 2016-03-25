@@ -115,20 +115,32 @@ or\n\
         previewUpdated();
     });
 
-
     configure_dropzone_area(img_upload_url);
 
     return editor;
 }
 
 var scrollSyncEnabled = false;
-var scrollSyncFunction = function(scroll) { $("#preview").scrollTop(scroll); };
+var $divs = null;
+var scrollSyncFunction = function(e) {
+    var
+      $other     = $divs.not(this).off('scroll'),
+      other      = $other[0],
+      percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
+
+    other.scrollTop = Math.round(percentage * (other.scrollHeight - other.offsetHeight));
+
+    setTimeout(function() { $other.on('scroll', scrollSyncFunction); }, 10);
+
+    return false;
+};
 
 function toggleScrollSync() {
+    $divs = $('#editor-wrapper, #preview');
     if (scrollSyncEnabled) {
-        editor.getSession().on('changeScrollTop', scrollSyncFunction);
+        $divs.off('scroll', scrollSyncFunction);
     } else {
-        editor.getSession().off('changeScrollTop', scrollSyncFunction);
+        $divs.on('scroll', scrollSyncFunction);
     }
     scrollSyncEnabled = ! scrollSyncEnabled;
 }

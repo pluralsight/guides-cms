@@ -1,12 +1,17 @@
 /* Editor column */
 
+#editor-wrapper {
+    padding: 0;
+    overflow: scroll;
+    height: 470px;
+}
+
 #editor {
     /* position: absolute; */
     /* top: 0; */
     /* right: 60px; */
     /* bottom: 0; */
     /* left: 0; */
-    height: 470px;
 }
 
 .editor-column {
