@@ -113,6 +113,7 @@ or\n\
 \n\n\
 ";
     editor.setValue(content || placeholder);
+    editor.gotoLine(1);
     previewUpdated();
 
     editor.getSession().on('change', function(e) {
