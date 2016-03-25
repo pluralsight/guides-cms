@@ -37,6 +37,9 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/github");
     editor.getSession().setMode("ace/mode/markdown");
+    editor.getSession().setUseWrapMode(true);
+    editor.setShowPrintMargin(false);
+    editor.setOption('maxLines', 99999);
     // editor.renderer.setShowGutter(false);
     // editor.renderer.setOption('showLineNumbers', false);
 
