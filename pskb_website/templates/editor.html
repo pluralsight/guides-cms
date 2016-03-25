@@ -137,7 +137,14 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        var editor = initialize_editor('{{article.sha or "hack.guides-draft"}}', '{{article.content}}', '{{'' if not article.author_name else article.author_name}}', '{{'' if not article.author_real_name else article.author_real_name}}', '{{url_for('img_upload')}}');
+        var local_filename = '{{ article.sha or "hack.guides-draft" }}';
+        {% autoescape false %}
+        var original_content = '{{ article.content | replace("\n", "\\n") | replace("\r", "") | replace("'", "\\'") }}';
+        {% endautoescape %}
+        var author_name = '{{ '' if not article.author_name else article.author_name }}';
+        var author_real_name = '{{ '' if not article.author_real_name else article.author_real_name }}';
+        var img_upload_url = '{{ url_for("img_upload") }}';
+        var editor = initialize_editor(local_filename, original_content, author_name, author_real_name, img_upload_url);
         $("#title").change(function() { previewUpdated(); });
         $("#stacks").change(function() { previewUpdated(); });
 
