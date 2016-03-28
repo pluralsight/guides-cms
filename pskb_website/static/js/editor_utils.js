@@ -72,7 +72,7 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     // editor.renderer.setShowGutter(false);
     // editor.renderer.setOption('showLineNumbers', false);
 
-    var placeholder = "\n\
+    var placeholder = "\
 # Markdown tutorial by example\
 \n\n\
 Read this if you need to check the Markdown syntax. Otherwise, erase this text and start writing your guide.\
@@ -89,7 +89,7 @@ Read this if you need to check the Markdown syntax. Otherwise, erase this text a
 \n\n\
 # Text Format \
 \n\n\
-normal, *italic*, **bold**, __bold__, _emphasis_, ùníçõd&, `code`, \*escaping special chars\*, &copy; \
+normal, *italic*, **bold**, __bold__, _emphasis_, ~~strikethrough~~, ùníçõd&, `code`, \*escaping special chars\*, &copy; \
 \n\n\
 ## Bloquote \
 \n\n\
@@ -121,7 +121,7 @@ or\n\
 * item 2\
 \n\n\
 #### Ordered list\
-\n\
+\n\n\
 1. item 1\n\
 1. item 2\n\
 \n\
@@ -130,6 +130,27 @@ or\n\
 1. item 1\n\
 2. item 2\n\
 \n\
+#### Nesting\
+\n\n\
+1. item 1\n\
+  1. item 1.1\n\
+  2. item 1.2\n\
+    - subitem 1\n\
+    - subitem 2\n\
+2. item 2\n\
+\n\
+#### Task Listing\
+\n\n\
+- [ ] item 1\n\
+- [x] item 2\n\
+\n\n\
+### Tables\
+\n\n\
+First Column Header | Second Column Header | Third Column\n\
+------------------- | -------------------- | ------------\n\
+Content from cell 1 | | Content from cell 3\n\
+Another cell 1 | Another cell 2\n\
+\n\n\
 ### Links\
 \n\n\
 * [text of the link](http://hackguides.org)\n\
@@ -138,6 +159,18 @@ or\n\
 ### Images and Files\
 \n\n\
 ![alt text](http://tutorials.pluralsight.com/static/img/dark-logo.png 'Logo Title')\
+\n\n\
+### Horizontal rules\
+\n\n\
+------------------------\
+\n\n\
+or\
+\n\n\
+* * *\
+\n\n\
+or\
+\n\n\
+*****\
 \n\n\
 ";
     editor.setValue(content || loadAutoSave(local_filename) || placeholder);
