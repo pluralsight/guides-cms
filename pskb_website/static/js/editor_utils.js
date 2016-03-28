@@ -28,7 +28,34 @@ var previewUpdated = debounce(function() {
     var preview = $('#preview');
     preview.html(content_as_html);
     $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-}, 200);
+}, 500);
+
+var loadAutoSave = function(local_filename) {
+    var obj = localStorage.getItem('hack.guides');
+    if (obj) {
+        obj = JSON.parse(obj);
+        return obj[local_filename]; // markdown content or undefined
+    }
+    return undefined;
+}
+
+var autoSave = debounce(function(local_filename) {
+    var content_as_markdown = editor.getSession().getValue();
+    var obj = localStorage.getItem('hack.guides') || '{}';
+    obj = JSON.parse(obj);
+    obj[local_filename] = content_as_markdown;
+    localStorage.setItem('hack.guides', JSON.stringify(obj));
+}, 1000);
+
+var clearLocalSave = function(local_filename) {
+    var obj = localStorage.getItem('hack.guides');
+    if (obj) {
+        obj = JSON.parse(obj);
+        delete obj[local_filename];
+        localStorage.setItem('hack.guides', JSON.stringify(obj));
+    }
+    return undefined;
+}
 
 function initialize_editor(local_filename, content, name, real_name, img_upload_url) {
     author_name = name;
@@ -113,12 +140,13 @@ or\n\
 ![alt text](http://tutorials.pluralsight.com/static/img/dark-logo.png 'Logo Title')\
 \n\n\
 ";
-    editor.setValue(content || placeholder);
+    editor.setValue(content || loadAutoSave(local_filename) || placeholder);
     editor.gotoLine(1);
     previewUpdated();
 
     editor.getSession().on('change', function(e) {
         previewUpdated();
+        autoSave(local_filename);
     });
 
     configure_dropzone_area(img_upload_url);
