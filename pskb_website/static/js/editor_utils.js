@@ -72,6 +72,16 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     // editor.renderer.setShowGutter(false);
     // editor.renderer.setOption('showLineNumbers', false);
 
+    marked.setOptions({
+      gfm: true,
+      tables: true,
+      breaks: true,
+      pedantic: false,
+      sanitize: false,
+      smartLists: true,
+      smartypants: false
+    });
+
     var placeholder = "\
 # Markdown tutorial by example\
 \n\n\
