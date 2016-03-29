@@ -86,7 +86,7 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
 # Markdown tutorial by example\
 \n\n\
 Read this if you need to check the Markdown syntax. Otherwise, erase this text and start writing your guide.\
-\n\n\
+\n\n\n\
 # Headers \
 \n\n\
 ## Header's Subsection \
@@ -96,7 +96,7 @@ Read this if you need to check the Markdown syntax. Otherwise, erase this text a
 #### Header's Subsection \
 \n\n\
 ##### Header's Subsection \
-\n\n\
+\n\n\n\
 # Text Format \
 \n\n\
 normal, *italic*, **bold**, __bold__, _emphasis_, ~~strikethrough~~, ùníçõd&, `code`, \*escaping special chars\*, &copy; \
@@ -105,7 +105,7 @@ normal, *italic*, **bold**, __bold__, _emphasis_, ~~strikethrough~~, ùníçõd&
 \n\n\
 > You can put some warning or important messages in bloquotes. \n\
 Check that a bloquote can have multiple lines. \
-\n\n\
+\n\n\n\
 # Code \
 \n\n\
 ```\n\
@@ -117,10 +117,10 @@ $(function(){\n\
   $('div').html('I am a div.');\n\
 });\n\
 ```\
+\n\n\n\
+# Lists\
 \n\n\
-### Lists\
-\n\n\
-#### Unordered list\
+## Unordered list\
 \n\n\
 - item 1\n\
 - item 2\n\
@@ -130,7 +130,7 @@ or\n\
 * item 1\n\
 * item 2\
 \n\n\
-#### Ordered list\
+## Ordered list\
 \n\n\
 1. item 1\n\
 1. item 2\n\
@@ -140,7 +140,7 @@ or\n\
 1. item 1\n\
 2. item 2\n\
 \n\
-#### Nesting\
+## Nesting\
 \n\n\
 1. item 1\n\
   1. item 1.1\n\
@@ -149,28 +149,28 @@ or\n\
     - subitem 2\n\
 2. item 2\n\
 \n\
-#### Task Listing\
+## Task Listing\
 \n\n\
 - [ ] item 1\n\
 - [x] item 2\n\
 \n\n\
-### Tables\
+# Tables\
 \n\n\
 First Column Header | Second Column Header | Third Column\n\
 ------------------- | -------------------- | ------------\n\
 Content from cell 1 | | Content from cell 3\n\
 Another cell 1 | Another cell 2\n\
 \n\n\
-### Links\
+# Links\
 \n\n\
 * [text of the link](http://hackguides.org)\n\
 * http://hackguides.org\
-\n\n\
-### Images and Files\
+\n\n\n\
+# Images and Files\
 \n\n\
 ![alt text](http://tutorials.pluralsight.com/static/img/dark-logo.png 'Logo Title')\
-\n\n\
-### Horizontal rules\
+\n\n\n\
+# Horizontal rules\
 \n\n\
 ------------------------\
 \n\n\
