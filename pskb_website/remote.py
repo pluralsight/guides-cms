@@ -295,7 +295,18 @@ def file_details_from_github(path, branch=u'master', allow_404=False):
     resp = github.get(url, data={'ref': branch})
 
     if resp.status == 200:
-        sha = resp.data['sha']
+
+        # Temporary debug. It seems that sometimes github returns a 200
+        # response and a list of items, which should only happen if we ask for
+        # the contents of a directory.  This function should never be called
+        # with a directory.
+        try:
+            sha = resp.data['sha']
+        except TypeError as err:
+            app.logger.error('Incorrect SHA response for URL: %s, resp: %s, err: %s',
+                             url, resp.data, err)
+            return None
+
         link = resp.data['_links']['html']
         text = unicode(base64.b64decode(resp.data['content'].encode('utf-8')),
                        encoding='utf-8')
