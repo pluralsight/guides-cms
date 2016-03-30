@@ -33,7 +33,7 @@ deploy_stage:
 	git push stage master
 
 deploy_prod:
-	git push prod production:master
+	git push prod master
 
 push:
 	git push origin master
