@@ -50,12 +50,13 @@ def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master',
                      url_for(u'article_view', title=title, stack=stack,
                              **kwargs))
 
-    query_str_arg = '&' if '?' in url else '?'
-
     if article.publish_status != PUBLISHED:
+        query_str_arg = '&' if '?' in url else '?'
         url = u'%s%sstatus=%s' % (url, query_str_arg, article.publish_status)
 
+
     if branch != u'master':
+        query_str_arg = '&' if '?' in url else '?'
         url = u'%s%sbranch=%s' % (url, query_str_arg, branch)
 
     return url
