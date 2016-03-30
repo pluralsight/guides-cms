@@ -78,12 +78,37 @@
     font-size: 12px;
 }
 
+#article_title {
+    position: absolute;
+    right: 5px;
+    top: 10px;
+    max-width: 460px;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: right;
+}
+
+#article_stack {
+    position: absolute;
+    right: 5px;
+    top: 45px;
+    max-width: 460px;
+    overflow: hidden;
+    font-size: 10px;
+    color: gray;
+}
+
+#article_author {
+    font-size: 10px;
+}
+
 #preview {
     height: 500px;
     overflow: scroll;
     font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,"Segoe UI",Arial,freesans,sans-serif;
     padding: 15px;
-    padding-top: 5px;
+    padding-top: 0px;
 }
 
 #preview td, #preview th {

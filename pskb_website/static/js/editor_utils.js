@@ -22,8 +22,7 @@ function debounce(func, wait, immediate) {
 };
 
 var previewUpdated = debounce(function() {
-    var header = get_article_header_data();
-    var content_as_markdown = header + '\n' + editor.getSession().getValue();
+    var content_as_markdown = editor.getSession().getValue();
     var content_as_html = marked(content_as_markdown);
     var preview = $('#preview');
     preview.html(content_as_html);
@@ -256,48 +255,6 @@ function configure_dropzone_area(img_upload_url) {
 
     return myDropzone;
 }
-
-function get_article_header_data() {
-    var title = document.getElementById('title').value;
-
-    var h1 = '<h1 id="title" class="tagline gradient-text" style="margin-top: 5px">' + title + '</h1>';
-    var h4 = '<h4 id="author"><small>written by ';
-
-    var anchor = '<a href="#">';
-    if (author_name != undefined && author_name != '') {
-        anchor = '<a href="/user/"' + author_name + '>';
-    }
-
-    if (author_real_name != undefined && author_real_name != '') {
-        anchor += author_real_name;
-    } else if (author_name != undefined && author_name != '') {
-        anchor += author_name;
-    } else {
-        anchor += 'you';
-    }
-
-    anchor += '</a>';
-    h4 += anchor + '</small></h4>';
-    var selected_stacks = document.getElementById('stacks').selectedOptions;
-    var stacks = '';
-    for (ii = 0; ii < selected_stacks.length; ii++) {
-        if (selected_stacks[ii].value != '') {
-            stacks += selected_stacks[ii].value + ',';
-        }
-    }
-
-    if (stacks.length) {
-        if (stacks[stacks.length - 1] == ',') {
-            stacks = stacks.slice(0, -1);
-        }
-    }
-
-    var h5 = '<h5 id="related"><small>Related to ' + stacks + '</small>';
-    var header = '<div class="header">' + h1 + h4 + h5 + '</div>' + '<hr>';
-
-    return header;
-}
-
 
 function save(sha, path, secondary_repo, action_url) {
     var form = document.createElement("form");
