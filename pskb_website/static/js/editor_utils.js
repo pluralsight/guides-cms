@@ -1,90 +1,10 @@
-var editor;
-var author_name;
-var author_real_name;
-
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(func, wait, immediate) {
-    var timeout;
-    return function() {
-        var context = this, args = arguments;
-        var later = function() {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-    };
-};
-
-var previewUpdated = debounce(function() {
-    var content_as_markdown = editor.getSession().getValue();
-    var content_as_html = marked(content_as_markdown);
-    var preview = $('#preview');
-    preview.html(content_as_html);
-    $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-}, 500);
-
-var loadAutoSave = function(local_filename) {
-    var obj = localStorage.getItem('hack.guides');
-    if (obj) {
-        obj = JSON.parse(obj);
-        return obj[local_filename]; // markdown content or undefined
-    }
-    return undefined;
-}
-
-var autoSave = debounce(function(local_filename) {
-    var content_as_markdown = editor.getSession().getValue();
-    var obj = localStorage.getItem('hack.guides') || '{}';
-    obj = JSON.parse(obj);
-    obj[local_filename] = content_as_markdown;
-    localStorage.setItem('hack.guides', JSON.stringify(obj));
-}, 1000);
-
-var clearLocalSave = function(local_filename) {
-    var obj = localStorage.getItem('hack.guides');
-    if (obj) {
-        obj = JSON.parse(obj);
-        delete obj[local_filename];
-        localStorage.setItem('hack.guides', JSON.stringify(obj));
-    }
-    return undefined;
-}
-
-function initialize_editor(local_filename, content, name, real_name, img_upload_url) {
-    author_name = name;
-    author_real_name = real_name;
-
-    editor = ace.edit("editor");
-    editor.setTheme("ace/theme/github");
-    editor.getSession().setMode("ace/mode/markdown");
-    editor.getSession().setUseWrapMode(true);
-    // editor.getSession().setNewLineMode("unix");
-    editor.setShowPrintMargin(false);
-    editor.setOption('maxLines', 99999);
-    editor.$blockScrolling = Infinity;
-    // editor.renderer.setShowGutter(false);
-    // editor.renderer.setOption('showLineNumbers', false);
-
-    marked.setOptions({
-      gfm: true,
-      tables: true,
-      breaks: true,
-      pedantic: false,
-      sanitize: false,
-      smartLists: true,
-      smartypants: false
-    });
-
-    var placeholder = "\
+var MARKDOWN_TUTORIAL = "\
 # Markdown tutorial by example\
 \n\n\
-Read this if you need to check the Markdown syntax. Otherwise, erase this text and start writing your guide.\
+Read this if you need to check the Markdown syntax. \n\n\
+\
+> **Disable the live tutorial to go back to your article**.\n\
+\
 \n\n\n\
 # Headers \
 \n\n\
@@ -182,13 +102,124 @@ or\
 *****\
 \n\n\
 ";
+
+var editor;
+var author_name;
+var author_real_name;
+var current_local_filename;
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+};
+
+var previewUpdated = debounce(function() {
+    var content_as_markdown = editor.getSession().getValue();
+    var content_as_html = marked(content_as_markdown);
+    var preview = $('#preview');
+    preview.html(content_as_html);
+    $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+}, 500);
+
+var autosaveEnabled = true;
+
+var loadAutoSave = function(local_filename) {
+    var obj = localStorage.getItem('hack.guides');
+    if (obj) {
+        obj = JSON.parse(obj);
+        return obj[local_filename]; // markdown content or undefined
+    }
+    return undefined;
+}
+
+var autoSave = debounce(function(local_filename) {
+    var content_as_markdown = editor.getSession().getValue();
+    var obj = localStorage.getItem('hack.guides') || '{}';
+    obj = JSON.parse(obj);
+    obj[local_filename] = content_as_markdown;
+    localStorage.setItem('hack.guides', JSON.stringify(obj));
+}, 1000);
+
+var clearLocalSave = function(local_filename) {
+    var obj = localStorage.getItem('hack.guides');
+    if (obj) {
+        obj = JSON.parse(obj);
+        delete obj[local_filename];
+        localStorage.setItem('hack.guides', JSON.stringify(obj));
+    }
+    return undefined;
+}
+
+function openLiveMarkdownTutorial() {
+    autosaveEnabled = false;
+    editor.getSession().setValue(MARKDOWN_TUTORIAL);
+}
+
+function closeLiveMarkdownTutorial() {
+    editor.setValue(loadAutoSave(current_local_filename) || '');
+    autosaveEnabled = true;
+}
+
+var liveTutorialEnabled = false;
+function toggleLiveTutorial() {
+    if (liveTutorialEnabled) {
+        closeLiveMarkdownTutorial();
+    } else {
+        openLiveMarkdownTutorial();
+    }
+    liveTutorialEnabled = ! liveTutorialEnabled;
+}
+
+function initialize_editor(local_filename, content, name, real_name, img_upload_url) {
+    author_name = name;
+    author_real_name = real_name;
+    current_local_filename = local_filename;
+
+    editor = ace.edit("editor");
+    editor.setTheme("ace/theme/github");
+    editor.getSession().setMode("ace/mode/markdown");
+    editor.getSession().setUseWrapMode(true);
+    // editor.getSession().setNewLineMode("unix");
+    editor.setShowPrintMargin(false);
+    editor.setOption('maxLines', 99999);
+    editor.$blockScrolling = Infinity;
+    // editor.renderer.setShowGutter(false);
+    // editor.renderer.setOption('showLineNumbers', false);
+
+    marked.setOptions({
+      gfm: true,
+      tables: true,
+      breaks: true,
+      pedantic: false,
+      sanitize: false,
+      smartLists: true,
+      smartypants: false
+    });
+
+    var placeholder = '# Start writing your tutorial here.\n\nOr load the live markdown tutorial to check the syntax.';
     editor.setValue(content || loadAutoSave(local_filename) || placeholder);
     editor.gotoLine(1);
     previewUpdated();
 
     editor.getSession().on('change', function(e) {
         previewUpdated();
-        autoSave(local_filename);
+        if (autosaveEnabled) {
+            autoSave(local_filename);
+        }
     });
 
     configure_dropzone_area(img_upload_url);

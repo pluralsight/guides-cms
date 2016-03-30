@@ -28,12 +28,6 @@
     padding:15px;
 }
 
-#btn-scroll-sync {
-    display: table-cell;
-    vertical-align: middle;
-    margin-top: 3px;
-}
-
 .editor-ps-logo {
     float: left;
     padding:0;
@@ -42,11 +36,17 @@
     height:29px;
 }
 
-.markdown-help {
+#btn-scroll-sync {
     display: table-cell;
     vertical-align: middle;
-    padding:0;
-    width: 100px;
+    margin-top: 3px;
+}
+
+#btn-live-tutorial {
+    display: table-cell;
+    vertical-align: middle;
+    margin-top: 3px;
+    margin-left: 5px;
 }
 
 /* Preview column */
