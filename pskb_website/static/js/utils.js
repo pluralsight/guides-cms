@@ -116,7 +116,7 @@ function create_toc_from_headers(headers) {
 
     for (var ii=0; ii < headers.length; ii++) {
         var hdr = headers[ii];
-        var url_content = hdr.textContent.replace(/ /g, "-").toLowerCase();
+        var url_content = hdr.textContent.replace(/[!\"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.: ]/g, "-").toLowerCase();
         var re = /h(\d)/i;
         var hdr_num = parseInt(re.exec(hdr.tagName)[1]);
 
