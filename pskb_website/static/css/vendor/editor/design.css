@@ -65,24 +65,29 @@
     background-color: #f7f7f7;
     padding:15px;
     height: 60px;
+    text-align: center;
 }
 
 .preview-text {
-    display: table-cell;
+    position: absolute;
+    left: 7px;
+    top: 20px;
     vertical-align: middle;
     color: gray;
     font-size: 12px;
 }
 
 #article_title {
-    position: absolute;
-    right: 5px;
-    top: 10px;
-    max-width: 460px;
-    overflow: hidden;
-    font-size: 12px;
+    font-size: 17px;
     font-weight: bold;
-    text-align: right;
+    text-align: center;
+    max-width: 330px;
+    padding-left: 0;
+    padding-right: 0;
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden !important;
 }
 
 #article_stack {
