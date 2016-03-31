@@ -211,9 +211,15 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     });
 
     var placeholder = '# Start writing your tutorial here.\n\nOr load the live markdown tutorial to check the syntax.';
-    editor.setValue(content || loadAutoSave(local_filename) || placeholder);
+    var local_content = loadAutoSave(local_filename);
+    // local content should always be the same or the most updated version.
+    editor.setValue(local_content || content || placeholder);
     editor.gotoLine(1);
     previewUpdated();
+
+    if (content && ! local_content) {
+        autoSave(local_filename);
+    }
 
     editor.getSession().on('change', function(e) {
         previewUpdated();
