@@ -48,7 +48,7 @@
             Try to make your title concise and to the point. Maximum length is 130 characters.
             </li>
         </ul>
-    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" maxlength="130" value="{{article.title}}" {{'readOnly="true"' if article else ""}} {% if not article %}autofocus{% endif %}/>
+    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" maxlength="130" value="{{article.title}}" {{'readOnly="true"' if article else ""}} {% if not article %}autofocus{% endif %} required="required"/>
     <input id="original_stack" name="original_stack" type="hidden" value="{{article.stacks[0] if article else ''}}" />
 
     <br />
@@ -122,7 +122,8 @@
     <p>
         Picking a stack will help readers find it more easily.
     </p>
-    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks">
+    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required">
+        <option value="" {{"selected" if not selected_stack}}>---</option>
         {% for stack in stacks %}
             <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
         {% endfor %}
@@ -155,6 +156,8 @@
             var stacks = $('#stacks').val();
             $("#article_stack").html(stacks ? 'Related to <i>' + stacks + '</i>' : 'no stack defined yet');
         });
+        $("#title").change();
+        $("#stacks").change();
 
         $("#btn-scroll-sync").click(function() {
             toggleScrollSync();

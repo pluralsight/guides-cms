@@ -317,6 +317,7 @@ function save(sha, path, secondary_repo, action_url) {
     var stacks = document.createElement("input");
     stacks.name = "stacks";
     stacks.value = stacks_select.value;
+    stacks.required = "required";
     form.appendChild(stacks.cloneNode());
 
     if (secondary_repo) {
