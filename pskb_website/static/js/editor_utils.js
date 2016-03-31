@@ -22,8 +22,8 @@ normal, *italic*, **bold**, __bold__, _emphasis_, ~~strikethrough~~, ùníçõd&
 \n\n\
 ## Bloquote \
 \n\n\
-> You can put some warning or important messages in bloquotes. \n\
-Check that a bloquote can have multiple lines. \
+> You can put some warning or important messages in blockquotes. \n\
+Check that a blockquote can have multiple lines. \
 \n\n\n\
 # Code \
 \n\n\
