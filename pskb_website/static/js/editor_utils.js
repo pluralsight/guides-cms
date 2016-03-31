@@ -293,52 +293,60 @@ function configure_dropzone_area(img_upload_url) {
     return myDropzone;
 }
 
-function save(sha, path, secondary_repo, action_url) {
-    var form = document.createElement("form");
-    form.action = action_url;
-    form.method = "POST";
+var clearFlashMessages = function(message, clazz) {
+    $('.bg-info, .bg-warning, .bg-danger').remove();
+};
 
-    var textarea = document.createElement("textarea");
-    textarea.name = "content";
-    $(textarea).val(editor.getSession().getValue());
-    form.appendChild(textarea);
+var addFlashMessage = function(message, clazz) {
+    var msg = '<p class="' + (clazz || 'bg-info') + '">' + message + '</p>';
+    $('.flash-msgs').append(msg);
+};
 
-    var sha_elem = document.createElement("input");
-    sha_elem.name = "sha";
-    sha_elem.value = sha;
-    form.appendChild(sha_elem.cloneNode());
-
-    var path_elem = document.createElement("input");
-    path_elem.name = "path";
-    path_elem.value = path;
-    form.appendChild(path_elem.cloneNode());
-
-    var title = document.getElementById("title");
-    form.appendChild(title.cloneNode());
-
-    var orig_stack = document.getElementById("original_stack");
-    form.appendChild(orig_stack.cloneNode());
-
-    var stacks_select = document.getElementById("stacks");
-    var stacks = document.createElement("input");
-    stacks.name = "stacks";
-    stacks.value = stacks_select.value;
-    stacks.required = "required";
-    form.appendChild(stacks.cloneNode());
-
-    if (secondary_repo) {
-        var secondary_repo_elem = document.createElement("input");
-        secondary_repo_elem.name = "secondary_repo";
-        secondary_repo_elem.value = 1;
-        form.appendChild(secondary_repo_elem.cloneNode());
+function save(sha, path, secondary_repo) {
+    clearFlashMessages();
+    var data = {
+        'title': $('input[name=title]').val(),
+        'original_stack': $('input[name=original_stack]').val(),
+        'stacks': $('#stacks').val(),
+        'content': editor.getSession().getValue(),
+        'sha': sha,
+        'path': path
     }
-
-    // To be sent, the form needs to be attached to the main document.
-    form.style.display = "none";
-    document.body.appendChild(form);
-
-    form.submit();
-
-    // But once the form is sent, it's useless to keep it.
-    document.body.removeChild(form);
+    if (secondary_repo) {
+        data['secondary_repo'] = 1;
+    }
+    $.ajax({
+        type: 'POST',
+        url: '/api/save/',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: data,
+        dataType: 'json',
+        cache: false,
+        success: function(data) {
+            console.log(data);
+            console.log(data.msg);
+            if (data.msg) {
+                addFlashMessage(data.msg);
+                $("html, body").animate({ scrollTop: 0 }, "fast");
+            }
+            setTimeout(function(){ window.location.href = data.redirect; }, 1000);
+        },
+        error: function(response) {
+            var status = response.status;
+            var data = response.responseJSON;
+            console.log(status, data);
+            console.log(data.error);
+            if (data.error) {
+                if (status < 500) {
+                    addFlashMessage(data.error, 'bg-warning');
+                } else {
+                    addFlashMessage(data.error, 'bg-danger');
+                }
+                $("html, body").animate({ scrollTop: 0 }, "fast");
+            }
+            if (data.redirect) {
+                setTimeout(function(){ window.location.href = data.redirect; }, 1000);
+            }
+        },
+    });
 }

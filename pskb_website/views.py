@@ -546,20 +546,22 @@ def partner(article_path):
                            disclaimer=True)
 
 
-@app.route('/save/', methods=['POST'])
+@app.route('/api/save/', methods=['POST'])
 @login_required
-def save():
-    """Form POST save"""
+def api_save():
+    """Api: POST /api/save {path:'', title: '', sha:'', original_stack: '', content: '', stacks: []}"""
 
     g.slack_url = SLACK_URL
 
     user = models.find_user()
     if user is None:
-        flash('Cannot save unless logged in', category='error')
-        return render_template('index.html'), 404
+        redirect_to = url_for('index')
+        data = {'error': 'Cannot save unless logged in', 'redirect': redirect_to}
+        return Response(response=json.dumps(data), status=401, mimetype='application/json')
 
     if user.email is None:
         flash('Unable to read email address from Github API to properly attribute your commit to your account. Please make sure you have authorized the application to access your email.', category='warning')
+        # FIXME: stop using flash
 
     content = request.form['content']
 
@@ -569,8 +571,9 @@ def save():
     orig_stack = request.form['original_stack']
 
     if not content.strip() or not title.strip():
-        flash('Must enter title and body of guide', category='error')
-        return redirect(url_for('write'))
+        redirect_to = url_for('write')
+        data = {'error': 'Must enter title and body of guide', 'redirect': redirect_to}
+        return Response(response=json.dumps(data), status=400, mimetype='application/json')
 
     # Form only accepts 1 stack right now but we can handle multiple on the
     # back-end.
@@ -591,12 +594,15 @@ def save():
 
             if new_path is None:
                 flash('Failed changing guide stack', category='error')
+                # FIXME? return an error?
             else:
                 path = new_path
 
+    new_article = False
     if path:
         message = 'Updates to "%s"' % (title)
     else:
+        new_article = True
         message = 'New guide, "%s"' % (title)
 
         # Go ahead and make sure we don't have an article with the same stack
@@ -608,13 +614,14 @@ def save():
             if stacks is None:
                 msg = u'Please try choosing a stack. The title "%s" is already used by a guide.' % (title)
             else:
-                msg = u'Please try choosing a different stack/title combination.  The title "%s" is already used by a guide with the stack "%s".' % (title, ','.join(stacks))
-
-            flash(msg, category='error')
-            return redirect(url_for('write'))
+                msg = u'Please try choosing a different stack/title combination. The title "%s" is already used by a guide with the stack "%s".' % (title, ','.join(stacks))
+            redirect_to = url_for('write')
+            data = {'error': msg, 'redirect': redirect_to}
+            return Response(response=json.dumps(data), status=422, mimetype='application/json')
 
     # Hidden option for admin to save articles to our other repo that's not
     # editable
+    # TODO: move this to another endpoint
     repo_path = None
     if request.form.get('secondary_repo', None) is not None:
         repo_path = '%s/%s' % (app.config['SECONDARY_REPO_OWNER'],
@@ -628,12 +635,18 @@ def save():
                                             author_real_name=user.name)
 
     if not article:
-        flash('Failed creating guide on github', category='error')
-        return redirect(url_for('index'))
+        redirect_to = url_for('index')
+        data = {'error': 'Failed creating guide on github', 'redirect': redirect_to}
+        return Response(response=json.dumps(data), status=500, mimetype='application/json')
 
+    # TODO: move this to another endpoint
     if repo_path is not None:
-        return redirect(url_for('partner', article_path=article.path,
-                                branch=article.branch))
+        redirect_to = url_for('partner', article_path=article.path, branch=article.branch)
+        data = {'msg': 'Saved into admin repository', 'redirect': redirect_to}
+        if new_article:
+            return Response(response=json.dumps(data), status=201, mimetype='application/json')
+        else:
+            return Response(response=json.dumps(data), status=200, mimetype='application/json')
 
     # We only have to worry about this on the master branch because we never
     # actually use file listings on other branches.
@@ -655,8 +668,13 @@ def save():
                                    branch=article.branch,
                                    status=article.publish_status)
 
-    return redirect(filters.url_for_article(article, branch=article.branch,
-                                            saved=1))
+    redirect_to = filters.url_for_article(article, branch=article.branch, saved=1)
+    if new_article:
+        data = {'msg': 'Article created', 'redirect': redirect_to}
+        return Response(response=json.dumps(data), status=201, mimetype='application/json')
+    else:
+        data = {'msg': 'Article updated', 'redirect': redirect_to}
+        return Response(response=json.dumps(data), status=200, mimetype='application/json')
 
 
 @app.route('/delete/', methods=['POST'])
