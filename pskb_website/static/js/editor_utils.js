@@ -167,11 +167,13 @@ var clearLocalSave = function(local_filename) {
 function openLiveMarkdownTutorial() {
     autosaveEnabled = false;
     editor.getSession().setValue(MARKDOWN_TUTORIAL);
+    $('#btn-save').prop('disabled', true);
 }
 
 function closeLiveMarkdownTutorial() {
     editor.setValue(loadAutoSave(current_local_filename) || '');
     autosaveEnabled = true;
+    $('#btn-save').prop('disabled', false);
 }
 
 var liveTutorialEnabled = false;
@@ -304,6 +306,7 @@ var addFlashMessage = function(message, clazz) {
 
 function save(sha, path, secondary_repo) {
     clearFlashMessages();
+    $('#btn-save').prop('disabled', true);
     var data = {
         'title': $('input[name=title]').val(),
         'original_stack': $('input[name=original_stack]').val(),
@@ -329,6 +332,7 @@ function save(sha, path, secondary_repo) {
             if (data.msg) {
                 addFlashMessage(data.msg);
                 $("html, body").animate({ scrollTop: 0 }, "fast");
+                $('#btn-save').prop('disabled', false);
             }
             setTimeout(function(){ window.location.href = data.redirect; }, 1000);
         },
@@ -344,6 +348,7 @@ function save(sha, path, secondary_repo) {
                     addFlashMessage(data.error, 'bg-danger');
                 }
                 $("html, body").animate({ scrollTop: 0 }, "fast");
+                $('#btn-save').prop('disabled', false);
             }
             if (data.redirect) {
                 setTimeout(function(){ window.location.href = data.redirect; }, 1000);
