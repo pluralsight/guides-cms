@@ -325,6 +325,7 @@ function save(sha, path, secondary_repo) {
         success: function(data) {
             console.log(data);
             console.log(data.msg);
+            clearLocalSave(current_local_filename);
             if (data.msg) {
                 addFlashMessage(data.msg);
                 $("html, body").animate({ scrollTop: 0 }, "fast");
