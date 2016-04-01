@@ -52,6 +52,8 @@ the underlying git repository:
 7. Edit the URL for your guide in the
    :ref:`guide listing file <guide_listing_files>` your guide belongs to
 8. Commit these changes to your CMS content repository and push to github.com.
+9. You can manually flush your redis cache or wait a few minutes for things to
+   automatically refresh.
 
 How do I change the stack for an existing guide?
 ------------------------------------------------
@@ -67,3 +69,5 @@ How do I change the stack for an existing guide?
 5. Edit the URL for your guide in the
    :ref:`guide listing file <guide_listing_files>` your guide belongs to
 6. Commit these changes to your CMS content repository and push to github.com.
+7. You can manually flush your redis cache or wait a few minutes for things to
+   automatically refresh.
