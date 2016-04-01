@@ -20,7 +20,7 @@ PUB_FILENAME = u'published.md'
 IN_REVIEW_FILENAME = u'in_review.md'
 DRAFT_FILENAME = u'draft.md'
 
-# Add author's image url here
+REDIRECT_FILENAME = u'redirects.md'
 
 # Parse a line of markdown into 2 links and list of stacks
 TITLE_RE = re.compile(r'###\s+(?P<title>.*)\s+by\s+(?P<author_real_name>.*)')
@@ -111,6 +111,56 @@ def draft_articles(branch=u'master'):
     """
 
     return _read_file_listing(DRAFT_FILENAME, branch=branch)
+
+
+def read_redirects(branch=u'master'):
+    """
+    Read redirects file and parse into a dictionary mapping an old url to a new
+    url
+
+    :param branch: Branch to read redirect file from
+    :returns: Dictionary with keys for old url and values for new url
+
+    The format of the redirect file is two URLs per line with whitespace
+    between them::
+
+        http://www.xyz.com http://www.xyz.com/1
+        http://www.xyz.com/2 http://www.xyz.com/3
+
+    This means redirect http://www.xyz.com to http://www.xyz.com/1 and redirect
+    http://www.xyz.com/2 to http://www.xyz.com/3.
+
+    Any lines starting with a '#' or not containing two tokens is ignored.
+    """
+
+    redirects = {}
+    text = cache.read_file(REDIRECT_FILENAME, branch)
+
+    if text is None:
+        details = read_file(REDIRECT_FILENAME, rendered_text=False,
+                            branch=branch)
+
+        if details is None:
+            return redirects
+
+        text = details.text
+
+        # This should be a pretty low volume file so cache it for an hour.
+        cache.save_file(REDIRECT_FILENAME, branch, text, timeout=60 * 60)
+
+    for line in text.splitlines():
+        if line.startswith('#'):
+            continue
+
+        try:
+            old, new = line.split()
+        except ValueError:
+            # Not valid line, needs exactly 2 tokens
+            continue
+
+        redirects[old] = new
+
+    return redirects
 
 
 def update_article_listing(article_url, title, author_url, author_name,

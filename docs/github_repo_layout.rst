@@ -43,6 +43,8 @@ Layout components
     |----   +       article.md
     |----   +       details.json
     |----   + python
+    |
+    |---- redirects.md
 
 The layout consists of a the following 'types' of files/objects:
 
@@ -53,6 +55,20 @@ Page
 A page is just a markdown file at the top-level of the repository.  Currently
 there's one page being used called `faq.md`.  The markdown for this page will
 automatically be rendered at the `/faq.md` URL.
+
+.. _redirects_file:
+
+^^^^^^^^^^^^
+redirects.md
+^^^^^^^^^^^^
+
+This file contains mapping of old guide URLs to new URLs.  The purpose of this
+file is to accomodate changing guide titles/paths and maintaining old URLs with
+temporary 301 redirects.  The format of this file is <old_url> <new_url> i.e
+space separated. Keep in mind the URLs must be fully formed including the
+domain otherwise the redirect will be based on the current domain.
+
+This file is optional and must be manually created.
 
 ^^^^^^^^^^^^^
 Guide Listing

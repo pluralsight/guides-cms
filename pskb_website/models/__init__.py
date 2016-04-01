@@ -16,6 +16,7 @@ from .article import find_article_by_title
 from .article import change_article_stack
 
 from .file import read_file
+from .file import read_redirects
 from .file import update_article_listing
 from .file import published_articles
 from .file import in_review_articles

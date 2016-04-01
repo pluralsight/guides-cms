@@ -5,6 +5,7 @@ Main views of PSKB app
 from functools import wraps
 import os
 import re
+from urlparse import urlparse
 
 import requests
 
@@ -319,7 +320,7 @@ def review(title):
     if article is not None:
         return redirect(filters.url_for_article(article, branch=branch), 301)
 
-    return missing_article()
+    return missing_article(request.base_url)
 
 
 # Note this URL is directly linked to the filters.url_for_article filter.
@@ -393,7 +394,7 @@ def article_view(stack, title):
     app.logger.error('Failed finding guide - stack: "%s", title: "%s", branch: "%s"',
                      stack, title, branch)
 
-    return missing_article()
+    return missing_article(request.base_url)
 
 
 def render_article_list_view(status):
@@ -880,8 +881,54 @@ def render_published_articles(status_code=200):
                            featured_article=featured_article), status_code
 
 
-def missing_article():
-    """Function to handle missing articles"""
+def missing_article(requested_url=None):
+    """
+    Handle missing articles by checking if URL is should be 301 redirect or
+    showing published articles in the URL is truly bad
+    """
+
+    # See if this URL is setup as a redirect due to an title change, etc.
+    if requested_url is not None:
+        new_url = lookup_url_redirect(requested_url)
+        if new_url is not None:
+            return redirect(new_url, code=301)
 
     flash('We could not find that guide. Give these fresh ones a try.')
     return render_published_articles(status_code=404)
+
+
+def lookup_url_redirect(requested_url):
+    """
+    Lookup given URL for a 301 redirect
+
+    :param requested_url: URL to look for a redirect
+    :returns: URL to redirect to or None if no redirect found
+    """
+
+    new_url = None
+    redirects = models.read_redirects()
+
+    # All our URLs should be ASCII!
+    try:
+        old_url = str(requested_url)
+    except UnicodeEncodeError:
+        return None
+
+    try:
+        new_url = redirects[old_url]
+    except KeyError:
+        # Maybe the url was referenced without the domain:
+        try:
+            old_url = urlparse(old_url).path
+        except Exception as err:
+            app.logger.error(u'Failed parsing URL "%s" for redirect: %s',
+                                old_url, err)
+            return None
+
+        try:
+            new_url = redirects[old_url]
+        except KeyError:
+            # No worries, guess this really was a bad URL
+            pass
+
+    return new_url
