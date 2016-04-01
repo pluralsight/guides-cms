@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h1 style="text-align: center;">Thanks for helping helping us create great guides</h1>
+
+{% if commit_stats %}
+<h2 style="text-align: center;">{{commit_stats|length}} authors have contributed so far!</h2>
+{% endif %}
+
+<h2>Community editors</h2>
+
+<p>
+    Special thanks to the following community editors for helping improve the
+    quality of submitted guides:
+</p>
+
+<!-- Read this information from a editors.md file
+<div class="list-group" style="text-align: center;">
+  <a href="https://github.com/prtkgpt" class="list-group-item" style="border: none;">
+    <img src="https://avatars.githubusercontent.com/u/2454349?v=3&amp;s=226" width="80" height="80" style="border-radius: 42px;" alt="prtkgpt"/>
+    <span class="list-group-item-heading">Prateek Gupta</h4>
+    <p class="list-group-item-text">Prateek's bio</p>
+  </a>
+</div>
+- Maybe list 3 users to a row or something.
+- Use a table without borders ?
+-->
+
+<ul>
+    <li>Display editors.md information here</li>
+</ul>
+
+<hr>
+
+<h3>Published leaderboard</h3>
+<div class="table-responsive">
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th colspan="2">Author</th>
+            <th>Guides</th>
+            <th width="60%">&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+
+{% for login, (count, avatar_url) in guide_stats|dictsort(by='value')|reverse %}
+    {% if login not in ignore_users %}
+    <tr>
+            {% if avatar_url %}
+                <td width="50"><img src="{{avatar_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{login}}"/></td>
+            {% else %}
+                <td width="50">&nbsp;</td>
+            {% endif %}
+
+        <td class="login-name"><a href="{{url_for('user_profile', author_name=login)}}">{{login}}</a></td>
+        <td>{{count}}</td>
+        <td width="60%">&nbsp;</td>
+    </tr>
+    {% endif %}
+{% endfor %}
+
+    </tbody>
+</table>
+</div>
+
+
+{% if not commit_stats %}
+    <p class="lead">Compiling detailed stats from Github.com, please check back soon.</p>
+{% else %}
+
+<hr>
+
+<h4>Total contribution leaderboard</h4>
+<p style="text-align: center;">
+    The table below is sorted by weekly contributions. So every week gives you
+    a fresh shot to get to the top.
+</p>
+
+<div class="table-responsive">
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th colspan="2">Author</th>
+            <th>Total commits</th>
+            <th>Commits this week</th>
+            <th>Additions</th>
+            <th>Deletions</th>
+        </tr>
+    </thead>
+    <tbody>
+
+{# This is a list of dicts and the list is already sorted #}
+{% for user in commit_stats %}
+    {% if user.login not in ignore_users %}
+    <tr>
+        {% if user.avatar_url %}
+            <td width="50"><img src="{{user.avatar_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{user.login}}"/></td>
+        {% else %}
+            <td width="50">&nbsp;</td>
+        {% endif %}
+
+        <td class="login-name"><a href="{{url_for('user_profile', author_name=user.login)}}">{{user.login}}</a></td>
+        <td>{{user.total}}</td>
+        <td>{{user.weekly_commits}}</td>
+        <td>{{user.weekly_additions}}</td>
+        <td>{{user.weekly_deletions}}</td>
+    </tr>
+    {% endif %}
+{% endfor %}
+
+    </tbody>
+</table>
+</div>
+
+{% endif %}
+{% endblock %}

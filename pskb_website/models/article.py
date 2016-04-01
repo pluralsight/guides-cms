@@ -220,6 +220,51 @@ def get_public_articles_for_author(author_name):
             yield article
 
 
+def author_stats(statuses=None):
+    """
+    Get number of articles for each author
+
+    :param statuses: List of statuses to aggregate stats for
+    :param statuses: Optional status to aggregate stats for, all possible
+                     statuses are counted if None is given
+    :returns: Dictionary mapping author names to number of articles::
+
+        {author_name: [article_count, avatar_url]}
+
+    Note avatar_url can be None and is considered optional
+    """
+
+    cache_key = 'author-stats'
+    stats = cache.get(cache_key)
+    if stats:
+        return json.loads(stats)
+
+    stats = {}
+    statuses = [get_available_articles(status=st) for st in statuses]
+    for article in itertools.chain(*statuses):
+        # This is ALMOST a good fit for collections.defaultdict() but we need
+        # to inspect the avatar URL each time to see if it can be replaced with
+        # a non-empty value since this is optional article information.
+        try:
+            prev_stats = stats[article.author_name]
+        except KeyError:
+            prev_stats = [1, None]
+        else:
+            prev_stats[0] += 1
+
+            if prev_stats[1] is None and article.image_url is not None:
+                prev_stats[1] = article.image_url
+
+        stats[article.author_name] = prev_stats
+
+    if not stats:
+        return stats
+
+    # Just fetch stats every 30 minutes, this is not a critical bit of data
+    cache.save(cache_key, json.dumps(stats), timeout=30 * 60)
+    return stats
+
+
 def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
                  allow_missing=False):
     """

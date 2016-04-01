@@ -13,6 +13,7 @@ from .article import get_articles_for_author
 from .article import get_public_articles_for_author
 from .article import find_article_by_title
 from .article import change_article_stack
+from .article import author_stats
 
 from .file import read_file
 from .file import read_redirects
@@ -24,3 +25,4 @@ from .email_list import add_subscriber
 
 from .image import save_image
 from .lib import to_json
+from .lib import weekly_contribution_stats

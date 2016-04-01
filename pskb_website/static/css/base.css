@@ -629,6 +629,11 @@ a.active-page {
     font-size: 12px;
 }
 
+td.login-name {
+    padding-top: 15px !important;
+    white-space: nowrap;
+}
+
 @media(min-width:992px) {
     .article-teaser .article-author span.gh-name {
         right: 70px;

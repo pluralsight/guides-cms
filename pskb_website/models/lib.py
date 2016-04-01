@@ -5,6 +5,9 @@ Collection of shared functionality for models subpackage
 import copy
 import json
 
+from .. import remote
+from .. import cache
+
 
 def to_json(object_, exclude_attrs=None):
     """
@@ -26,3 +29,42 @@ def to_json(object_, exclude_attrs=None):
     # Print it to a string in a pretty format. Whitespace doesn't matter so
     # might as well make it more readable.
     return json.dumps(dict_, sort_keys=True, indent=4, separators=(',', ': '))
+
+
+def weekly_contribution_stats():
+    """
+    Get total and weekly contribution stats for default repository
+
+    :returns: List of dictionaries for every contributor to repository ordered
+              by most commits this week
+    """
+
+    cache_key = 'commit-stats'
+    stats = cache.get(cache_key)
+    if stats:
+        return json.loads(stats)
+
+    # Reformat data and toss out the extra, we're only worried about totals an
+    # the current week.
+    stats = []
+    for user in remote.contributor_stats():
+        # Assuming last entry is the current week to avoid having to calculate
+        # timesteps, etc.
+        this_week = user['weeks'][-1]
+
+        stats.append({'avatar_url': user['author']['avatar_url'],
+                      'login': user['author']['login'],
+                      'total': user['total'],
+                      'weekly_commits': this_week['c'],
+                      'weekly_additions': this_week['a'],
+                      'weekly_deletions': this_week['d']})
+
+    if not stats:
+        return stats
+
+    stats = sorted(stats, key=lambda v: v['weekly_commits'], reverse=True)
+
+    # Just fetch stats every 30 minutes, this is not a critical bit of data
+    cache.save(cache_key, json.dumps(stats), timeout=30 * 60)
+
+    return stats

@@ -120,6 +120,33 @@ def gh_rate_limit():
     return repr(remote.check_rate_limit())
 
 
+@app.route('/contributors/')
+def contributors():
+    """Contributors page"""
+
+    commit_stats = models.weekly_contribution_stats()
+    guide_stats = models.author_stats(statuses=(PUBLISHED,))
+
+    # FIXME: Would be better to automatically ignore all collaborators on a
+    # repo but that requires 1 API request per user and we might want to count
+    # some collaborators and not others anyway.
+
+    # We could pass this ignore_users down but then we'd have to be mindful of
+    # which version was cached, etc. It's easier to do this trimming here
+    # because we can trim all stats independent of lower layers and caching
+    # even though this might not be as efficient.  Ideally we won't be
+    # ignoring large amounts of users so shouldn't be a big issue.
+
+    ignore_users = []
+    for user in app.config.get('IGNORE_STATS_FOR', '').split(','):
+        ignore_users.append(user.strip())
+
+    return render_template('contributors.html',
+                           commit_stats=commit_stats,
+                           guide_stats=guide_stats,
+                           ignore_users=ignore_users)
+
+
 @app.route('/faq/')
 def faq():
     """FAQ page"""

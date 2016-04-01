@@ -1,3 +1,5 @@
+# FIXME: Make every function user our save/get wrappers
+
 """
 Caching utilities
 
@@ -58,6 +60,35 @@ def verify_redis_instance(func):
         return func(*args, **kwargs)
 
     return _wrapper
+
+
+@verify_redis_instance
+def save(key, value, timeout=DEFAULT_CACHE_TIMEOUT):
+    """
+    Generic function to save a key/value pair
+
+    :param key: Key to save
+    :param value: Value to save
+    :param timeout: Timeout in seconds to cache text, use None for no timeout
+    :returns None:
+    """
+
+    redis_obj.set(key, value)
+
+    if timeout is not None:
+        redis_obj.expire(key, timeout)
+
+
+@verify_redis_instance
+def get(key):
+    """
+    Look for cached value with given key
+
+    :param key: Key data was cached with
+    :returns: Value saved or None if not found
+    """
+
+    return redis_obj.get(key)
 
 
 @verify_redis_instance

@@ -645,3 +645,30 @@ def merge_branch(repo_path, base, head, message):
 
     log_error('Failed merging', url, resp, repo=repo_path, base=base, head=head)
     return False
+
+
+def contributor_stats(repo_path=None):
+    """
+    Get response of /repos/<repo_path>/stats/contributors from github.com
+
+    :param repo_path: Default repo or repo path in owner/repo_name form
+    :returns: Raw response of contributor stats from https://developer.github.com/v3/repos/statistics/#get-contributors-list-with-additions-deletions-and-commit-counts
+
+    Note the github caches contributor results so an empty list can also be
+    returned if the data is not available yet or there is an error
+    """
+
+    repo_path = default_repo_path() if repo_path is None else repo_path
+    url = u'/repos/%s/stats/contributors' % (repo_path)
+
+    resp = github.get(url)
+
+    stats = []
+    if resp.status == 200:
+        stats = resp.data
+    elif resp.status == 202:
+        app.logger.info('Data not in cache from github.com')
+    else:
+        log_error('Failed reading stats from github', url, resp)
+
+    return stats
