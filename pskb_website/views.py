@@ -94,21 +94,7 @@ def index():
     if app.config['REPO_OWNER_ACCESS_TOKEN'] is None:
         return redirect(url_for('login'))
 
-    # FIXME: This should only fetch the most recent x number.
-    articles = list(models.get_available_articles(status=PUBLISHED))
-    featured = os.environ.get('FEATURED_TITLE')
-    featured_article = None
-
-    if featured is not None:
-        for ii, article in enumerate(articles):
-            if article.title == featured:
-                # This is only safe b/c we won't continue iterating it after we
-                # find the featured one!
-                featured_article = articles.pop(ii)
-                break
-
-    return render_template('index.html', articles=articles,
-                           featured_article=featured_article)
+    return render_published_articles()
 
 
 @app.route('/login/')
@@ -333,7 +319,7 @@ def review(title):
     if article is not None:
         return redirect(filters.url_for_article(article, branch=branch), 301)
 
-    return render_template('error.html'), 404
+    return missing_article()
 
 
 # Note this URL is directly linked to the filters.url_for_article filter.
@@ -407,7 +393,7 @@ def article_view(stack, title):
     app.logger.error('Failed finding guide - stack: "%s", title: "%s", branch: "%s"',
                      stack, title, branch)
 
-    return render_template('error.html'), 404
+    return missing_article()
 
 
 def render_article_list_view(status):
@@ -865,4 +851,37 @@ def internal_error(error):
 @app.errorhandler(404)
 def not_found(error):
     """Not found error page"""
+
     return render_template('error.html'), 404
+
+
+def render_published_articles(status_code=200):
+    """
+    Render published article listing and featured article
+
+    This is extracted into a stand-alone function so we can render this in
+    multiple locations without redirects which could hurt SEO and usability.
+    """
+
+    # FIXME: This should only fetch the most recent x number.
+    articles = list(models.get_available_articles(status=PUBLISHED))
+    featured = os.environ.get('FEATURED_TITLE')
+    featured_article = None
+
+    if featured is not None:
+        for ii, article in enumerate(articles):
+            if article.title == featured:
+                # This is only safe b/c we won't continue iterating it after we
+                # find the featured one!
+                featured_article = articles.pop(ii)
+                break
+
+    return render_template('index.html', articles=articles,
+                           featured_article=featured_article), status_code
+
+
+def missing_article():
+    """Function to handle missing articles"""
+
+    flash('We could not find that guide. Give these fresh ones a try.')
+    return render_published_articles(status_code=404)
