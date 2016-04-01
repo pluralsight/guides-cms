@@ -70,6 +70,8 @@ domain otherwise the redirect will be based on the current domain.
 
 This file is optional and must be manually created.
 
+.. _guide_listing_files:
+
 ^^^^^^^^^^^^^
 Guide Listing
 ^^^^^^^^^^^^^

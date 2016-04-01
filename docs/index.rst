@@ -21,9 +21,11 @@ Contents:
    publish_workflow
    github_api_usage
    github_repo_layout
+   faq
    views
    model_api
    remote_api
+   utils
 
 
 ==================
