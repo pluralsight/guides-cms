@@ -355,7 +355,7 @@ def article_view(stack, title):
     # <img src="test.png"/> on a /python/my-article page would try to find the
     # image at /python/test.png.
     if '.' in stack or '.' in title:
-        return render_template('error.html'), 404
+        return not_found()
 
     branch = request.args.get('branch', u'master')
 
@@ -542,7 +542,7 @@ def save():
     user = models.find_user()
     if user is None:
         flash('Cannot save unless logged in', category='error')
-        return render_template('index.html'), 404
+        return render_published_articles(status_code=401)
 
     if user.email is None:
         flash('Unable to read email address from Github API to properly attribute your commit to your account. Please make sure you have authorized the application to access your email.', category='warning')
@@ -652,7 +652,7 @@ def delete():
     user = models.find_user()
     if user is None:
         flash('Cannot delete unless logged in', category='error')
-        return render_template('index.html'), 404
+        return render_published_articles(status_code=401)
 
     path = request.form['path']
     branch = request.form['branch']
@@ -687,7 +687,7 @@ def change_publish_status():
     user = models.find_user()
     if user is None:
         flash('Cannot change publish status unless logged in', category='error')
-        return render_template('index.html'), 404
+        return render_published_articles(status_code=401)
 
     path = request.form['path']
     branch = request.form['branch']
@@ -842,14 +842,14 @@ def template_globals():
 
 
 @app.errorhandler(500)
-def internal_error(error):
+def internal_error(error=None):
     """Unknown error page"""
 
     return render_template('error.html'), 500
 
 
 @app.errorhandler(404)
-def not_found(error):
+def not_found(error=None):
     """Not found error page"""
 
     return render_template('error.html'), 404
