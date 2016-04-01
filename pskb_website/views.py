@@ -733,7 +733,7 @@ def change_publish_status():
 
     # Create this link AFTER changing the status b/c the URL will have the
     # status in it if the article is not published yet.
-    article_url = filters.url_for_article(article, saved=1)
+    article_url = filters.url_for_article(article)
 
     tasks.update_listing.delay(article_url,
                                article.title,
@@ -751,7 +751,7 @@ def change_publish_status():
                              user.login, user.email,
                              new_publish_status=article.publish_status)
 
-    return redirect(article_url)
+    return redirect(filters.url_for_article(article, saved=1))
 
 
 @app.route('/subscribe/', methods=['POST'])
