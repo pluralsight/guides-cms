@@ -18,12 +18,12 @@
             {% endif %}
         {% else %}
             <p>No guides yet!</p>
-            <p>
-                As a next step, why not create an guide? You can do so by
-                <a href="{{url_for('write')}}">clicking here</a>.
-            </p>
         {% endfor %}
 
+        <p>
+            See even more from {{user.name if user.name else user.login}} on
+            their <a href="https://github.com/{{user.login}}" target="_blank">github profile</a>.
+        </p>
     </div>
 
     <div class="col-md-4">
