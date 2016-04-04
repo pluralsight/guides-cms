@@ -1,0 +1,133 @@
+/* Editor column */
+
+#editor-wrapper {
+    padding: 0;
+    overflow: scroll;
+    height: 470px;
+}
+
+#editor {
+    min-height: 470px;
+}
+
+.editor-column {
+    padding:0px;
+}
+
+.editor-header {
+    width: 100%;
+    height: 60px;
+    display: table;
+    text-align: right;
+    border-bottom: 1px solid #d4d4d4;
+    background-color: #f7f7f7;
+    padding:15px;
+}
+
+.editor-ps-logo {
+    float: left;
+    padding:0;
+    margin:0;
+    width: 145px;
+    height:29px;
+}
+
+#btn-scroll-sync {
+    display: table-cell;
+    vertical-align: middle;
+    margin-top: 3px;
+}
+
+#btn-live-tutorial {
+    display: table-cell;
+    vertical-align: middle;
+    margin-top: 3px;
+    margin-left: 5px;
+}
+
+/* Preview column */
+
+.editor-preview-wrapper {
+    border: 1px solid #d4d4d4;
+    font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+}
+
+.preview-column {
+    background-color: #f7f7f7;
+    border-left: 1px solid #d4d4d4;
+    padding:0px;
+}
+
+.preview-header {
+    width: 100%;
+    display: table;
+    border-bottom: 1px solid #d4d4d4;
+    background-color: #f7f7f7;
+    padding:15px;
+    height: 60px;
+    text-align: center;
+}
+
+.preview-text {
+    position: absolute;
+    left: 7px;
+    top: 20px;
+    vertical-align: middle;
+    color: gray;
+    font-size: 12px;
+}
+
+#article_title {
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 330px;
+    padding-left: 0;
+    padding-right: 0;
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden !important;
+}
+
+#article_stack {
+    position: absolute;
+    right: 5px;
+    top: 45px;
+    max-width: 460px;
+    overflow: hidden;
+    font-size: 10px;
+    color: gray;
+}
+
+#article_author {
+    font-size: 10px;
+}
+
+#preview {
+    height: 500px;
+    overflow: scroll;
+    font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,"Segoe UI",Arial,freesans,sans-serif;
+    padding: 15px;
+    padding-top: 0px;
+    background-color: #fff;
+}
+
+#preview td, #preview th {
+    padding: 5px;
+    border: 1px solid black;
+}
+
+.editor-footer {
+    width: 100%;
+    height: 30px;
+    display: table;
+    border-top: 1px solid #d4d4d4;
+    background-color: #f7f7f7;
+}
+
+.editor-footer span {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 15px;
+}

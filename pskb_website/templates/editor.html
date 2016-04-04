@@ -2,21 +2,22 @@
 
 {% block css %}
     {{ super() }}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/vendor/bootstrap-markdown.min.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/vendor/editor/github.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/vendor/github.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/vendor/hljs_github.css')}}">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/editor/design.css') }}">
 {% endblock %}
 
 {% block js %}
-    {{super()}}
-    <script src="{{url_for('static', filename='js/vendor/editor/marked.js')}}"></script>
-    <script src="{{url_for('static', filename='js/vendor/editor/highlight.pack.js')}}"></script>
-    <script src="{{url_for('static', filename='js/vendor/editor/bootstrap-markdown.js')}}"></script>
-    <script src="{{url_for('static', filename='js/vendor/editor/dropzone.js')}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
-    <script src="{{url_for('static', filename='js/editor_utils.js')}}"></script>
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/vendor/editor/highlight.pack.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/editor/dropzone.js') }}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
+
+    <script src="{{ url_for('static', filename='ace/ace.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/editor/marked.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/editor_utils.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -44,11 +45,10 @@
     <h3>2. Pick a Title</h3>
         <ul>
             <li>
-            Try to make your title concise and to the point maximum length is
-        130 characters.
+            Try to make your title concise and to the point. Maximum length is 130 characters.
             </li>
         </ul>
-    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" maxlength="130" value="{{article.title}}" {{'readOnly="true"' if article else ""}} />
+    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" maxlength="130" value="{{article.title}}" {{'readOnly="true"' if article else ""}} {% if not article %}autofocus{% endif %} required="required"/>
     <input id="original_stack" name="original_stack" type="hidden" value="{{article.stacks[0] if article else ''}}" />
 
     <br />
@@ -60,7 +60,7 @@
                     <li>Surround text with ** to make this **<b>bold</b>**.</li>
                     <li>Use - in front of lines to automatically create lists.</li>
                     <li>Use # to make header text and much more.</li>
-                    <li>Get more tips <a href="http://daringfireball.net/projects/markdown/syntax">here</a>.</li>
+                    <li>Get more tips <a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/">here</a> and <a href="https://guides.github.com/features/mastering-markdown/">here</a>.</li>
                 </ul>
             <li>
                 We'll automatically a create Table of Contents for your
@@ -71,14 +71,49 @@
                 tags to nest your supporting points.
             </li>
             <li>
-                Use the preview button when hovering over the editor to get a
-                quick look at how your content will look once published.
+                You can see the preview in the right side of the editor.
             </li>
         </ul>
     </p>
 
-    <div class="editor-container">
-        <textarea id="md-editor-ta" name="content">{{article.content}}</textarea>
+
+    <div class="row editor-preview-wrapper">
+        <div class="col-xs-12 col-sm-6 editor-column" id="droppable-area">
+            <div class="editor-header">
+                <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo">
+                <button id="btn-scroll-sync" class="btn btn-default btn-xs">Scroll Sync</button>
+                <button id="btn-live-tutorial" class="btn btn-default btn-xs markdown-help">Live Markdown Tutorial <span class="fa fa-question-circle"></span></button>
+            </div>
+
+            <div id="editor-wrapper">
+                <div id="editor"></div>
+            </div>
+
+            <div class="editor-footer">
+                <span>Upload files by dragging & dropping into the editor or click <a href="#" class="btn-dropzone">here</a></span>
+                <div class="dz-preview dz-file-preview" id="preview-template" style="display: none;">
+                    <div class="dz-details" style="display: none;">
+                    <div class="dz-filename" style="display: none;"><span data-dz-name></span></div>
+                    <div class="dz-size" data-dz-size style="display: none;"></div>
+                        <img data-dz-thumbnail />
+                    </div>
+                    <div class="dz-progress" style="display: none;"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                    <div class="dz-success-mark" style="display: none;"><span>✔</span></div>
+                    <div class="dz-error-mark" style="display: none;"><span>✘</span></div>
+                    <div class="dz-error-message"><span data-dz-errormessage></span></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-6 preview-column">
+            <div class="preview-header">
+                <span class="preview-text hidden-xs hidden-sm">PREVIEW</span>
+                <span id="article_title" class=""></span>
+                <span id="article_stack" class=""></span>
+            </div>
+            <div id="preview"></div>
+        </div>
     </div>
 
     <br />
@@ -87,7 +122,8 @@
     <p>
         Picking a stack will help readers find it more easily.
     </p>
-    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks">
+    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required">
+        <option value="" {{"selected" if not selected_stack}}>---</option>
         {% for stack in stacks %}
             <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
         {% endfor %}
@@ -96,10 +132,42 @@
     <br />
     <br />
 
-    <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}', '{{url_for('save')}}')" class="btn btn-primary">Save</button>
+    <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary" id="btn-save">Save</button>
+
+    <br />
+    <br />
 </div>
 
 <script type="text/javascript">
-    initialize_editor('{{'' if not article.author_name else article.author_name}}', '{{'' if not article.author_real_name else article.author_real_name}}', '{{url_for('img_upload')}}');
+    $(document).ready(function() {
+        var local_filename = '{{ article.sha or "hack.guides-draft" }}';
+        {% autoescape false %}
+        var original_content = '{{ article.content | replace("\n", "\\n") | replace("\r", "") | replace("'", "\\'") }}';
+        {% endautoescape %}
+        var author_name = '{{ '' if not article.author_name else article.author_name }}';
+        var author_real_name = '{{ '' if not article.author_real_name else article.author_real_name }}';
+        var img_upload_url = '{{ url_for("img_upload") }}';
+        var editor = initialize_editor(local_filename, original_content, author_name, author_real_name, img_upload_url);
+
+        $("#title").change(function() {
+            $("#article_title").html($("#title").val() || 'Untitled');
+        });
+        $("#stacks").change(function() {
+            var stacks = $('#stacks').val();
+            $("#article_stack").html(stacks ? 'Related to <i>' + stacks + '</i>' : 'no stack defined yet');
+        });
+        $("#title").change();
+        $("#stacks").change();
+
+        $("#btn-scroll-sync").click(function() {
+            toggleScrollSync();
+            $("#btn-scroll-sync").toggleClass('active');
+        });
+
+        $("#btn-live-tutorial").click(function() {
+            toggleLiveTutorial();
+            $("#btn-live-tutorial").toggleClass('active');
+        });
+    });
 </script>
 {% endblock %}
