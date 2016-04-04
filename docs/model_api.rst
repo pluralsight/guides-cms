@@ -28,3 +28,8 @@ Image
 =====
 .. automodule:: pskb_website.models.image
     :members:
+
+Lib
+===
+.. automodule:: pskb_website.models.lib
+    :members:
