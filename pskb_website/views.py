@@ -320,7 +320,7 @@ def review(title):
     if article is not None:
         return redirect(filters.url_for_article(article, branch=branch), 301)
 
-    return missing_article(request.base_url)
+    return missing_article(request.base_url, title=title, branch=branch)
 
 
 # Note this URL is directly linked to the filters.url_for_article filter.
@@ -391,10 +391,8 @@ def article_view(stack, title):
         if article is not None:
             return render_article_view(request, article)
 
-    app.logger.error('Failed finding guide - stack: "%s", title: "%s", branch: "%s"',
-                     stack, title, branch)
-
-    return missing_article(request.base_url)
+    return missing_article(request.base_url, stack=stack, title=title,
+                           branch=branch)
 
 
 def render_article_list_view(status):
@@ -900,7 +898,7 @@ def render_published_articles(status_code=200):
                            featured_article=featured_article), status_code
 
 
-def missing_article(requested_url=None):
+def missing_article(requested_url=None, stack=None, title=None, branch=None):
     """
     Handle missing articles by checking if URL is should be 301 redirect or
     showing published articles in the URL is truly bad
@@ -911,6 +909,10 @@ def missing_article(requested_url=None):
         new_url = lookup_url_redirect(requested_url)
         if new_url is not None:
             return redirect(new_url, code=301)
+
+    app.logger.error(
+        'Failed finding guide - stack: "%s", title: "%s", branch: "%s"',
+        stack, title, branch)
 
     flash('We could not find that guide. Give these fresh ones a try.')
     return render_published_articles(status_code=404)
