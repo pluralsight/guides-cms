@@ -1,117 +1,358 @@
+var MARKDOWN_TUTORIAL = "\
+# Markdown tutorial by example\
+\n\n\
+Read this if you need to check the Markdown syntax. \n\n\
+\
+> **Disable the live tutorial to go back to your article**.\n\
+\
+\n\n\n\
+# Headers \
+\n\n\
+## Header's Subsection \
+\n\n\
+### Header's Subsection \
+\n\n\
+#### Header's Subsection \
+\n\n\
+##### Header's Subsection \
+\n\n\n\
+# Text Format \
+\n\n\
+normal, *italic*, **bold**, __bold__, _emphasis_, ~~strikethrough~~, ùníçõd&, `code`, \*escaping special chars\*, &copy; \
+\n\n\
+## Bloquote \
+\n\n\
+> You can put some warning or important messages in blockquotes. \n\
+Check that a blockquote can have multiple lines. \
+\n\n\n\
+# Code \
+\n\n\
+```\n\
+print('test')\n\
+```\
+\n\n\
+```javascript\n\
+$(function(){\n\
+  $('div').html('I am a div.');\n\
+});\n\
+```\
+\n\n\n\
+# Lists\
+\n\n\
+## Unordered list\
+\n\n\
+- item 1\n\
+- item 2\n\
+\n\
+or\n\
+\n\
+* item 1\n\
+* item 2\
+\n\n\
+## Ordered list\
+\n\n\
+1. item 1\n\
+1. item 2\n\
+\n\
+or\n\
+\n\
+1. item 1\n\
+2. item 2\n\
+\n\
+## Nesting\
+\n\n\
+1. item 1\n\
+  1. item 1.1\n\
+  2. item 1.2\n\
+    - subitem 1\n\
+    - subitem 2\n\
+2. item 2\n\
+\n\
+## Task Listing\
+\n\n\
+- [ ] item 1\n\
+- [x] item 2\n\
+\n\n\
+# Tables\
+\n\n\
+First Column Header | Second Column Header | Third Column\n\
+------------------- | -------------------- | ------------\n\
+Content from cell 1 | | Content from cell 3\n\
+Another cell 1 | Another cell 2\n\
+\n\n\
+# Links\
+\n\n\
+* [text of the link](http://hackguides.org)\n\
+* http://hackguides.org\
+\n\n\n\
+# Images and Files\
+\n\n\
+![alt text](http://tutorials.pluralsight.com/static/img/dark-logo.png 'Logo Title')\
+\n\n\n\
+# Horizontal rules\
+\n\n\
+------------------------\
+\n\n\
+or\
+\n\n\
+* * *\
+\n\n\
+or\
+\n\n\
+*****\
+\n\n\
+";
+
 var editor;
 var author_name;
 var author_real_name;
+var current_local_filename;
 
-function initialize_editor(name, real_name, img_upload_url) {
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+};
+
+var previewUpdated = debounce(function() {
+    var content_as_markdown = editor.getSession().getValue();
+    var content_as_html = marked(content_as_markdown);
+    var preview = $('#preview');
+    preview.html(content_as_html);
+    $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+}, 500);
+
+var autosaveEnabled = true;
+
+var loadAutoSave = function(local_filename) {
+    var obj = localStorage.getItem('hack.guides');
+    if (obj) {
+        obj = JSON.parse(obj);
+        return obj[local_filename]; // markdown content or undefined
+    }
+    return undefined;
+}
+
+var autoSave = debounce(function(local_filename) {
+    var content_as_markdown = editor.getSession().getValue();
+    var obj = localStorage.getItem('hack.guides') || '{}';
+    obj = JSON.parse(obj);
+    obj[local_filename] = content_as_markdown;
+    localStorage.setItem('hack.guides', JSON.stringify(obj));
+}, 1000);
+
+var clearLocalSave = function(local_filename) {
+    var obj = localStorage.getItem('hack.guides');
+    if (obj) {
+        obj = JSON.parse(obj);
+        delete obj[local_filename];
+        localStorage.setItem('hack.guides', JSON.stringify(obj));
+    }
+    return undefined;
+}
+
+function openLiveMarkdownTutorial() {
+    autosaveEnabled = false;
+    editor.getSession().setValue(MARKDOWN_TUTORIAL);
+    $('#btn-save').prop('disabled', true);
+}
+
+function closeLiveMarkdownTutorial() {
+    editor.setValue(loadAutoSave(current_local_filename) || '');
+    autosaveEnabled = true;
+    $('#btn-save').prop('disabled', false);
+}
+
+var liveTutorialEnabled = false;
+function toggleLiveTutorial() {
+    if (liveTutorialEnabled) {
+        closeLiveMarkdownTutorial();
+    } else {
+        openLiveMarkdownTutorial();
+    }
+    liveTutorialEnabled = ! liveTutorialEnabled;
+}
+
+function initialize_editor(local_filename, content, name, real_name, img_upload_url) {
     author_name = name;
     author_real_name = real_name;
+    current_local_filename = local_filename;
 
-    var editor = $('#md-editor-ta');
-    editor.markdown({
-        autofocus: true,
-        resize: 'vertical',
-        height: 500,
-        onPreview: add_article_header_data,
-        footer: '<div id="md-footer">Upload files by dragging & dropping</div>',
-        //or <a href="#" class="upload-img">selecting them</a></div>',
-        dropZoneOptions: {
-            url: img_upload_url,
-            disablePreview: true,
-            maxFileSize: 3, // In Megabytes
+    editor = ace.edit("editor");
+    editor.setTheme("ace/theme/github");
+    editor.getSession().setMode("ace/mode/markdown");
+    editor.getSession().setUseWrapMode(true);
+    // editor.getSession().setNewLineMode("unix");
+    editor.setShowPrintMargin(false);
+    editor.setOption('maxLines', 99999);
+    editor.$blockScrolling = Infinity;
+    // editor.renderer.setShowGutter(false);
+    // editor.renderer.setOption('showLineNumbers', false);
 
-            /* Disabled temporarily because unable to correctly get position of
-             * cursor when clicking this. The image is always inserted at the
-             * top of the text box, not the cursor position. */
-            //clickable: '.upload-img' // This points to element whose click will trigger selection of files.
+    marked.setOptions({
+      gfm: true,
+      tables: true,
+      breaks: true,
+      pedantic: false,
+      sanitize: false,
+      smartLists: true,
+      smartypants: false
+    });
+
+    var placeholder = '# Start writing your tutorial here.\n\nOr load the live markdown tutorial to check the syntax.';
+    var local_content = loadAutoSave(local_filename);
+    // local content should always be the same or the most updated version.
+    editor.setValue(local_content || content || placeholder);
+    editor.gotoLine(1);
+    previewUpdated();
+
+    if (content && ! local_content) {
+        autoSave(local_filename);
+    }
+
+    editor.getSession().on('change', function(e) {
+        previewUpdated();
+        if (autosaveEnabled) {
+            autoSave(local_filename);
         }
     });
+
+    configure_dropzone_area(img_upload_url);
+
+    return editor;
 }
 
-function add_article_header_data(editor) {
-    var title = document.getElementById('title').value;
+var scrollSyncEnabled = false;
+var $divs = null;
+var scrollSyncFunction = function(e) {
+    var
+      $other     = $divs.not(this).off('scroll'),
+      other      = $other[0],
+      percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
 
-    var h1 = '<h1 id="title" class="tagline gradient-text" style="margin-top: 5px">' + title + '</h1>';
-    var h4 = '<h4 id="author"><small>written by ';
+    other.scrollTop = Math.round(percentage * (other.scrollHeight - other.offsetHeight));
 
-    var anchor = '<a href="#">';
-    if (author_name != undefined && author_name != '') {
-        anchor = '<a href="/user/"' + author_name + '>';
-    }
+    setTimeout(function() { $other.on('scroll', scrollSyncFunction); }, 10);
 
-    if (author_real_name != undefined && author_real_name != '') {
-        anchor += author_real_name;
-    } else if (author_name != undefined && author_name != '') {
-        anchor += author_name;
+    return false;
+};
+
+function toggleScrollSync() {
+    $divs = $('#editor-wrapper, #preview');
+    if (scrollSyncEnabled) {
+        $divs.off('scroll', scrollSyncFunction);
     } else {
-        anchor += 'you';
+        $divs.on('scroll', scrollSyncFunction);
     }
-
-    anchor += '</a>';
-    h4 += anchor + '</small></h4>';
-    var selected_stacks = document.getElementById('stacks').selectedOptions;
-    var stacks = '';
-    for (ii = 0; ii < selected_stacks.length; ii++) {
-        if (selected_stacks[ii].value != '') {
-            stacks += selected_stacks[ii].value + ',';
-        }
-    }
-
-    if (stacks.length) {
-        if (stacks[stacks.length - 1] == ',') {
-            stacks = stacks.slice(0, -1);
-        }
-    }
-
-    var h5 = '<h5 id="related"><small>Related to ' + stacks + '</small>';
-    var header = '<div class="header">' + h1 + h4 + h5 + '</div>' + '<hr>';
-
-    return header + editor.parseContent();
+    scrollSyncEnabled = ! scrollSyncEnabled;
 }
 
+function configure_dropzone_area(img_upload_url) {
+    Dropzone.autoDiscover = false;
+    var dropZoneOptions = {
+        url: img_upload_url,
+        paramName: 'file',
+        maxFilesize: 3, // MB
+        uploadMultiple: false,
+        disablePreview: false,
+        createImageThumbnails: false,
+        addRemoveLinks: false,
+        previewTemplate: document.querySelector('#preview-template').innerHTML,
+        clickable: '.btn-dropzone',
+        accept: function(file, done) {
+            if (file.name.endsWith('.exe') || file.name.endsWith('.bin') || file.name.endsWith('.bat')) {
+                done("File not supported");
+            }
+            else {
+                done();
+            }
+        }
+    };
+    var myDropzone = new Dropzone("div#droppable-area", dropZoneOptions);
+    myDropzone.on('success', function(file, path) {
+        // Add Markdown reference into the editor
+        var fileMarkdown = '\n![description](' + path + ')\n';
+        editor.insert(fileMarkdown);
+    });
 
-function save(sha, path, secondary_repo, action_url) {
-    var form = document.createElement("form");
-    form.action = action_url;
-    form.method = "POST";
+    myDropzone.on("complete", function(file) {
+        myDropzone.removeFile(file);
+    });
 
-    var content = document.getElementById("md-editor-ta");
-    form.appendChild(content);
+    return myDropzone;
+}
 
-    var sha_elem = document.createElement("input");
-    sha_elem.name = "sha";
-    sha_elem.value = sha;
-    form.appendChild(sha_elem.cloneNode());
+var clearFlashMessages = function(message, clazz) {
+    $('.bg-info, .bg-warning, .bg-danger').remove();
+};
 
-    var path_elem = document.createElement("input");
-    path_elem.name = "path";
-    path_elem.value = path;
-    form.appendChild(path_elem.cloneNode());
+var addFlashMessage = function(message, clazz) {
+    var msg = '<p class="' + (clazz || 'bg-info') + '">' + message + '</p>';
+    $('.flash-msgs').append(msg);
+};
 
-    var title = document.getElementById("title");
-    form.appendChild(title.cloneNode());
-
-    var orig_stack = document.getElementById("original_stack");
-    form.appendChild(orig_stack.cloneNode());
-
-    var stacks_select = document.getElementById("stacks");
-    var stacks = document.createElement("input");
-    stacks.name = "stacks";
-    stacks.value = stacks_select.value;
-    form.appendChild(stacks.cloneNode());
-
-    if (secondary_repo) {
-        var secondary_repo_elem = document.createElement("input");
-        secondary_repo_elem.name = "secondary_repo";
-        secondary_repo_elem.value = 1;
-        form.appendChild(secondary_repo_elem.cloneNode());
+function save(sha, path, secondary_repo) {
+    clearFlashMessages();
+    $('#btn-save').prop('disabled', true);
+    var data = {
+        'title': $('input[name=title]').val(),
+        'original_stack': $('input[name=original_stack]').val(),
+        'stacks': $('#stacks').val(),
+        'content': editor.getSession().getValue(),
+        'sha': sha,
+        'path': path
     }
-
-    // To be sent, the form needs to be attached to the main document.
-    form.style.display = "none";
-    document.body.appendChild(form);
-
-    form.submit();
-
-    // But once the form is sent, it's useless to keep it.
-    document.body.removeChild(form);
+    if (secondary_repo) {
+        data['secondary_repo'] = 1;
+    }
+    $.ajax({
+        type: 'POST',
+        url: '/api/save/',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: data,
+        dataType: 'json',
+        cache: false,
+        success: function(data) {
+            console.log(data);
+            console.log(data.msg);
+            clearLocalSave(current_local_filename);
+            if (data.msg) {
+                addFlashMessage(data.msg);
+                $("html, body").animate({ scrollTop: 0 }, "fast");
+                $('#btn-save').prop('disabled', false);
+            }
+            setTimeout(function(){ window.location.href = data.redirect; }, 1000);
+        },
+        error: function(response) {
+            var status = response.status;
+            var data = response.responseJSON;
+            console.log(status, data);
+            console.log(data.error);
+            if (data.error) {
+                if (status < 500) {
+                    addFlashMessage(data.error, 'bg-warning');
+                } else {
+                    addFlashMessage(data.error, 'bg-danger');
+                }
+                $("html, body").animate({ scrollTop: 0 }, "fast");
+                $('#btn-save').prop('disabled', false);
+            }
+            if (data.redirect) {
+                setTimeout(function(){ window.location.href = data.redirect; }, 1000);
+            }
+        },
+    });
 }
