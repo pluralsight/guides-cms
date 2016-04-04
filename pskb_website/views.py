@@ -657,10 +657,10 @@ def api_save():
 
     redirect_to = filters.url_for_article(article, branch=article.branch, saved=1)
     if new_article:
-        data = {'msg': 'Article created', 'redirect': redirect_to}
+        data = {'msg': 'Guide created', 'redirect': redirect_to}
         return Response(response=json.dumps(data), status=201, mimetype='application/json')
     else:
-        data = {'msg': 'Article updated', 'redirect': redirect_to}
+        data = {'msg': 'Guide updated', 'redirect': redirect_to}
         return Response(response=json.dumps(data), status=200, mimetype='application/json')
 
 
@@ -687,7 +687,7 @@ def delete():
     if not models.delete_article(article, msg, user.login, user.email):
         flash('Failed removing guide', category='error')
     else:
-        flash('Article successfully deleted', category='info')
+        flash('Guide successfully deleted', category='info')
 
     # This article should have only been on one of these lists but trying to
     # remove it doesn't hurt so just forcefully remove it from both just in
