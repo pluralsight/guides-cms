@@ -2,6 +2,7 @@
 Collection of shared functionality for models subpackage
 """
 
+import collections
 import copy
 import json
 
@@ -35,8 +36,10 @@ def weekly_contribution_stats():
     """
     Get total and weekly contribution stats for default repository
 
-    :returns: List of dictionaries for every contributor to repository ordered
-              by most commits this week
+    :returns: Ordered dictionary keyed by author login name and ordered by most
+              commits this week
+              Each value in dictionary is a dictionary of stats for that
+              contributor
     """
 
     cache_key = 'commit-stats'
@@ -60,11 +63,15 @@ def weekly_contribution_stats():
                       'weekly_deletions': this_week['d']})
 
     if not stats:
-        return stats
+        return {}
 
-    stats = sorted(stats, key=lambda v: v['weekly_commits'], reverse=True)
+    ordered_stats = collections.OrderedDict()
+    for user_dict in sorted(stats, key=lambda v: v['weekly_commits'],
+                            reverse=True):
+        login = user_dict.pop('login')
+        ordered_stats[login] = user_dict
 
     # Just fetch stats every 30 minutes, this is not a critical bit of data
-    cache.save(cache_key, json.dumps(stats), timeout=30 * 60)
+    cache.save(cache_key, json.dumps(ordered_stats), timeout=30 * 60)
 
-    return stats
+    return ordered_stats

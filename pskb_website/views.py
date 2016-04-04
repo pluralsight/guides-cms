@@ -124,8 +124,21 @@ def gh_rate_limit():
 def contributors():
     """Contributors page"""
 
+    # The commit stats will have the avatar for all users because these stats
+    # come directly from github.  However, the guide_stats are based on what
+    # metadata we have stored so the image url could be empty.  So, fill in any
+    # missing images with the commit stats to avoid additional API calls.
     commit_stats = models.weekly_contribution_stats()
     guide_stats = models.author_stats(statuses=(PUBLISHED,))
+
+    for user, (count, image_url) in guide_stats.iteritems():
+        if image_url is None:
+            try:
+                avatar_url = commit_stats[user]['avatar_url']
+            except KeyError:
+                pass
+            else:
+                guide_stats[user] = [count, avatar_url]
 
     # FIXME: Would be better to automatically ignore all collaborators on a
     # repo but that requires 1 API request per user and we might want to count

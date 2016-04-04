@@ -7,6 +7,7 @@
 <h2 style="text-align: center;">{{commit_stats|length}} authors have contributed so far!</h2>
 {% endif %}
 
+<!-- Read this information from a editors.md file
 <h2>Community editors</h2>
 
 <p>
@@ -14,7 +15,6 @@
     quality of submitted guides:
 </p>
 
-<!-- Read this information from a editors.md file
 <div class="list-group" style="text-align: center;">
   <a href="https://github.com/prtkgpt" class="list-group-item" style="border: none;">
     <img src="https://avatars.githubusercontent.com/u/2454349?v=3&amp;s=226" width="80" height="80" style="border-radius: 42px;" alt="prtkgpt"/>
@@ -24,13 +24,11 @@
 </div>
 - Maybe list 3 users to a row or something.
 - Use a table without borders ?
--->
-
-<ul>
-    <li>Display editors.md information here</li>
-</ul>
 
 <hr>
+
+-->
+
 
 <h3>Published leaderboard</h3>
 <div class="table-responsive">
@@ -66,7 +64,7 @@
 
 
 {% if not commit_stats %}
-    <p class="lead">Compiling detailed stats from Github.com, please check back soon.</p>
+    <h2>Compiling detailed stats from Github.com, please check back soon.</h2>
 {% else %}
 
 <hr>
@@ -90,21 +88,21 @@
     </thead>
     <tbody>
 
-{# This is a list of dicts and the list is already sorted #}
-{% for user in commit_stats %}
-    {% if user.login not in ignore_users %}
+{# This is an ordered dict #}
+{% for login, info in commit_stats.iteritems() %}
+    {% if login not in ignore_users %}
     <tr>
-        {% if user.avatar_url %}
-            <td width="50"><img src="{{user.avatar_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{user.login}}"/></td>
+        {% if info.avatar_url %}
+            <td width="50"><img src="{{info.avatar_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{login}}"/></td>
         {% else %}
             <td width="50">&nbsp;</td>
         {% endif %}
 
-        <td class="login-name"><a href="{{url_for('user_profile', author_name=user.login)}}">{{user.login}}</a></td>
-        <td>{{user.total}}</td>
-        <td>{{user.weekly_commits}}</td>
-        <td>{{user.weekly_additions}}</td>
-        <td>{{user.weekly_deletions}}</td>
+        <td class="login-name"><a href="{{url_for('user_profile', author_name=login)}}">{{login}}</a></td>
+        <td>{{info.total}}</td>
+        <td>{{info.weekly_commits}}</td>
+        <td>{{info.weekly_additions}}</td>
+        <td>{{info.weekly_deletions}}</td>
     </tr>
     {% endif %}
 {% endfor %}
