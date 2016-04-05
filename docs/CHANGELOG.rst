@@ -3,6 +3,49 @@ CHANGELOG
 =========
 
 --------------------
+version .4 - 5/4/16
+--------------------
+
+New Features
+------------
+
+- Live markdown tutorial in new editor
+- Auto save guide text using HTML5 local storage
+- Side-by-side markdown preview
+- Optional scroll-sync between text and markdown preview panes
+- Ability to add images to guides via standard file dialog
+- Support for 301 redirects for guides (see :ref:`redirects file <redirects_file>`)
+- Easier signup to Slack community via popup box on FAQ page
+
+Bug Fixes
+---------
+
+- Links in editor preview open in new tabs
+- Use proper HTTP status codes for redirects requiring authentication
+- Properly escape characters in Table of Contents (see `issue <https://github.com/pluralsight/guides-cms/issues/29>`_
+- Incorrect links to branched guides on main guide page
+- Overlapping of table of contents with footer
+- Do not show users' drafts on profile page unless logged in as user
+- Prevent errors on redundant publish status changes
+- Prevent making API calls for URLs that do not look like guides on guide page
+- Issue losing list of branches when saving original article after branched
+- Issue with /user/ returning articles of repo owner instead of error
+- Making a commit with wrong user name by incorrectly reading user cache (see `commit <https://github.com/pluralsight/guides-cms/commit/495efee1149cc8d8731b218ef2a81c5787aa77b3>`_
+- Maintain social share counts for po.st with new URL structure introduced in v.3
+
+Changes
+-------
+
+- Changed editor from `Bootstrap Markdown editor <http://www.codingdrama.com/bootstrap-markdown/>`_ to `Ace <https://ace.c9.io/>`_
+- Show published guides instead of error page when unable to find requested guide
+- Improved caching of file listings for homepage and review pages
+- Add better explanation of publish workflow after submitting a new guide
+- Improve error message when creating duplicate guide with title/stack
+- Removed redundant 'Edit guide' link in header on guide page
+- Removed form to set featured article
+- Use /author/<name>/ URL for authors instead of user, 301 redirect from /user/<name>
+
+--------------------
 version .3 - 11/3/16
 --------------------
 
