@@ -212,7 +212,7 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
       smartypants: false
     });
 
-    var placeholder = '# Start writing your tutorial here.\n\nOr load the live markdown tutorial to check the syntax.';
+    var placeholder = '# Start writing your guide here.\n\nOr load the live markdown tutorial to check the syntax.';
     var local_content = loadAutoSave(local_filename);
     // local content should always be the same or the most updated version.
     editor.setValue(local_content || content || placeholder);
