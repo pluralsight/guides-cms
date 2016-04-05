@@ -132,6 +132,10 @@ var previewUpdated = debounce(function() {
     var content_as_html = marked(content_as_markdown);
     var preview = $('#preview');
     preview.html(content_as_html);
+
+    /* From utils.js */
+    create_external_links('#preview');
+
     $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
 }, 500);
 
