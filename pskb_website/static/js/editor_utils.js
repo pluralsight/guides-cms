@@ -299,6 +299,17 @@ function configure_dropzone_area(img_upload_url) {
     return myDropzone;
 }
 
+
+var isFullscreenEnabled = false;
+function toggleFullscreenMode() {
+    if (isFullscreenEnabled) {
+        $('html, body').removeClass('body-fs');
+    } else {
+        $('html, body').addClass('body-fs');
+    }
+    isFullscreenEnabled = ! isFullscreenEnabled;
+}
+
 var clearFlashMessages = function(message, clazz) {
     $('.bg-info, .bg-warning, .bg-danger').remove();
 };
