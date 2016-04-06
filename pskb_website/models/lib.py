@@ -42,10 +42,19 @@ def contribution_stats():
               contributor
     """
 
+    def _sort_contributions(stats):
+        ordered_stats = collections.OrderedDict()
+        for user_dict in sorted(stats, key=lambda v: v['weekly_commits'],
+                                reverse=True):
+            login = user_dict.pop('login')
+            ordered_stats[login] = user_dict
+
+        return ordered_stats
+
     cache_key = 'commit-stats'
     stats = cache.get(cache_key)
     if stats:
-        return json.loads(stats)
+        return _sort_contributions(json.loads(stats))
 
     # Reformat data and toss out the extra, we're only worried about totals an
     # the current week.
@@ -65,13 +74,10 @@ def contribution_stats():
     if not stats:
         return {}
 
-    ordered_stats = collections.OrderedDict()
-    for user_dict in sorted(stats, key=lambda v: v['weekly_commits'],
-                            reverse=True):
-        login = user_dict.pop('login')
-        ordered_stats[login] = user_dict
+    # Note we do NOT cache the ordered results b/c we use an ordered dict for
+    # that and we cannot serialize an ordered dict and maintain insert order.
 
     # Just fetch stats every 30 minutes, this is not a critical bit of data
-    cache.save(cache_key, json.dumps(ordered_stats), timeout=30 * 60)
+    cache.save(cache_key, json.dumps(stats), timeout=30 * 60)
 
-    return ordered_stats
+    return _sort_contributions(stats)
