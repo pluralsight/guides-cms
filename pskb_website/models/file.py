@@ -130,6 +130,8 @@ def read_redirects(branch=u'master'):
     This means redirect http://www.xyz.com to http://www.xyz.com/1 and redirect
     http://www.xyz.com/2 to http://www.xyz.com/3.
 
+    Each line can start with an optional '- ', which will be ignored.
+
     Any lines starting with a '#' or not containing two tokens is ignored.
     """
 
@@ -152,10 +154,18 @@ def read_redirects(branch=u'master'):
         if line.startswith('#'):
             continue
 
-        try:
-            old, new = line.split()
-        except ValueError:
-            # Not valid line, needs exactly 2 tokens
+        tokens = line.split()
+
+        # A valid line is either 3 tokens one of which is a '-' to start a
+        # markdown list item or 2 tokens (old and new url).
+        if len(tokens) == 3 and tokens[0] == '-':
+            old = tokens[1]
+            new = tokens[2]
+        elif len(tokens) == 2:
+            old = tokens[0]
+            new = tokens[1]
+        else:
+            # Not valid line, needs at least 2 tokens
             continue
 
         redirects[old] = new

@@ -64,9 +64,10 @@ redirects.md
 
 This file contains mapping of old guide URLs to new URLs.  The purpose of this
 file is to accomodate changing guide titles/paths and maintaining old URLs with
-temporary 301 redirects.  The format of this file is <old_url> <new_url> i.e
-space separated. Keep in mind the URLs must be fully formed including the
-domain otherwise the redirect will be based on the current domain.
+temporary 301 redirects.  The format of this file is '`<old_url> <new_url>`' or
+'`- <old_urL> <new_url>`' i.e space separated and as an optional markdown list
+item. Keep in mind the URLs must be fully formed including the domain otherwise
+the redirect will be based on the current domain.
 
 This file is optional and must be manually created.
 
