@@ -128,7 +128,7 @@ def contributors():
     # come directly from github.  However, the guide_stats are based on what
     # metadata we have stored so the image url could be empty.  So, fill in any
     # missing images with the commit stats to avoid additional API calls.
-    commit_stats = models.weekly_contribution_stats()
+    commit_stats = models.contribution_stats()
     guide_stats = models.author_stats(statuses=(PUBLISHED,))
 
     for user, (count, image_url) in guide_stats.iteritems():

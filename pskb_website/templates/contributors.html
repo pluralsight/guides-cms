@@ -69,7 +69,7 @@
 
 <hr>
 
-<h4>Total contribution leaderboard</h4>
+<h4>Weekly contribution leaderboard</h4>
 <p style="text-align: center;">
     The table below is sorted by weekly contributions. So every week gives you
     a fresh shot to get to the top.
@@ -90,7 +90,7 @@
 
 {# This is an ordered dict #}
 {% for login, info in commit_stats.iteritems() %}
-    {% if login not in ignore_users %}
+    {% if login not in ignore_users and info.weekly_commits > 0 %}
     <tr>
         {% if info.avatar_url %}
             <td width="50"><img src="{{info.avatar_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{login}}"/></td>

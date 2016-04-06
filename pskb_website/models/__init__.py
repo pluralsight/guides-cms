@@ -25,4 +25,4 @@ from .email_list import add_subscriber
 
 from .image import save_image
 from .lib import to_json
-from .lib import weekly_contribution_stats
+from .lib import contribution_stats

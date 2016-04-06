@@ -32,7 +32,7 @@ def to_json(object_, exclude_attrs=None):
     return json.dumps(dict_, sort_keys=True, indent=4, separators=(',', ': '))
 
 
-def weekly_contribution_stats():
+def contribution_stats():
     """
     Get total and weekly contribution stats for default repository
 
