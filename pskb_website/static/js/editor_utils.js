@@ -168,28 +168,6 @@ var clearLocalSave = function(local_filename) {
     return undefined;
 }
 
-function openLiveMarkdownTutorial() {
-    autosaveEnabled = false;
-    editor.getSession().setValue(MARKDOWN_TUTORIAL);
-    $('#btn-save').prop('disabled', true);
-}
-
-function closeLiveMarkdownTutorial() {
-    editor.setValue(loadAutoSave(current_local_filename) || '');
-    autosaveEnabled = true;
-    $('#btn-save').prop('disabled', false);
-}
-
-var liveTutorialEnabled = false;
-function toggleLiveTutorial() {
-    if (liveTutorialEnabled) {
-        closeLiveMarkdownTutorial();
-    } else {
-        openLiveMarkdownTutorial();
-    }
-    liveTutorialEnabled = ! liveTutorialEnabled;
-}
-
 function initialize_editor(local_filename, content, name, real_name, img_upload_url) {
     author_name = name;
     author_real_name = real_name;
@@ -239,31 +217,6 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     return editor;
 }
 
-var scrollSyncEnabled = false;
-var $divs = null;
-var scrollSyncFunction = function(e) {
-    var
-      $other     = $divs.not(this).off('scroll'),
-      other      = $other[0],
-      percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
-
-    other.scrollTop = Math.round(percentage * (other.scrollHeight - other.offsetHeight));
-
-    setTimeout(function() { $other.on('scroll', scrollSyncFunction); }, 10);
-
-    return false;
-};
-
-function toggleScrollSync() {
-    $divs = $('#editor-wrapper, #preview');
-    if (scrollSyncEnabled) {
-        $divs.off('scroll', scrollSyncFunction);
-    } else {
-        $divs.on('scroll', scrollSyncFunction);
-    }
-    scrollSyncEnabled = ! scrollSyncEnabled;
-}
-
 function configure_dropzone_area(img_upload_url) {
     Dropzone.autoDiscover = false;
     var dropZoneOptions = {
@@ -299,6 +252,53 @@ function configure_dropzone_area(img_upload_url) {
     return myDropzone;
 }
 
+function openLiveMarkdownTutorial() {
+    autosaveEnabled = false;
+    editor.getSession().setValue(MARKDOWN_TUTORIAL);
+    $('#btn-save').prop('disabled', true);
+}
+
+function closeLiveMarkdownTutorial() {
+    editor.setValue(loadAutoSave(current_local_filename) || '');
+    autosaveEnabled = true;
+    $('#btn-save').prop('disabled', false);
+}
+
+var liveTutorialEnabled = false;
+function toggleLiveTutorial() {
+    if (liveTutorialEnabled) {
+        closeLiveMarkdownTutorial();
+    } else {
+        openLiveMarkdownTutorial();
+    }
+    liveTutorialEnabled = ! liveTutorialEnabled;
+}
+
+
+var scrollSyncEnabled = false;
+var $divs = null;
+var scrollSyncFunction = function(e) {
+    var
+      $other     = $divs.not(this).off('scroll'),
+      other      = $other[0],
+      percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
+
+    other.scrollTop = Math.round(percentage * (other.scrollHeight - other.offsetHeight));
+
+    setTimeout(function() { $other.on('scroll', scrollSyncFunction); }, 10);
+
+    return false;
+};
+
+function toggleScrollSync() {
+    $divs = $('#editor-wrapper, #preview');
+    if (scrollSyncEnabled) {
+        $divs.off('scroll', scrollSyncFunction);
+    } else {
+        $divs.on('scroll', scrollSyncFunction);
+    }
+    scrollSyncEnabled = ! scrollSyncEnabled;
+}
 
 var isFullscreenEnabled = false;
 function toggleFullscreenMode() {
