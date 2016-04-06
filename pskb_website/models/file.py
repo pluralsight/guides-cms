@@ -1,8 +1,8 @@
 """
 More direct wrapper around reading files from remote storage
 
-This module serves as a small abstraction away from the remote storage so it
-can easily be switched if needed while keeping the API the same.
+This module serves as a way to read and parse common markdown file 'types' from
+the repository such as the file listings for published articles, etc.
 """
 
 import collections
