@@ -1,11 +1,27 @@
                     <div class="navbar-header">
-                        <a class="navbar-brand" href="{{url_for('index')}}">
-                            {% if g.header_white %}
-                            <img src="{{url_for('static', filename='img/light-logo.png')}}" width="200" height="40" alt="hack.guides()">
-                            {% else %}
-                            <img src="{{url_for('static', filename='img/dark-logo.png')}}" width="200" height="41" alt="hack.guides()">
-                            {% endif %}
-                        </a>
+                        <div class="hack-links">
+                            <a class="navbar-brand" href="{{url_for('index')}}">
+                                {% if g.header_white %}
+                                <img src="{{url_for('static', filename='img/light-logo.png')}}" width="200" height="40" alt="hack.guides()">
+                                {% else %}
+                                <img src="{{url_for('static', filename='img/dark-logo.png')}}" width="200" height="41" alt="hack.guides()">
+                                {% endif %}
+
+                            </a>
+
+                            <svg class="hack-links-plus-icon" width='45px', height='45px', viewbox='0 0 51 50', version='1.1', xmlns='http://www.w3.org/2000/svg', xmlns:xlink='http://www.w3.org/1999/xlink', xmlns:sketch='http://www.bohemiancoding.com/sketch/ns'>
+                                <g stroke='none', stroke-width='1', fill-rule='evenodd', fill='#8A8B87'>
+                                <path d='M25.033,0 C11.226,0 0.033,11.19 0.033,25 C0.033,38.81 11.226,50 25.033,50 C38.841,50 50.033,38.81 50.033,25 C50.033,11.19 38.841,0 25.033,0 L25.033,0 Z M25.033,1.6 C37.936,1.6 48.434,12.1 48.434,25 C48.434,37.9 37.936,48.4 25.033,48.4 C12.131,48.4 1.633,37.9 1.633,25 C1.633,12.1 12.131,1.6 25.033,1.6 L25.033,1.6 Z'></path>
+                                <path d='M26.033,24 L26.033,10 L24.033,10 L24.033,24 L10.033,24 L10.033,26 L24.033,26 L24.033,40 L26.033,40 L26.033,26 L40.033,26 L40.033,24 L26.033,24 Z'></path>
+                                </g>
+                            </svg>
+
+                            <div class="external-hack-links">
+                                <a class="hacksummit" href="http://hacksummit.org"><img src="{{ url_for('static', filename='img/logos/logo_summit.svg') }}" alt="hack.summit()" height="30" width="244"></a>
+
+                                <a class="hackpledge" href="http://hackpledge.org"><img src="{{ url_for('static', filename='img/logos/logo_pledge.svg') }}" alt="hack.pledge()" height="30" width="244"></a>
+                            </div>
+                        </div>
 
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                             <span class="sr-only">Toggle navigation</span>
