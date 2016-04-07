@@ -289,7 +289,10 @@ def my_drafts():
     g.drafts_active = True
     articles = models.get_articles_for_author(session['login'],
                                               status=DRAFT)
-    return render_template('index.html', articles=articles)
+    featured_article = find_featured_article()
+
+    return render_template('index.html', articles=articles,
+                           featured_article=featured_article)
 
 
 @app.route('/write/<path:article_path>/', methods=['GET'])
@@ -916,6 +919,30 @@ def not_found(error=None):
     return render_template('error.html'), 404
 
 
+def find_featured_article(articles=None):
+    """
+    Find featured article in list of articles or published articles
+
+    :params articles: List of article objects to search for featured article or
+                      use published articles if no list is given
+    :returns: Article object of featured article or None if not found
+    """
+
+    featured = os.environ.get('FEATURED_TITLE')
+    if featured is None:
+        return None
+
+    if articles is None:
+        # FIXME: This should only fetch the most recent x number.
+        articles = list(models.get_available_articles(status=PUBLISHED))
+
+    for ii, article in enumerate(articles):
+        if article.title == featured:
+            return article
+
+    return None
+
+
 def render_published_articles(status_code=200):
     """
     Render published article listing and featured article
@@ -926,16 +953,10 @@ def render_published_articles(status_code=200):
 
     # FIXME: This should only fetch the most recent x number.
     articles = list(models.get_available_articles(status=PUBLISHED))
-    featured = os.environ.get('FEATURED_TITLE')
-    featured_article = None
 
-    if featured is not None:
-        for ii, article in enumerate(articles):
-            if article.title == featured:
-                # This is only safe b/c we won't continue iterating it after we
-                # find the featured one!
-                featured_article = articles.pop(ii)
-                break
+    featured_article = find_featured_article(articles)
+    if featured_article:
+        articles.remove(featured_article)
 
     return render_template('index.html', articles=articles,
                            featured_article=featured_article), status_code
