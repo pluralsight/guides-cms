@@ -344,8 +344,7 @@ function save(sha, path, secondary_repo) {
             var status = response.status;
             var data = response.responseJSON;
             console.log(status, data);
-            console.log(data.error);
-            if (data.error) {
+            if (data && data.error) {
                 if (status < 500) {
                     addFlashMessage(data.error, 'bg-warning');
                 } else {
@@ -354,8 +353,10 @@ function save(sha, path, secondary_repo) {
                 $("html, body").animate({ scrollTop: 0 }, "fast");
                 $('#btn-save').prop('disabled', false);
             }
-            if (data.redirect) {
+            if (data && data.redirect) {
                 setTimeout(function(){ window.location.href = data.redirect; }, 1000);
+            } else {
+                $('#btn-save').prop('disabled', false);
             }
         },
     });

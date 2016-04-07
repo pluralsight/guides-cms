@@ -138,7 +138,7 @@
     $(document).ready(function() {
         var local_filename = '{{ article.sha or "hack.guides-draft" }}';
         {% autoescape false %}
-        var original_content = '{{ article.content | replace("\n", "\\n") | replace("\r", "") | replace("'", "\\'") }}';
+        var original_content = '{{ article.content | replace("\n", "\\n") | replace("\r", "") | replace("'", "\\'") | replace("/script", "\\/script") }}';
         {% endautoescape %}
         var author_name = '{{ '' if not article.author_name else article.author_name }}';
         var author_real_name = '{{ '' if not article.author_real_name else article.author_real_name }}';
