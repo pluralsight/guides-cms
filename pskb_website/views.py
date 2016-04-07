@@ -165,7 +165,10 @@ def faq():
     """FAQ page"""
 
     g.slack_url = SLACK_URL
-    file_details = models.read_file('faq.md', rendered_text=True)
+
+    # Read and cache this for an hour, the FAQ doesn't change very frequently
+    text = models.read_file('faq.md', rendered_text=True, use_cache=True,
+                            timeout=60 * 60)
 
     # Screen-scrape slack signup app since it's dynamic with node.js and grabs
     # from slack API.
@@ -176,7 +179,7 @@ def faq():
         if user_count is not None:
             g.slack_stats = user_count.group(1)
 
-    return render_template('faq.html', details=file_details)
+    return render_template('faq.html', text=text)
 
 
 @app.route('/github_login')

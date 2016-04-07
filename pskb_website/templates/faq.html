@@ -5,7 +5,7 @@
 <h1 class="lead">Our Mission</h1>
 
 {% if details %}
-    <div id="article">{{ details.text|safe }}</div>
+    <div id="article">{{ text|safe }}</div>
     <p>
         <a href="{{details.url}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Edit FAQ on Github</a>
     </p>

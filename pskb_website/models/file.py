@@ -37,11 +37,44 @@ file_listing_item = collections.namedtuple('file_listing_item',
                                  'thumbnail_url', 'stacks'])
 
 
-def read_file(path, rendered_text=True, branch=u'master'):
+def read_file(path, rendered_text=True, branch=u'master', use_cache=True,
+              timeout=cache.DEFAULT_CACHE_TIMEOUT):
     """
-    Read file
+    Read file contents
 
     :param path: Short path to file, not including repo or owner
+    :param rendered_text: Read rendered markdown text (True) or raw text (False)
+    :param branch: Name of branch to read file from
+    :param use_cache: Boolean to read from cache if available and save if not
+                      found in cache (use False to bypass any cache
+                      interaction, useful for very large files)
+    :param timeout: Cache timeout to save contents with (in seconds) - only
+                    used if use_cache is True
+    :returns: Text of file or None if file could not be read
+    """
+
+    if use_cache:
+        text = cache.read_file(path, branch)
+        if text is not None:
+            return text
+
+    details = read_file_details(path, rendered_text=rendered_text,
+                                branch=branch)
+    if details is None:
+        return None
+
+    if use_cache:
+        cache.save_file(path, branch, details.text, timeout=timeout)
+
+    return details.text
+
+
+def read_file_details(path, rendered_text=True, branch=u'master'):
+    """
+    Read file details including SHA and contents
+
+    :param path: Short path to file, not including repo or owner
+    :param rendered_text: Read rendered markdown text (True) or raw text (False)
     :param branch: Name of branch to read file from
     :returns: remote.file_details tuple or None if file is missing
     """
@@ -136,19 +169,10 @@ def read_redirects(branch=u'master'):
     """
 
     redirects = {}
-    text = cache.read_file(REDIRECT_FILENAME, branch)
 
-    if text is None:
-        details = read_file(REDIRECT_FILENAME, rendered_text=False,
-                            branch=branch)
-
-        if details is None:
-            return redirects
-
-        text = details.text
-
-        # This should be a pretty low volume file so cache it for an hour.
-        cache.save_file(REDIRECT_FILENAME, branch, text, timeout=60 * 60)
+    # This should be a pretty low volume file so cache it for an hour.
+    text = read_file(REDIRECT_FILENAME, rendered_text=False, branch=branch,
+                     use_cache=True, timeout=60 * 60)
 
     for line in text.splitlines():
         if line.startswith('#'):
@@ -212,7 +236,8 @@ def update_article_listing(article_url, title, author_url, author_name,
 
     sha = None
     start_text = ''
-    details = read_file(filename, rendered_text=False, branch=branch)
+
+    details = read_file_details(filename, rendered_text=False, branch=branch)
     if details is not None:
         sha = details.sha
         start_text = details.text
@@ -281,7 +306,7 @@ def remove_article_from_listing(title, status, committer_name,
     sha = None
     start_text = ''
 
-    details = read_file(filename, rendered_text=False, branch=branch)
+    details = read_file_details(filename, rendered_text=False, branch=branch)
     if details is not None:
         sha = details.sha
         start_text = details.text
@@ -332,11 +357,10 @@ def sync_file_listing(all_articles, status, committer_name, committer_email,
         filename = DRAFT_FILENAME
         message = u'Synchronizing draft'
 
-    details = read_file(filename, rendered_text=False, branch=branch)
-
     text = u''
     sha = None
 
+    details = read_file_details(filename, rendered_text=False, branch=branch)
     if details is not None:
         text = details.text
         sha = details.sha
@@ -392,15 +416,10 @@ def _read_file_listing(filename, branch=u'master'):
     :returns: Generator to iterate through file_listing_item tuples
     """
 
-    text = cache.read_file(filename, branch)
+    text = read_file(filename, rendered_text=False, branch=branch,
+                     use_cache=True)
     if text is None:
-        details = read_file(filename, rendered_text=False, branch=branch)
-        if details is None:
-            raise StopIteration
-
-        text = details.text
-
-        cache.save_file(filename, branch, text)
+        raise StopIteration
 
     for item in read_items_from_file_listing(text):
         yield item
