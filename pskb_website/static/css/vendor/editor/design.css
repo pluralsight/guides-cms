@@ -183,6 +183,10 @@
     margin-top: 60px; /* header space */
 }
 
+.body-fs #editor {
+    min-height: 100%;
+}
+
 .body-fs #preview {
     overflow: auto;
     max-height: 100%;
