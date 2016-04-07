@@ -122,6 +122,8 @@ def _fetch_files_from_github_api(repo, sha, headers=None):
     """
 
     url = 'repos/%s/git/trees/%s?recursive=1' % (repo, sha)
+    app.logger.debug('GET: %s', url)
+
     resp = github.get(url, headers=headers)
     if resp.status not in (200, 304):
         log_error('Failed reading files', url, resp)
@@ -211,6 +213,8 @@ def repo_sha_from_github(repo, branch=u'master'):
     """
 
     url = 'repos/%s/git/refs/heads/%s' % (repo, branch)
+    app.logger.debug('GET: %s', url)
+
     resp = github.get(url)
 
     if resp.status != 200:
@@ -222,6 +226,8 @@ def repo_sha_from_github(repo, branch=u'master'):
 
 def primary_github_email_of_logged_in():
     """Get primary email address of logged in user"""
+
+    app.logger.debug('GET: user/emails')
 
     resp = github.get('user/emails')
     if resp.status != 200:
@@ -270,6 +276,7 @@ def rendered_markdown_from_github(path, branch=u'master'):
 
     url = contents_url_from_path(path)
     headers = {'accept': 'application/vnd.github.html'}
+    app.logger.debug('GET: %s, headers: %s, ref: %s', url, headers, branch)
 
     resp = github.get(url, headers=headers, data={'ref': branch})
     if resp.status == 200:
@@ -292,6 +299,8 @@ def file_details_from_github(path, branch=u'master', allow_404=False):
     """
 
     url = contents_url_from_path(path)
+    app.logger.debug('GET: %s ref: %s', url, branch)
+
     resp = github.get(url, data={'ref': branch})
 
     if resp.status == 200:
@@ -357,6 +366,8 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     # for more information.
     token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
 
+    app.logger.debug('PUT: %s, data: %s, token: %s', url, commit_info, token)
+
     resp = github.put(url, data=commit_info, format='json', token=token)
 
     if resp.status not in (201, 200):
@@ -404,6 +415,8 @@ def read_user_from_github(username=None):
     else:
         url = 'user'
 
+    app.logger.debug('GET: %s', url)
+
     resp = github.get(url)
 
     if resp.status != 200:
@@ -429,6 +442,8 @@ def read_repo_collaborators_from_github(owner=None, repo=None):
 
     # This endpoint requires a user that has push access
     token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+
+    app.logger.debug('GET: %s, token: %s', url, token)
 
     resp = github.get(url, token=token)
 
@@ -495,6 +510,9 @@ def read_branch(repo_path, name):
     """
 
     url = 'repos/%s/git/refs/heads/%s' % (repo_path, name)
+
+    app.logger.debug('GET: %s', url)
+
     resp = github.get(url)
 
     # Branch doesn't exist
@@ -525,6 +543,9 @@ def create_branch(repo_path, name, sha):
     # Must use token of owner for this request b/c only owners and
     # collaborators can create branches
     token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+
+    app.logger.debug('POST: %s, data: %s, token: %s', url, data, token)
+
     resp = github.post(url, data=data, format='json', token=token)
 
     if resp.status == 422:
@@ -560,6 +581,9 @@ def update_branch(repo_path, name, sha):
     # Must use token of owner for this request b/c only owners and
     # collaborators can update branches
     token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+
+    app.logger.debug('PATCH: %s, data: %s, token: %s', url, data, token)
+
     resp = github.patch(url, data=data, format='json', token=token)
     if resp.status != 200:
         log_error('Failed updating branch', url, resp, sha=sha)
@@ -576,6 +600,8 @@ def check_rate_limit():
     """
 
     url = '/rate_limit'
+    app.logger.debug('GET: %s', url)
+
     resp = github.get(url)
     if resp.status != 200:
         log_error('Failed checking rate limit', url, resp)
@@ -614,6 +640,9 @@ def remove_file_from_github(path, message, name, email, branch):
     # separate kwargs for access_token.  See flask_oauthlib.client.make_client
     # for more information.
     token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+
+    app.logger.debug('DELETE: %s, data: %s, token: %s', url, commit_info, token)
+
     resp = github.delete(url, data=commit_info, format='json', token=token)
     if resp.status != 200:
         log_error('Failed removing file', url, resp, file=path)
@@ -637,6 +666,9 @@ def merge_branch(repo_path, base, head, message):
     data = {'base': base, 'head': head, 'commit_message': message}
 
     token = (app.config['REPO_OWNER_ACCESS_TOKEN'], )
+
+    app.logger.debug('POST: %s, data: %s, token: %s', url, data, token)
+
     resp = github.post(url, data=data, format='json', token=token)
 
     # 204 means no content i.e. no merge needed
@@ -660,6 +692,8 @@ def contributor_stats(repo_path=None):
 
     repo_path = default_repo_path() if repo_path is None else repo_path
     url = u'/repos/%s/stats/contributors' % (repo_path)
+
+    app.logger.debug('GET: %s', url)
 
     resp = github.get(url)
 
