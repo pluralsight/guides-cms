@@ -7,6 +7,7 @@ the repository such as the file listings for published articles, etc.
 
 import collections
 import re
+import json
 
 from .. import PUBLISHED, IN_REVIEW, DRAFT
 from .. import app
@@ -56,7 +57,7 @@ def read_file(path, rendered_text=True, branch=u'master', use_cache=True,
     if use_cache:
         text = cache.read_file(path, branch)
         if text is not None:
-            return text
+            return json.loads(text)
 
     details = read_file_details(path, rendered_text=rendered_text,
                                 branch=branch)
@@ -64,7 +65,7 @@ def read_file(path, rendered_text=True, branch=u'master', use_cache=True,
         return None
 
     if use_cache:
-        cache.save_file(path, branch, details.text, timeout=timeout)
+        cache.save_file(path, branch, json.dumps(details.text), timeout=timeout)
 
     return details.text
 
