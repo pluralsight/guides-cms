@@ -4,7 +4,12 @@
 
 <h1 class="lead">Our Mission</h1>
 
-<div id="article">{{ text|safe }}</div>
+{% if text %}
+    <div id="article">{{ text|safe }}</div>
+    <p>
+        <a href="{{repo_url}}/blob/master/faq.md" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Edit FAQ on Github</a>
+    </p>
+{% endif %}
 
 {% endblock %}
 
