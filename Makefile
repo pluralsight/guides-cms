@@ -22,7 +22,7 @@ run:
 	$(VENV)/bin/python run.py
 
 test:
-	$(VENV)/bin/py.test
+	$(VENV)/bin/py.test pskb_website
 
 html_docs:
 	cd docs; make html
