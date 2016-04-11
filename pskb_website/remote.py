@@ -251,16 +251,29 @@ def read_file_from_github(path, branch=u'master', rendered_text=True,
     :param allow_404: False to log warning for 404 or True to allow it i.e.
                       when you're just seeing if a file already exists
     :returns: file_details namedtuple or None if error
-    """
 
-    details = file_details_from_github(path, branch, allow_404=allow_404)
-    if details is None:
-        return details
+    Note when requesting rendered text there will be no SHA or last_updated
+    data available.  This is a restriction from the github API
+    (https://developer.github.com/v3/media/#repository-contents) Requesting
+    file 'details' like SHA and rendered text are 2 API calls.  Therefore, if
+    you want all of that information you should call this function twice, once
+    with rendered_text=True and one with rendered_text=False and combine the
+    information yourself.
+    """
 
     if rendered_text:
         text = rendered_markdown_from_github(path, branch)
-        details = file_details(path, branch, details.sha, details.last_updated,
-                               details.url, text)
+
+        # This is a little tricky b/c this URL could change on github and we
+        # would be wrong.  However, those URLs have been the same for years so
+        # seems like a safe enough bet at this point.
+        owner, repo, file_path = split_full_file_path(path)
+        url = u'https://github.com/%s/%s/blob/%s/%s' % (owner, repo, branch,
+                                                        file_path)
+
+        details = file_details(path, branch, None, None, url, text)
+    else:
+        details = file_details_from_github(path, branch, allow_404=allow_404)
 
     return details
 

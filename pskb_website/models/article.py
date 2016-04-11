@@ -299,7 +299,11 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
 
     details = remote.read_file_from_github(full_path, branch, rendered_text,
                                            allow_404=allow_missing)
-    if details is None or None in (details.text, details.sha):
+
+    # Allow empty sha when requesting rendered_text b/c of the way the
+    # underlying remote API works. See read_file_from_github for more
+    # information.
+    if details is None or details.text is None or (details.sha is None and not rendered_text):
         if not allow_missing:
             app.logger.error('Failed reading path: "%s" branch: %s', full_path,
                              branch)
