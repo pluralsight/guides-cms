@@ -52,7 +52,22 @@
     <input id="original_stack" name="original_stack" type="hidden" value="{{article.stacks[0] if article else ''}}" />
 
     <br />
-    <h3>3. Write</h3>
+
+    <h3>3. Choose your stack</h3>
+    <p>
+        Picking a stack will help readers find it more easily.
+    </p>
+    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required">
+        <option value="" {{"selected" if not selected_stack}}>---</option>
+        {% for stack in stacks %}
+            <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
+        {% endfor %}
+    </select>
+
+    <br />
+    <br />
+
+    <h3>4. Write</h3>
     <p>
         The editor supports the popular
         <a href="http://daringfireball.net/projects/markdown/" target="_blank">markdown format</a>,
@@ -66,6 +81,7 @@
             <li><a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Mastering markdown</a></li>
         </ul>
     </p>
+
     <h4>Table of Contents</h4>
     <p>
         We'll automatically a create Table of Contents for your
@@ -109,27 +125,18 @@
                 <span id="article_title" class=""></span>
                 <span id="article_stack" class=""></span>
             </div>
+
             <div id="preview"></div>
+
+            <div class="preview-footer">
+                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
+            </div>
         </div>
     </div>
 
     <br />
 
-    <h3>4. Choose your stack</h3>
-    <p>
-        Picking a stack will help readers find it more easily.
-    </p>
-    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required">
-        <option value="" {{"selected" if not selected_stack}}>---</option>
-        {% for stack in stacks %}
-            <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
-        {% endfor %}
-    </select>
-
-    <br />
-    <br />
-
-    <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary" id="btn-save">Save</button>
+    <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
 
     <br />
     <br />

@@ -255,13 +255,13 @@ function configure_dropzone_area(img_upload_url) {
 function openLiveMarkdownTutorial() {
     autosaveEnabled = false;
     editor.getSession().setValue(MARKDOWN_TUTORIAL);
-    $('#btn-save').prop('disabled', true);
+    $('.btn-save').prop('disabled', true);
 }
 
 function closeLiveMarkdownTutorial() {
     editor.setValue(loadAutoSave(current_local_filename) || '');
     autosaveEnabled = true;
-    $('#btn-save').prop('disabled', false);
+    $('.btn-save').prop('disabled', false);
 }
 
 var liveTutorialEnabled = false;
@@ -301,13 +301,22 @@ function toggleScrollSync() {
 }
 
 var isFullscreenEnabled = false;
+
+function closeFullscreen() {
+    $('html, body').removeClass('body-fs');
+    isFullscreenEnabled = false;
+}
+function openFullscreen() {
+    $('html, body').addClass('body-fs');
+    isFullscreenEnabled = true;
+}
+
 function toggleFullscreenMode() {
     if (isFullscreenEnabled) {
-        $('html, body').removeClass('body-fs');
+        closeFullscreen();
     } else {
-        $('html, body').addClass('body-fs');
+        openFullscreen();
     }
-    isFullscreenEnabled = ! isFullscreenEnabled;
 }
 
 var clearFlashMessages = function(message, clazz) {
@@ -321,7 +330,7 @@ var addFlashMessage = function(message, clazz) {
 
 function save(sha, path, secondary_repo) {
     clearFlashMessages();
-    $('#btn-save').prop('disabled', true);
+    $('.btn-save').prop('disabled', true);
     var data = {
         'title': $('input[name=title]').val(),
         'original_stack': $('input[name=original_stack]').val(),
@@ -341,29 +350,31 @@ function save(sha, path, secondary_repo) {
         dataType: 'json',
         cache: false,
         success: function(data) {
+            closeFullscreen();
             console.log(data);
             console.log(data.msg);
             clearLocalSave(current_local_filename);
             if (data.msg) {
                 addFlashMessage(data.msg);
                 $("html, body").animate({ scrollTop: 0 }, "fast");
-                $('#btn-save').prop('disabled', false);
+                $('.btn-save').prop('disabled', false);
             }
             setTimeout(function(){ window.location.href = data.redirect; }, 1000);
         },
         error: function(response) {
+            closeFullscreen();
             var status = response.status;
             var data = response.responseJSON;
             console.log(status, data);
             if (data && data.error) {
                 addFlashMessage(data.error, 'bg-danger');
                 $("html, body").animate({ scrollTop: 0 }, "fast");
-                $('#btn-save').prop('disabled', false);
+                $('.btn-save').prop('disabled', false);
             }
             if (data && data.redirect) {
                 setTimeout(function(){ window.location.href = data.redirect; }, 1000);
             } else {
-                $('#btn-save').prop('disabled', false);
+                $('.btn-save').prop('disabled', false);
             }
         },
     });

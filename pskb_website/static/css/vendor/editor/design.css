@@ -7,16 +7,6 @@
 
 /* Editor column */
 
-#editor-wrapper {
-    padding: 0;
-    overflow: scroll;
-    height: 470px;
-}
-
-#editor {
-    min-height: 470px;
-}
-
 .editor-column {
     padding:0px;
 }
@@ -58,6 +48,31 @@
     margin-top: 3px;
     margin-left: 5px;
 }
+
+#editor-wrapper {
+    padding: 0;
+    overflow: scroll;
+    height: 470px;
+}
+
+#editor {
+    min-height: 470px;
+}
+
+.editor-footer {
+    width: 100%;
+    height: 30px;
+    display: table;
+    border-top: 1px solid #d4d4d4;
+    background-color: #f7f7f7;
+}
+
+.upload-text {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 15px;
+}
+
 
 /* Preview column */
 
@@ -127,18 +142,19 @@
     border: 1px solid black;
 }
 
-.editor-footer {
+.preview-footer {
     width: 100%;
-    height: 30px;
-    display: table;
+    height: 50px;
+    max-height: 50px;
     border-top: 1px solid #d4d4d4;
     background-color: #f7f7f7;
+    display: none;
 }
 
-.upload-text {
-    display: table-cell;
-    vertical-align: middle;
-    padding-left: 15px;
+.preview-footer .btn-save {
+    float: right;
+    margin-top: 8px;
+    margin-right: 10px;
 }
 
 /* Fullscreen mode */
@@ -191,10 +207,10 @@
     overflow: auto;
     max-height: 100%;
 
-    height: -moz-calc(100% - 60px);
-    height: -webkit-calc(100% - 60px);
-    height: -o-calc(100% - 60px);
-    height: calc(100% - 60px);
+    height: -moz-calc(100% - 110px);
+    height: -webkit-calc(100% - 110px);
+    height: -o-calc(100% - 110px);
+    height: calc(100% - 110px);
 
     margin-top: 60px; /* header space */
 }
@@ -207,7 +223,7 @@
     height: 60px;
 }
 
-.body-fs .editor-footer {
+.body-fs .editor-footer, .body-fs .preview-footer2 {
     z-index: 10001;
     position: absolute;
     bottom: 0;
@@ -218,4 +234,8 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden !important;
+}
+
+.body-fs .preview-footer {
+    display: table;
 }
