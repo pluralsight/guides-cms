@@ -345,11 +345,7 @@ function save(sha, path, secondary_repo) {
             var data = response.responseJSON;
             console.log(status, data);
             if (data && data.error) {
-                if (status < 500) {
-                    addFlashMessage(data.error, 'bg-warning');
-                } else {
-                    addFlashMessage(data.error, 'bg-danger');
-                }
+                addFlashMessage(data.error, 'bg-danger');
                 $("html, body").animate({ scrollTop: 0 }, "fast");
                 $('#btn-save').prop('disabled', false);
             }
