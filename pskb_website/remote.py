@@ -262,7 +262,7 @@ def read_file_from_github(path, branch=u'master', rendered_text=True,
     """
 
     if rendered_text:
-        text = rendered_markdown_from_github(path, branch)
+        text = rendered_markdown_from_github(path, branch, allow_404=allow_404)
 
         # This is a little tricky b/c this URL could change on github and we
         # would be wrong.  However, those URLs have been the same for years so
@@ -278,12 +278,14 @@ def read_file_from_github(path, branch=u'master', rendered_text=True,
     return details
 
 
-def rendered_markdown_from_github(path, branch=u'master'):
+def rendered_markdown_from_github(path, branch=u'master', allow_404=False):
     """
     Get rendered markdown file text from github API
 
     :param path: Path to file (<owner>/<repo>/<dir>/.../<filename.md>)
     :param branch: Name of branch to read file from
+    :param allow_404: False to log warning for 404 or True to allow it i.e.
+                      when you're just seeing if a file already exists
     :returns: HTML file text
     """
 
@@ -295,7 +297,8 @@ def rendered_markdown_from_github(path, branch=u'master'):
     if resp.status == 200:
         return unicode(resp.data, encoding='utf-8')
 
-    log_error('Failed reading rendered markdown', url, resp, branch=branch)
+    if resp.status != 404 or not allow_404:
+        log_error('Failed reading rendered markdown', url, resp, branch=branch)
 
     return None
 
