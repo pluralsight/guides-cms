@@ -10,6 +10,7 @@ import subprocess
 from . import lib
 from . import file as file_mod
 from .user import find_user
+from .user import User
 from .. import app
 from .. import PUBLISHED, IN_REVIEW, DRAFT, STATUSES
 from .. import cache
@@ -587,7 +588,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
     exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', '_path',
-                     'last_updated')
+                     'last_updated', '_contributors')
     json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
     # Nothing changed so no commit needed
@@ -888,6 +889,10 @@ class Article(object):
         self._path = None
         self._publish_status = DRAFT
 
+        # List of User objects representing any 'author' i.e user who has
+        # contributed at least 1 line of text to this article.
+        self._contributors = []
+
     @property
     def path(self):
         return u'%s/%s/%s' % (self.publish_status,
@@ -917,6 +922,31 @@ class Article(object):
     @property
     def published(self):
         return self.publish_status == PUBLISHED
+
+    @property
+    def contributors(self):
+        """
+        List of User objects representing any 'author' i.e user who has
+        contributed at least 1 line of text to this article.
+        """
+
+        # Small form of caching. This way we only fetch the contributors once.
+
+        # NOTE: This could result in some data out of data if we have new
+        # contributors after this is called but contributor information isn't
+        # super important so should be ok.
+        if self._contributors:
+            return self._contributors
+
+        contribs = remote.file_contributors(self.path, branch=self.branch)
+
+        # remote call returns committers as well but we're only interested in
+        # authors
+        for name, login in contribs['authors']:
+            if login != self.author_name:
+                self._contributors.append(User(name, login))
+
+        return self._contributors
 
     @staticmethod
     def from_json(str_):

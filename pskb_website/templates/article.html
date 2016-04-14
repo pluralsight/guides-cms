@@ -81,6 +81,28 @@
 
         {{article.content|safe}}
 
+        {# This is an extra API request so only do it for published guides. #}
+        {% if article.published and article.contributors %}
+            <div id="contributors" class="row">
+                <div class="col-sm-12">
+                    <h4>Contributors</h4>
+                    <p>
+                        Thanks to the following users who've contributed to
+                        making this the best guide possible!
+                    </p>
+                    <ul>
+                    {% for user in article.contributors %}
+                        <li><a href="https://github.com/{{user.login}}" target="_blank">{{user.name if user.name else user.login}}</a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <p>
+                    Have an idea for improving this guide? Click the 'Edit this
+                    guide' button on the left and get on this list!
+                </p>
+            </div>
+        {% endif %}
+
         <div id="user-info" class="row">
             <div class="col-sm-4">
                 {% if user.avatar_url %}

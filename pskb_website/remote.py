@@ -695,6 +695,59 @@ def merge_branch(repo_path, base, head, message):
     return False
 
 
+def file_contributors(path, branch=u'master'):
+    """
+    Get dictionary of User objects representing authors and committers to a
+    file
+
+    :param path: Short-path to file (<dir>/.../<filename>) i.e. without repo
+                 and owner
+    :param base: Name of branch to read contributors for
+    :returns: Dictionary of the following form::
+
+        {'authors': set([(name, login), (name, login), ...]),
+         'committers': set([(name, login), (name, login), ...])}
+
+    Note that name can be None if user doesn't have their full name setup on
+    github account.
+    """
+
+    contribs = {'authors': set(), 'committers': set()}
+    url = u'/repos/%s/commits' % (default_repo_path())
+
+    app.logger.debug('GET: %s path: %s, branch: %s', url, path, branch)
+
+    resp = github.get(url, data={'path': path, 'branch': branch})
+    if resp.status != 200:
+        log_error('Failed reading commits from github', url, resp)
+        return contribs
+
+    def _extract_data_from_commit(commit, key):
+        login = commit[key]['login']
+
+        try:
+            author_name = commit['commit'][key]['name']
+        except KeyError:
+            author_name = None
+        else:
+            if not author_name:
+                author_name = None
+
+        # API can return same name and login depending on how the account and
+        # commit information is setup so don't bother storing duplicates. This
+        # way caller knows we didn't get a real author name.
+        if login == author_name:
+            author_name = None
+
+        return (author_name, commit[key]['login'])
+
+    for commit in resp.data:
+        contribs['authors'].add(_extract_data_from_commit(commit, 'author'))
+        contribs['committers'].add(_extract_data_from_commit(commit, 'committer'))
+
+    return contribs
+
+
 def contributor_stats(repo_path=None):
     """
     Get response of /repos/<repo_path>/stats/contributors from github.com
