@@ -329,6 +329,13 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
         # We don't have a ton of cache space so reserve it for more
         # high-traffic data like the rendered view of the articles.
         if rendered_text:
+            # Force read of contributors and only cache it for published
+            # guides. Again, trying to save on cache space, and we're not too
+            # concerned with the list of contributors until a guide is
+            # published.
+            if article.published:
+                article._read_contributors_from_api()
+
             cache.save_file(article.path, article.branch, lib.to_json(article))
     else:
         # We cannot properly show an article without metadata.
@@ -587,7 +594,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
     exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', '_path',
-                     'last_updated', '_contributors')
+                     'last_updated')
     json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
     # Nothing changed so no commit needed
@@ -941,49 +948,7 @@ class Article(object):
         if self._contributors:
             return self._contributors
 
-        self._contributors = []
-
-        # FIXME: Need to track duplicates here too so we get a unique list of
-        # contributors WITH names only if available across both statuses.
-
-        # Keep track of all the logins that have names so we can only store
-        # users with their full names if available.  Some contributions maybe
-        # returned from the API with a full name and without a full name, just
-        # depends on how the commit was done.
-        logins_with_names = set()
-
-        # We have to request the contributors for published and in-review
-        # statuses if the article is published. This is a quirk to how the
-        # github commit API works.  The API doesn't use git --follow so since
-        # guides are moved from in-review to published we have to find any
-        # authors at both locations.
-        # We don't bother with requesting 'draft' status b/c we're assuming
-        # only authors work on the guide in that phase.
-
-        # Use set to track uniques but we'll turn it into a list at the end so
-        # we can make sure we use a serializable type.
-        unique_contributors = set()
-
-        for status in (PUBLISHED, IN_REVIEW):
-            path = u'%s/%s/%s' % (status,
-                                  utils.slugify_stack(self.stacks[0]),
-                                  utils.slugify(self.title))
-
-            contribs = remote.file_contributors(path, branch=self.branch)
-
-            # remote call returns committers as well but we're only interested
-            # in authors
-            for user in contribs['authors']:
-                if user[1] != self.author_name:
-                    if user[0] is not None:
-                        logins_with_names.add(user[1])
-
-                    unique_contributors.add(user)
-
-        # Remove any duplicates that have empty names
-        for user in unique_contributors:
-            if user[0] is not None or user[1] not in logins_with_names:
-                self._contributors.append(user)
+        self._read_contributors_from_api()
 
         return self._contributors
 
@@ -1036,3 +1001,47 @@ class Article(object):
         :returns:  Full path to article
         """
         return '%s/%s/%s' % (self.repo_path, self.path, self.filename)
+
+    def _read_contributors_from_api(self):
+        """Force reset of contributors for article and fetch from github API"""
+
+        self._contributors = []
+
+        # Keep track of all the logins that have names so we can only store
+        # users with their full names if available.  Some contributions maybe
+        # returned from the API with a full name and without a full name, just
+        # depends on how the commit was done.
+        logins_with_names = set()
+
+        # We have to request the contributors for published and in-review
+        # statuses if the article is published. This is a quirk to how the
+        # github commit API works.  The API doesn't use git --follow so since
+        # guides are moved from in-review to published we have to find any
+        # authors at both locations.
+        # We don't bother with requesting 'draft' status b/c we're assuming
+        # only authors work on the guide in that phase.
+
+        # Use set to track uniques but we'll turn it into a list at the end so
+        # we can make sure we use a serializable type.
+        unique_contributors = set()
+
+        for status in (PUBLISHED, IN_REVIEW):
+            path = u'%s/%s/%s' % (status,
+                                  utils.slugify_stack(self.stacks[0]),
+                                  utils.slugify(self.title))
+
+            contribs = remote.file_contributors(path, branch=self.branch)
+
+            # remote call returns committers as well but we're only interested
+            # in authors
+            for user in contribs['authors']:
+                if user[1] != self.author_name:
+                    if user[0] is not None:
+                        logins_with_names.add(user[1])
+
+                    unique_contributors.add(user)
+
+        # Remove any duplicates that have empty names
+        for user in unique_contributors:
+            if user[0] is not None or user[1] not in logins_with_names:
+                self._contributors.append(user)
