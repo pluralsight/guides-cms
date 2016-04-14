@@ -349,6 +349,13 @@ function save(sha, path, secondary_repo) {
         data: data,
         dataType: 'json',
         cache: false,
+        beforeSend: function(xhr) {
+            $('html, body').css("cursor", "wait");
+            return true;
+        },
+        complete: function(xhr, txt_status) {
+            $('html, body').css("cursor", "auto");
+        },
         success: function(data) {
             closeFullscreen();
             console.log(data);
