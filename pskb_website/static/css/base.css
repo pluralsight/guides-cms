@@ -16,17 +16,26 @@ body {
 
 .hack-links a {
     display: block;
-    padding: 10px;
+    padding: 0;
 }
 
 .navbar-brand, .navbar-brand img {
-    z-index: 999;
+    z-index: 99999;
     display: inline-block;
+    position: relative;
+}
+
+.navbar .navbar-brand, .navbar-inverse .navbar-brand img {
+    background-color: #fff;
+}
+
+.navbar-inverse .navbar-brand, .navbar-inverse .navbar-brand img {
+    background-color: #222;
 }
 
 .hack-links-plus-icon {
-    z-index: 999;
-    padding: 10px;
+    z-index: 99999;
+    padding: 10px 0;
     cursor: pointer;
 
     -moz-transform: rotate(0);
@@ -52,13 +61,13 @@ body {
 }
 
 .hack-links .external-hack-links {
-    z-index: 888;
+    z-index: 88888;
     position: absolute;
-    width: 270px;
-    height: 130px;
+    width: 240px;
+    height: 110px;
     top: -160px;
     left: 0;
-    padding: 20px 20px 20px 5px;
+    padding: 10px 0;
     opacity: 0;
 
     -webkit-transition: -webkit-transform 0.2s cubic-bezier(.08,1.09,.64,1.12);
@@ -69,9 +78,30 @@ body {
 
 .hack-links:hover .external-hack-links {
     transform: translateY(200px);
-    background-color: #222;
     padding-bottom: 0;
     opacity: 1;
+}
+
+.navbar .hack-links:hover .external-hack-links {
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-top: 0;
+}
+
+.navbar .hack-links:hover .external-hack-links img {
+    filter: invert(100%);
+    -webkit-filter: invert(100%);
+}
+
+.navbar-inverse .hack-links:hover .external-hack-links {
+    background-color: #222;
+    border: 1px solid #111;
+    border-top: 0;
+}
+
+.navbar-inverse .hack-links:hover .external-hack-links img {
+    filter: invert(0%);
+    -webkit-filter: invert(0%);
 }
 
 
