@@ -52,7 +52,22 @@
     <input id="original_stack" name="original_stack" type="hidden" value="{{article.stacks[0] if article else ''}}" />
 
     <br />
-    <h3>3. Write</h3>
+
+    <h3>3. Choose your stack</h3>
+    <p>
+        Picking a stack will help readers find it more easily.
+    </p>
+    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required">
+        <option value="" {{"selected" if not selected_stack}}>---</option>
+        {% for stack in stacks %}
+            <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
+        {% endfor %}
+    </select>
+
+    <br />
+    <br />
+
+    <h3>4. Write</h3>
     <p>
         The editor supports the popular
         <a href="http://daringfireball.net/projects/markdown/" target="_blank">markdown format</a>,
@@ -66,6 +81,7 @@
             <li><a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Mastering markdown</a></li>
         </ul>
     </p>
+
     <h4>Table of Contents</h4>
     <p>
         We'll automatically a create Table of Contents for your
@@ -76,8 +92,9 @@
     <div class="row editor-preview-wrapper">
         <div class="col-xs-12 col-sm-6 editor-column" id="droppable-area">
             <div class="editor-header">
-                <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo">
-                <button id="btn-scroll-sync" class="btn btn-default btn-xs">Scroll Sync</button>
+                <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
+                <button id="btn-fullscreen-mode" class="btn btn-default btn-xs">Fullscreen mode</button>
+                <button id="btn-scroll-sync" class="btn btn-default btn-xs hidden-xs hidden-sm">Scroll Sync</button>
                 <button id="btn-live-tutorial" class="btn btn-default btn-xs markdown-help">Live Markdown Tutorial <span class="fa fa-question-circle"></span></button>
             </div>
 
@@ -86,7 +103,7 @@
             </div>
 
             <div class="editor-footer">
-                <span>Upload files by dragging & dropping into the editor or click <a href="#" class="btn-dropzone">here</a></span>
+                <div class="upload-text">Upload files by dragging & dropping into the editor <span class="hidden-xs">or click <a href="#" class="btn-dropzone">here</a></span></div>
                 <div class="dz-preview dz-file-preview" id="preview-template" style="display: none;">
                     <div class="dz-details" style="display: none;">
                     <div class="dz-filename" style="display: none;"><span data-dz-name></span></div>
@@ -108,27 +125,18 @@
                 <span id="article_title" class=""></span>
                 <span id="article_stack" class=""></span>
             </div>
+
             <div id="preview"></div>
+
+            <div class="preview-footer">
+                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
+            </div>
         </div>
     </div>
 
     <br />
 
-    <h3>4. Choose your stack</h3>
-    <p>
-        Picking a stack will help readers find it more easily.
-    </p>
-    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required">
-        <option value="" {{"selected" if not selected_stack}}>---</option>
-        {% for stack in stacks %}
-            <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
-        {% endfor %}
-    </select>
-
-    <br />
-    <br />
-
-    <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary" id="btn-save">Save</button>
+    <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
 
     <br />
     <br />
@@ -154,6 +162,11 @@
         });
         $("#title").change();
         $("#stacks").change();
+
+        $("#btn-fullscreen-mode").click(function() {
+            toggleFullscreenMode();
+            $("#btn-fullscreen-mode").toggleClass('active');
+        });
 
         $("#btn-scroll-sync").click(function() {
             toggleScrollSync();

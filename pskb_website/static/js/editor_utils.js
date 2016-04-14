@@ -168,28 +168,6 @@ var clearLocalSave = function(local_filename) {
     return undefined;
 }
 
-function openLiveMarkdownTutorial() {
-    autosaveEnabled = false;
-    editor.getSession().setValue(MARKDOWN_TUTORIAL);
-    $('#btn-save').prop('disabled', true);
-}
-
-function closeLiveMarkdownTutorial() {
-    editor.setValue(loadAutoSave(current_local_filename) || '');
-    autosaveEnabled = true;
-    $('#btn-save').prop('disabled', false);
-}
-
-var liveTutorialEnabled = false;
-function toggleLiveTutorial() {
-    if (liveTutorialEnabled) {
-        closeLiveMarkdownTutorial();
-    } else {
-        openLiveMarkdownTutorial();
-    }
-    liveTutorialEnabled = ! liveTutorialEnabled;
-}
-
 function initialize_editor(local_filename, content, name, real_name, img_upload_url) {
     author_name = name;
     author_real_name = real_name;
@@ -239,31 +217,6 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     return editor;
 }
 
-var scrollSyncEnabled = false;
-var $divs = null;
-var scrollSyncFunction = function(e) {
-    var
-      $other     = $divs.not(this).off('scroll'),
-      other      = $other[0],
-      percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
-
-    other.scrollTop = Math.round(percentage * (other.scrollHeight - other.offsetHeight));
-
-    setTimeout(function() { $other.on('scroll', scrollSyncFunction); }, 10);
-
-    return false;
-};
-
-function toggleScrollSync() {
-    $divs = $('#editor-wrapper, #preview');
-    if (scrollSyncEnabled) {
-        $divs.off('scroll', scrollSyncFunction);
-    } else {
-        $divs.on('scroll', scrollSyncFunction);
-    }
-    scrollSyncEnabled = ! scrollSyncEnabled;
-}
-
 function configure_dropzone_area(img_upload_url) {
     Dropzone.autoDiscover = false;
     var dropZoneOptions = {
@@ -299,6 +252,73 @@ function configure_dropzone_area(img_upload_url) {
     return myDropzone;
 }
 
+function openLiveMarkdownTutorial() {
+    autosaveEnabled = false;
+    editor.getSession().setValue(MARKDOWN_TUTORIAL);
+    $('.btn-save').prop('disabled', true);
+}
+
+function closeLiveMarkdownTutorial() {
+    editor.setValue(loadAutoSave(current_local_filename) || '');
+    autosaveEnabled = true;
+    $('.btn-save').prop('disabled', false);
+}
+
+var liveTutorialEnabled = false;
+function toggleLiveTutorial() {
+    if (liveTutorialEnabled) {
+        closeLiveMarkdownTutorial();
+    } else {
+        openLiveMarkdownTutorial();
+    }
+    liveTutorialEnabled = ! liveTutorialEnabled;
+}
+
+
+var scrollSyncEnabled = false;
+var $divs = null;
+var scrollSyncFunction = function(e) {
+    var
+      $other     = $divs.not(this).off('scroll'),
+      other      = $other[0],
+      percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
+
+    other.scrollTop = Math.round(percentage * (other.scrollHeight - other.offsetHeight));
+
+    setTimeout(function() { $other.on('scroll', scrollSyncFunction); }, 10);
+
+    return false;
+};
+
+function toggleScrollSync() {
+    $divs = $('#editor-wrapper, #preview');
+    if (scrollSyncEnabled) {
+        $divs.off('scroll', scrollSyncFunction);
+    } else {
+        $divs.on('scroll', scrollSyncFunction);
+    }
+    scrollSyncEnabled = ! scrollSyncEnabled;
+}
+
+var isFullscreenEnabled = false;
+
+function closeFullscreen() {
+    $('html, body').removeClass('body-fs');
+    isFullscreenEnabled = false;
+}
+function openFullscreen() {
+    $('html, body').addClass('body-fs');
+    isFullscreenEnabled = true;
+}
+
+function toggleFullscreenMode() {
+    if (isFullscreenEnabled) {
+        closeFullscreen();
+    } else {
+        openFullscreen();
+    }
+}
+
 var clearFlashMessages = function(message, clazz) {
     $('.bg-info, .bg-warning, .bg-danger').remove();
 };
@@ -310,7 +330,7 @@ var addFlashMessage = function(message, clazz) {
 
 function save(sha, path, secondary_repo) {
     clearFlashMessages();
-    $('#btn-save').prop('disabled', true);
+    $('.btn-save').prop('disabled', true);
     var data = {
         'title': $('input[name=title]').val(),
         'original_stack': $('input[name=original_stack]').val(),
@@ -330,29 +350,31 @@ function save(sha, path, secondary_repo) {
         dataType: 'json',
         cache: false,
         success: function(data) {
+            closeFullscreen();
             console.log(data);
             console.log(data.msg);
             clearLocalSave(current_local_filename);
             if (data.msg) {
                 addFlashMessage(data.msg);
                 $("html, body").animate({ scrollTop: 0 }, "fast");
-                $('#btn-save').prop('disabled', false);
+                $('.btn-save').prop('disabled', false);
             }
             setTimeout(function(){ window.location.href = data.redirect; }, 1000);
         },
         error: function(response) {
+            closeFullscreen();
             var status = response.status;
             var data = response.responseJSON;
             console.log(status, data);
             if (data && data.error) {
                 addFlashMessage(data.error, 'bg-danger');
                 $("html, body").animate({ scrollTop: 0 }, "fast");
-                $('#btn-save').prop('disabled', false);
+                $('.btn-save').prop('disabled', false);
             }
             if (data && data.redirect) {
                 setTimeout(function(){ window.location.href = data.redirect; }, 1000);
             } else {
-                $('#btn-save').prop('disabled', false);
+                $('.btn-save').prop('disabled', false);
             }
         },
     });

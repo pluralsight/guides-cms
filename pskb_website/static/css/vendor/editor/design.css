@@ -1,14 +1,11 @@
+/* Editor + Preview wrapper */
+
+.editor-preview-wrapper {
+    border: 1px solid #d4d4d4;
+    font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+}
+
 /* Editor column */
-
-#editor-wrapper {
-    padding: 0;
-    overflow: scroll;
-    height: 470px;
-}
-
-#editor {
-    min-height: 470px;
-}
 
 .editor-column {
     padding:0px;
@@ -32,10 +29,17 @@
     height:29px;
 }
 
+#btn-fullscreen-mode {
+    display: table-cell;
+    vertical-align: middle;
+    margin-top: 3px;
+}
+
 #btn-scroll-sync {
     display: table-cell;
     vertical-align: middle;
     margin-top: 3px;
+    margin-left: 5px;
 }
 
 #btn-live-tutorial {
@@ -45,12 +49,32 @@
     margin-left: 5px;
 }
 
-/* Preview column */
-
-.editor-preview-wrapper {
-    border: 1px solid #d4d4d4;
-    font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+#editor-wrapper {
+    padding: 0;
+    overflow: scroll;
+    height: 470px;
 }
+
+#editor {
+    min-height: 470px;
+}
+
+.editor-footer {
+    width: 100%;
+    height: 30px;
+    display: table;
+    border-top: 1px solid #d4d4d4;
+    background-color: #f7f7f7;
+}
+
+.upload-text {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 15px;
+}
+
+
+/* Preview column */
 
 .preview-column {
     background-color: #f7f7f7;
@@ -118,16 +142,100 @@
     border: 1px solid black;
 }
 
-.editor-footer {
+.preview-footer {
     width: 100%;
-    height: 30px;
-    display: table;
+    height: 50px;
+    max-height: 50px;
     border-top: 1px solid #d4d4d4;
     background-color: #f7f7f7;
+    display: none;
 }
 
-.editor-footer span {
-    display: table-cell;
-    vertical-align: middle;
-    padding-left: 15px;
+.preview-footer .btn-save {
+    float: right;
+    margin-top: 8px;
+    margin-right: 10px;
+}
+
+/* Fullscreen mode */
+
+.body-fs {
+    height: 100% !important;
+    overflow: hidden;
+}
+
+.body-fs .editor-preview-wrapper {
+    z-index: 10000;
+    position: fixed !important;
+    height: auto !important;
+    min-height: 100%;
+    width: auto !important;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.body-fs .editor-column, .body-fs .preview-column {
+    height: 100%;
+}
+
+.body-fs .preview-column {
+    z-index: 10002;
+}
+
+.body-fs #editor-wrapper {
+    overflow: auto;
+    max-height: 100%;
+
+    height: -moz-calc(100% - 90px);
+    height: -webkit-calc(100% - 90px);
+    height: -o-calc(100% - 90px);
+    height: calc(100% - 90px);
+
+    margin-top: 60px; /* header space */
+}
+
+.body-fs #editor {
+    min-height: 100%;
+}
+
+.body-fs #preview {
+    overflow: auto;
+    max-height: 100%;
+
+    height: -moz-calc(100% - 110px);
+    height: -webkit-calc(100% - 110px);
+    height: -o-calc(100% - 110px);
+    height: calc(100% - 110px);
+
+    margin-top: 60px; /* header space */
+}
+
+.body-fs .editor-header, .body-fs .preview-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+}
+
+.body-fs .editor-footer, .body-fs .preview-footer2 {
+    z-index: 10001;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    max-height: 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden !important;
+}
+
+.body-fs .preview-footer {
+    display: table;
 }
