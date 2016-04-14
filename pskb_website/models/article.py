@@ -594,7 +594,7 @@ def save_article_meta_data(article, author_name, email, branch=None):
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
     exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', '_path',
-                     'last_updated')
+                     'last_updated', '_contributors')
     json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
     # Nothing changed so no commit needed
