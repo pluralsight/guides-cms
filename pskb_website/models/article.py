@@ -10,7 +10,6 @@ import subprocess
 from . import lib
 from . import file as file_mod
 from .user import find_user
-from .user import User
 from .. import app
 from .. import PUBLISHED, IN_REVIEW, DRAFT, STATUSES
 from .. import cache
@@ -926,8 +925,12 @@ class Article(object):
     @property
     def contributors(self):
         """
-        List of User objects representing any 'author' i.e user who has
-        contributed at least 1 line of text to this article.
+        List of tuples representing any 'author' i.e user who has contributed
+        at least 1 line of text to this article.  Each tuple is in the form of
+        (name, login) where name can be None.
+
+        We use plain tuples instead of named tuples or User objects so we can
+        easily seralize the contributors to JSON.
         """
 
         # Small form of caching. This way we only fetch the contributors once.
@@ -938,13 +941,49 @@ class Article(object):
         if self._contributors:
             return self._contributors
 
-        contribs = remote.file_contributors(self.path, branch=self.branch)
+        self._contributors = []
 
-        # remote call returns committers as well but we're only interested in
-        # authors
-        for name, login in contribs['authors']:
-            if login != self.author_name:
-                self._contributors.append(User(name, login))
+        # FIXME: Need to track duplicates here too so we get a unique list of
+        # contributors WITH names only if available across both statuses.
+
+        # Keep track of all the logins that have names so we can only store
+        # users with their full names if available.  Some contributions maybe
+        # returned from the API with a full name and without a full name, just
+        # depends on how the commit was done.
+        logins_with_names = set()
+
+        # We have to request the contributors for published and in-review
+        # statuses if the article is published. This is a quirk to how the
+        # github commit API works.  The API doesn't use git --follow so since
+        # guides are moved from in-review to published we have to find any
+        # authors at both locations.
+        # We don't bother with requesting 'draft' status b/c we're assuming
+        # only authors work on the guide in that phase.
+
+        # Use set to track uniques but we'll turn it into a list at the end so
+        # we can make sure we use a serializable type.
+        unique_contributors = set()
+
+        for status in (PUBLISHED, IN_REVIEW):
+            path = u'%s/%s/%s' % (status,
+                                  utils.slugify_stack(self.stacks[0]),
+                                  utils.slugify(self.title))
+
+            contribs = remote.file_contributors(path, branch=self.branch)
+
+            # remote call returns committers as well but we're only interested
+            # in authors
+            for user in contribs['authors']:
+                if user[1] != self.author_name:
+                    if user[0] is not None:
+                        logins_with_names.add(user[1])
+
+                    unique_contributors.add(user)
+
+        # Remove any duplicates that have empty names
+        for user in unique_contributors:
+            if user[0] is not None or user[1] not in logins_with_names:
+                self._contributors.append(user)
 
         return self._contributors
 

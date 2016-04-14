@@ -91,8 +91,8 @@
                         making this the best guide possible!
                     </p>
                     <ul>
-                    {% for user in article.contributors %}
-                        <li><a href="https://github.com/{{user.login}}" target="_blank">{{user.name if user.name else user.login}}</a></li>
+                    {% for name, login in article.contributors %}
+                        <li><a href="https://github.com/{{login}}" target="_blank">{{name if name else login}}</a></li>
                     {% endfor %}
                     </ul>
                 </div>
