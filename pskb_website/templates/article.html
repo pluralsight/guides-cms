@@ -97,8 +97,8 @@
                     </ul>
                 </div>
                 <p>
-                    Have an idea for improving this guide? Click the 'Edit this
-                    guide' button on the left and get on this list!
+                    Have an idea for improving this guide? <a href="{{url_for('write', article_path=article.path, branch=article.branch)}}">Edit this guide</a>
+                    to get on the list!
                 </p>
             </div>
         {% endif %}
