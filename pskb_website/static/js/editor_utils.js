@@ -107,6 +107,12 @@ var editor;
 var author_name;
 var author_real_name;
 var current_local_filename;
+var preview = null;
+var autosaveEnabled = true;
+var liveTutorialEnabled = false;
+var scrollSyncEnabled = false;
+var $divs4scroll = null;
+
 var help_sections;
 var isHelpEnabled = false;
 
@@ -129,7 +135,6 @@ function debounce(func, wait, immediate) {
     };
 };
 
-var preview = null;
 var previewUpdated = debounce(function() {
     preview.innerHTML = marked(editor.getSession().getValue());
 
@@ -139,7 +144,6 @@ var previewUpdated = debounce(function() {
     $(preview).find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
 }, 500);
 
-var autosaveEnabled = true;
 
 var loadAutoSave = function(local_filename) {
     var obj = localStorage.getItem('hack.guides');
@@ -265,7 +269,6 @@ function closeLiveMarkdownTutorial() {
     $('.btn-save').prop('disabled', false);
 }
 
-var liveTutorialEnabled = false;
 function toggleLiveTutorial() {
     if (liveTutorialEnabled) {
         closeLiveMarkdownTutorial();
@@ -275,12 +278,9 @@ function toggleLiveTutorial() {
     liveTutorialEnabled = ! liveTutorialEnabled;
 }
 
-
-var scrollSyncEnabled = false;
-var $divs = null;
 var scrollSyncFunction = function(e) {
     var
-      $other     = $divs.not(this).off('scroll'),
+      $other     = $divs4scroll.not(this).off('scroll'),
       other      = $other[0],
       percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
 
@@ -292,11 +292,11 @@ var scrollSyncFunction = function(e) {
 };
 
 function toggleScrollSync() {
-    $divs = $('#editor-wrapper, #preview');
+    $divs4scroll = $('#editor-wrapper, #preview');
     if (scrollSyncEnabled) {
-        $divs.off('scroll', scrollSyncFunction);
+        $divs4scroll.off('scroll', scrollSyncFunction);
     } else {
-        $divs.on('scroll', scrollSyncFunction);
+        $divs4scroll.on('scroll', scrollSyncFunction);
     }
     scrollSyncEnabled = ! scrollSyncEnabled;
 }
