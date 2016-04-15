@@ -165,7 +165,7 @@
 }
 
 .body-fs .editor-preview-wrapper {
-    z-index: 10000;
+    z-index: 9999990;
     position: fixed !important;
     height: auto !important;
     min-height: 100%;
@@ -184,7 +184,7 @@
 }
 
 .body-fs .preview-column {
-    z-index: 10002;
+    z-index: 9999992;
 }
 
 .body-fs #editor-wrapper {
@@ -224,7 +224,7 @@
 }
 
 .body-fs .editor-footer, .body-fs .preview-footer2 {
-    z-index: 10001;
+    z-index: 9999991;
     position: absolute;
     bottom: 0;
     left: 0;
