@@ -129,11 +129,9 @@ function debounce(func, wait, immediate) {
     };
 };
 
+var preview = null;
 var previewUpdated = debounce(function() {
-    var content_as_markdown = editor.getSession().getValue();
-    var content_as_html = marked(content_as_markdown);
-    var preview = $('#preview');
-    preview.html(content_as_html);
+    preview.innerHTML = marked(editor.getSession().getValue());
 
     /* From utils.js */
     create_external_links('#preview');
@@ -174,6 +172,8 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     author_name = name;
     author_real_name = real_name;
     current_local_filename = local_filename;
+
+    preview = document.getElementById('preview');
 
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/github");
