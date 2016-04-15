@@ -192,6 +192,15 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     // editor.renderer.setShowGutter(false);
     // editor.renderer.setOption('showLineNumbers', false);
 
+    editor.commands.addCommand({
+        name: 'fullscreen',
+        bindKey: {win: 'Ctrl-F',  mac: 'Command-F'},
+        exec: function(editor) {
+            toggleFullscreenMode();
+            $("#btn-fullscreen-mode").toggleClass('active');
+        }
+    });
+
     marked.setOptions({
       gfm: true,
       tables: true,
