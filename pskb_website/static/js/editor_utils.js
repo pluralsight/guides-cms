@@ -178,11 +178,14 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     current_local_filename = local_filename;
 
     preview = document.getElementById('preview');
+    $divs4scroll = $('#editor-wrapper, #preview');
+    toggleScrollSync(); // enable auto sync
 
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/github");
     editor.getSession().setMode("ace/mode/markdown");
     editor.getSession().setUseWrapMode(true);
+    editor.setOption('maxLines', 99999); // this is required for the auto synced scroll
     // editor.getSession().setNewLineMode("unix");
     editor.setShowPrintMargin(false);
     editor.$blockScrolling = Infinity;
@@ -292,7 +295,6 @@ var scrollSyncFunction = function(e) {
 };
 
 function toggleScrollSync() {
-    $divs4scroll = $('#editor-wrapper, #preview');
     if (scrollSyncEnabled) {
         $divs4scroll.off('scroll', scrollSyncFunction);
     } else {
