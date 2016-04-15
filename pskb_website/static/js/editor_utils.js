@@ -136,7 +136,7 @@ var previewUpdated = debounce(function() {
     /* From utils.js */
     create_external_links('#preview');
 
-    $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+    $(preview).find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
 }, 500);
 
 var autosaveEnabled = true;
