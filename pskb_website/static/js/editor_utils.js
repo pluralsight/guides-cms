@@ -181,7 +181,6 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     editor.getSession().setUseWrapMode(true);
     // editor.getSession().setNewLineMode("unix");
     editor.setShowPrintMargin(false);
-    editor.setOption('maxLines', 99999);
     editor.$blockScrolling = Infinity;
     // editor.renderer.setShowGutter(false);
     // editor.renderer.setOption('showLineNumbers', false);
