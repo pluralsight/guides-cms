@@ -1026,9 +1026,10 @@ class Article(object):
         unique_contributors = set()
 
         for status in (PUBLISHED, IN_REVIEW):
-            path = u'%s/%s/%s' % (status,
-                                  utils.slugify_stack(self.stacks[0]),
-                                  utils.slugify(self.title))
+            path = u'%s/%s/%s/%s' % (status,
+                                     utils.slugify_stack(self.stacks[0]),
+                                     utils.slugify(self.title),
+                                     self.filename)
 
             contribs = remote.file_contributors(path, branch=self.branch)
 
