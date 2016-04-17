@@ -16,6 +16,7 @@ Contents:
    intro
    CHANGELOG
    install
+   testing
    github_setup
    deployment
    publish_workflow
@@ -35,4 +36,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
