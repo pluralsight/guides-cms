@@ -63,26 +63,6 @@ Now you can :ref:`test things from the CLI <wo_browser>` if that's more your spe
 
 You can try creating a guide once you have celery running locally or your `CELERY_BROKER_URL` configured to a running Redis server.
 
-.. _wo_browser:
-
------------------------
-Testing without browser
------------------------
-
-You can test a lot of the functionality of the application without a web
-browser.  In general, much of the interaction with the Github API can be used
-directly from the command-line.  To do this run the following:
-
-`python manage.py shell`
-
-Now you have access to the entire application.  To test a Github API response
-try the following::
-
-    from pskb_website import remote
-    remote.read_user_from_github(username='octocat')
-
-You should now see the description of the famous Github octocat user!
-
 .. _celery_setup:
 
 -------------------------------------------
