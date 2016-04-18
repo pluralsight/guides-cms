@@ -135,8 +135,17 @@ function debounce(func, wait, immediate) {
     };
 };
 
+function replaceHtml(el, html) {
+    var oldEl = el;
+    var newEl = el.cloneNode(false);
+    newEl.innerHTML = html;
+    oldEl.parentNode.replaceChild(newEl, oldEl);
+    preview = newEl;
+    return newEl;
+};
+
 var previewUpdated = debounce(function() {
-    preview.innerHTML = marked(editor.getSession().getValue());
+    replaceHtml(preview, marked(editor.getSession().getValue()));
 
     /* From utils.js */
     create_external_links('#preview');
