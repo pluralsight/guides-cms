@@ -103,15 +103,25 @@ or\
 \n\n\
 ";
 
+// Article data
 var editor;
 var author_name;
 var author_real_name;
+// Auto-save
 var current_local_filename;
-var preview = null;
 var autosaveEnabled = true;
+// Preview
+var preview = null;
+// Markdown tutorial
 var liveTutorialEnabled = false;
+// Scroll Sync
 var scrollSyncEnabled = false;
 var $divs4scroll = null;
+// Virtual DOM
+var vdom = window.virtualDom
+var html2vtree = window.html2vdom({ VNode: vdom.VNode, VText: vdom.VText })
+var currentVTree = null;
+var previewRootDomNode = null;
 
 var help_sections;
 var isHelpEnabled = false;
@@ -135,23 +145,23 @@ function debounce(func, wait, immediate) {
     };
 };
 
-function replaceHtml(el, html) {
-    var oldEl = el;
-    var newEl = el.cloneNode(false);
-    newEl.innerHTML = html;
-    oldEl.parentNode.replaceChild(newEl, oldEl);
-    preview = newEl;
-    return newEl;
+var updatePreview = function() {
+    var newHtml = marked(editor.getSession().getValue())
+
+    if (! currentVTree) {
+        currentVTree = html2vtree(newHtml)
+        currentVTree = vdom.h('div.previewWrapper#previewWrapper', {}, currentVTree)
+        previewRootDomNode = vdom.create(currentVTree)
+        preview.appendChild(previewRootDomNode);
+    }
+
+    var newVTree = html2vtree(newHtml)
+    newVTree = vdom.h('div.previewWrapper#previewWrapper', {}, newVTree)
+
+    var patches = vdom.diff(currentVTree, newVTree);
+    previewRootDomNode = vdom.patch(previewRootDomNode, patches);
+    currentVTree = newVTree;
 };
-
-var previewUpdated = debounce(function() {
-    replaceHtml(preview, marked(editor.getSession().getValue()));
-
-    /* From utils.js */
-    create_external_links('#preview');
-
-    $(preview).find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-}, 500);
 
 
 var loadAutoSave = function(local_filename) {
@@ -163,13 +173,13 @@ var loadAutoSave = function(local_filename) {
     return undefined;
 }
 
-var autoSave = debounce(function(local_filename) {
+var autoSave = function(local_filename) {
     var content_as_markdown = editor.getSession().getValue();
     var obj = localStorage.getItem('hack.guides') || '{}';
     obj = JSON.parse(obj);
     obj[local_filename] = content_as_markdown;
     localStorage.setItem('hack.guides', JSON.stringify(obj));
-}, 1000);
+};
 
 var clearLocalSave = function(local_filename) {
     var obj = localStorage.getItem('hack.guides');
@@ -194,12 +204,14 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     editor.setTheme("ace/theme/github");
     editor.getSession().setMode("ace/mode/markdown");
     editor.getSession().setUseWrapMode(true);
-    editor.setOption('maxLines', 99999); // this is required for the auto synced scroll
-    // editor.getSession().setNewLineMode("unix");
-    editor.setShowPrintMargin(false);
+    editor.getSession().setNewLineMode("unix");
+
+    editor.setOption('maxLines', Infinity); // this is required for the auto synced scroll
     editor.$blockScrolling = Infinity;
-    // editor.renderer.setShowGutter(false);
-    // editor.renderer.setOption('showLineNumbers', false);
+
+    editor.setShowPrintMargin(false);
+    editor.renderer.setShowGutter(true);
+    editor.renderer.setOption('showLineNumbers', true);
 
     editor.commands.addCommand({
         name: 'fullscreen',
@@ -225,18 +237,18 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     // local content should always be the same or the most updated version.
     editor.setValue(local_content || content || placeholder);
     editor.gotoLine(1);
-    previewUpdated();
+    updatePreview();
 
     if (content && ! local_content) {
         autoSave(local_filename);
     }
 
-    editor.getSession().on('change', function(e) {
-        previewUpdated();
+    editor.getSession().on('change', debounce(updatePreview, 200));
+    editor.getSession().on('change', debounce(function() {
         if (autosaveEnabled) {
             autoSave(local_filename);
         }
-    });
+    }, 1000));
 
     configure_dropzone_area(img_upload_url);
 
