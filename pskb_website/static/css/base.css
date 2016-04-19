@@ -700,11 +700,6 @@ a:hover.emphasize-dark  {
     margin-top: 50px;
 }
 
-#editor-section #title {
-    margin-top: 20px;
-    width: 70%;
-}
-
 a.active-page {
     text-decoration: underline;
 }
