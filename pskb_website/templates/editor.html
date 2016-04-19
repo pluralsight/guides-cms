@@ -93,9 +93,12 @@
         <div class="col-xs-12 col-sm-6 editor-column" id="droppable-area">
             <div class="editor-header">
                 <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
-                <button id="btn-fullscreen-mode" class="btn btn-default btn-xs">Fullscreen mode</button>
-                <button id="btn-scroll-sync" class="btn btn-default btn-xs hidden-xs hidden-sm">Scroll Sync</button>
-                <button id="btn-live-tutorial" class="btn btn-default btn-xs markdown-help">Live Markdown Tutorial <span class="fa fa-question-circle"></span></button>
+                <div class="editor-features">
+                    <button id="btn-fullscreen-mode" class="btn btn-default btn-xs active">Fullscreen mode</button>
+                    <button id="btn-scroll-sync" class="btn btn-default btn-xs hidden-xs hidden-sm">Scroll Sync</button>
+                    <button id="btn-live-tutorial" class="btn btn-default btn-xs markdown-help">Live Markdown Tutorial <span class="fa fa-question-circle"></span></button>
+                    <button id="btn-upload" class="btn btn-default btn-xs btn-dropzone">Add image</button>
+                </div>
             </div>
 
             <div id="editor-wrapper">
@@ -103,7 +106,7 @@
             </div>
 
             <div class="editor-footer">
-                <div class="upload-text">Upload files by dragging & dropping into the editor <span class="hidden-xs">or click <a href="#" class="btn-dropzone">here</a></span></div>
+                <div class="upload-text">Upload files by dragging & dropping into the editor or via the add image button.</div>
                 <div class="dz-preview dz-file-preview" id="preview-template" style="display: none;">
                     <div class="dz-details" style="display: none;">
                     <div class="dz-filename" style="display: none;"><span data-dz-name></span></div>

@@ -184,6 +184,8 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     // editor.renderer.setShowGutter(false);
     // editor.renderer.setOption('showLineNumbers', false);
 
+    toggleFullscreenMode();
+
     marked.setOptions({
       gfm: true,
       tables: true,
@@ -306,6 +308,7 @@ function closeFullscreen() {
     $('html, body').removeClass('body-fs');
     isFullscreenEnabled = false;
 }
+
 function openFullscreen() {
     $('html, body').addClass('body-fs');
     isFullscreenEnabled = true;
