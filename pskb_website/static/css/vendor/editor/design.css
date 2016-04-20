@@ -49,8 +49,10 @@
     border-radius: 0px;
 }
 
-.editor-header .btn-save {
+.editor-header .btn-save,
+.editor-header .btn-cancel {
     float: right;
+    margin-right: 10px;
 }
 
 /* Full-screen only controls */

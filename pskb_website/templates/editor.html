@@ -32,6 +32,7 @@
                 <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
 
                 <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
+                <button onclick="cancel()" class="btn btn-danger btn-cancel">Cancel</button>
 
                 <div class="editor-features">
                     <button id="btn-fullscreen-mode" class="btn btn-default btn-xs active">Fullscreen mode</button>
@@ -88,6 +89,10 @@
 </div>
 
 <script type="text/javascript">
+    function cancel() {
+        window.location.href = "{{url_for('index')}}";
+    }
+
     $(document).ready(function() {
         init_editor_help();
 
