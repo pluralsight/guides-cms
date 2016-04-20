@@ -158,6 +158,7 @@ var updatePreview = function() {
     var patches = vdom.diff(currentVTree, newVTree);
     previewRootDomNode = vdom.patch(previewRootDomNode, patches);
     currentVTree = newVTree;
+    scrollPreviewAccordingToEditor()
 };
 
 
@@ -247,12 +248,7 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     }, 1000));
 
     editor.getSession().on('changeScrollTop', function(scrollTop) {
-        if (scrollSyncEnabled) {
-            var editorHeight = getAceEditorScrollHeight()
-            var percentage = scrollTop / editorHeight
-
-            preview.scrollTop = Math.round(percentage * (preview.scrollHeight - preview.offsetHeight))
-        }
+        scrollPreviewAccordingToEditor(scrollTop)
     })
 
     configure_dropzone_area(img_upload_url);
@@ -319,6 +315,16 @@ function toggleLiveTutorial() {
         openLiveMarkdownTutorial();
     }
     liveTutorialEnabled = ! liveTutorialEnabled;
+}
+
+function scrollPreviewAccordingToEditor(scrollTop) {
+    if (scrollSyncEnabled) {
+        scrollTop = scrollTop || editor.session.getScrollTop()
+        var editorHeight = getAceEditorScrollHeight()
+        var percentage = scrollTop / editorHeight
+
+        preview.scrollTop = Math.round(percentage * (preview.scrollHeight - preview.offsetHeight))
+    }
 }
 
 function scrollEditorAccordingToPreview() {
