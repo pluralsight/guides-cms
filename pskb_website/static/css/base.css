@@ -696,10 +696,6 @@ a:hover.emphasize-dark  {
     color: #000000;
 }
 
-#editor-section {
-    margin-top: 50px;
-}
-
 a.active-page {
     text-decoration: underline;
 }

@@ -107,6 +107,7 @@ var editor;
 var author_name;
 var author_real_name;
 var current_local_filename;
+var help_sections;
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
@@ -307,11 +308,16 @@ var isFullscreenEnabled = false;
 function closeFullscreen() {
     $('html, body').removeClass('body-fs');
     isFullscreenEnabled = false;
+    show_all_sections(true);
 }
 
 function openFullscreen() {
     $('html, body').addClass('body-fs');
     isFullscreenEnabled = true;
+    show_all_sections(false);
+
+    /* Always show section 0 first */
+    goto_section(0, 0);
 }
 
 function toggleFullscreenMode() {
@@ -387,5 +393,65 @@ function save(sha, path, secondary_repo) {
                 $('.btn-save').prop('disabled', false);
             }
         },
+    });
+}
+
+function visible_section_idx() {
+    for (var ii=0; ii < help_sections.length; ii++) {
+        if ($(help_sections[ii]).css('display') == 'block') {
+            return ii;
+        }
+    }
+
+    return -1;
+}
+
+function goto_section(curr_section, next_section) {
+    $(help_sections[curr_section]).css('display', 'none');
+    $(help_sections[next_section]).css('display', 'block');
+}
+
+
+function show_all_sections(should_show) {
+    var display = 'none';
+    if (should_show) {
+        display = 'block';
+    }
+
+    for (var ii=0; ii < help_sections.length; ii++) {
+        $(help_sections[ii]).css('display', display);
+    }
+}
+
+/* Show each section 1 at a time in help. This only works for full-screen mode
+ * because these buttons are visible otherwise. */
+function init_editor_help() {
+    help_sections = $('#editor-help').find('.section');
+
+    $('#editor-help #close').click(function() {
+        $('#editor-help').fadeOut('fast');
+        $('#editor-help').hide();
+    });
+
+    $('#editor-help #next').click(function() {
+        var curr_section = visible_section_idx();
+        var next_section = curr_section + 1;
+
+        if (next_section >= help_sections.length) {
+            next_section = 0;
+        }
+
+        goto_section(curr_section, next_section);
+    });
+
+    $('#editor-help #prev').click(function() {
+        var curr_section = visible_section_idx();
+        var next_section = curr_section - 1;
+
+        if (next_section < 0) {
+            next_section = help_sections.length - 1;
+        }
+
+        goto_section(curr_section, next_section);
     });
 }

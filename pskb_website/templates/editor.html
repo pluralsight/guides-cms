@@ -23,48 +23,10 @@
 {% block body %}
 
 <div id="editor-section">
-    <h3>1. Get Started</h3>
-    <p>
-        <ul>
-            <li>Saving your guide will send it straight to our official <a href="{{repo_url}}"> Github repository</a> where editors around the world can help you fullfill your guide's potential.</li>
-            <li>
-                Your guide will show up in the master branch of our
-                <a href="{{repo_url}}"> Github repository</a>
-                unless you're editing a guide started by someone else.  In that
-                case, a branch named after your username will automatically be
-                created for you.  The original author can then see the changes
-                you're suggesting directly on Github.
-            </li>
-            <li>
-                Once our editors feel your article is ready, we'll put your
-                guide on our <a href="{{url_for('index')}}">homepage</a> so your expertise can
-                help educate the world.
-            </li>
-        </ul>
-    </p>
-    <h3>2. Write</h3>
-    <p>
-        The editor supports the popular
-        <a href="http://daringfireball.net/projects/markdown/" target="_blank">markdown format</a>,
-        which means you can create great looking guides with a bit of special
-        syntax.  The editor is designed to work closely with Github.com's
-        <a href="https://help.github.com/categories/writing-on-github/" target="_blank">markdown implementation</a>
-        so see refer to the live tutorial below or these great Github.com
-        references for help:
-        <ul>
-            <li><a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/" target="_blank">Basic formatting</a></li>
-            <li><a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Mastering markdown</a></li>
-        </ul>
-    </p>
-
-    <h4>Table of Contents</h4>
-    <p>
-        We'll automatically a create Table of Contents for your
-        guide based on your usage of &lt;h1&gt; and &lt;h2&gt; tags the
-        equivalent '#' and '##' markdown headers.
-    </p>
-
     <div class="row editor-preview-wrapper">
+
+        {% include "editor_help.html" %}
+
         <div class="col-xs-12 col-sm-6 editor-column" id="droppable-area">
             <div class="editor-header">
                 <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
@@ -126,6 +88,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        init_editor_help();
+
         var local_filename = '{{ article.sha or "hack.guides-draft" }}';
         {% autoescape false %}
         var original_content = '{{ article.content | replace("\n", "\\n") | replace("\r", "") | replace("'", "\\'") | replace("/script", "\\/script") }}';
