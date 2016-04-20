@@ -112,11 +112,11 @@ var current_local_filename;
 var autosaveEnabled = true;
 // Preview
 var preview = null;
+var editor_wrapper = null;
 // Markdown tutorial
 var liveTutorialEnabled = false;
 // Scroll Sync
 var scrollSyncEnabled = false;
-var $divs4scroll = null;
 // Virtual DOM
 var vdom = window.virtualDom
 var html2vtree = window.html2vdom({ VNode: vdom.VNode, VText: vdom.VText })
@@ -197,7 +197,7 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     current_local_filename = local_filename;
 
     preview = document.getElementById('preview');
-    $divs4scroll = $('#editor-wrapper, #preview');
+    editor_wrapper = document.getElementById('editor-wrapper');
     toggleScrollSync(); // enable auto sync
 
     editor = ace.edit("editor");
@@ -206,7 +206,6 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     editor.getSession().setUseWrapMode(true);
     editor.getSession().setNewLineMode("unix");
 
-    editor.setOption('maxLines', Infinity); // this is required for the auto synced scroll
     editor.$blockScrolling = Infinity;
 
     editor.setShowPrintMargin(false);
@@ -250,9 +249,23 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
         }
     }, 1000));
 
+    editor.getSession().on('changeScrollTop', function(scrollTop) {
+        if (scrollSyncEnabled) {
+            var editorHeight = getAceEditorScrollHeight()
+            var percentage = scrollTop / editorHeight
+
+            preview.scrollTop = Math.round(percentage * (preview.scrollHeight - preview.offsetHeight))
+        }
+    })
+
     configure_dropzone_area(img_upload_url);
 
     return editor;
+}
+
+function getAceEditorScrollHeight() {
+    var r = editor.renderer
+    return r.layerConfig.maxHeight - r.$size.scrollerHeight + r.scrollMargin.bottom
 }
 
 function configure_dropzone_area(img_upload_url) {
@@ -311,24 +324,23 @@ function toggleLiveTutorial() {
     liveTutorialEnabled = ! liveTutorialEnabled;
 }
 
-var scrollSyncFunction = function(e) {
-    var
-      $other     = $divs4scroll.not(this).off('scroll'),
-      other      = $other[0],
-      percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
+function scrollEditorAccordingToPreview() {
+    $(preview).off('scroll')
 
-    other.scrollTop = Math.round(percentage * (other.scrollHeight - other.offsetHeight));
+    var percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight)
 
-    setTimeout(function() { $other.on('scroll', scrollSyncFunction); }, 10);
+    var editorHeight = getAceEditorScrollHeight()
+    var position = Math.round(percentage * editorHeight)
+    editor.getSession().setScrollTop(position)
 
-    return false;
-};
+    setTimeout(function() { $(preview).on('scroll', scrollEditorAccordingToPreview); }, 10);
+}
 
 function toggleScrollSync() {
     if (scrollSyncEnabled) {
-        $divs4scroll.off('scroll', scrollSyncFunction);
+        $(preview).off('scroll', scrollEditorAccordingToPreview);
     } else {
-        $divs4scroll.on('scroll', scrollSyncFunction);
+        $(preview).on('scroll', scrollEditorAccordingToPreview);
     }
     scrollSyncEnabled = ! scrollSyncEnabled;
 }
