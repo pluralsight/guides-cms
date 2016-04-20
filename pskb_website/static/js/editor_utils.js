@@ -403,9 +403,14 @@ function visible_section_idx() {
     return -1;
 }
 
-function goto_section(curr_section, next_section) {
-    $(help_sections[curr_section]).css('display', 'none');
-    $(help_sections[next_section]).css('display', 'block');
+function goto_section(next_section) {
+    for (var ii=0; ii < help_sections.length; ii++) {
+        if (next_section == ii ) {
+            $(help_sections[ii]).css('display', 'block');
+        } else {
+            $(help_sections[ii]).css('display', 'none');
+        }
+    }
 }
 
 
@@ -455,7 +460,7 @@ function init_editor_help() {
             next_section = 0;
         }
 
-        goto_section(curr_section, next_section);
+        goto_section(next_section);
     });
 
     $('#editor-help #prev').click(function() {
@@ -466,6 +471,6 @@ function init_editor_help() {
             next_section = help_sections.length - 1;
         }
 
-        goto_section(curr_section, next_section);
+        goto_section(next_section);
     });
 }
