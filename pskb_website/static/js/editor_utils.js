@@ -108,6 +108,7 @@ var author_name;
 var author_real_name;
 var current_local_filename;
 var help_sections;
+var isHelpEnabled = true;
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
@@ -314,10 +315,6 @@ function closeFullscreen() {
 function openFullscreen() {
     $('html, body').addClass('body-fs');
     isFullscreenEnabled = true;
-    show_all_sections(false);
-
-    /* Always show section 0 first */
-    goto_section(0, 0);
 }
 
 function toggleFullscreenMode() {
@@ -423,15 +420,32 @@ function show_all_sections(should_show) {
     }
 }
 
+function toggleHelp() {
+    if (isHelpEnabled) {
+        hideHelp();
+    } else {
+        showHelp();
+    }
+}
+
+
+function showHelp() {
+    $('#editor-help').fadeIn('fast');
+    $('#editor-help').show();
+    isHelpEnabled = true;
+}
+
+function hideHelp() {
+    $('#editor-help').fadeOut('fast');
+    $('#editor-help').hide();
+    isHelpEnabled = false;
+}
+
+
 /* Show each section 1 at a time in help. This only works for full-screen mode
  * because these buttons are visible otherwise. */
 function init_editor_help() {
     help_sections = $('#editor-help').find('.section');
-
-    $('#editor-help #close').click(function() {
-        $('#editor-help').fadeOut('fast');
-        $('#editor-help').hide();
-    });
 
     $('#editor-help #next').click(function() {
         var curr_section = visible_section_idx();

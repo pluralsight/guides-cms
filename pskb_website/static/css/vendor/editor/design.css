@@ -98,6 +98,10 @@
     margin-left: 5px;
 }
 
+#btn-show-help {
+    display: none;
+}
+
 #editor-wrapper {
     padding: 0;
     overflow: scroll;
@@ -326,3 +330,11 @@
 .body-fs #editor-help #next {
     right: 55px;
     padding-top: 7px;
+}
+
+.body-fs #btn-show-help {
+    display: table-cell;
+    vertical-align: middle;
+    margin-top: 3px;
+    margin-left: 5px;
+}

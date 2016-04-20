@@ -38,6 +38,7 @@
                     <button id="btn-scroll-sync" data-toggle="tooltip" data-placement="bottom" title="Syncrhonize your place in guide between editor and preview panes" class="btn btn-default btn-xs hidden-xs hidden-sm">Scroll Sync</button>
                     <button id="btn-live-tutorial" class="btn btn-default btn-xs markdown-help">Live Markdown Tutorial <span class="fa fa-question-circle"></span></button>
                     <button id="btn-upload" data-toggle="tooltip" data-placement="bottom" title="Dragging and dropping images onto editor also supported" class="btn btn-default btn-xs btn-dropzone">Add image</button>
+                    <button id="btn-show-help" data-toggle="tooltip" data-placement="bottom" title="Show help" class="btn btn-default btn-xs active">Help</button>
                 </div>
 
                 <br />
@@ -112,6 +113,16 @@
         $("#btn-fullscreen-mode").click(function() {
             toggleFullscreenMode();
             $("#btn-fullscreen-mode").toggleClass('active');
+
+            /* Help is always visible in non-full screen so for simplicity
+               we'll always * show help when transitioning.  Otherwise we'd
+               need another variable to * save the help visibility simply for
+               full screen mode. */
+            showHelp();
+
+            if (!$("#btn-show-help").hasClass('active')) {
+                $("#btn-show-help").addClass('active');
+            }
         });
 
         $("#btn-scroll-sync").click(function() {
@@ -125,6 +136,16 @@
         $("#btn-live-tutorial").click(function() {
             toggleLiveTutorial();
             $("#btn-live-tutorial").toggleClass('active');
+        });
+
+        $('#btn-show-help').click(function() {
+            toggleHelp();
+            $("#btn-show-help").toggleClass('active');
+        });
+
+        $('#editor-help #close').click(function() {
+            hideHelp();
+            $("#btn-show-help").toggleClass('active');
         });
 
         /* Initialize bootstrap tooltips */
