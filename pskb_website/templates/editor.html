@@ -69,6 +69,8 @@
             <div class="editor-header">
                 <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
 
+                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
+
                 <div class="editor-features">
                     <button id="btn-fullscreen-mode" class="btn btn-default btn-xs active">Fullscreen mode</button>
                     <button id="btn-scroll-sync" data-toggle="tooltip" data-placement="bottom" title="Syncrhonize your place in guide between editor and preview panes" class="btn btn-default btn-xs hidden-xs hidden-sm">Scroll Sync</button>
@@ -95,8 +97,6 @@
             </div>
 
             <div class="editor-footer">
-                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
-
                 <div class="dz-preview dz-file-preview" id="preview-template" style="display: none;">
                     <div class="dz-details" style="display: none;">
                     <div class="dz-filename" style="display: none;"><span data-dz-name></span></div>
@@ -122,13 +122,6 @@
             <div id="preview"></div>
         </div>
     </div>
-
-    <br />
-
-    <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
-
-    <br />
-    <br />
 </div>
 
 <script type="text/javascript">
