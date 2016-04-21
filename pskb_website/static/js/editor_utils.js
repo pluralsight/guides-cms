@@ -203,21 +203,15 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     editor.getSession().setMode("ace/mode/markdown");
     editor.getSession().setUseWrapMode(true);
     editor.getSession().setNewLineMode("unix");
-
+    // Manage editor size
+    editor.setOption('minLines', 1);
+    $(window).resize(resizeEditor);
+    resizeEditor()
     editor.$blockScrolling = Infinity;
-
+    // Editor layout features
     editor.setShowPrintMargin(false);
     editor.renderer.setShowGutter(true);
     editor.renderer.setOption('showLineNumbers', true);
-
-    editor.commands.addCommand({
-        name: 'fullscreen',
-        bindKey: {win: 'Ctrl-F',  mac: 'Command-F'},
-        exec: function(editor) {
-            toggleFullscreenMode();
-            $("#btn-fullscreen-mode").toggleClass('active');
-        }
-    });
 
     marked.setOptions({
       gfm: true,
@@ -350,7 +344,15 @@ function toggleScrollSync() {
 
 function openFullscreen() {
     $('html, body').addClass('body-fs');
+    resizeEditor()
 }
+
+function resizeEditor() {
+    var lineHeight = editor.renderer.lineHeight
+    var maxLines = document.getElementById('editor-wrapper').offsetHeight / lineHeight
+    editor.setOption('maxLines', Math.floor(maxLines) - 1);
+    editor.resize()
+};
 
 var clearFlashMessages = function(message, clazz) {
     $('.bg-info, .bg-warning, .bg-danger').remove();
