@@ -146,8 +146,8 @@ function debounce(func, wait, immediate) {
 };
 
 var updatePreview = function() {
-    var newHtml = marked(editor.getSession().getValue())
-    newVTree = html2vtree('<div id="previewWrapper" class="previewWrapper">' + newHtml + '</div>')
+    var newHtml = markdown2html(editor.getSession().getValue())
+    newVTree = html2vtree('<div class="previewWrapper" key="previewWrapper">' + newHtml + '</div>', 'key')
 
     if (! currentVTree) {
         currentVTree = newVTree
@@ -158,6 +158,7 @@ var updatePreview = function() {
     var patches = vdom.diff(currentVTree, newVTree);
     previewRootDomNode = vdom.patch(previewRootDomNode, patches);
     currentVTree = newVTree;
+    // $(preview).find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
     scrollPreviewAccordingToEditor()
 };
 
@@ -212,16 +213,6 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     editor.setShowPrintMargin(false);
     editor.renderer.setShowGutter(true);
     editor.renderer.setOption('showLineNumbers', true);
-
-    marked.setOptions({
-      gfm: true,
-      tables: true,
-      breaks: true,
-      pedantic: false,
-      sanitize: false,
-      smartLists: true,
-      smartypants: false
-    });
 
     var placeholder = '# Start writing your guide here.\n\nOr load the live markdown tutorial to check the syntax.';
     var local_content = loadAutoSave(local_filename);
