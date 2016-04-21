@@ -146,8 +146,20 @@ function debounce(func, wait, immediate) {
 };
 
 var updatePreview = function() {
+    console.clear()
+    var start, end, time = 0
+    start = new Date().getTime();
     var newHtml = markdown2html(editor.getSession().getValue())
+    end = new Date().getTime();
+    time = end - start;
+    console.log('markdown to html: ' + time + 'ms')
+
+    start = new Date().getTime();
     newVTree = html2vtree('<div class="previewWrapper" key="previewWrapper">' + newHtml + '</div>', 'key')
+    end = new Date().getTime();
+    time = end - start;
+    console.log('html to vdom: ' + time + 'ms')
+    console.log('vdom: ' + newVTree.children.length + ' nodes')
 
     if (! currentVTree) {
         currentVTree = newVTree
@@ -155,11 +167,27 @@ var updatePreview = function() {
         preview.appendChild(previewRootDomNode);
     }
 
+    start = new Date().getTime();
     var patches = vdom.diff(currentVTree, newVTree);
+    end = new Date().getTime();
+    time = end - start;
+    console.log('diff: ' + Object.keys(patches).length + ' nodes')
+    console.log('diff: ' + time + 'ms')
+
+    start = new Date().getTime();
     previewRootDomNode = vdom.patch(previewRootDomNode, patches);
+    end = new Date().getTime();
+    time = end - start;
+    console.log('patch: ' + time + 'ms')
+
+    start = new Date().getTime();
     currentVTree = newVTree;
     // $(preview).find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
     scrollPreviewAccordingToEditor()
+    end = new Date().getTime();
+    time = end - start;
+    console.log('fixed variable and scroll: ' + time + 'ms')
+    console.log('<< Preview updated')
 };
 
 
