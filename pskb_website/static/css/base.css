@@ -108,6 +108,13 @@ body {
     -webkit-filter: invert(0%);
 }
 
+.navbar .external-hack-links a:hover {
+    background-color: #eee;
+}
+
+.navbar-inverse .external-hack-links a:hover {
+    background-color: #444;
+}
 
 /* Default color of Pluralsight buttons */
 .btn-primary,
