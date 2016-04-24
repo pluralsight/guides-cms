@@ -32,28 +32,28 @@ renderer.heading = function (text, level) {
 
 renderer.paragraph = function(text) {
     var key = this.getUniqueKey('paragraph' + text)
-    return '<p data-id="' + key + '" key="' + key + '">' + text + '</p>\n';
+    return '<p data-id="' + key + '" key="' + key + '">' + text + '</p>';
 };
 
 renderer.list = function(body, ordered) {
     var type = ordered ? 'ol' : 'ul';
     var key = this.getUniqueKey(type + body)
-    return '<' + type + ' data-id="' + key + '" key="' + key + '">\n' + body + '</' + type + '>\n';
+    return '<' + type + ' data-id="' + key + '" key="' + key + '">' + body + '</' + type + '>';
 };
 
 renderer.blockquote = function(quote) {
     var key = this.getUniqueKey('blockquote' + quote)
-    return '<blockquote data-id="' + key + '" key="' + key + '">\n' + quote + '</blockquote>\n';
+    return '<blockquote data-id="' + key + '" key="' + key + '">' + quote + '</blockquote>';
 };
 
 renderer.table = function(header, body) {
     var key = this.getUniqueKey('table' + header + body)
-    return '<table data-id="' + key + '" key="' + key + '">\n' + '<thead>\n'
+    return '<table data-id="' + key + '" key="' + key + '">' + '<thead>'
         + header
-        + '</thead>\n'
-        + '<tbody>\n'
+        + '</thead>'
+        + '<tbody>'
         + body
-        + '</tbody>\n</table>\n';
+        + '</tbody></table>';
 };
 
 /* From utils.js */
