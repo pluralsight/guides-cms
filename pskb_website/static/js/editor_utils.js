@@ -197,22 +197,28 @@ var updatePreview = function() {
     var patches = vdom.diff(currentVTree, newVTree);
     end = new Date().getTime();
     time = end - start;
-    console.log('diff: ' + (Object.keys(patches).length-1) + ' nodes');
+    var numberDiffNodes = Object.keys(patches).length - 1;
+    console.log('diff: ' + numberDiffNodes + ' nodes');
     console.log('diff: ' + time + 'ms');
 
-    start = new Date().getTime();
-    previewRootDomNode = vdom.patch(previewRootDomNode, patches);
-    end = new Date().getTime();
-    time = end - start;
-    console.log('patch: ' + time + 'ms');
+    if (numberDiffNodes > 0) {
+        start = new Date().getTime();
+        previewRootDomNode = vdom.patch(previewRootDomNode, patches);
+        end = new Date().getTime();
+        time = end - start;
+        console.log('patch: ' + time + 'ms');
 
-    start = new Date().getTime();
-    currentVTree = newVTree;
-    // $(preview).find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-    scrollPreviewAccordingToEditor();
-    end = new Date().getTime();
-    time = end - start;
-    console.log('fixed variable and scroll: ' + time + 'ms');
+        start = new Date().getTime();
+        currentVTree = newVTree;
+        console.log($(preview).find('pre code').length)
+        $(preview).find('pre code').each(function(i, e) {
+            hljs.highlightBlock(e);
+        });
+        scrollPreviewAccordingToEditor();
+        end = new Date().getTime();
+        time = end - start;
+        console.log('fixed variable and scroll: ' + time + 'ms');
+    }
     console.log('<< Preview updated');
     updatingPreview = false;
 };
