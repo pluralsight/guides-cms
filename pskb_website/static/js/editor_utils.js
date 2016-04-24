@@ -113,6 +113,7 @@ var autosaveEnabled = true;
 // Preview
 var preview = null;
 var editor_wrapper = null;
+var updatingPreview = false;
 // Markdown tutorial
 var liveTutorialEnabled = false;
 // Scroll Sync
@@ -125,6 +126,7 @@ var previewRootDomNode = null;
 
 var help_sections;
 var isHelpEnabled = false;
+
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
@@ -140,12 +142,36 @@ function debounce(func, wait, immediate) {
         };
         var callNow = immediate && !timeout;
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        if (isFunction(wait)) {
+            timeout = setTimeout(later, wait());
+        } else {
+            timeout = setTimeout(later, wait);
+        }
         if (callNow) func.apply(context, args);
     };
 };
 
+function getUpdatePreviewDelay() {
+    var delay = 0;
+    var cursorLine = editor.selection.getCursor()['row'];
+    var totalOfLines = editor.session.getLength();
+    var linesAfterCursor = totalOfLines - cursorLine;
+    if (linesAfterCursor > 2000) {
+        delay = 2000 - 200;
+    } else if (linesAfterCursor > 1000) {
+        delay = 1000 - 200;
+    } else if (linesAfterCursor > 500) {
+        delay = 500 - 200;
+    }
+    return delay;
+}
+
 var updatePreview = function() {
+    if (updatingPreview) {
+        return;
+    }
+    updatingPreview = true;
+
     console.clear()
     var start, end, time = 0
     start = new Date().getTime();
@@ -171,7 +197,7 @@ var updatePreview = function() {
     var patches = vdom.diff(currentVTree, newVTree);
     end = new Date().getTime();
     time = end - start;
-    console.log('diff: ' + Object.keys(patches).length + ' nodes')
+    console.log('diff: ' + (Object.keys(patches).length-1) + ' nodes')
     console.log('diff: ' + time + 'ms')
 
     start = new Date().getTime();
@@ -188,6 +214,7 @@ var updatePreview = function() {
     time = end - start;
     console.log('fixed variable and scroll: ' + time + 'ms')
     console.log('<< Preview updated')
+    updatingPreview = false;
 };
 
 
@@ -254,12 +281,13 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
         autoSave(local_filename);
     }
 
-    editor.getSession().on('change', debounce(updatePreview, 200));
+    editor.getSession().on('change', debounce(updatePreview, getUpdatePreviewDelay));
     editor.getSession().on('change', debounce(function() {
         if (autosaveEnabled) {
             autoSave(local_filename);
         }
-    }, 1000));
+    }, 2000));
+
 
     editor.getSession().on('changeScrollTop', function(scrollTop) {
         scrollPreviewAccordingToEditor(scrollTop)
