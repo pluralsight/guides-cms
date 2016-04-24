@@ -119,7 +119,7 @@ var liveTutorialEnabled = false;
 // Scroll Sync
 var scrollSyncEnabled = false;
 // Virtual DOM
-var vdom = window.virtualDom
+var vdom = window.virtualDom;
 var html2vtree = window.vdomParser;
 var currentVTree = null;
 var previewRootDomNode = null;
@@ -172,24 +172,24 @@ var updatePreview = function() {
     }
     updatingPreview = true;
 
-    console.clear()
-    var start, end, time = 0
+    console.clear();
+    var start, end, time = 0;
     start = new Date().getTime();
-    var newHtml = markdown2html(editor.getSession().getValue())
+    var newHtml = markdown2html(editor.getSession().getValue());
     end = new Date().getTime();
     time = end - start;
-    console.log('markdown to html: ' + time + 'ms')
+    console.log('markdown to html: ' + time + 'ms');
 
     start = new Date().getTime();
-    newVTree = html2vtree('<div class="previewWrapper" key="previewWrapper">' + newHtml + '</div>', 'key')
+    newVTree = html2vtree('<div class="previewWrapper" key="previewWrapper">' + newHtml + '</div>', 'key');
     end = new Date().getTime();
     time = end - start;
-    console.log('html to vdom: ' + time + 'ms')
-    console.log('vdom: ' + newVTree.children.length + ' nodes')
+    console.log('html to vdom: ' + time + 'ms');
+    console.log('vdom: ' + newVTree.children.length + ' nodes');
 
     if (! currentVTree) {
-        currentVTree = newVTree
-        previewRootDomNode = vdom.create(currentVTree)
+        currentVTree = newVTree;
+        previewRootDomNode = vdom.create(currentVTree);
         preview.appendChild(previewRootDomNode);
     }
 
@@ -197,23 +197,23 @@ var updatePreview = function() {
     var patches = vdom.diff(currentVTree, newVTree);
     end = new Date().getTime();
     time = end - start;
-    console.log('diff: ' + (Object.keys(patches).length-1) + ' nodes')
-    console.log('diff: ' + time + 'ms')
+    console.log('diff: ' + (Object.keys(patches).length-1) + ' nodes');
+    console.log('diff: ' + time + 'ms');
 
     start = new Date().getTime();
     previewRootDomNode = vdom.patch(previewRootDomNode, patches);
     end = new Date().getTime();
     time = end - start;
-    console.log('patch: ' + time + 'ms')
+    console.log('patch: ' + time + 'ms');
 
     start = new Date().getTime();
     currentVTree = newVTree;
     // $(preview).find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-    scrollPreviewAccordingToEditor()
+    scrollPreviewAccordingToEditor();
     end = new Date().getTime();
     time = end - start;
-    console.log('fixed variable and scroll: ' + time + 'ms')
-    console.log('<< Preview updated')
+    console.log('fixed variable and scroll: ' + time + 'ms');
+    console.log('<< Preview updated');
     updatingPreview = false;
 };
 
@@ -262,7 +262,7 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     // Manage editor size
     editor.setOption('minLines', 1);
     $(window).resize(resizeEditor);
-    resizeEditor()
+    resizeEditor();
     editor.$blockScrolling = Infinity;
     // Editor layout features
     editor.setShowPrintMargin(false);
@@ -290,7 +290,7 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
 
 
     editor.getSession().on('changeScrollTop', function(scrollTop) {
-        scrollPreviewAccordingToEditor(scrollTop)
+        scrollPreviewAccordingToEditor(scrollTop);
     })
 
     configure_dropzone_area(img_upload_url);
@@ -299,8 +299,8 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
 }
 
 function getAceEditorScrollHeight() {
-    var r = editor.renderer
-    return r.layerConfig.maxHeight - r.$size.scrollerHeight + r.scrollMargin.bottom
+    var r = editor.renderer;
+    return r.layerConfig.maxHeight - r.$size.scrollerHeight + r.scrollMargin.bottom;
 }
 
 function configure_dropzone_area(img_upload_url) {
@@ -361,22 +361,22 @@ function toggleLiveTutorial() {
 
 function scrollPreviewAccordingToEditor(scrollTop) {
     if (scrollSyncEnabled) {
-        scrollTop = scrollTop || editor.session.getScrollTop()
-        var editorHeight = getAceEditorScrollHeight()
-        var percentage = scrollTop / editorHeight
+        scrollTop = scrollTop || editor.session.getScrollTop();
+        var editorHeight = getAceEditorScrollHeight();
+        var percentage = scrollTop / editorHeight;
 
-        preview.scrollTop = Math.round(percentage * (preview.scrollHeight - preview.offsetHeight))
+        preview.scrollTop = Math.round(percentage * (preview.scrollHeight - preview.offsetHeight));
     }
 }
 
 function scrollEditorAccordingToPreview() {
-    $(preview).off('scroll')
+    $(preview).off('scroll');
 
-    var percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight)
+    var percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
 
-    var editorHeight = getAceEditorScrollHeight()
-    var position = Math.round(percentage * editorHeight)
-    editor.getSession().setScrollTop(position)
+    var editorHeight = getAceEditorScrollHeight();
+    var position = Math.round(percentage * editorHeight);
+    editor.getSession().setScrollTop(position);
 
     setTimeout(function() { $(preview).on('scroll', scrollEditorAccordingToPreview); }, 10);
 }
@@ -392,14 +392,14 @@ function toggleScrollSync() {
 
 function openFullscreen() {
     $('html, body').addClass('body-fs');
-    resizeEditor()
+    resizeEditor();
 }
 
 function resizeEditor() {
-    var lineHeight = editor.renderer.lineHeight
-    var maxLines = document.getElementById('editor-wrapper').offsetHeight / lineHeight
+    var lineHeight = editor.renderer.lineHeight;
+    var maxLines = document.getElementById('editor-wrapper').offsetHeight / lineHeight;
     editor.setOption('maxLines', Math.floor(maxLines) - 1);
-    editor.resize()
+    editor.resize();
 };
 
 var clearFlashMessages = function(message, clazz) {
