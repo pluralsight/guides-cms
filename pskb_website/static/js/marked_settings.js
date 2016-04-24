@@ -20,36 +20,35 @@ renderer.getUniqueKey = function(text) {
         index = marked.hashDB[key] + 1
     }
     marked.hashDB[key] = index
-    // console.log(marked.hashDB)
     return key + index
 }
 
 renderer.heading = function (text, level) {
     var escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
     var key = this.getUniqueKey('heading' + level + escapedText)
-    return '<h' + level + ' key="' + key + '"><a name="' + escapedText + '" class="anchor" href="#' + escapedText + '">' +
+    return '<h' + level + ' data-id="' + key + '" key="' + key + '"><a name="' + escapedText + '" class="anchor" href="#' + escapedText + '">' +
             '<span class="header-link"></span></a>' + text + '</h' + level + '>';
 };
 
 renderer.paragraph = function(text) {
     var key = this.getUniqueKey('paragraph' + text)
-    return '<p key="' + key + '">' + text + '</p>\n';
+    return '<p data-id="' + key + '" key="' + key + '">' + text + '</p>\n';
 };
 
 renderer.list = function(body, ordered) {
     var type = ordered ? 'ol' : 'ul';
     var key = this.getUniqueKey(type + body)
-    return '<' + type + ' key="' + key + '">\n' + body + '</' + type + '>\n';
+    return '<' + type + ' data-id="' + key + '" key="' + key + '">\n' + body + '</' + type + '>\n';
 };
 
 renderer.blockquote = function(quote) {
     var key = this.getUniqueKey('blockquote' + quote)
-    return '<blockquote key="' + key + '">\n' + quote + '</blockquote>\n';
+    return '<blockquote data-id="' + key + '" key="' + key + '">\n' + quote + '</blockquote>\n';
 };
 
 renderer.table = function(header, body) {
     var key = this.getUniqueKey('table' + header + body)
-    return '<table key="' + key + '">\n' + '<thead>\n'
+    return '<table data-id="' + key + '" key="' + key + '">\n' + '<thead>\n'
         + header
         + '</thead>\n'
         + '<tbody>\n'
