@@ -242,6 +242,7 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     editor.renderer.setShowGutter(true);
     editor.renderer.setOption('showLineNumbers', true);
 
+
     var placeholder = '# Start writing your guide here.\n\nOr load the live markdown tutorial to check the syntax.';
     var local_content = loadAutoSave(local_filename);
     // local content should always be the same or the most updated version.
