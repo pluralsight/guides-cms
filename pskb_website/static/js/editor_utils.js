@@ -186,8 +186,6 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     // editor.renderer.setShowGutter(false);
     // editor.renderer.setOption('showLineNumbers', false);
 
-    toggleFullscreenMode();
-
     marked.setOptions({
       gfm: true,
       tables: true,
@@ -304,25 +302,8 @@ function toggleScrollSync() {
     scrollSyncEnabled = ! scrollSyncEnabled;
 }
 
-var isFullscreenEnabled = false;
-
-function closeFullscreen() {
-    $('html, body').removeClass('body-fs');
-    isFullscreenEnabled = false;
-    show_all_help_sections(true);
-}
-
 function openFullscreen() {
     $('html, body').addClass('body-fs');
-    isFullscreenEnabled = true;
-}
-
-function toggleFullscreenMode() {
-    if (isFullscreenEnabled) {
-        closeFullscreen();
-    } else {
-        openFullscreen();
-    }
 }
 
 var clearFlashMessages = function(message, clazz) {
@@ -363,7 +344,6 @@ function save(sha, path, secondary_repo) {
             $('html, body').css("cursor", "auto");
         },
         success: function(data) {
-            closeFullscreen();
             console.log(data);
             console.log(data.msg);
             clearLocalSave(current_local_filename);
@@ -375,7 +355,6 @@ function save(sha, path, secondary_repo) {
             setTimeout(function(){ window.location.href = data.redirect; }, 1000);
         },
         error: function(response) {
-            closeFullscreen();
             var status = response.status;
             var data = response.responseJSON;
             console.log(status, data);
