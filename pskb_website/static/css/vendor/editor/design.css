@@ -298,3 +298,13 @@
     margin-top: 3px;
     margin-left: 5px;
 }
+
+#modal-error {
+    z-index: 9999994;
+}
+
+.modal-body p {
+    margin: 0px;
+    font-size: 16px;
+    font-weight: 500;
+}

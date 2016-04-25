@@ -310,9 +310,10 @@ var clearFlashMessages = function(message, clazz) {
     $('.bg-info, .bg-warning, .bg-danger').remove();
 };
 
-var addFlashMessage = function(message, clazz) {
-    var msg = '<p class="' + (clazz || 'bg-info') + '">' + message + '</p>';
-    $('.flash-msgs').append(msg);
+/* This requires Twitter bootstraps Modal.js! */
+var addModalMessage = function(message) {
+    $('#modal-content').html('<p>' + message + '</p>');
+    $('#modal-error').modal()
 };
 
 function save(sha, path, secondary_repo) {
@@ -348,7 +349,7 @@ function save(sha, path, secondary_repo) {
             console.log(data.msg);
             clearLocalSave(current_local_filename);
             if (data.msg) {
-                addFlashMessage(data.msg);
+                addModalMessage(data.msg);
                 $("html, body").animate({ scrollTop: 0 }, "fast");
                 $('.btn-save').prop('disabled', false);
             }
@@ -359,7 +360,7 @@ function save(sha, path, secondary_repo) {
             var data = response.responseJSON;
             console.log(status, data);
             if (data && data.error) {
-                addFlashMessage(data.error, 'bg-danger');
+                addModalMessage(data.error);
                 $("html, body").animate({ scrollTop: 0 }, "fast");
                 $('.btn-save').prop('disabled', false);
             }

@@ -602,8 +602,7 @@ def api_save():
     orig_stack = request.form['original_stack']
 
     if not content.strip() or not title.strip():
-        redirect_to = url_for('write')
-        data = {'error': 'Must enter title and body of guide', 'redirect': redirect_to}
+        data = {'error': 'Must enter title and body of guide'}
         return Response(response=json.dumps(data), status=400, mimetype='application/json')
 
     # Form only accepts 1 stack right now but we can handle multiple on the
@@ -646,8 +645,7 @@ def api_save():
                 msg = u'Please try choosing a stack. The title "%s" is already used by a guide.' % (title)
             else:
                 msg = u'Please try choosing a different stack/title combination. The title "%s" is already used by a guide with the stack "%s".' % (title, ','.join(stacks))
-            redirect_to = url_for('write')
-            data = {'error': msg, 'redirect': redirect_to}
+            data = {'error': msg}
             return Response(response=json.dumps(data), status=422, mimetype='application/json')
 
     # Hidden option for admin to save articles to our other repo that's not
