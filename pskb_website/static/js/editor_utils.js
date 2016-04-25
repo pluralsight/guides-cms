@@ -309,7 +309,7 @@ var isFullscreenEnabled = false;
 function closeFullscreen() {
     $('html, body').removeClass('body-fs');
     isFullscreenEnabled = false;
-    show_all_sections(true);
+    show_all_help_sections(true);
 }
 
 function openFullscreen() {
@@ -414,7 +414,7 @@ function goto_section(next_section) {
 }
 
 
-function show_all_sections(should_show) {
+function show_all_help_sections(should_show) {
     var display = 'none';
     if (should_show) {
         display = 'block';
@@ -451,6 +451,7 @@ function hideHelp() {
  * because these buttons are visible otherwise. */
 function init_editor_help() {
     help_sections = $('#editor-help').find('.section');
+    goto_section(0);
 
     $('#editor-help #next').click(function() {
         var curr_section = visible_section_idx();
