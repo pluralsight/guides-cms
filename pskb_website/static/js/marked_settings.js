@@ -56,8 +56,27 @@ renderer.table = function(header, body) {
         + '</tbody></table>';
 };
 
-/* From utils.js */
-// FIXME: create_external_links('#preview');
+renderer.link = function(href, title, text) {
+  if (this.options.sanitize) {
+    try {
+      var prot = decodeURIComponent(unescape(href))
+        .replace(/[^\w:]/g, '')
+        .toLowerCase();
+    } catch (e) {
+      return '';
+    }
+    if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
+      return '';
+    }
+  }
+  var out = '<a href="' + href + '"';
+  if (title) {
+    out += ' title="' + title + '"';
+  }
+  out += ' target="_blank">' + text + '&nbsp;<span class="glyphicon glyphicon-new-window" aria-hidden="true" style="font-size: 10px;"></span></a>';
+  return out;
+};
+
 marked.setOptions({
     renderer: renderer,
     gfm: true,
