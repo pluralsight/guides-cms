@@ -104,10 +104,10 @@
     overflow: auto;
     max-height: 100%;
 
-    height: -moz-calc(100% - 140px);
-    height: -webkit-calc(100% - 140px);
-    height: -o-calc(100% - 140px);
-    height: calc(100% - 140px);
+    height: -moz-calc(100% - 150px);
+    height: -webkit-calc(100% - 150px);
+    height: -o-calc(100% - 150px);
+    height: calc(100% - 150px);
 
     margin-top: 130px; /* header space */
 }
