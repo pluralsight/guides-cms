@@ -91,7 +91,11 @@
 
 <script type="text/javascript">
     function cancel() {
-        window.location.href = "{{url_for('index')}}";
+        {% if article %}
+            window.location.href = "{{article|url_for_article(branch=article.branch)}}";
+        {% else %}
+            window.location.href = "{{url_for('index')}}";
+        {% endif %}
     }
 
     $(document).ready(function() {
