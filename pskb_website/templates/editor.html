@@ -36,20 +36,26 @@
                 <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
                 <button onclick="cancel()" class="btn btn-danger btn-cancel">Cancel</button>
 
-                <div class="editor-features">
-                    <button id="btn-scroll-sync" data-toggle="tooltip" data-placement="bottom" title="Syncrhonize your place in guide between editor and preview panes" class="btn btn-default btn-xs hidden-xs hidden-sm">Scroll Sync</button>
-                    <button id="btn-live-tutorial" class="btn btn-default btn-xs markdown-help">Live Markdown Tutorial <span class="fa fa-question-circle"></span></button>
-                    <button id="btn-upload" data-toggle="tooltip" data-placement="bottom" title="Dragging and dropping images onto editor also supported" class="btn btn-default btn-xs btn-dropzone">Add image</button>
-                    <button id="btn-show-help" data-toggle="tooltip" data-placement="bottom" title="Show help" class="btn btn-default btn-xs active">Help</button>
+                <div class="dropdown">
+                    <button id="editor-options" class="btn btn-info btn-options" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Options
+                    <span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu" aria-labelledby="editor-options">
+                        <li id="btn-scroll-sync" data-toggle="tooltip" data-placement="left" title="Sync your place in guide between editor and preview panes"><a data-target="#">Scroll Sync&nbsp;<span class="fa fa-check-square"></span></a></li>
+                        <li id="btn-live-tutorial" data-toggle="tooltip" data-placement="left" title="Toggle interactive markdown tutorial. Don't worry your guide is saved and restored when using the tutorial." class="markdown-help"><a data-target="#">Live Markdown Tutorial&nbsp;<span class="fa fa-check-square"></span></a></li>
+                        <li id="btn-upload" data-toggle="tooltip" data-placement="left" title="Dragging and dropping images onto editor also supported" class="btn-dropzone"><a data-target="#">Add Image</a></li>
+                        <li id="btn-show-help" data-toggle="tooltip" data-placement="left" title="Show help"><a data-target="#">Help&nbsp;<span class="fa fa-check-square"></a></li>
+                    </ul>
                 </div>
 
-                <br />
+                <br style="clear: both;"/>
 
                 <input id="title" name="title" type="text" placeholder="Title" data-toggle="tooltip" data-placement="bottom" title="Concise and descriptive, a good title is 130 characters or less" is 130 charmaxlength="130" value="{{article.title}}" {{'readOnly="true"' if article else ""}} {% if not article %}autofocus{% endif %} required="required"/>
                 <input id="original_stack" name="original_stack" type="hidden" value="{{article.stacks[0] if article else ''}}" />
-                <br /> <br />
 
-                <select id="stacks" name="stacks" class="selectpicker" data-width="100%" data-size="6" data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required">
+                <select id="stacks" name="stacks" class="selectpicker" data-width="100%" data-size="6" data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required" data-toggle="tooltip" data-placement="bottom" title="Pick a stack to help categorize your guide">
                     <option value="" {{"selected" if not selected_stack}}>Stack</option>
                     {% for stack in stacks %}
                         <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
@@ -121,7 +127,6 @@
         $("#stacks").change();
 
         openFullscreen();
-        showHelp();
 
         $("#btn-scroll-sync").click(function() {
             toggleScrollSync();
@@ -140,6 +145,9 @@
             toggleHelp();
             $("#btn-show-help").toggleClass('active');
         });
+
+        /* Enable help by default */
+        $('#btn-show-help').click();
 
         $('#editor-help #close').click(function() {
             hideHelp();

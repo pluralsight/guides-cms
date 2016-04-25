@@ -108,7 +108,7 @@ var author_name;
 var author_real_name;
 var current_local_filename;
 var help_sections;
-var isHelpEnabled = true;
+var isHelpEnabled = false;
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
