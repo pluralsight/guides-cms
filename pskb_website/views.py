@@ -699,10 +699,10 @@ def api_save():
 
     redirect_to = filters.url_for_article(article, branch=article.branch, saved=1)
     if new_article:
-        data = {'msg': 'Guide created', 'redirect': redirect_to}
+        data = {'redirect': redirect_to}
         return Response(response=json.dumps(data), status=201, mimetype='application/json')
     else:
-        data = {'msg': 'Guide updated', 'redirect': redirect_to}
+        data = {'redirect': redirect_to}
         return Response(response=json.dumps(data), status=200, mimetype='application/json')
 
 

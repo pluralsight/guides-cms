@@ -348,11 +348,6 @@ function save(sha, path, secondary_repo) {
             console.log(data);
             console.log(data.msg);
             clearLocalSave(current_local_filename);
-            if (data.msg) {
-                addModalMessage(data.msg);
-                $("html, body").animate({ scrollTop: 0 }, "fast");
-                $('.btn-save').prop('disabled', false);
-            }
             setTimeout(function(){ window.location.href = data.redirect; }, 1000);
         },
         error: function(response) {
