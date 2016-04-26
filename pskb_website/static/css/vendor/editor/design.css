@@ -3,6 +3,12 @@
     overflow: hidden;
 }
 
+/* Prevent any orange from regular footer peeking through when scrolling
+ * through the editor. */
+.body-fs #footer {
+    background-color: #fff;
+}
+
 /* Editor + Preview wrapper */
 
 .editor-preview-wrapper {
