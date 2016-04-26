@@ -31,7 +31,9 @@
 
         <div class="col-xs-12 col-sm-6 editor-column" id="droppable-area">
             <div class="editor-header">
-                <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
+                <a href="{{url_for('index')}}">
+                    <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
+                </a>
 
                 <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
                 <button onclick="cancel()" class="btn btn-danger btn-cancel">Cancel</button>
