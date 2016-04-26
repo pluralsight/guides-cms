@@ -9,6 +9,15 @@
     {{ super() }}
 {% endblock %}
 
+
+{% block title %}
+    {% if article and article.title %}
+        <title>{{article.title}} | hack.guides()</title>
+    {% else %}
+        {{super}}
+    {% endif %}
+{% endblock %}
+
 {% block css %}
     <link href="{{url_for('static', filename='css/vendor/editor/github.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/vendor/github.css')}}" rel="stylesheet">

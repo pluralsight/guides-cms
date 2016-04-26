@@ -1,5 +1,13 @@
 {% extends "layout.html" %}
 
+{% block title %}
+    {% if user %}
+        <title>{{user.name if user.name else user.login}} | hack.guides()</title>
+    {% else %}
+        {{super}}
+    {% endif %}
+{% endblock %}
+
 {% block body %}
 
 <div class="row">
