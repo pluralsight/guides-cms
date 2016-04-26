@@ -20,7 +20,7 @@ body {
 }
 
 .navbar-brand {
-    z-index: 99999;
+    z-index: 1030; /* modal 1050, fullscreen 1040 */
     position: relative;
 }
 
@@ -37,7 +37,7 @@ body {
 }
 
 .hack-links-plus-icon {
-    z-index: 99999;
+    z-index: 1030;
     padding: 0;
     margin-top: 8px;
     cursor: pointer;
@@ -65,7 +65,7 @@ body {
 }
 
 .hack-links .external-hack-links {
-    z-index: 88888;
+    z-index: 1020;
     position: absolute;
     width: 240px;
     height: 110px;

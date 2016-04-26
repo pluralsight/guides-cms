@@ -14,7 +14,7 @@
 .editor-preview-wrapper {
     border: 1px solid #d4d4d4;
     font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
-    z-index: 9999990;
+    z-index: 1040; /* modal 1050, logo 1030 */
     position: fixed !important;
     height: auto !important;
     min-height: 100%;
@@ -130,7 +130,7 @@
     display: table;
     border-top: 1px solid #d4d4d4;
     background-color: #f7f7f7;
-    z-index: 9999991;
+    z-index: 1041;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -146,7 +146,7 @@
     background-color: #f7f7f7;
     border-left: 1px solid #d4d4d4;
     padding:0px;
-    z-index: 9999992;
+    z-index: 1042;
 }
 
 .preview-header {
@@ -213,7 +213,7 @@
 
 #editor-help {
     position: fixed !important;
-    z-index: 9999993;
+    z-index: 1043;
     color: #000000;
     border-top: 1px solid #000000;
     background-color: #f7f7f7;
@@ -274,7 +274,7 @@
 }
 
 #modal-error {
-    z-index: 9999994;
+    z-index: 1044;
 }
 
 .modal-body p {
