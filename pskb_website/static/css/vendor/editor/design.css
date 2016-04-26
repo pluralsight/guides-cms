@@ -296,12 +296,14 @@
 .dropdown-menu>.active>a:hover {
     color: #000;
     background-color: #f5f5f5;
+    cursor: pointer;
 }
 
 .dropdown-menu>li>a:focus,
 .dropdown-menu>li>a:hover {
     color: #000;
     background-color: #f5f5f5;
+    cursor: pointer;
 }
 
 .dropdown {
