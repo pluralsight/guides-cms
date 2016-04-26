@@ -846,6 +846,11 @@ td.login-name {
         top: 10px;
         right: 5px;
     }
+
+    /* Clear social share buttons that show up at bottom on mobile. */
+    #signup-row {
+        bottom: 50px;
+    }
 }
 
 
