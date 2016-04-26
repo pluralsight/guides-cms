@@ -602,8 +602,7 @@ def api_save():
     orig_stack = request.form['original_stack']
 
     if not content.strip() or not title.strip():
-        redirect_to = url_for('write')
-        data = {'error': 'Must enter title and body of guide', 'redirect': redirect_to}
+        data = {'error': 'Must enter title and body of guide'}
         return Response(response=json.dumps(data), status=400, mimetype='application/json')
 
     # Form only accepts 1 stack right now but we can handle multiple on the
@@ -646,8 +645,7 @@ def api_save():
                 msg = u'Please try choosing a stack. The title "%s" is already used by a guide.' % (title)
             else:
                 msg = u'Please try choosing a different stack/title combination. The title "%s" is already used by a guide with the stack "%s".' % (title, ','.join(stacks))
-            redirect_to = url_for('write')
-            data = {'error': msg, 'redirect': redirect_to}
+            data = {'error': msg}
             return Response(response=json.dumps(data), status=422, mimetype='application/json')
 
     # Hidden option for admin to save articles to our other repo that's not
@@ -701,10 +699,10 @@ def api_save():
 
     redirect_to = filters.url_for_article(article, branch=article.branch, saved=1)
     if new_article:
-        data = {'msg': 'Guide created', 'redirect': redirect_to}
+        data = {'redirect': redirect_to}
         return Response(response=json.dumps(data), status=201, mimetype='application/json')
     else:
-        data = {'msg': 'Guide updated', 'redirect': redirect_to}
+        data = {'redirect': redirect_to}
         return Response(response=json.dumps(data), status=200, mimetype='application/json')
 
 

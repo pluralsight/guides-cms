@@ -117,14 +117,18 @@ body {
 }
 
 /* Default color of Pluralsight buttons */
-.btn-primary,
+.btn-primary {
+    background-color: #fb6e20;
+    border-color: #fb6e20;
+}
+
 .btn-primary:focus,
 .btn-primary:hover,
 .btn-primary:active,
 .btn-primary:active:hover,
 .btn-primary:active:focus {
-    background-color: #fb6e20;
-    border-color: #fb6e20;
+    background-color: #ed681e;
+    border-color: #ed681e;
 }
 
 /* Use default Pluralsight link styling */
@@ -696,15 +700,6 @@ a:hover.emphasize-dark  {
     color: #000000;
 }
 
-#editor-section {
-    margin-top: 50px;
-}
-
-#editor-section #title {
-    margin-top: 20px;
-    width: 70%;
-}
-
 a.active-page {
     text-decoration: underline;
 }
@@ -850,6 +845,11 @@ td.login-name {
     .close-btn {
         top: 10px;
         right: 5px;
+    }
+
+    /* Clear social share buttons that show up at bottom on mobile. */
+    #signup-row {
+        bottom: 50px;
     }
 }
 

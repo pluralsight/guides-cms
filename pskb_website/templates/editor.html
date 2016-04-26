@@ -23,79 +23,44 @@
 {% block body %}
 
 <div id="editor-section">
-    <h3>1. Get Started</h3>
-    <p>
-        <ul>
-            <li>Saving your guide will send it straight to our official <a href="{{repo_url}}"> Github repository</a> where editors around the world can help you fullfill your guide's potential.</li>
-            <li>
-                Your guide will show up in the master branch of our
-                <a href="{{repo_url}}"> Github repository</a>
-                unless you're editing a guide started by someone else.  In that
-                case, a branch named after your username will automatically be
-                created for you.  The original author can then see the changes
-                you're suggesting directly on Github.
-            </li>
-            <li>
-                Once our editors feel your article is ready, we'll put your
-                guide on our <a href="{{url_for('index')}}">homepage</a> so your expertise can
-                help educate the world.
-            </li>
-        </ul>
-    </p>
-    <h3>2. Pick a Title</h3>
-        <ul>
-            <li>
-            Try to make your title concise and to the point. Maximum length is 130 characters.
-            </li>
-        </ul>
-    <input id="title" name="title" type="text" class="form-control article-title" placeholder="Title" maxlength="130" value="{{article.title}}" {{'readOnly="true"' if article else ""}} {% if not article %}autofocus{% endif %} required="required"/>
-    <input id="original_stack" name="original_stack" type="hidden" value="{{article.stacks[0] if article else ''}}" />
-
-    <br />
-
-    <h3>3. Choose your stack</h3>
-    <p>
-        Picking a stack will help readers find it more easily.
-    </p>
-    <select id="stacks" name="stacks" class="form-control selectpicker stacks-editor" data-size="6"  data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required">
-        <option value="" {{"selected" if not selected_stack}}>---</option>
-        {% for stack in stacks %}
-            <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
-        {% endfor %}
-    </select>
-
-    <br />
-    <br />
-
-    <h3>4. Write</h3>
-    <p>
-        The editor supports the popular
-        <a href="http://daringfireball.net/projects/markdown/" target="_blank">markdown format</a>,
-        which means you can create great looking guides with a bit of special
-        syntax.  The editor is designed to work closely with Github.com's
-        <a href="https://help.github.com/categories/writing-on-github/" target="_blank">markdown implementation</a>
-        so see refer to the live tutorial below or these great Github.com
-        references for help:
-        <ul>
-            <li><a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/" target="_blank">Basic formatting</a></li>
-            <li><a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Mastering markdown</a></li>
-        </ul>
-    </p>
-
-    <h4>Table of Contents</h4>
-    <p>
-        We'll automatically a create Table of Contents for your
-        guide based on your usage of &lt;h1&gt; and &lt;h2&gt; tags the
-        equivalent '#' and '##' markdown headers.
-    </p>
-
     <div class="row editor-preview-wrapper">
+
+        {% include "editor_error.html" %}
+
+        {% include "editor_help.html" %}
+
         <div class="col-xs-12 col-sm-6 editor-column" id="droppable-area">
             <div class="editor-header">
                 <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
-                <button id="btn-fullscreen-mode" class="btn btn-default btn-xs">Fullscreen mode</button>
-                <button id="btn-scroll-sync" class="btn btn-default btn-xs hidden-xs hidden-sm">Scroll Sync</button>
-                <button id="btn-live-tutorial" class="btn btn-default btn-xs markdown-help">Live Markdown Tutorial <span class="fa fa-question-circle"></span></button>
+
+                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
+                <button onclick="cancel()" class="btn btn-danger btn-cancel">Cancel</button>
+
+                <div class="dropdown">
+                    <button id="editor-options" class="btn btn-info btn-options" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Options
+                    <span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu" aria-labelledby="editor-options">
+                        <li id="btn-scroll-sync" data-toggle="tooltip" data-placement="left" title="Sync your place in guide between editor and preview panes"><a data-target="#">Scroll Sync&nbsp;<span class="fa fa-check-square"></span></a></li>
+                        <li id="btn-live-tutorial" data-toggle="tooltip" data-placement="left" title="Toggle interactive markdown tutorial. Don't worry your guide is saved and restored when using the tutorial." class="markdown-help"><a data-target="#">Live Markdown Tutorial&nbsp;<span class="fa fa-check-square"></span></a></li>
+                        <li id="btn-upload" data-toggle="tooltip" data-placement="left" title="Click to upload image, dragging and dropping images onto editor also supported" class="btn-dropzone"><a data-target="#">Add Image</a></li>
+                        <li id="btn-show-help" data-toggle="tooltip" data-placement="left" title="Toggle help along bottom"><a data-target="#">Help&nbsp;<span class="fa fa-check-square"></a></li>
+                    </ul>
+                </div>
+
+                <br style="clear: both;"/>
+
+                <input id="title" name="title" type="text" placeholder="Title" data-toggle="tooltip" data-placement="bottom" title="Concise and descriptive, a good title is 130 characters or less" is 130 charmaxlength="130" value="{{article.title}}" {{'readOnly="true"' if article else ""}} {% if not article %}autofocus{% endif %} required="required"/>
+                <input id="original_stack" name="original_stack" type="hidden" value="{{article.stacks[0] if article else ''}}" />
+
+                <select id="stacks" name="stacks" class="selectpicker" data-width="100%" data-size="6" data-dropup-auto="false" data-header="Scroll for additional stacks" data-title="Stacks" required="required" data-toggle="tooltip" data-placement="bottom" title="Pick a stack to help categorize your guide">
+                    <option value="" {{"selected" if not selected_stack}}>Stack</option>
+                    {% for stack in stacks %}
+                        <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div id="editor-wrapper">
@@ -103,7 +68,6 @@
             </div>
 
             <div class="editor-footer">
-                <div class="upload-text">Upload files by dragging & dropping into the editor <span class="hidden-xs">or click <a href="#" class="btn-dropzone">here</a></span></div>
                 <div class="dz-preview dz-file-preview" id="preview-template" style="display: none;">
                     <div class="dz-details" style="display: none;">
                     <div class="dz-filename" style="display: none;"><span data-dz-name></span></div>
@@ -121,29 +85,28 @@
 
         <div class="col-xs-12 col-sm-6 preview-column">
             <div class="preview-header">
-                <span class="preview-text hidden-xs hidden-sm">PREVIEW</span>
-                <span id="article_title" class=""></span>
-                <span id="article_stack" class=""></span>
+                <div class="preview-text hidden-xs hidden-sm">PREVIEW</div>
+                <div id="article-title" class=""></div>
+                <div id="article-stack" class=""></div>
             </div>
 
             <div id="preview"></div>
-
-            <div class="preview-footer">
-                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
-            </div>
         </div>
     </div>
-
-    <br />
-
-    <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
-
-    <br />
-    <br />
 </div>
 
 <script type="text/javascript">
+    function cancel() {
+        {% if article %}
+            window.location.href = "{{article|url_for_article(branch=article.branch)}}";
+        {% else %}
+            window.location.href = "{{url_for('index')}}";
+        {% endif %}
+    }
+
     $(document).ready(function() {
+        init_editor_help();
+
         var local_filename = '{{ article.sha or "hack.guides-draft" }}';
         {% autoescape false %}
         var original_content = '{{ article.content | replace("\n", "\\n") | replace("\r", "") | replace("'", "\\'") | replace("/script", "\\/script") }}';
@@ -154,19 +117,16 @@
         var editor = initialize_editor(local_filename, original_content, author_name, author_real_name, img_upload_url);
 
         $("#title").change(function() {
-            $("#article_title").html($("#title").val() || 'Untitled');
+            $("#article-title").html($("#title").val() || 'Untitled');
         });
         $("#stacks").change(function() {
             var stacks = $('#stacks').val();
-            $("#article_stack").html(stacks ? 'Related to <i>' + stacks + '</i>' : 'no stack defined yet');
+            $("#article-stack").html(stacks ? 'Related to <i>' + stacks + '</i>' : 'no stack defined yet');
         });
         $("#title").change();
         $("#stacks").change();
 
-        $("#btn-fullscreen-mode").click(function() {
-            toggleFullscreenMode();
-            $("#btn-fullscreen-mode").toggleClass('active');
-        });
+        openFullscreen();
 
         $("#btn-scroll-sync").click(function() {
             toggleScrollSync();
@@ -180,6 +140,28 @@
             toggleLiveTutorial();
             $("#btn-live-tutorial").toggleClass('active');
         });
+
+        $('#btn-show-help').click(function() {
+            toggleHelp();
+            $("#btn-show-help").toggleClass('active');
+        });
+
+        /* Enable help by default */
+        $('#btn-show-help').click();
+
+        $('#editor-help #close').click(function() {
+            hideHelp();
+            $("#btn-show-help").toggleClass('active');
+        });
+
+        /* Initialize bootstrap tooltips */
+        $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
+{% endblock %}
+
+{% block footer %}
+
+{# No footer for editor, it's full-screen! #}
+
 {% endblock %}

@@ -107,6 +107,8 @@ var editor;
 var author_name;
 var author_real_name;
 var current_local_filename;
+var help_sections;
+var isHelpEnabled = false;
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
@@ -300,32 +302,18 @@ function toggleScrollSync() {
     scrollSyncEnabled = ! scrollSyncEnabled;
 }
 
-var isFullscreenEnabled = false;
-
-function closeFullscreen() {
-    $('html, body').removeClass('body-fs');
-    isFullscreenEnabled = false;
-}
 function openFullscreen() {
     $('html, body').addClass('body-fs');
-    isFullscreenEnabled = true;
-}
-
-function toggleFullscreenMode() {
-    if (isFullscreenEnabled) {
-        closeFullscreen();
-    } else {
-        openFullscreen();
-    }
 }
 
 var clearFlashMessages = function(message, clazz) {
     $('.bg-info, .bg-warning, .bg-danger').remove();
 };
 
-var addFlashMessage = function(message, clazz) {
-    var msg = '<p class="' + (clazz || 'bg-info') + '">' + message + '</p>';
-    $('.flash-msgs').append(msg);
+/* This requires Twitter bootstraps Modal.js! */
+var addModalMessage = function(message) {
+    $('#modal-content').html('<p>' + message + '</p>');
+    $('#modal-error').modal()
 };
 
 function save(sha, path, secondary_repo) {
@@ -357,24 +345,17 @@ function save(sha, path, secondary_repo) {
             $('html, body').css("cursor", "auto");
         },
         success: function(data) {
-            closeFullscreen();
             console.log(data);
             console.log(data.msg);
             clearLocalSave(current_local_filename);
-            if (data.msg) {
-                addFlashMessage(data.msg);
-                $("html, body").animate({ scrollTop: 0 }, "fast");
-                $('.btn-save').prop('disabled', false);
-            }
             setTimeout(function(){ window.location.href = data.redirect; }, 1000);
         },
         error: function(response) {
-            closeFullscreen();
             var status = response.status;
             var data = response.responseJSON;
             console.log(status, data);
             if (data && data.error) {
-                addFlashMessage(data.error, 'bg-danger');
+                addModalMessage(data.error);
                 $("html, body").animate({ scrollTop: 0 }, "fast");
                 $('.btn-save').prop('disabled', false);
             }
@@ -384,5 +365,88 @@ function save(sha, path, secondary_repo) {
                 $('.btn-save').prop('disabled', false);
             }
         },
+    });
+}
+
+function visible_section_idx() {
+    for (var ii=0; ii < help_sections.length; ii++) {
+        if ($(help_sections[ii]).css('display') == 'block') {
+            return ii;
+        }
+    }
+
+    return -1;
+}
+
+function goto_section(next_section) {
+    for (var ii=0; ii < help_sections.length; ii++) {
+        if (next_section == ii ) {
+            $(help_sections[ii]).css('display', 'block');
+        } else {
+            $(help_sections[ii]).css('display', 'none');
+        }
+    }
+}
+
+
+function show_all_help_sections(should_show) {
+    var display = 'none';
+    if (should_show) {
+        display = 'block';
+    }
+
+    for (var ii=0; ii < help_sections.length; ii++) {
+        $(help_sections[ii]).css('display', display);
+    }
+}
+
+function toggleHelp() {
+    if (isHelpEnabled) {
+        hideHelp();
+    } else {
+        showHelp();
+    }
+}
+
+
+function showHelp() {
+    $('#editor-help').fadeIn('fast');
+    $('#editor-help').show();
+    isHelpEnabled = true;
+}
+
+function hideHelp() {
+    $('#editor-help').fadeOut('fast');
+    $('#editor-help').hide();
+    isHelpEnabled = false;
+}
+
+
+/* Show each section 1 at a time in help. This only works for full-screen mode
+ * because these buttons are visible otherwise. */
+function init_editor_help() {
+    help_sections = $('#editor-help').find('.section');
+    goto_section(0);
+
+    $('#editor-help #next').click(function() {
+        var curr_section = visible_section_idx();
+        var next_section = curr_section + 1;
+
+        if (next_section >= help_sections.length) {
+            next_section = 0;
+        }
+
+        goto_section(next_section);
+    });
+
+    $('#editor-help #prev').click(function() {
+        var curr_section = visible_section_idx();
+        var next_section = curr_section - 1;
+
+        if (next_section < 0) {
+            next_section = help_sections.length - 1;
+        }
+
+        goto_section(next_section);
     });
 }
