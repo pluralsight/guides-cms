@@ -77,6 +77,23 @@ renderer.link = function(href, title, text) {
   return out;
 };
 
+renderer.code = function(code, lang, escaped) {
+    var key = this.getUniqueKey('pre' + code + lang);
+    escaped = true;
+    if (!lang) {
+        return '<pre data-id="' + key + '" key="' + key + '"><code>'
+          + (escaped ? code : escape(code, true))
+          + '\n</code></pre>';
+    }
+
+    return '<pre data-id="' + key + '" key="' + key + '"><code class="'
+        + this.options.langPrefix
+        + escape(lang, true)
+        + '">'
+        + (escaped ? code : escape(code, true))
+        + '\n</code></pre>\n';
+};
+
 marked.setOptions({
     renderer: renderer,
     gfm: true,
