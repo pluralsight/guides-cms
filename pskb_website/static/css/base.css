@@ -117,14 +117,18 @@ body {
 }
 
 /* Default color of Pluralsight buttons */
-.btn-primary,
+.btn-primary {
+    background-color: #fb6e20;
+    border-color: #fb6e20;
+}
+
 .btn-primary:focus,
 .btn-primary:hover,
 .btn-primary:active,
 .btn-primary:active:hover,
 .btn-primary:active:focus {
-    background-color: #fb6e20;
-    border-color: #fb6e20;
+    background-color: #ed681e;
+    border-color: #ed681e;
 }
 
 /* Use default Pluralsight link styling */
