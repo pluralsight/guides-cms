@@ -860,3 +860,12 @@ td.login-name {
         max-width: 200px;
     }
 }
+
+@media screen and (max-width: 768px) {
+    .btn-autosize {
+      padding: 1px 5px;
+      font-size: 12px;
+      line-height: 1.5;
+      border-radius: 3px;
+    }
+}

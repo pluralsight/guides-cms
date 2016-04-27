@@ -39,13 +39,13 @@
                     <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
                 </a>
 
-                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save">Save</button>
-                <button onclick="cancel()" class="btn btn-danger btn-cancel">Cancel</button>
+                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
+                <button onclick="cancel()" class="btn btn-danger btn-cancel btn-autosize">Cancel</button>
 
                 <div class="dropdown">
-                    <button id="editor-options" class="btn btn-info btn-options" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <button id="editor-options" class="btn btn-info btn-options btn-autosize" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         Options
-                    <span class="caret"></span>
+                        <span class="caret"></span>
                     </button>
 
                     <ul class="dropdown-menu" aria-labelledby="editor-options">
@@ -81,19 +81,16 @@
                 <div id="editor"></div>
             </div>
 
-            <div class="editor-footer">
-                <div class="dz-preview dz-file-preview" id="preview-template" style="display: none;">
-                    <div class="dz-details" style="display: none;">
-                    <div class="dz-filename" style="display: none;"><span data-dz-name></span></div>
-                    <div class="dz-size" data-dz-size style="display: none;"></div>
-                        <img data-dz-thumbnail />
-                    </div>
-                    <div class="dz-progress" style="display: none;"><span class="dz-upload" data-dz-uploadprogress></span></div>
-                    <div class="dz-success-mark" style="display: none;"><span>✔</span></div>
-                    <div class="dz-error-mark" style="display: none;"><span>✘</span></div>
-                    <div class="dz-error-message"><span data-dz-errormessage></span></div>
+            <div class="dz-preview dz-file-preview" id="preview-template" style="display: none;">
+                <div class="dz-details" style="display: none;">
+                <div class="dz-filename" style="display: none;"><span data-dz-name></span></div>
+                <div class="dz-size" data-dz-size style="display: none;"></div>
+                    <img data-dz-thumbnail />
                 </div>
-
+                <div class="dz-progress" style="display: none;"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                <div class="dz-success-mark" style="display: none;"><span>✔</span></div>
+                <div class="dz-error-mark" style="display: none;"><span>✘</span></div>
+                <div class="dz-error-message"><span data-dz-errormessage></span></div>
             </div>
         </div>
 

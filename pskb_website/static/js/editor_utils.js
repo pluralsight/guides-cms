@@ -407,7 +407,7 @@ function openFullscreen() {
 function resizeEditor() {
     var lineHeight = editor.renderer.lineHeight;
     var maxLines = document.getElementById('editor-wrapper').offsetHeight / lineHeight;
-    editor.setOption('maxLines', Math.floor(maxLines) - 1);
+    editor.setOption('maxLines', Math.floor(maxLines));
     editor.resize();
 };
 
