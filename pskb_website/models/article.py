@@ -1043,7 +1043,16 @@ class Article(object):
         # we can make sure we use a serializable type.
         unique_contributors = set()
 
-        for status in (PUBLISHED, IN_REVIEW):
+        statuses = (PUBLISHED, IN_REVIEW)
+
+        # No point in checking published if guide isn't published yet; saves us
+        # an API request.  This could cause an issue if a guide is published,
+        # gets some edits, then is unpublished.  However that doesn't happen in
+        # practice so going with slight request optimization.
+        if not self.published:
+            statuses = (IN_REVIEW, )
+
+        for status in statuses:
             path = u'%s/%s/%s/%s' % (status,
                                      utils.slugify_stack(self.stacks[0]),
                                      utils.slugify(self.title),
