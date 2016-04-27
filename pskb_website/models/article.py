@@ -897,7 +897,7 @@ class Article(object):
 
         # List of User objects representing any 'author' i.e user who has
         # contributed at least 1 line of text to this article.
-        self._contributors = []
+        self._contributors = None
 
     @property
     def path(self):
@@ -945,7 +945,7 @@ class Article(object):
         # NOTE: This could result in some data out of data if we have new
         # contributors after this is called but contributor information isn't
         # super important so should be ok.
-        if self._contributors:
+        if self._contributors is not None:
             return self._contributors
 
         self._read_contributors_from_api()
