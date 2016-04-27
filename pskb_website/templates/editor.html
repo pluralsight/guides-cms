@@ -49,10 +49,18 @@
                     </button>
 
                     <ul class="dropdown-menu" aria-labelledby="editor-options">
-                        <li id="btn-scroll-sync" data-toggle="tooltip" data-placement="left" title="Sync your place in guide between editor and preview panes"><a data-target="#">Scroll Sync&nbsp;<span class="fa fa-check-square"></span></a></li>
-                        <li id="btn-live-tutorial" data-toggle="tooltip" data-placement="left" title="Toggle interactive markdown tutorial. Don't worry your guide is saved and restored when using the tutorial." class="markdown-help"><a data-target="#">Live Markdown Tutorial&nbsp;<span class="fa fa-check-square"></span></a></li>
-                        <li id="btn-upload" data-toggle="tooltip" data-placement="left" title="Click to upload image, dragging and dropping images onto editor also supported" class="btn-dropzone"><a data-target="#">Add Image</a></li>
-                        <li id="btn-show-help" data-toggle="tooltip" data-placement="left" title="Toggle help along bottom"><a data-target="#">Help&nbsp;<span class="fa fa-check-square"></a></li>
+                        <li id="btn-scroll-sync" data-toggle="tooltip" data-placement="left" title="Sync your place in guide between editor and preview panes">
+                            <a data-target="#">Scroll Sync&nbsp;<span class="fa fa-check-square"></span></a>
+                        </li>
+                        <li id="btn-live-tutorial" data-toggle="tooltip" data-placement="left" title="Toggle interactive markdown tutorial. Don't worry your guide is saved and restored when using the tutorial." class="markdown-help">
+                            <a data-target="#">Live Markdown Tutorial&nbsp;<span class="fa fa-check-square"></span></a>
+                        </li>
+                        <li id="btn-upload" data-toggle="tooltip" data-placement="left" title="Click to upload image, dragging and dropping images onto editor also supported" class="btn-dropzone">
+                            <a data-target="#">Add Image</a>
+                        </li>
+                        <li id="btn-show-help" data-toggle="tooltip" data-placement="left" title="Toggle help along bottom">
+                            <a data-target="#">Help&nbsp;<span class="fa fa-check-square"></a>
+                        </li>
                     </ul>
                 </div>
 
@@ -140,6 +148,7 @@
             toggleScrollSync();
             $("#btn-scroll-sync").toggleClass('active');
         });
+        $("#btn-scroll-sync").click();
 
         $("#btn-live-tutorial").click(function() {
             toggleLiveTutorial();
@@ -150,7 +159,6 @@
             toggleHelp();
             $("#btn-show-help").toggleClass('active');
         });
-
         /* Enable help by default */
         $('#btn-show-help').click();
 

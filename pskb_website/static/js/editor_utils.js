@@ -261,7 +261,6 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
 
     preview = document.getElementById('preview');
     editor_wrapper = document.getElementById('editor-wrapper');
-    toggleScrollSync(); // enable auto sync
 
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/github");
@@ -412,10 +411,6 @@ function resizeEditor() {
     editor.resize();
 };
 
-var clearFlashMessages = function(message, clazz) {
-    $('.bg-info, .bg-warning, .bg-danger').remove();
-};
-
 /* This requires Twitter bootstraps Modal.js! */
 var addModalMessage = function(message) {
     $('#modal-content').html('<p>' + message + '</p>');
@@ -423,7 +418,6 @@ var addModalMessage = function(message) {
 };
 
 function save(sha, path, secondary_repo) {
-    clearFlashMessages();
     var data = {
         'title': $('input[name=title]').val(),
         'original_stack': $('input[name=original_stack]').val(),
@@ -510,7 +504,6 @@ function toggleHelp() {
         showHelp();
     }
 }
-
 
 function showHelp() {
     $('#editor-help').fadeIn('fast');
