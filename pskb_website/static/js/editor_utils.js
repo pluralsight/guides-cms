@@ -166,6 +166,43 @@ function getUpdatePreviewDelay() {
     return delay;
 }
 
+var highlightNewCode = function(patches) {
+    var start, end, time = 0;
+    start = new Date().getTime();
+    var codesPatched = [];
+    Object.keys(patches).forEach(function (key) {
+        if ( 'a' === key ) {
+        } else if ( Array.isArray(patches[key]) ) {
+            patches[key].forEach(function (vpatch, ii) {
+                var node = vpatch.vNode || vpatch.patch;
+                var tagExists = node && node.tagName;
+                var tagName = tagExists && node.tagName.toUpperCase();
+                if (tagExists && (tagName == 'PRE')) {
+                    codesPatched.push(node.key);
+                }
+            })
+        }
+        else {
+            var vpatch = patches[key];
+            var node = vpatch.vNode || vpatch.patch;
+            var tagExists = node && node.tagName;
+            var tagName = tagExists && node.tagName.toUpperCase();
+            if (tagExists && (tagName == 'PRE')) {
+                codesPatched.push(node.key);
+            }
+        }
+    });
+    codesPatched.forEach(function (key, i) {
+        var elem = $('pre[data-id="' + key + '"]')[0];
+        if (elem) { // element may be removed
+            hljs.highlightBlock(elem);
+        }
+    });
+    end = new Date().getTime();
+    time = end - start;
+    console.log('highlight code: ' + time + 'ms');
+}
+
 var updatePreview = function() {
     if (updatingPreview) {
         return;
@@ -191,6 +228,9 @@ var updatePreview = function() {
         currentVTree = newVTree;
         previewRootDomNode = vdom.create(currentVTree);
         preview.appendChild(previewRootDomNode);
+        $(preview).find('pre code').each(function(i, e) {
+            hljs.highlightBlock(e);
+        });
     }
 
     start = new Date().getTime();
@@ -210,14 +250,17 @@ var updatePreview = function() {
 
         start = new Date().getTime();
         currentVTree = newVTree;
-        console.log($(preview).find('pre code').length)
-        $(preview).find('pre code').each(function(i, e) {
-            hljs.highlightBlock(e);
-        });
+        end = new Date().getTime();
+        time = end - start;
+        console.log('fixed variable: ' + time + 'ms');
+
+        highlightNewCode(patches);
+
+        start = new Date().getTime();
         scrollPreviewAccordingToEditor();
         end = new Date().getTime();
         time = end - start;
-        console.log('fixed variable and scroll: ' + time + 'ms');
+        console.log('scroll: ' + time + 'ms');
     }
     console.log('<< Preview updated');
     updatingPreview = false;
