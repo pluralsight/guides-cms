@@ -19,6 +19,8 @@ from . import forms
 from . import tasks
 from . import filters
 from . import utils
+from . import contributors_to_ignore
+
 
 SLACK_URL = u'https://hackguides.herokuapp.com'
 
@@ -150,9 +152,7 @@ def contributors():
     # even though this might not be as efficient.  Ideally we won't be
     # ignoring large amounts of users so shouldn't be a big issue.
 
-    ignore_users = []
-    for user in app.config.get('IGNORE_STATS_FOR', '').split(','):
-        ignore_users.append(user.strip())
+    ignore_users = contributors_to_ignore()
 
     return render_template('contributors.html',
                            commit_stats=commit_stats,
