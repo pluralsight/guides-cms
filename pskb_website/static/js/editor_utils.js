@@ -318,7 +318,6 @@ var addModalMessage = function(message) {
 
 function save(sha, path, secondary_repo) {
     clearFlashMessages();
-    $('.btn-save').prop('disabled', true);
     var data = {
         'title': $('input[name=title]').val(),
         'original_stack': $('input[name=original_stack]').val(),
@@ -338,11 +337,13 @@ function save(sha, path, secondary_repo) {
         dataType: 'json',
         cache: false,
         beforeSend: function(xhr) {
+            $('.btn-save').prop('disabled', true);
             $('html, body').css("cursor", "wait");
             return true;
         },
         complete: function(xhr, txt_status) {
             $('html, body').css("cursor", "auto");
+            $('.btn-save').prop('disabled', false);
         },
         success: function(data) {
             console.log(data);
@@ -356,13 +357,9 @@ function save(sha, path, secondary_repo) {
             console.log(status, data);
             if (data && data.error) {
                 addModalMessage(data.error);
-                $("html, body").animate({ scrollTop: 0 }, "fast");
-                $('.btn-save').prop('disabled', false);
             }
             if (data && data.redirect) {
                 setTimeout(function(){ window.location.href = data.redirect; }, 1000);
-            } else {
-                $('.btn-save').prop('disabled', false);
             }
         },
     });

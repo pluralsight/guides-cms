@@ -14,7 +14,7 @@
 .editor-preview-wrapper {
     border: 1px solid #d4d4d4;
     font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
-    z-index: 1040; /* modal 1050, logo 1030 */
+    z-index: 1030; /* modal 1050/1040, logo 1020 */
     position: fixed !important;
     height: auto !important;
     min-height: 100%;
@@ -130,7 +130,7 @@
     display: table;
     border-top: 1px solid #d4d4d4;
     background-color: #f7f7f7;
-    z-index: 1041;
+    z-index: 1031;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -146,7 +146,7 @@
     background-color: #f7f7f7;
     border-left: 1px solid #d4d4d4;
     padding:0px;
-    z-index: 1042;
+    z-index: 1032;
 }
 
 .preview-header {
@@ -213,7 +213,7 @@
 
 #editor-help {
     position: fixed !important;
-    z-index: 1043;
+    z-index: 1033;
     color: #000000;
     border-top: 1px solid #000000;
     background-color: #f7f7f7;
@@ -271,10 +271,6 @@
 #editor-help #next {
     right: 55px;
     padding-top: 7px;
-}
-
-#modal-error {
-    z-index: 1044;
 }
 
 .modal-body p {
