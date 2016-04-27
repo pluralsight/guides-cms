@@ -15,6 +15,7 @@ from .. import PUBLISHED, IN_REVIEW, DRAFT, STATUSES
 from .. import cache
 from .. import remote
 from .. import utils
+from .. import contributors_to_ignore
 
 # FIXME: This file is fairly modular to the outside world but internally it's
 # very fragmented and the layers of abstraction are all mixed up.  Needs a lot
@@ -334,7 +335,7 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
             # concerned with the list of contributors until a guide is
             # published.
             if article.published:
-                article._read_contributors_from_api()
+                article._read_contributors_from_api(remove_ignored_users=True)
 
             cache.save_file(article.path, article.branch, lib.to_json(article))
     else:
@@ -938,6 +939,10 @@ class Article(object):
 
         We use plain tuples instead of named tuples or User objects so we can
         easily seralize the contributors to JSON.
+
+        NOTE: This property automatically removes users set to ignore via the
+        contributors_to_ignore() function!  To get the full list use
+        _read_contributors_from_api(remove_ignored_users=False).
         """
 
         # Small form of caching. This way we only fetch the contributors once.
@@ -948,7 +953,7 @@ class Article(object):
         if self._contributors is not None:
             return self._contributors
 
-        self._read_contributors_from_api()
+        self._read_contributors_from_api(remove_ignored_users=True)
 
         return self._contributors
 
@@ -1002,7 +1007,20 @@ class Article(object):
         """
         return '%s/%s/%s' % (self.repo_path, self.path, self.filename)
 
-    def _read_contributors_from_api(self):
+    def _remove_ignored_contributors(self):
+        """
+        Remove ignored contributors from self._contributors according to
+        contributors returned by contributors_to_ignore
+        """
+
+        ignore_names = contributors_to_ignore()
+
+        # Make a copy to loop over and remove from real list
+        for user in list(self._contributors):
+            if user[0] in ignore_names or user[1] in ignore_names:
+                self._contributors.remove(user)
+
+    def _read_contributors_from_api(self, remove_ignored_users=True):
         """Force reset of contributors for article and fetch from github API"""
 
         self._contributors = []
@@ -1046,3 +1064,6 @@ class Article(object):
         for user in unique_contributors:
             if user[0] is not None or user[1] not in logins_with_names:
                 self._contributors.append(user)
+
+        if remove_ignored_users:
+            self._remove_ignored_contributors()
