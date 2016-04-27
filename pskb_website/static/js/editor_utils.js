@@ -167,8 +167,6 @@ function getUpdatePreviewDelay() {
 }
 
 var highlightNewCode = function(patches) {
-    var start, end, time = 0;
-    start = new Date().getTime();
     var codesPatched = [];
     Object.keys(patches).forEach(function (key) {
         if ( 'a' === key ) {
@@ -198,9 +196,6 @@ var highlightNewCode = function(patches) {
             hljs.highlightBlock(elem);
         }
     });
-    end = new Date().getTime();
-    time = end - start;
-    console.log('highlight code: ' + time + 'ms');
 }
 
 var updatePreview = function() {
@@ -209,20 +204,8 @@ var updatePreview = function() {
     }
     updatingPreview = true;
 
-    console.clear();
-    var start, end, time = 0;
-    start = new Date().getTime();
     var newHtml = markdown2html(editor.getSession().getValue());
-    end = new Date().getTime();
-    time = end - start;
-    console.log('markdown to html: ' + time + 'ms');
-
-    start = new Date().getTime();
     newVTree = html2vtree('<div class="previewWrapper" key="previewWrapper">' + newHtml + '</div>', 'key');
-    end = new Date().getTime();
-    time = end - start;
-    console.log('html to vdom: ' + time + 'ms');
-    console.log('vdom: ' + newVTree.children.length + ' nodes');
 
     if (! currentVTree) {
         currentVTree = newVTree;
@@ -233,36 +216,14 @@ var updatePreview = function() {
         });
     }
 
-    start = new Date().getTime();
     var patches = vdom.diff(currentVTree, newVTree);
-    end = new Date().getTime();
-    time = end - start;
     var numberDiffNodes = Object.keys(patches).length - 1;
-    console.log('diff: ' + numberDiffNodes + ' nodes');
-    console.log('diff: ' + time + 'ms');
-
     if (numberDiffNodes > 0) {
-        start = new Date().getTime();
         previewRootDomNode = vdom.patch(previewRootDomNode, patches);
-        end = new Date().getTime();
-        time = end - start;
-        console.log('patch: ' + time + 'ms');
-
-        start = new Date().getTime();
         currentVTree = newVTree;
-        end = new Date().getTime();
-        time = end - start;
-        console.log('fixed variable: ' + time + 'ms');
-
         highlightNewCode(patches);
-
-        start = new Date().getTime();
         scrollPreviewAccordingToEditor();
-        end = new Date().getTime();
-        time = end - start;
-        console.log('scroll: ' + time + 'ms');
     }
-    console.log('<< Preview updated');
     updatingPreview = false;
 };
 
@@ -414,6 +375,7 @@ function scrollPreviewAccordingToEditor(scrollTop) {
         var editorHeight = getAceEditorScrollHeight();
         var percentage = scrollTop / editorHeight;
 
+        // FIXME: Getting preview.scrollHeight and preview.offsetHeight is slow
         preview.scrollTop = Math.round(percentage * (preview.scrollHeight - preview.offsetHeight));
     }
 }
