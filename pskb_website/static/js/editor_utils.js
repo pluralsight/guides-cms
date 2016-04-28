@@ -103,10 +103,27 @@ or\
 \n\n\
 ";
 
+// Article data
 var editor;
 var author_name;
 var author_real_name;
+// Auto-save
 var current_local_filename;
+var autosaveEnabled = true;
+// Preview
+var preview = null;
+var editor_wrapper = null;
+var updatingPreview = false;
+// Markdown tutorial
+var liveTutorialEnabled = false;
+// Scroll Sync
+var scrollSyncEnabled = false;
+// Virtual DOM
+var vdom = window.virtualDom;
+var html2vtree = window.vdomParser;
+var currentVTree = null;
+var previewRootDomNode = null;
+
 var help_sections;
 var isHelpEnabled = false;
 
@@ -124,24 +141,91 @@ function debounce(func, wait, immediate) {
         };
         var callNow = immediate && !timeout;
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        if (_.isFunction(wait)) {
+            timeout = setTimeout(later, wait());
+        } else {
+            timeout = setTimeout(later, wait);
+        }
         if (callNow) func.apply(context, args);
     };
 };
 
-var previewUpdated = debounce(function() {
-    var content_as_markdown = editor.getSession().getValue();
-    var content_as_html = marked(content_as_markdown);
-    var preview = $('#preview');
-    preview.html(content_as_html);
+function getUpdatePreviewDelay() {
+    var delay = 0;
+    var cursorLine = editor.selection.getCursor()['row'];
+    var totalOfLines = editor.session.getLength();
+    var linesAfterCursor = totalOfLines - cursorLine;
+    if (linesAfterCursor > 2000) {
+        delay = 2000 - 200;
+    } else if (linesAfterCursor > 1000) {
+        delay = 1000 - 200;
+    } else if (linesAfterCursor > 500) {
+        delay = 500 - 200;
+    }
+    return delay;
+}
 
-    /* From utils.js */
-    create_external_links('#preview');
+var highlightNewCode = function(patches) {
+    var codesPatched = [];
+    Object.keys(patches).forEach(function (key) {
+        if ( 'a' === key ) {
+        } else if ( Array.isArray(patches[key]) ) {
+            patches[key].forEach(function (vpatch, ii) {
+                var node = vpatch.vNode || vpatch.patch;
+                var tagExists = node && node.tagName;
+                var tagName = tagExists && node.tagName.toUpperCase();
+                if (tagExists && (tagName == 'PRE')) {
+                    codesPatched.push(node.key);
+                }
+            })
+        }
+        else {
+            var vpatch = patches[key];
+            var node = vpatch.vNode || vpatch.patch;
+            var tagExists = node && node.tagName;
+            var tagName = tagExists && node.tagName.toUpperCase();
+            if (tagExists && (tagName == 'PRE')) {
+                codesPatched.push(node.key);
+            }
+        }
+    });
+    codesPatched.forEach(function (key, i) {
+        var elem = $('pre[data-id="' + key + '"]')[0];
+        if (elem) { // element may be removed
+            hljs.highlightBlock(elem);
+        }
+    });
+}
 
-    $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-}, 500);
+var updatePreview = function() {
+    if (updatingPreview) {
+        return;
+    }
+    updatingPreview = true;
 
-var autosaveEnabled = true;
+    var newHtml = markdown2html(editor.getSession().getValue());
+    newVTree = html2vtree('<div class="previewWrapper" key="previewWrapper">' + newHtml + '</div>', 'key');
+
+    if (! currentVTree) {
+        currentVTree = newVTree;
+        previewRootDomNode = vdom.create(currentVTree);
+        preview.appendChild(previewRootDomNode);
+        $(preview).find('pre code').each(function(i, e) {
+            hljs.highlightBlock(e);
+        });
+    }
+
+    var patches = vdom.diff(currentVTree, newVTree);
+    var numberDiffNodes = Object.keys(patches).length - 1;
+    if (numberDiffNodes > 0) {
+        previewRootDomNode = vdom.patch(previewRootDomNode, patches);
+        currentVTree = newVTree;
+        highlightNewCode(patches);
+        scrollPreviewAccordingToEditor();
+    }
+    updatingPreview = false;
+};
+
 
 var loadAutoSave = function(local_filename) {
     var obj = localStorage.getItem('hack.guides');
@@ -152,13 +236,13 @@ var loadAutoSave = function(local_filename) {
     return undefined;
 }
 
-var autoSave = debounce(function(local_filename) {
+var autoSave = function(local_filename) {
     var content_as_markdown = editor.getSession().getValue();
     var obj = localStorage.getItem('hack.guides') || '{}';
     obj = JSON.parse(obj);
     obj[local_filename] = content_as_markdown;
     localStorage.setItem('hack.guides', JSON.stringify(obj));
-}, 1000);
+};
 
 var clearLocalSave = function(local_filename) {
     var obj = localStorage.getItem('hack.guides');
@@ -175,48 +259,56 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     author_real_name = real_name;
     current_local_filename = local_filename;
 
+    preview = document.getElementById('preview');
+    editor_wrapper = document.getElementById('editor-wrapper');
+
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/github");
     editor.getSession().setMode("ace/mode/markdown");
     editor.getSession().setUseWrapMode(true);
-    // editor.getSession().setNewLineMode("unix");
-    editor.setShowPrintMargin(false);
-    editor.setOption('maxLines', 99999);
+    editor.getSession().setNewLineMode("unix");
+    // Manage editor size
+    editor.setOption('minLines', 1);
+    $(window).resize(resizeEditor);
+    resizeEditor();
     editor.$blockScrolling = Infinity;
-    // editor.renderer.setShowGutter(false);
-    // editor.renderer.setOption('showLineNumbers', false);
+    // Editor layout features
+    editor.setShowPrintMargin(false);
+    editor.renderer.setShowGutter(true);
+    editor.renderer.setOption('showLineNumbers', true);
 
-    marked.setOptions({
-      gfm: true,
-      tables: true,
-      breaks: true,
-      pedantic: false,
-      sanitize: false,
-      smartLists: true,
-      smartypants: false
-    });
 
     var placeholder = '# Start writing your guide here.\n\nOr load the live markdown tutorial to check the syntax.';
     var local_content = loadAutoSave(local_filename);
     // local content should always be the same or the most updated version.
     editor.setValue(local_content || content || placeholder);
     editor.gotoLine(1);
-    previewUpdated();
+    updatePreview();
 
     if (content && ! local_content) {
         autoSave(local_filename);
     }
 
-    editor.getSession().on('change', function(e) {
-        previewUpdated();
+    editor.getSession().on('change', debounce(updatePreview, getUpdatePreviewDelay));
+    editor.getSession().on('change', debounce(function() {
         if (autosaveEnabled) {
             autoSave(local_filename);
         }
-    });
+    }, 2000));
+
+
+    editor.getSession().on('changeScrollTop', function(scrollTop) {
+        scrollPreviewAccordingToEditor(scrollTop);
+    })
 
     configure_dropzone_area(img_upload_url);
 
     return editor;
+}
+
+function getAceEditorScrollHeight() {
+    var r = editor.renderer;
+    return r.layerConfig.maxHeight - r.$size.scrollerHeight + r.scrollMargin.bottom;
 }
 
 function configure_dropzone_area(img_upload_url) {
@@ -266,7 +358,6 @@ function closeLiveMarkdownTutorial() {
     $('.btn-save').prop('disabled', false);
 }
 
-var liveTutorialEnabled = false;
 function toggleLiveTutorial() {
     if (liveTutorialEnabled) {
         closeLiveMarkdownTutorial();
@@ -276,38 +367,48 @@ function toggleLiveTutorial() {
     liveTutorialEnabled = ! liveTutorialEnabled;
 }
 
+function scrollPreviewAccordingToEditor(scrollTop) {
+    if (scrollSyncEnabled) {
+        scrollTop = scrollTop || editor.session.getScrollTop();
+        var editorHeight = getAceEditorScrollHeight();
+        var percentage = scrollTop / editorHeight;
 
-var scrollSyncEnabled = false;
-var $divs = null;
-var scrollSyncFunction = function(e) {
-    var
-      $other     = $divs.not(this).off('scroll'),
-      other      = $other[0],
-      percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
+        // FIXME: Getting preview.scrollHeight and preview.offsetHeight is slow
+        preview.scrollTop = Math.round(percentage * (preview.scrollHeight - preview.offsetHeight));
+    }
+}
 
-    other.scrollTop = Math.round(percentage * (other.scrollHeight - other.offsetHeight));
+function scrollEditorAccordingToPreview() {
+    $(preview).off('scroll');
 
-    setTimeout(function() { $other.on('scroll', scrollSyncFunction); }, 10);
+    var percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
 
-    return false;
-};
+    var editorHeight = getAceEditorScrollHeight();
+    var position = Math.round(percentage * editorHeight);
+    editor.getSession().setScrollTop(position);
+
+    setTimeout(function() { $(preview).on('scroll', scrollEditorAccordingToPreview); }, 10);
+}
 
 function toggleScrollSync() {
-    $divs = $('#editor-wrapper, #preview');
     if (scrollSyncEnabled) {
-        $divs.off('scroll', scrollSyncFunction);
+        $(preview).off('scroll', scrollEditorAccordingToPreview);
     } else {
-        $divs.on('scroll', scrollSyncFunction);
+        $(preview).on('scroll', scrollEditorAccordingToPreview);
     }
     scrollSyncEnabled = ! scrollSyncEnabled;
 }
 
 function openFullscreen() {
     $('html, body').addClass('body-fs');
+    resizeEditor();
 }
 
-var clearFlashMessages = function(message, clazz) {
-    $('.bg-info, .bg-warning, .bg-danger').remove();
+function resizeEditor() {
+    var lineHeight = editor.renderer.lineHeight;
+    var maxLines = document.getElementById('editor-wrapper').offsetHeight / lineHeight;
+    editor.setOption('maxLines', Math.floor(maxLines));
+    editor.resize();
 };
 
 /* This requires Twitter bootstraps Modal.js! */
@@ -317,8 +418,6 @@ var addModalMessage = function(message) {
 };
 
 function save(sha, path, secondary_repo) {
-    clearFlashMessages();
-    $('.btn-save').prop('disabled', true);
     var data = {
         'title': $('input[name=title]').val(),
         'original_stack': $('input[name=original_stack]').val(),
@@ -338,11 +437,13 @@ function save(sha, path, secondary_repo) {
         dataType: 'json',
         cache: false,
         beforeSend: function(xhr) {
+            $('.btn-save').prop('disabled', true);
             $('html, body').css("cursor", "wait");
             return true;
         },
         complete: function(xhr, txt_status) {
             $('html, body').css("cursor", "auto");
+            $('.btn-save').prop('disabled', false);
         },
         success: function(data) {
             console.log(data);
@@ -356,13 +457,9 @@ function save(sha, path, secondary_repo) {
             console.log(status, data);
             if (data && data.error) {
                 addModalMessage(data.error);
-                $("html, body").animate({ scrollTop: 0 }, "fast");
-                $('.btn-save').prop('disabled', false);
             }
             if (data && data.redirect) {
                 setTimeout(function(){ window.location.href = data.redirect; }, 1000);
-            } else {
-                $('.btn-save').prop('disabled', false);
             }
         },
     });
@@ -407,7 +504,6 @@ function toggleHelp() {
         showHelp();
     }
 }
-
 
 function showHelp() {
     $('#editor-help').fadeIn('fast');
