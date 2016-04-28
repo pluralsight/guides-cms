@@ -20,6 +20,7 @@ Contents:
    github_setup
    deployment
    publish_workflow
+   merging_changes
    github_api_usage
    github_repo_layout
    faq
