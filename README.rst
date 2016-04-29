@@ -26,7 +26,7 @@ Developer Documentation
 Please see the following documentation on `Read the Docs <http://readthedocs.org>`_ for
 more detailed documentation of the code of the CMS.
 
-http://hacker-guides-cms.readthedocs.org/en/latest/
+http://hacker-guides-cms.readthedocs.io/en/latest/
 
 
 ----------------
