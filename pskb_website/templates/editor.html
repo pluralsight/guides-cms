@@ -39,7 +39,9 @@
                     <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
                 </a>
 
-                <button id="btn-save" onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
+                <div data-toggle="tooltip" data-placement="bottom" style="display: inline-block; float: right; padding:1px;">
+                    <button id="btn-save" onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
+                </div>
                 <button id="btn-back" onclick="back()" class="btn btn-danger btn-back btn-autosize">Back</button>
 
                 <div class="dropdown">
