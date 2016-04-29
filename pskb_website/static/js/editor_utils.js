@@ -349,14 +349,18 @@ function configure_dropzone_area(img_upload_url) {
 function openLiveMarkdownTutorial() {
     autosaveEnabled = false;
     editor.getSession().setValue(MARKDOWN_TUTORIAL);
+    $('#btn-save').parent().tooltip('destroy');
     $('#btn-save').prop('disabled', true);
+    $('#btn-save').parent().tooltip({title: 'Live Markdown Tutorial enabled'});
 }
 
 function closeLiveMarkdownTutorial() {
     editor.setValue(loadAutoSave(current_local_filename) || '');
+    editor.gotoLine(1);
     autosaveEnabled = true;
     $('#btn-save').prop('disabled', false);
-    editor.gotoLine(1);
+    $('#btn-save').parent().attr('title', '');
+    $('#btn-save').parent().tooltip('destroy');
 }
 
 function toggleLiveTutorial() {
