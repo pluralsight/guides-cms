@@ -226,33 +226,33 @@
 }
 
 #editor-help .control {
-    font-size: 16px;
+    font-size: 11px;
     color: #000;
     border: 1px solid #000;
     display: inline;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     position: absolute;
     font-weight: 600;
     border-radius: 50%;
     padding-top: 2px;
     text-align: center;
-    top: 10px;
+    top: 5px;
 }
 
 #editor-help #close {
     right: 10px;
-    padding-top: 2px;
+    padding-top: 3px;
 }
 
 #editor-help #prev {
-    right: 100px;
-    padding-top: 7px;
+    right: 85px;
+    padding-top: 5px;
 }
 
 #editor-help #next {
-    right: 55px;
-    padding-top: 7px;
+    right: 47px;
+    padding-top: 5px;
 }
 
 .modal-body p {
