@@ -356,6 +356,7 @@ function closeLiveMarkdownTutorial() {
     editor.setValue(loadAutoSave(current_local_filename) || '');
     autosaveEnabled = true;
     $('#btn-save').prop('disabled', false);
+    editor.gotoLine(1);
 }
 
 function toggleLiveTutorial() {
