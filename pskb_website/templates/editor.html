@@ -39,8 +39,8 @@
                     <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
                 </a>
 
-                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
-                <button onclick="cancel()" class="btn btn-danger btn-cancel btn-autosize">Cancel</button>
+                <button id="btn-save" onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
+                <button id="btn-back" onclick="back()" class="btn btn-danger btn-back btn-autosize">Back</button>
 
                 <div class="dropdown">
                     <button id="editor-options" class="btn btn-info btn-options btn-autosize" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -109,7 +109,7 @@
 {% include "editor_error.html" %}
 
 <script type="text/javascript">
-    function cancel() {
+    function back() {
         {% if article %}
             window.location.href = "{{article|url_for_article(branch=article.branch)}}";
         {% else %}
