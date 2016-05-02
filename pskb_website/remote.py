@@ -295,7 +295,11 @@ def rendered_markdown_from_github(path, branch=u'master', allow_404=False):
 
     resp = github.get(url, headers=headers, data={'ref': branch})
     if resp.status == 200:
-        return unicode(resp.data, encoding='utf-8')
+        try:
+            return unicode(resp.data, encoding='utf-8')
+        except ValueError:
+            app.logger.error('Failed parsing response, url: "%s", branch: "%s"', url, branch)
+            raise
 
     if resp.status != 404 or not allow_404:
         log_error('Failed reading rendered markdown', url, resp, branch=branch)
