@@ -297,7 +297,7 @@ def rendered_markdown_from_github(path, branch=u'master', allow_404=False):
     if resp.status == 200:
         try:
             return unicode(resp.data, encoding='utf-8')
-        except ValueError:
+        except TypeError:
             app.logger.error('Failed parsing response, url: "%s", branch: "%s"', url, branch)
             raise
 
