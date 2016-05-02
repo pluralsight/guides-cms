@@ -509,12 +509,22 @@ function showHelp() {
     $('#editor-help').fadeIn('fast');
     $('#editor-help').show();
     isHelpEnabled = true;
+
+    /* From utils.js */
+    if (supports_html5_storage()) {
+        localStorage['hack.guides-show-help'] = isHelpEnabled;
+    }
 }
 
 function hideHelp() {
     $('#editor-help').fadeOut('fast');
     $('#editor-help').hide();
     isHelpEnabled = false;
+
+    /* From utils.js */
+    if (supports_html5_storage()) {
+        localStorage['hack.guides-show-help'] = isHelpEnabled;
+    }
 }
 
 
@@ -522,7 +532,6 @@ function hideHelp() {
  * because these buttons are visible otherwise. */
 function init_editor_help() {
     help_sections = $('#editor-help').find('.section');
-    goto_section(0);
 
     $('#editor-help #next').click(function() {
         var curr_section = visible_section_idx();
@@ -545,4 +554,15 @@ function init_editor_help() {
 
         goto_section(next_section);
     });
+
+    /* From utils.js */
+    if (supports_html5_storage()) {
+        if (localStorage['hack.guides-show-help'] == 'false') {
+            hideHelp();
+            return;
+        }
+    }
+
+    showHelp();
+    goto_section(0);
 }

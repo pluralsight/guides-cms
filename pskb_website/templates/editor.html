@@ -156,13 +156,15 @@
             toggleHelp();
             $("#btn-show-help").toggleClass('active');
         });
-        /* Enable help by default */
-        $('#btn-show-help').click();
 
         $('#editor-help #close').click(function() {
             hideHelp();
             $("#btn-show-help").toggleClass('active');
         });
+
+        if (isHelpEnabled) {
+            $("#btn-show-help").toggleClass('active');
+        }
 
         /* Initialize bootstrap tooltips */
         $('[data-toggle="tooltip"]').tooltip();
