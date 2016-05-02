@@ -15,7 +15,6 @@ from .. import PUBLISHED, IN_REVIEW, DRAFT, STATUSES
 from .. import cache
 from .. import remote
 from .. import utils
-from .. import contributors_to_ignore
 
 # FIXME: This file is fairly modular to the outside world but internally it's
 # very fragmented and the layers of abstraction are all mixed up.  Needs a lot
@@ -1013,7 +1012,7 @@ class Article(object):
         contributors returned by contributors_to_ignore
         """
 
-        ignore_names = contributors_to_ignore()
+        ignore_names = lib.contributors_to_ignore()
 
         # Make a copy to loop over and remove from real list
         for user in list(self._contributors):

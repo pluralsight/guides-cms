@@ -6,6 +6,7 @@ import collections
 import copy
 import json
 
+from .. import app
 from .. import remote
 from .. import cache
 
@@ -81,3 +82,17 @@ def contribution_stats():
     cache.save(cache_key, json.dumps(stats), timeout=30 * 60)
 
     return _sort_contributions(stats)
+
+
+def contributors_to_ignore():
+    """
+    Get set of logins to ignore from all contribution stats
+
+    :returns: Set of logins
+    """
+
+    users = set([])
+    for user in app.config.get('IGNORE_STATS_FOR', '').split(','):
+        users.add(user.strip())
+
+    return users

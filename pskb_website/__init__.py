@@ -14,6 +14,8 @@ PUBLISHED = u'published'
 
 STATUSES = (PUBLISHED, IN_REVIEW, DRAFT)
 
+SLACK_URL = u'https://hackguides.herokuapp.com'
+
 app = Flask(__name__)
 
 # Running on heroku
@@ -62,20 +64,8 @@ if not app.debug:
     app.logger.addHandler(handler)
 
 
-def contributors_to_ignore():
-    """
-    Get set of logins to ignore from all contribution stats
-
-    :returns: Set of logins
-    """
-
-    users = set([])
-    for user in app.config.get('IGNORE_STATS_FOR', '').split(','):
-        users.add(user.strip())
-
-    return users
-
 import pskb_website.views
+import pskb_website.api
 import pskb_website.filters
 
 app.jinja_env.filters['date_string'] = filters.date_string
