@@ -437,6 +437,18 @@ def article_view(stack, title):
         if article is not None:
             return render_article_view(request, article)
 
+    # Branches are deleted once they are accepted or rejected so show the
+    # master if we can find it.
+    if branch != u'master':
+        flash('Unable to find %s\'s branch, maybe their changes were accepted into the master branch below.' % (branch),
+              category='info')
+
+        # Master is default branch so don't bother including, just for cleaner
+        # URL
+        master_url = url_for('article_view', stack=stack, title=title)
+
+        return redirect(master_url, code=301)
+
     return missing_article(request.base_url, stack=stack, title=title,
                            branch=branch)
 
