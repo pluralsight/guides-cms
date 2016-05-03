@@ -1,5 +1,3 @@
-# FIXME: Make every function user our save/get wrappers
-
 """
 Caching utilities
 
@@ -10,6 +8,17 @@ from 2 places, the website application and github.com.  So, anything that can
 change on github.com should have a reasonable cache timeout.  This way even if
 our application doesn't see it change we will refresh from github periodically
 just in case it changed there too.
+
+Note that all errors are logged but not raised outside of this module.  The
+cache is considered optional so we should allow the application to run
+regardless.
+
+Alot of the following functions are simple wrappers to provide a clean API
+naming scheme to the outside world.  We could also expose our get/save wrappers
+if we wanted to.  However, we're trying to hide the fact that we use redis so
+we could easily switch later without other layers needing changes.
+
+In addition, this layer knows how to turn arguments into cache keys.
 """
 
 import functools
@@ -73,10 +82,19 @@ def save(key, value, timeout=DEFAULT_CACHE_TIMEOUT):
     :returns None:
     """
 
-    redis_obj.set(key, value)
+    try:
+        redis_obj.set(key, value)
+    except Exception:
+        app.logger.warning('Failed saving key "%s" to cache:', key,
+                           exc_info=True)
+        return None
 
     if timeout is not None:
-        redis_obj.expire(key, timeout)
+        try:
+            redis_obj.expire(key, timeout)
+        except Exception:
+            app.logger.warning('Failed setting key "%s", timeout: %d expiration in cache:',
+                               key, timeout, exc_info=True)
 
 
 @verify_redis_instance
@@ -85,13 +103,20 @@ def get(key):
     Look for cached value with given key
 
     :param key: Key data was cached with
-    :returns: Value saved or None if not found
+    :returns: Value saved or None if not found or error
     """
 
-    return redis_obj.get(key)
+    if redis_obj is None:
+        return None
+
+    try:
+        return redis_obj.get(key)
+    except Exception:
+        app.logger.warning('Failed reading key "%s" from cache:', key,
+                           exc_info=True)
+        return None
 
 
-@verify_redis_instance
 def read_file(path, branch):
     """
     Look for text pointed to by given path and branch in cache
@@ -101,10 +126,9 @@ def read_file(path, branch):
     :returns: Text saved to cache or None if not found
     """
 
-    return redis_obj.get((path, branch))
+    return get((path, branch))
 
 
-@verify_redis_instance
 def save_file(path, branch, text, timeout=DEFAULT_CACHE_TIMEOUT):
     """
     Save file text in cache
@@ -116,11 +140,7 @@ def save_file(path, branch, text, timeout=DEFAULT_CACHE_TIMEOUT):
     :returns: None
     """
 
-    key = (path, branch)
-    redis_obj.set(key, text)
-
-    if timeout is not None:
-        redis_obj.expire(key, timeout)
+    save((path, branch), text, timeout=timeout)
 
 
 @verify_redis_instance
@@ -136,7 +156,6 @@ def delete_file(path, branch):
     redis_obj.delete((path, branch))
 
 
-@verify_redis_instance
 def save_user(username, user, timeout=DEFAULT_CACHE_TIMEOUT):
     """
     Save user JSON in cache
@@ -146,13 +165,9 @@ def save_user(username, user, timeout=DEFAULT_CACHE_TIMEOUT):
     :returns: None
     """
 
-    redis_obj.set(username, user)
-
-    if timeout is not None:
-        redis_obj.expire(username, timeout)
+    save(username, user, timeout=timeout)
 
 
-@verify_redis_instance
 def read_user(username):
     """
     Read user from cache
@@ -161,7 +176,7 @@ def read_user(username):
     :returns: Serialized representation of user object or None if not found
     """
 
-    return redis_obj.get(username)
+    return get(username)
 
 
 # These getter/setters only exist so we can move the cache location of these
@@ -191,7 +206,6 @@ def save_file_listing_etag(key, etag):
     FILE_LISTING_ETAGS[key] = etag
 
 
-@verify_redis_instance
 def read_file_listing(key):
     """
     Read list of files from cache
@@ -200,10 +214,9 @@ def read_file_listing(key):
     :returns: Iterable of files
     """
 
-    return redis_obj.get(key)
+    return get(key)
 
 
-@verify_redis_instance
 def save_file_listing(key, files, timeout=DEFAULT_CACHE_TIMEOUT):
     """
     Save list of files to cache
@@ -215,7 +228,4 @@ def save_file_listing(key, files, timeout=DEFAULT_CACHE_TIMEOUT):
     :returns: None
     """
 
-    redis_obj.set(key, files)
-
-    if timeout is not None:
-        redis_obj.expire(key, timeout)
+    save(key, files, timeout=timeout)
