@@ -5,6 +5,7 @@ Main entry point for interacting with remote service APIs
 import base64
 import collections
 import json
+import urllib
 
 from flask_oauthlib.client import OAuth
 from flask import session
@@ -269,7 +270,7 @@ def read_file_from_github(path, branch=u'master', rendered_text=True,
         # seems like a safe enough bet at this point.
         owner, repo, file_path = split_full_file_path(path)
         url = u'https://github.com/%s/%s/blob/%s/%s' % (owner, repo, branch,
-                                                        file_path)
+                                                        urllib.pathname2url(file_path))
 
         details = file_details(path, branch, None, None, url, text)
     else:
@@ -295,11 +296,7 @@ def rendered_markdown_from_github(path, branch=u'master', allow_404=False):
 
     resp = github.get(url, headers=headers, data={'ref': branch})
     if resp.status == 200:
-        try:
-            return unicode(resp.data, encoding='utf-8')
-        except TypeError:
-            app.logger.error('Failed parsing response, url: "%s", branch: "%s"', url, branch)
-            raise
+        return unicode(resp.data, encoding='utf-8')
 
     if resp.status != 404 or not allow_404:
         log_error('Failed reading rendered markdown', url, resp, branch=branch)
@@ -517,7 +514,8 @@ def contents_url_from_path(path):
     """
 
     owner, repo, file_path = split_full_file_path(path)
-    return 'repos/%s/%s/contents/%s' % (owner, repo, file_path)
+    return urllib.pathname2url('repos/%s/%s/contents/%s' % (owner, repo,
+                                                            file_path))
 
 
 def read_branch(repo_path, name):
