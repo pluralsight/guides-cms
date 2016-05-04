@@ -159,14 +159,14 @@
                 {% if article.branch != 'master' %}
                     <li>
                         See {{article.author_name}}'s <a href="{{article|url_for_article(branch='master')}}">original version of this guide</a> or
-                        {{article.branch}}'s <a href="https://github.com/{{article.repo_path}}/compare/master...{{article.branch}}" target="_blank">suggestions on github</a>.
+                        these <a href="https://github.com/{{article.repo_path}}/compare/master...{{article.branch}}" target="_blank">suggestions on github</a>.
                     </li>
                 {% endif %}
 
-                {% for branch in branches %}
-                    {% if branch != 'master' and branch != article.branch %}
+                {% for branch_author, branch_name in branches %}
+                    {% if branch_name != 'master' and branch_name != article.branch %}
                         <li>
-                            See {{branch}}'s <a href="{{article|url_for_article(branch=branch)}}"> version of this guide</a> or their <a href="https://github.com/{{article.repo_path}}/compare/master...{{branch}}"
+                            See {{branch_author}}'s <a href="{{article|url_for_article(branch=branch_name)}}"> version of this guide</a> or their <a href="https://github.com/{{article.repo_path}}/compare/master...{{branch_name}}"
                     target="_blank">suggestions on github</a>.
                         </li>
                     {% endif %}

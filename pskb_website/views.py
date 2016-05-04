@@ -444,7 +444,7 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
 
     # Always include a link to original article if this is a branched version
     if article.branch != u'master':
-        branches.append(u'master')
+        branches.append([article.author_name, u'master'])
 
     g.header_white = True
 
