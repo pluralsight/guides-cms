@@ -226,6 +226,8 @@ def write(article_path):
     article = None
     selected_stack = None
 
+    username = session['login']
+
     if article_path is not None:
         branch = request.args.get('branch', u'master')
         article = models.read_article(article_path, rendered_text=False,
@@ -248,7 +250,7 @@ def write(article_path):
 
     return render_template('editor.html', article=article,
                            stacks=forms.STACK_OPTIONS,
-                           selected_stack=selected_stack)
+                           selected_stack=selected_stack, username=username)
 
 
 @app.route('/partner/import/')

@@ -10,8 +10,12 @@
             <ul>
                 <li>Saving a guide sends it straight to our official <a href="{{repo_url}}" target="_blank">Github repository</a> where editors around the world can help.</li>
                 <li>
-                    Your guide is in the master branch of our <a href="{{repo_url}}" target="_blank">Github repository</a> unless you're editing a guide started by someone else.  In that case, a branch named after your username is created.  The original author can see your suggested changes directly on Github.
+                {% if article and article.author_name != username %}
+                    Your guide will be in a new branch of our <a href="{{repo_url}}" target="_blank">Github repository</a>.  The original author can review the changes there.
+                {% else %}
+                    Your guide will be in the master branch of our <a href="{{repo_url}}" target="_blank">Github repository</a>.
                 </li>
+                {% endif %}
                 <li>
                     Once our editors decide your guide is ready, we'll put it on our <a href="{{url_for('index')}}" target="_blank">homepage</a> to help educate the world.
                 </li>
