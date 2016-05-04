@@ -347,6 +347,7 @@ function configure_dropzone_area(img_upload_url) {
 }
 
 function openLiveMarkdownTutorial() {
+    liveTutorialEnabled = true;
     autosaveEnabled = false;
     editor.getSession().setValue(MARKDOWN_TUTORIAL);
     $('#btn-save').parent().tooltip('destroy');
@@ -355,12 +356,14 @@ function openLiveMarkdownTutorial() {
 }
 
 function closeLiveMarkdownTutorial() {
+    liveTutorialEnabled = false;
     editor.setValue(loadAutoSave(current_local_filename) || '');
     editor.gotoLine(1);
     autosaveEnabled = true;
     $('#btn-save').prop('disabled', false);
     $('#btn-save').parent().attr('title', '');
     $('#btn-save').parent().tooltip('destroy');
+    enableDisableSaveButton();
 }
 
 function toggleLiveTutorial() {
@@ -369,7 +372,6 @@ function toggleLiveTutorial() {
     } else {
         openLiveMarkdownTutorial();
     }
-    liveTutorialEnabled = ! liveTutorialEnabled;
 }
 
 function scrollPreviewAccordingToEditor(scrollTop) {
@@ -415,6 +417,22 @@ function resizeEditor() {
     editor.setOption('maxLines', Math.floor(maxLines));
     editor.resize();
 };
+
+function enableDisableSaveButton() {
+    if (! liveTutorialEnabled) {
+        var title = $('input[name=title]').val();
+        var stack = $('#stacks').val();
+        if (! (title && stack)) {
+            $('#btn-save').parent().tooltip('destroy');
+            $('#btn-save').prop('disabled', true);
+            $('#btn-save').parent().tooltip({title: 'Please, choose a title and a stack before saving the article.'});
+        } else {
+            $('#btn-save').prop('disabled', false);
+            $('#btn-save').parent().attr('title', '');
+            $('#btn-save').parent().tooltip('destroy');
+        }
+    }
+}
 
 /* This requires Twitter bootstraps Modal.js! */
 var addModalMessage = function(message) {
