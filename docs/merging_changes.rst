@@ -71,3 +71,33 @@ Integrating some changes from branch
     - Run `git push origin :<branch_name>` to remove the branch from github.com.  You can also do this via github.com by browsing the branches again and clicking the trash can icon next to the branch.
 7. Push the changes to github.com
     - Run `git push origin master`
+
+-----------------------------------
+Easier visualizing of complex diffs
+-----------------------------------
+
+Often times prose is harder to diff than code because the length of a line can
+be very long.  For example, it's common for an entire paragraph to be a single
+line in prose whereas software is usually broken up into small lines with hard
+linebreaks.
+
+This means a diff for prose could show a large change when in reality on a few
+words were changed.  The diff tools on github.com and `git` can help here if
+you know the right options to use.
+
+Github.com
+----------
+
+Github.com defaults to 'source diff view, but you can change this in the
+top-right hand corner of any commit page.  Try clicking the 'rich diff' icon
+next to the 'view' button for a different view.
+
+Git
+---
+
+First, try using `git log --word-diff=color -p` to see diffs.  Another trick is
+to find the two adjacent commits on a file and do something like the
+`git diff --word-diff=color d98909743b32df2f44e835162f50e5b6b7f92c1c..8bc2725698b84d95014b0124c141a08b1946718 in-review/ruby-ruby-on-rails/handling-file-upload-using-ruby-on-rails-5-api/article.md`
+
+You can get the two adjacent commits for a file by running `git log --follow
+<path_to_file>`.
