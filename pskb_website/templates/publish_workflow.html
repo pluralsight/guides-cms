@@ -1,5 +1,6 @@
 <div id="workflow-help" class="bg-success">
 {% if status == 'draft' %}
+    {% if article.branch == 'master' %}
     <h1 id="thanks">Thanks for posting your new guide!</h1>
     <p>
         The guide is now in <strong>draft</strong> status, which means it's
@@ -15,7 +16,11 @@
         <a href="{{g.slack_url}}">Slack channel</a> or
         <a href="mailto: prateek-gupta@pluralsight.com">contact us directly</a>.
     </p>
+    {% else %}
+    {% include 'editor_workflow.html' %}
+    {% endif %}
 {% elif status == 'in-review' %}
+    {% if article.branch == 'master' %}
     <h1 id="thanks">Thanks for posting your new guide!</h1>
     <p>
         The guide is now in <strong>in-review</strong> status, which means it
@@ -58,8 +63,12 @@
             </span>
         </div>
     </div>
+    {% else %}
+    {% include 'editor_workflow.html' %}
+    {% endif %}
 
 {% elif status == 'published' %}
+    {% if article.branch == 'master' %}
     <h1 id="thanks">This guide is now published!</h1>
     <p>
         Your content is being saved to Github. It should appear within a few
@@ -94,6 +103,9 @@
             </span>
         </div>
     </div>
+    {% else %}
+    {% include 'editor_workflow.html' %}
+    {% endif %}
 {% endif %}
 </div>
 
