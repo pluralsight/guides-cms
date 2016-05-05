@@ -350,7 +350,11 @@ function openLiveMarkdownTutorial() {
     liveTutorialEnabled = true;
     autosaveEnabled = false;
     editor.getSession().setValue(MARKDOWN_TUTORIAL);
-    $('#btn-save').prop('disabled', true);
+
+    $('.tutorial-title, #btn-close').show();
+    $('#article-title, #article-stack, #title, #stacks').hide();
+    $('[data-id="stacks"]').parent().hide();
+    $('#btn-save, #btn-back').hide();
 }
 
 function closeLiveMarkdownTutorial() {
@@ -358,7 +362,12 @@ function closeLiveMarkdownTutorial() {
     editor.setValue(loadAutoSave(current_local_filename) || '');
     editor.gotoLine(1);
     autosaveEnabled = true;
-    $('#btn-save').prop('disabled', false);
+
+    $('.tutorial-title, #btn-close').hide();
+    $('#article-title, #article-stack, #title, #stacks').show();
+    $('[data-id="stacks"]').parent().show();
+    $('#btn-save, #btn-back').show();
+
     enableDisableSaveButton();
 }
 
@@ -469,8 +478,8 @@ function save(sha, path, secondary_repo) {
         error: function(response) {
             $('html, body').css("cursor", "auto");
             $('#editor-options').prop('disabled', true);
-            $('#btn-back').prop('disabled', true);
-            $('#btn-save').prop('disabled', true);
+            $('#btn-back').prop('disabled', false);
+            $('#btn-save').prop('disabled', false);
             var status = response.status;
             var data = response.responseJSON;
             console.log(status, data);
