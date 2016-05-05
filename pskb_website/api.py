@@ -3,6 +3,9 @@ Collection of URLs returning JSON responses
 """
 
 import os
+import re
+
+import requests
 
 from flask import Response, url_for, request, flash, json, g
 
@@ -171,4 +174,23 @@ def img_upload():
         return Response(response='', status=500, mimetype='application/json')
 
     return Response(response=json.dumps(url), status=200,
+                    mimetype='application/json')
+
+
+@app.route('/api/slack_stats/', methods=['GET'])
+def slack_stats():
+    """
+    Screen-scrape slack signup app since it's dynamic with node.js and grabs
+    from slack API.
+    """
+
+    stats = ''
+    resp = requests.get(SLACK_URL)
+
+    if resp.status_code == 200:
+        user_count = re.search(r'<p class="status">(.*?)</p>', resp.content)
+        if user_count is not None:
+            stats = user_count.group(1)
+
+    return Response(response=json.dumps({'text': stats}), status=200,
                     mimetype='application/json')
