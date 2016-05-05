@@ -135,8 +135,8 @@ Branches
 --------
 
 Branches are currently used for suggested 'edits' to guides by the community
-editors.  The branches are named after the github login name of the user whose
-edits triggered the creation.
+editors.  The branches are named to match the editor's login, stack, and title
+of the guide.
 
 Each time a user edits an existing users' guide a branch is created (or
 updated).  You can easily use `Github's compare functionality <https://github.com/blog/612-introducing-github-compare-view>`_ to see the edits a particular user is suggesting.

@@ -453,10 +453,12 @@ def branch_article(article, message, new_content, author_name, email,
 
     :returns: New article object
 
-    New branch will be named after author of changes
+    New branch will be named after author of changes and title
     """
 
-    branch = author_name
+    branch = '%s-%s-%s' % (author_name, utils.slugify_stack(article.stacks[0]),
+                           utils.slugify(article.title))
+
     article_sha = article.sha
 
     # Create branch if we needed to
@@ -669,15 +671,23 @@ def save_branched_article_meta_data(article, author_name, email,
     orig_article = read_article(article.path, rendered_text=False,
                                 branch=u'master', repo_path=article.repo_path)
 
+    # Save list of author name and branch name. Yes, we could parse the name
+    # out of the branch but that is tricky b/c we'd have to disallow some
+    # characters in the author name to parse properly.
+    # Technically this would be better suited as a tuple but we serialize the
+    # data as json, which doesn't support tuples. Serializing tuples to json
+    # just comes back as a list anyway.
+    branch_info = [author_name, article.branch]
+
     # Nothing to save, we're already tracking this branch
     if add_branch:
-        if article.branch in orig_article.branches:
+        if branch_info in orig_article.branches:
             return True
 
-        orig_article.branches.append(article.branch)
+        orig_article.branches.append(branch_info)
     else:
         try:
-            orig_article.branches.remove(article.branch)
+            orig_article.branches.remove(branch_info)
         except ValueError:
             # Branch isn't being tracked anyway so nothing to remove
             return True
@@ -889,7 +899,10 @@ class Article(object):
         # Branch this article is on
         self.branch = branch
 
-        # List of branch names where this article also exists
+        # List of lists [author_name, branch_name] where author_name is the
+        # name of the user who created the branch.  Again, would be better
+        # suited as a list of tuples but we're using JSON for serialization and
+        # tuples turn into lists anyway.
         self.branches = []
 
         self._path = None
@@ -990,6 +1003,21 @@ class Article(object):
             # This field used to be optional
             elif attr == 'stacks' and not value:
                 value = [u'other']
+
+            # Backwards compatability. We used to only store a list of branch
+            # names b/c branches were named after editor. Now branches are
+            # named after editor and article so storing this as list to track
+            # who the editor is.
+            elif attr == 'branches':
+                branches = []
+
+                for branch in value:
+                    if isinstance(branch, (list, tuple)):
+                        branches.append(branch)
+                    else:
+                        branches.append([branch, branch])
+
+                value = branches
 
             if attr == '_publish_status' and value not in STATUSES:
                 raise ValueError('publish_status must be one of %s' % (STATUSES,))

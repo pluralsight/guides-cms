@@ -226,6 +226,8 @@ def write(article_path):
     article = None
     selected_stack = None
 
+    username = session['login']
+
     if article_path is not None:
         branch = request.args.get('branch', u'master')
         article = models.read_article(article_path, rendered_text=False,
@@ -248,7 +250,7 @@ def write(article_path):
 
     return render_template('editor.html', article=article,
                            stacks=forms.STACK_OPTIONS,
-                           selected_stack=selected_stack)
+                           selected_stack=selected_stack, username=username)
 
 
 @app.route('/partner/import/')
@@ -444,7 +446,7 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
 
     # Always include a link to original article if this is a branched version
     if article.branch != u'master':
-        branches.append(u'master')
+        branches.append([article.author_name, u'master'])
 
     g.header_white = True
 

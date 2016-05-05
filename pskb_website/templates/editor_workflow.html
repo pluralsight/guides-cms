@@ -1,0 +1,13 @@
+    <h1 id="thanks">Thanks for editing {{article.title}}!</h1>
+    <h3>1. Done editing?</h3>
+    <p>
+        If so, <a href="https://github.com/{{article.repo_path}}/compare/{{article.branch}}" target="_blank"> click here to open a Pull Request on Github.</a>&nbsp;&nbsp;&nbsp;
+        This notifies {{article.author_real_name if article.author_real_name else article.author_name}}
+        about your suggestions.  Look for feedback directly on github.com.
+    </p>
+    <h3>2. Not done yet?</h3>
+    <p>
+        No worries, just come back to this page when you're ready and
+        make additional changes.  The changes will be saved right
+        alongside these edits.
+    </p>
