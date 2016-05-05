@@ -446,14 +446,15 @@ var addModalMessage = function(message) {
     $('#modal-error').modal()
 };
 
-function save(sha, path, secondary_repo) {
+function save(sha, path, secondary_repo, first_commit) {
     var data = {
         'title': $('input[name=title]').val(),
         'original_stack': $('input[name=original_stack]').val(),
         'stacks': $('#stacks').val(),
         'content': editor.getSession().getValue(),
         'sha': sha,
-        'path': path
+        'path': path,
+        'first_commit': first_commit
     }
     if (secondary_repo) {
         data['secondary_repo'] = 1;
