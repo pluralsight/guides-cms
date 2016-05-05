@@ -20,8 +20,12 @@ from .lib import login_required
 @app.route('/api/save/', methods=['POST'])
 @login_required
 def api_save():
-    """Api: POST /api/save {path:'', title: '', sha:'', original_stack: '', content: '', stacks: []}"""
+    """
+    Api: POST /api/save
+    {path:'', title: '', sha:'', original_stack: '', content: '', stacks: []}
+    """
 
+    # Used to show link to slack for authors to get feedback
     g.slack_url = SLACK_URL
 
     user = models.find_user()
