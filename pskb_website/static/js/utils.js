@@ -225,3 +225,26 @@ function init_signup_row(scroll_pos, signup_type) {
         $('#signup-row').hide();
     });
 }
+
+
+/* Update given element with slack stats asychronously */
+function show_slack_stats(element) {
+    $.ajax({
+        type: 'GET',
+        url: '/api/slack_stats/',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        dataType: 'json',
+        cache: false,
+        success: function(data) {
+            if (data.text) {
+                element.html(data.text);
+            }
+        },
+        /* Don't bother doing anything on error. These stats aren't essential. */
+        error: function(response) {
+            var status = response.status;
+            var data = response.responseJSON;
+            console.log(status, data);
+        },
+    });
+}
