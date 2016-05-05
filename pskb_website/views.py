@@ -2,10 +2,6 @@
 Main views of PSKB app
 """
 
-import re
-
-import requests
-
 from flask import redirect, url_for, session, request, render_template, flash, g
 
 from . import PUBLISHED, IN_REVIEW, DRAFT, STATUSES, SLACK_URL
@@ -105,16 +101,7 @@ def faq():
     text = models.read_file('faq.md', rendered_text=True, use_cache=True,
                             timeout=60 * 60)
 
-    # Screen-scrape slack signup app since it's dynamic with node.js and grabs
-    # from slack API.
-
-    resp = requests.get(g.slack_url)
-    if resp.status_code == 200:
-        user_count = re.search(r'<p class="status">(.*?)</p>', resp.content)
-        if user_count is not None:
-            g.slack_stats = user_count.group(1)
-
-    return render_template('faq.html', text=text)
+    return render_template('faq.html')
 
 
 @app.route('/github_login')
