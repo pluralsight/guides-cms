@@ -39,10 +39,8 @@
                     <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
                 </a>
 
-                <div data-toggle="tooltip" data-placement="bottom" style="display: inline-block; float: right; padding:1px;">
-                    <button id="btn-save" onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
-                </div>
-                <button id="btn-back" onclick="back()" class="btn btn-danger btn-back btn-autosize">Back</button>
+                <button onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
+                <button onclick="cancel()" class="btn btn-danger btn-cancel btn-autosize">Cancel</button>
 
                 <div class="dropdown">
                     <button id="editor-options" class="btn btn-info btn-options btn-autosize" data-target="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -111,7 +109,7 @@
 {% include "editor_error.html" %}
 
 <script type="text/javascript">
-    function back() {
+    function cancel() {
         {% if article %}
             window.location.href = "{{article|url_for_article(branch=article.branch)}}";
         {% else %}
@@ -133,12 +131,10 @@
 
         $("#title").change(function() {
             $("#article-title").html($("#title").val() || 'Untitled');
-            enableDisableSaveButton();
         });
         $("#stacks").change(function() {
             var stacks = $('#stacks').val();
             $("#article-stack").html(stacks ? 'Related to <i>' + stacks + '</i>' : 'no stack defined yet');
-            enableDisableSaveButton();
         });
         $("#title").change();
         $("#stacks").change();
