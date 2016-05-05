@@ -2,6 +2,8 @@
 Misc. filter tags for templates
 """
 
+from urllib import urlencode
+
 from flask import url_for
 
 from . import PUBLISHED
@@ -57,7 +59,9 @@ def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master',
 
     if branch != u'master':
         query_str_arg = '&' if '?' in url else '?'
-        url = u'%s%sbranch=%s' % (url, query_str_arg, branch)
+        # Must encode branch name b/c it could have special characters like '+'
+        # for stacks like c++
+        url = u'%s%s%s' % (url, query_str_arg, urlencode({'branch': branch}))
 
     return url
 
