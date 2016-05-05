@@ -101,7 +101,7 @@ def faq():
     text = models.read_file('faq.md', rendered_text=True, use_cache=True,
                             timeout=60 * 60)
 
-    return render_template('faq.html')
+    return render_template('faq.html', text=text)
 
 
 @app.route('/github_login')
