@@ -350,9 +350,7 @@ function openLiveMarkdownTutorial() {
     liveTutorialEnabled = true;
     autosaveEnabled = false;
     editor.getSession().setValue(MARKDOWN_TUTORIAL);
-    $('#btn-save').parent().tooltip('destroy');
     $('#btn-save').prop('disabled', true);
-    $('#btn-save').parent().tooltip({title: 'Live Markdown Tutorial enabled'});
 }
 
 function closeLiveMarkdownTutorial() {
@@ -361,8 +359,6 @@ function closeLiveMarkdownTutorial() {
     editor.gotoLine(1);
     autosaveEnabled = true;
     $('#btn-save').prop('disabled', false);
-    $('#btn-save').parent().attr('title', '');
-    $('#btn-save').parent().tooltip('destroy');
     enableDisableSaveButton();
 }
 
@@ -423,13 +419,9 @@ function enableDisableSaveButton() {
         var title = $('input[name=title]').val();
         var stack = $('#stacks').val();
         if (! (title && stack)) {
-            $('#btn-save').parent().tooltip('destroy');
             $('#btn-save').prop('disabled', true);
-            $('#btn-save').parent().tooltip({title: 'Please, choose a title and a stack before saving the article.'});
         } else {
             $('#btn-save').prop('disabled', false);
-            $('#btn-save').parent().attr('title', '');
-            $('#btn-save').parent().tooltip('destroy');
         }
     }
 }
