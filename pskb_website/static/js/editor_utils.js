@@ -430,8 +430,9 @@ function resizeEditor() {
 function enableDisableSaveButton() {
     if (! liveTutorialEnabled) {
         var title = $('input[name=title]').val();
-        var stack = $('#stacks').val();
-        if (! (title && stack)) {
+        /* Stack can be empty as a catch-all for a guide that doesn't fit into
+         * any existing category.  However, title is essential. */
+        if (!title) {
             $('#btn-save').prop('disabled', true);
         } else {
             $('#btn-save').prop('disabled', false);
