@@ -44,6 +44,7 @@ def api_save():
     title = request.form['title']
     sha = request.form['sha']
     orig_stack = request.form['original_stack']
+    first_commit = request.form['first_commit']
 
     if not content.strip() or not title.strip():
         data = {'error': 'Must enter title and body of guide'}
@@ -105,7 +106,8 @@ def api_save():
                                             user.avatar_url,
                                             stacks=stacks,
                                             repo_path=repo_path,
-                                            author_real_name=user.name)
+                                            author_real_name=user.name,
+                                            first_commit=first_commit)
 
     if not article:
         redirect_to = url_for('index')

@@ -39,7 +39,7 @@
                     <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
                 </a>
 
-                <button id="btn-save" onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
+                <button id="btn-save" onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}', '{{'' if not article.first_commit else article.first_commit}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
 
                 <button id="btn-back" onclick="back()" class="btn btn-danger btn-back btn-autosize">Back</button>
 

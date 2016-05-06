@@ -379,7 +379,8 @@ def read_article_from_metadata(file_details):
 
 def save_article(title, message, new_content, author_name, email, sha,
                  branch=u'master', image_url=None, repo_path=None,
-                 author_real_name=None, stacks=None, status=DRAFT):
+                 author_real_name=None, stacks=None, status=DRAFT,
+                 first_commit=None):
     """
     Create or save new (original) article, not branched article
 
@@ -398,6 +399,7 @@ def save_article(title, message, new_content, author_name, email, sha,
     :param author_real_name: Optional real name of author, not username
     :param stacks: Optional list of stacks to associate with article
     :param status: PUBLISHED, IN_REVIEW, or DRAFT
+    :param first_commit: Optional first commit of article if it already exists
 
     :returns: Article object updated or saved or None for failure
 
@@ -411,6 +413,7 @@ def save_article(title, message, new_content, author_name, email, sha,
                       repo_path=repo_path, author_real_name=author_real_name,
                       stacks=stacks)
     article.publish_status = status
+    article.first_commit = first_commit
 
     commit_sha = remote.commit_file_to_github(article.full_path, message,
                                               new_content, author_name, email,
@@ -508,7 +511,8 @@ def branch_article(article, message, new_content, author_name, email,
 
 def branch_or_save_article(title, path, message, content, author_name, email,
                            sha, image_url, repo_path=None,
-                           author_real_name=None, stacks=None):
+                           author_real_name=None, stacks=None,
+                           first_commit=None):
     """
     Save article as original or as a branch depending on if given author is
     the same as original article (if it already exists)
@@ -528,6 +532,7 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     :param author_real_name: Optional real name of author, not username
     :param stacks: Optional list of stacks to associate with article (this
                    argument is ignored if article is branched)
+    :param first_commit: SHA of first commit to save with article
 
     :returns: Article object updated, saved, or branched
     """
@@ -543,6 +548,7 @@ def branch_or_save_article(title, path, message, content, author_name, email,
             return None
 
         status = article.publish_status
+        first_commit = article.first_commit
 
     if article and article.author_name != author_name and sha:
         # Note branching an article cannot change the stacks!
@@ -552,7 +558,8 @@ def branch_or_save_article(title, path, message, content, author_name, email,
         new = save_article(title, message, content, author_name, email,
                            sha, image_url=image_url, repo_path=repo_path,
                            author_real_name=author_real_name,
-                           stacks=stacks, status=status)
+                           stacks=stacks, status=status,
+                           first_commit=first_commit)
 
     return new
 
