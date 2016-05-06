@@ -157,7 +157,9 @@
 
         $("#btn-live-tutorial").click(function() {
             toggleLiveTutorial();
-            $("#btn-live-tutorial").toggleClass('active');
+            /* Handling of 'active' class handled in toggleLiveTutorial()
+             * because live tutorial can be enabled/disabled from this button
+             * as well as another 'close' button. */
         });
 
         $('#btn-show-help').click(function() {

@@ -355,6 +355,8 @@ function openLiveMarkdownTutorial() {
     $('#article-title, #article-stack, #title, #stacks').hide();
     $('[data-id="stacks"]').parent().hide();
     $('#btn-save, #btn-back').hide();
+
+    $("#btn-live-tutorial").addClass('active');
 }
 
 function closeLiveMarkdownTutorial() {
@@ -367,6 +369,8 @@ function closeLiveMarkdownTutorial() {
     $('#article-title, #article-stack, #title, #stacks').show();
     $('[data-id="stacks"]').parent().show();
     $('#btn-save, #btn-back').show();
+
+    $("#btn-live-tutorial").removeClass('active');
 
     enableDisableSaveButton();
 }
