@@ -84,7 +84,8 @@
 
 .editor-header .btn-save,
 .editor-header .btn-options,
-.editor-header .btn-cancel {
+.editor-header .btn-back,
+.editor-header .btn-close {
     float: right;
     margin-right: 10px;
 }

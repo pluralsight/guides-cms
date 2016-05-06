@@ -347,15 +347,28 @@ function configure_dropzone_area(img_upload_url) {
 }
 
 function openLiveMarkdownTutorial() {
+    liveTutorialEnabled = true;
     autosaveEnabled = false;
     editor.getSession().setValue(MARKDOWN_TUTORIAL);
-    $('.btn-save').prop('disabled', true);
+
+    $('.tutorial-title, #btn-close').show();
+    $('#article-title, #article-stack, #title, #stacks').hide();
+    $('[data-id="stacks"]').parent().hide();
+    $('#btn-save, #btn-back').hide();
 }
 
 function closeLiveMarkdownTutorial() {
+    liveTutorialEnabled = false;
     editor.setValue(loadAutoSave(current_local_filename) || '');
+    editor.gotoLine(1);
     autosaveEnabled = true;
-    $('.btn-save').prop('disabled', false);
+
+    $('.tutorial-title, #btn-close').hide();
+    $('#article-title, #article-stack, #title, #stacks').show();
+    $('[data-id="stacks"]').parent().show();
+    $('#btn-save, #btn-back').show();
+
+    enableDisableSaveButton();
 }
 
 function toggleLiveTutorial() {
@@ -364,7 +377,6 @@ function toggleLiveTutorial() {
     } else {
         openLiveMarkdownTutorial();
     }
-    liveTutorialEnabled = ! liveTutorialEnabled;
 }
 
 function scrollPreviewAccordingToEditor(scrollTop) {
@@ -411,6 +423,18 @@ function resizeEditor() {
     editor.resize();
 };
 
+function enableDisableSaveButton() {
+    if (! liveTutorialEnabled) {
+        var title = $('input[name=title]').val();
+        var stack = $('#stacks').val();
+        if (! (title && stack)) {
+            $('#btn-save').prop('disabled', true);
+        } else {
+            $('#btn-save').prop('disabled', false);
+        }
+    }
+}
+
 /* This requires Twitter bootstraps Modal.js! */
 var addModalMessage = function(message) {
     $('#modal-content').html('<p>' + message + '</p>');
@@ -437,21 +461,25 @@ function save(sha, path, secondary_repo) {
         dataType: 'json',
         cache: false,
         beforeSend: function(xhr) {
-            $('.btn-save').prop('disabled', true);
             $('html, body').css("cursor", "wait");
+            $('#editor-options').prop('disabled', true);
+            $('#btn-back').prop('disabled', true);
+            $('#btn-save').prop('disabled', true);
             return true;
         },
         complete: function(xhr, txt_status) {
-            $('html, body').css("cursor", "auto");
-            $('.btn-save').prop('disabled', false);
         },
         success: function(data) {
             console.log(data);
             console.log(data.msg);
             clearLocalSave(current_local_filename);
-            setTimeout(function(){ window.location.href = data.redirect; }, 1000);
+            window.location.href = data.redirect;
         },
         error: function(response) {
+            $('html, body').css("cursor", "auto");
+            $('#editor-options').prop('disabled', true);
+            $('#btn-back').prop('disabled', false);
+            $('#btn-save').prop('disabled', false);
             var status = response.status;
             var data = response.responseJSON;
             console.log(status, data);
