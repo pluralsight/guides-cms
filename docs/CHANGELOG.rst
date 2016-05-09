@@ -3,7 +3,7 @@ CHANGELOG
 =========
 
 --------------------
-version .5 - 9/5/16
+version .5 - 5/9/16
 --------------------
 
 New Features
@@ -60,7 +60,7 @@ Changes
 - 'Allow redirect URLs file to contain markdown lists `<https://github.com/pluralsight/guides-cms/commit/a83155605492dd7da65af662de1e3d937f56be68>`_
 
 --------------------
-version .4 - 5/4/16
+version .4 - 4/5/16
 --------------------
 
 New Features
@@ -103,7 +103,7 @@ Changes
 - Use /author/<name>/ URL for authors instead of user, 301 redirect from /user/<name>
 
 --------------------
-version .3 - 11/3/16
+version .3 - 3/11/16
 --------------------
 
 Bug Fixes
@@ -115,7 +115,7 @@ Bug Fixes
 
 
 --------------------
-version .2 - 11/3/16
+version .2 - 3/11/16
 --------------------
 
 Changes
@@ -253,7 +253,7 @@ Bug Fixes
 - Improve commit messages when removing guides
 
 --------------------
-version .1 - 23/2/16
+version .1 - 2/23/16
 --------------------
 
 Initial open source release during `<http://hacksummit.org>`_.
