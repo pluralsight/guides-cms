@@ -28,6 +28,7 @@ Contents:
    model_api
    remote_api
    utils
+   creating_releases
 
 
 ==================
