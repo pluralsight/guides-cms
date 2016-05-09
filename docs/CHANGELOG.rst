@@ -3,6 +3,63 @@ CHANGELOG
 =========
 
 --------------------
+version .5 - 9/5/16
+--------------------
+
+New Features
+------------
+
+- Logging of Github API rate limit
+    - See `bin/rate_limit_watcher.py` which can be used with Heroku Scheduler
+      add-on or `cron` in any UNIX environment
+- Added `newrelic` to requirements for performance monitoring
+    - This is optional, but still in the `requirements.txt` file.
+- Added full-screen editor as default and removed non-full screen
+    - This resulted in a lot of improvments including simpler CSS, better
+      integrated help, tooltips, modal error dialogs, and a full-screen view
+      with all possible controls readily available.
+- `Big speed improvements to editor <https://github.com/pluralsight/guides-cms/pull/47>`_
+- `Added links to hack.pledge and hack.summit in header <https://github.com/pluralsight/guides-cms/pull/42>`_
+- `Show list of contributors on guide page <https://github.com/pluralsight/guides-cms/pull/45>`_
+
+Bug Fixes
+---------
+
+- `Edit guide link is broken after changing publish status <https://github.com/pluralsight/guides-cms/issues/70>`_
+- `Editor removes escape characters even if in a codeblock <https://github.com/pluralsight/guides-cms/issues/64>`_
+- `Prevent extra commit to metadata file on first edit <https://github.com/pluralsight/guides-cms/issues/67>`_
+- `Image uploader doesn't set committer name correctly on commits <https://github.com/pluralsight/guides-cms/issues/66>`_
+- `Fixed URLs involving a branch name with special characters <https://github.com/pluralsight/guides-cms/commit/ea3ed3bc16485277fe767bf14f2490f27cfadb3f>`_
+- `Fixed problems with guide titles having special URL characters <https://github.com/pluralsight/guides-cms/commit/d91c3555352f5fbf72ad44587496f8dc1f933f92>`_
+- `Remove unecessary Github API request when fetching contributor lists <https://github.com/pluralsight/guides-cms/commit/e345ee1638ffb753ef9f132484ea9101a97be0db>`_
+- `Fetching contributors lists twice for guides with no contributors <https://github.com/pluralsight/guides-cms/commit/e848a8731335ba9ebc9c84c4937fc39b3f0dc4ea>`_
+- `Prevent mobile share buttons and email signup box overlapping <https://github.com/pluralsight/guides-cms/commit/7a065c646c536b7d5f5381fcd373552cdcb29dfb>`_
+- `Incorrectly including any user with a branch as a contributor <https://github.com/pluralsight/guides-cms/commit/fbf5bc5a8516630317b817cc76f6b9863a987e40>`_
+- `Faster loading of rendered markdown from Github API <https://github.com/pluralsight/guides-cms/commit/8793949e03dbf161c384c34e170aeaac2f2c5c24>`_
+- `Fixed escape <script> tag in article content <https://github.com/pluralsight/guides-cms/pull/36>`_
+- `Properly serialize file listing to cache with unicode <https://github.com/pluralsight/guides-cms/commit/4b58aa08aa94fd5a2668220c994a1ff954ab5912>`_
+- `Properly show featured guide on my-drafts page <https://github.com/pluralsight/guides-cms/commit/d41fc34d1e71160d866d25a96dcd9091b69e03b6>`_
+- `Add contributor page with leaderboards <https://github.com/pluralsight/guides-cms/commit/10bd2c6cc88a0149597ed68c785e0fbc376dfb34>`_
+    - Introduces `IGNORE_STATS_FOR` environment variable
+
+Changes
+-------
+
+- `Disable save button on editor until a title has been chosen <https://github.com/pluralsight/guides-cms/pull/69>`_
+- `Improved 'Live Markdown Tutorial' UI to include a more prominent 'Close
+  Tutorial' button <https://github.com/pluralsight/guides-cms/pull/69>`_
+- `Renamed 'Cancel' button on editor to 'Back' <https://github.com/pluralsight/guides-cms/pull/69>`_
+- `Branches are named after user and guide, not just user <https://github.com/pluralsight/guides-cms/issues/58>`_
+    - Makes merging changes much easier since each branch only deals with a
+      single guide
+- `Improved load time of FAQ page <https://github.com/pluralsight/guides-cms/issues/59>`_
+- `Redirect to master branch if branched guide is missing <https://github.com/pluralsight/guides-cms/issues/50>`_
+- `Do not show users in IGNORE_STATS_FOR environment variable in contributor
+  lists <https://github.com/pluralsight/guides-cms/commit/e345ee1638ffb753ef9f132484ea9101a97be0db>`_
+- `Use username/login in profile page title <https://github.com/pluralsight/guides-cms/commit/cffd8b0ebe039c367ada696b8b3e951cdf4b1867>`_
+- 'Allow redirect URLs file to contain markdown lists `<https://github.com/pluralsight/guides-cms/commit/a83155605492dd7da65af662de1e3d937f56be68>`_
+
+--------------------
 version .4 - 5/4/16
 --------------------
 
