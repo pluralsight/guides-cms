@@ -152,12 +152,14 @@ def api_save():
                                    status=article.publish_status)
 
     redirect_to = filters.url_for_article(article, branch=article.branch, saved=1)
+    data = {'redirect': redirect_to}
+    status = 200
+
     if new_article:
-        data = {'redirect': redirect_to}
-        return Response(response=json.dumps(data), status=201, mimetype='application/json')
-    else:
-        data = {'redirect': redirect_to}
-        return Response(response=json.dumps(data), status=200, mimetype='application/json')
+        status = 201
+
+    return Response(response=json.dumps(data), status=status,
+                    mimetype='application/json')
 
 
 @app.route('/img_upload/', methods=['POST'])
