@@ -111,8 +111,15 @@ def api_save():
                                             first_commit=first_commit)
 
     if not article:
-        redirect_to = url_for('index')
-        data = {'error': 'Failed creating guide on github', 'redirect': redirect_to}
+        # Was this a new guide or update?
+        if path:
+            redirect_to = request.referrer or url_for('index')
+        else:
+            redirect_to = url_for('write')
+
+        data = {'error': 'Failed creating guide on github. Please try again.',
+                'redirect': redirect_to}
+
         return Response(response=json.dumps(data), status=500, mimetype='application/json')
 
     # TODO: move this to another endpoint
