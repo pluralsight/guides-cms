@@ -254,7 +254,7 @@ var clearLocalSave = function(local_filename) {
     return undefined;
 }
 
-function initialize_editor(local_filename, content, name, real_name, img_upload_url) {
+function initialize_editor(local_filename, name, real_name, img_upload_url) {
     author_name = name;
     author_real_name = real_name;
     current_local_filename = local_filename;
@@ -277,7 +277,8 @@ function initialize_editor(local_filename, content, name, real_name, img_upload_
     editor.renderer.setShowGutter(true);
     editor.renderer.setOption('showLineNumbers', true);
 
-
+    var content = $('#initial_content').val();
+    $('#initial_content').remove();
     var placeholder = '# Start writing your guide here.\n\nOr load the live markdown tutorial to check the syntax.';
     var local_content = loadAutoSave(local_filename);
     // local content should always be the same or the most updated version.

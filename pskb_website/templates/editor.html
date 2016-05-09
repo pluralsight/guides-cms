@@ -112,6 +112,8 @@
     </div>
 </div>
 
+<textarea id="initial_content" style="display:none;">{{ article.content }}</textarea>
+
 {% include "editor_error.html" %}
 
 <script type="text/javascript">
@@ -127,13 +129,10 @@
         init_editor_help();
 
         var local_filename = '{{ article.sha or "hack.guides-draft" }}';
-        {% autoescape false %}
-        var original_content = '{{ article.content | replace("\n", "\\n") | replace("\r", "") | replace("'", "\\'") | replace("/script", "\\/script") }}';
-        {% endautoescape %}
         var author_name = '{{ '' if not article.author_name else article.author_name }}';
         var author_real_name = '{{ '' if not article.author_real_name else article.author_real_name }}';
         var img_upload_url = '{{ url_for("img_upload") }}';
-        var editor = initialize_editor(local_filename, original_content, author_name, author_real_name, img_upload_url);
+        var editor = initialize_editor(local_filename, author_name, author_real_name, img_upload_url);
 
         $("#title").change(function() {
             $("#article-title").html($("#title").val() || 'Untitled');
