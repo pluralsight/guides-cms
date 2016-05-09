@@ -55,7 +55,7 @@
         <br />
 
         <p>
-            <a href="{{url_for('write', article_path=article.path, branch=article.branch)}}">Edit this guide <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+            <a href="{{article|url_for_edit(branch=article.branch)}}">Edit this guide <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
         </p>
         <p>
             <a href="{{article.external_url}}" target="_blank">View guide on Github
@@ -106,7 +106,9 @@
                     </ul>
                 </div>
                 <p>
-                    Have an idea for improving this guide? <a href="{{url_for('write', article_path=article.path, branch=article.branch)}}">Edit this guide</a>
+                    Have an idea for improving this guide?
+                    <a href="{{article|url_for_edit(branch=article.branch)}}">Edit this guide<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+
                     to get on the list!
                 </p>
             </div>

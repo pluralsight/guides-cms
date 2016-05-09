@@ -22,6 +22,21 @@ def date_string(dt, fmt_str):
     return dt.strftime(fmt_str)
 
 
+def url_for_edit(article, **kwargs):
+    """
+    Get URL to edit article
+
+    :param article: Article object
+    :param kwargs: Passed directly into flask.url_for
+    :returns: URL as string
+    """
+
+    title = utils.slugify(article.title)
+    stack = utils.slugify_stack(article.stacks[0])
+
+    return url_for(u'write', title=title, stack=stack, **kwargs)
+
+
 def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master',
                     **kwargs):
     """

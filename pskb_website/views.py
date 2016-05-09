@@ -210,22 +210,20 @@ def my_drafts():
                            featured_article=featured_article)
 
 
-@app.route('/write/<path:article_path>/', methods=['GET'])
-@app.route('/write/', defaults={'article_path': None})
+@app.route('/write/<stack>/<title>', methods=['GET'])
+@app.route('/write/', defaults={'stack': None, 'title': None}, methods=['GET'])
 @login_required
-def write(article_path):
+def write(stack, title):
     """Editor page"""
 
     article = None
     selected_stack = None
 
-    username = session['login']
-
-    if article_path is not None:
+    if stack is not None and title is not None:
         branch = request.args.get('branch', u'master')
-        article = models.read_article(article_path, rendered_text=False,
-                                      branch=branch)
-
+        status = request.args.get('status', DRAFT)
+        article = read_article(stack, title, branch, status,
+                               rendered_text=False)
         if article is None:
             flash('Failed reading guide', category='error')
             return render_template('editor.html', article=article,
@@ -241,9 +239,11 @@ def write(article_path):
         if article.stacks:
             selected_stack = article.stacks[0]
 
-    return render_template('editor.html', article=article,
+    return render_template('editor.html',
+                           article=article,
                            stacks=forms.STACK_OPTIONS,
-                           selected_stack=selected_stack, username=username)
+                           selected_stack=selected_stack,
+                           username=session['login'])
 
 
 @app.route('/partner/import/')
