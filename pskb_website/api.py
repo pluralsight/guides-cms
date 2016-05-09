@@ -14,6 +14,7 @@ from . import app
 from . import models
 from . import tasks
 from . import filters
+from . import remote
 from .lib import login_required
 
 
@@ -199,4 +200,12 @@ def slack_stats():
             stats = user_count.group(1)
 
     return Response(response=json.dumps({'text': stats}), status=200,
+                    mimetype='application/json')
+
+
+@app.route('/gh_rate_limit')
+def gh_rate_limit():
+    """Debug request to view rate limit on Github"""
+
+    return Response(response=json.dumps(remote.check_rate_limit()), status=200,
                     mimetype='application/json')
