@@ -334,25 +334,9 @@ def article_view(stack, title):
         session['previously_requested_page'] = request.url
         return redirect(url_for('login'))
 
-    # Using a list here because we specifically want to check in this order but
-    # we don't want to check a single status more than once so don't want dups
-    # either.
-    statuses_to_check = [status]
-    for possible_status in STATUSES:
-        if possible_status not in statuses_to_check:
-            statuses_to_check.append(possible_status)
-
-    for status in statuses_to_check:
-        path = u'%s/%s/%s' % (status, stack, title)
-
-        # allow_missing is a workaround when we're looking for an article from
-        # old /review/ URL b/c we don't know what the status is we have to
-        # check them all.  We don't want to log things as missing if we didn't
-        # know where they were and had to check all locations.
-        article = models.read_article(path, branch=branch, allow_missing=True)
-
-        if article is not None:
-            return render_article_view(request, article)
+    article = read_article(stack, title, branch, status)
+    if article is not None:
+        return render_article_view(request, article)
 
     # Branches are deleted once they are accepted or rejected so show the
     # master if we can find it.
@@ -723,3 +707,43 @@ def missing_article(requested_url=None, stack=None, title=None, branch=None):
 
     flash('We could not find that guide. Give these fresh ones a try.')
     return render_published_articles(status_code=404)
+
+
+def read_article(stack, title, branch, status, rendered_text=True):
+    """
+    Read article by checking all possible statuses, starting with given status
+
+    :param stack: Article stack
+    :param title: Article title
+    :param branch: Article branch
+    :param status: First status to check for article
+    :returns: Article object or None if not found
+
+    This is a small wrapper around models.read_article to handle the common
+    task of reading an article's text regardless of where it is in the publish
+    status workflow. models.read_article requires the path to the publish
+    status.
+    """
+
+    # Using a list here because we specifically want to check in this order but
+    # we don't want to check a single status more than once so don't want dups
+    # either.
+    statuses_to_check = [status]
+    for possible_status in STATUSES:
+        if possible_status not in statuses_to_check:
+            statuses_to_check.append(possible_status)
+
+    article = None
+    for status in statuses_to_check:
+        path = u'%s/%s/%s' % (status, stack, title)
+
+        # allow_missing is a workaround when we're looking for an article from
+        # old /review/ URL b/c we don't know what the status is we have to
+        # check them all.  We don't want to log things as missing if we didn't
+        # know where they were and had to check all locations.
+        article = models.read_article(path, branch=branch, allow_missing=True,
+                                      rendered_text=rendered_text)
+        if article is not None:
+            break
+
+    return article
