@@ -90,6 +90,21 @@
     margin-right: 10px;
 }
 
+.tooltip-wrapper {
+    display: inline-block; /* display: block works as well */
+    float: right;
+    margin: 0;
+}
+
+.tooltip-wrapper .btn[disabled] {
+    pointer-events: none;
+}
+
+.tooltip-wrapper.disabled {
+    cursor: not-allowed;
+}
+
+
 #editor-help-controls {
     display: none;
 }

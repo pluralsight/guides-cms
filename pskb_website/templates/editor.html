@@ -39,7 +39,9 @@
                     <img src="/static/img/light-logo.png" alt="hack.guides()" class="editor-ps-logo img-responsive">
                 </a>
 
-                <button id="btn-save" onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}', '{{'' if not article.first_commit else article.first_commit}}')" class="btn btn-primary btn-save btn-autosize">Save</button>
+                <div id="btn-save-wrapper" class="tooltip-wrapper disabled" data-placement="bottom">
+                    <button id="btn-save" onclick="save('{{article.sha}}', '{{article.path}}', '{{secondary_repo}}', '{{'' if not article.first_commit else article.first_commit}}')" class="btn btn-primary btn-save btn-autosize" disabled>Save</button>
+                </div>
 
                 <button id="btn-back" onclick="back()" class="btn btn-danger btn-back btn-autosize">Back</button>
 
@@ -141,7 +143,6 @@
         $("#stacks").change(function() {
             var stacks = $('#stacks').val();
             $("#article-stack").html(stacks ? 'Related to <i>' + stacks + '</i>' : 'no stack defined yet');
-            enableDisableSaveButton();
         });
         $("#title").change();
         $("#stacks").change();
