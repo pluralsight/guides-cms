@@ -19,6 +19,10 @@ from .file import read_file
 from .file import read_redirects
 from .file import update_article_listing
 
+from .featured import allow_set_featured_article
+from .featured import set_featured_article
+from .featured import get_featured_article
+
 from .user import find_user
 
 from .email_list import add_subscriber

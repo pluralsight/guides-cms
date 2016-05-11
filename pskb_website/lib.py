@@ -115,29 +115,3 @@ def lookup_url_redirect(requested_url):
             pass
 
     return new_url
-
-
-def find_featured_article(articles=None):
-    """
-    Find featured article in list of articles or published articles
-
-    :params articles: List of article objects to search for featured article or
-                      use published articles if no list is given
-    :returns: Article object of featured article or None if not found
-    """
-
-    featured = os.environ.get('FEATURED_TITLE')
-    if featured is None:
-        return None
-
-    if articles is None:
-        # FIXME: This should only fetch the most recent x number.
-        articles = list(models.get_available_articles(status=PUBLISHED))
-
-    featured = featured.strip()
-
-    for article in articles:
-        if article.title.strip() == featured:
-            return article
-
-    return None
