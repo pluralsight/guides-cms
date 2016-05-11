@@ -440,8 +440,8 @@ a:hover.emphasize-dark  {
     font-size: 18px;
 }
 
-#article-header span.glyphicon:hover,
-#article-header span.glyphicon:focus {
+.heart-guide:hover,
+.heart-guide:focus {
     cursor: pointer;
 }
 
@@ -450,12 +450,11 @@ span.glyphicon-heart-empty {
     color: #fb6e20;
 }
 
-#article-header .heart-count {
+.heart-count {
     font-size: 15px;
     padding-left: 5px;
     color: #777;
 }
-
 
 #title {
     clear: left;
@@ -533,6 +532,11 @@ span.glyphicon-heart-empty {
 #article h5:hover .octicon-link,
 #article h6:hover .octicon-link {
     visibility: visible;
+}
+
+#love-it {
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 #user-info {

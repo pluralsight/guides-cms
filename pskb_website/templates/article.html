@@ -84,7 +84,7 @@
                 <br />
                 <h3 id="related"><small>Related to {{article.stacks|join(',')}}</small></h3>
             {% endif %}
-            <span id="heart-guide" class="glyphicon" aria-hidden="true" title="Let the community know this guide was useful">
+            <span class="glyphicon heart-guide" aria-hidden="true" title="Let the community know this guide was useful">
                 <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
             </span>
         </div><!-- article-header -->
@@ -92,6 +92,14 @@
         <h1 id="title" class="lead">{{article.title}}</h1>
 
         {{article.content|safe}}
+
+        <div id="love-it">
+            <h4>Love this guide? Let the community know!
+                <span class="glyphicon heart-guide" aria-hidden="true">
+                    <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
+                </span>
+            </h4>
+        </div>
 
         {# This is an extra API request so only do it for published guides. #}
         {% if article.published and article.contributors %}
@@ -231,19 +239,19 @@
         article.css('z-index', article_z);
     });
 
-    $('#heart-guide').toggleClass('glyphicon-heart', {{'true' if hearted else 'false'}});
-    $('#heart-guide').toggleClass('glyphicon-heart-empty', {{'false' if hearted else 'true'}});
+    $('.heart-guide').toggleClass('glyphicon-heart', {{'true' if hearted else 'false'}});
+    $('.heart-guide').toggleClass('glyphicon-heart-empty', {{'false' if hearted else 'true'}});
 
     {# Login required to heart guide so don't even bother connecting it, we'll
        still check it on the server-side too. This just minimizes confusion for
        users. #}
     {% if session.github_token %}
-        $('#heart-guide').click(function() {
+        $('.heart-guide').click(function() {
             var heart_count = $('.heart-count');
-            toggleHeart($(this), heart_count, "{{article.stacks[0]}}", "{{article.title}}");
+            toggleHeart($('.heart-guide'), heart_count, "{{article.stacks[0]}}", "{{article.title}}");
         });
     {% else %}
-        $('#heart-guide').prop('title', 'Login to let the community know this guide was useful');
+        $('.heart-guide').prop('title', 'Login to let the community know this guide was useful');
     {% endif %}
 
 </script>
