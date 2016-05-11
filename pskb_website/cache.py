@@ -64,7 +64,7 @@ def verify_redis_instance(func):
     @functools.wraps(func)
     def _wrapper(*args, **kwargs):
         if redis_obj is None:
-            return None
+            return False
 
         return func(*args, **kwargs)
 
@@ -79,7 +79,8 @@ def save(key, value, timeout=DEFAULT_CACHE_TIMEOUT):
     :param key: Key to save
     :param value: Value to save
     :param timeout: Timeout in seconds to cache text, use None for no timeout
-    :returns None:
+    :returns: True or False if save succeeded, irrespective of setting the
+              timeout
     """
 
     try:
@@ -87,7 +88,7 @@ def save(key, value, timeout=DEFAULT_CACHE_TIMEOUT):
     except Exception:
         app.logger.warning('Failed saving key "%s" to cache:', key,
                            exc_info=True)
-        return None
+        return False
 
     if timeout is not None:
         try:
@@ -95,6 +96,8 @@ def save(key, value, timeout=DEFAULT_CACHE_TIMEOUT):
         except Exception:
             app.logger.warning('Failed setting key "%s", timeout: %d expiration in cache:',
                                key, timeout, exc_info=True)
+
+    return True
 
 
 @verify_redis_instance
@@ -137,10 +140,10 @@ def save_file(path, branch, text, timeout=DEFAULT_CACHE_TIMEOUT):
     :param branch: Name of branch file belongs to
     :param text: Raw text to save
     :param timeout: Timeout in seconds to cache text, use None for no timeout
-    :returns: None
+    :returns: True or False if save succeeded
     """
 
-    save((path, branch), text, timeout=timeout)
+    return save((path, branch), text, timeout=timeout)
 
 
 @verify_redis_instance
@@ -162,10 +165,10 @@ def save_user(username, user, timeout=DEFAULT_CACHE_TIMEOUT):
 
     :param username: Username for user
     :param user: Serialized representation of user to store in cache
-    :returns: None
+    :returns: True or False if save succeeded
     """
 
-    save(username, user, timeout=timeout)
+    return save(username, user, timeout=timeout)
 
 
 def read_user(username):
@@ -225,7 +228,7 @@ def save_file_listing(key, files, timeout=DEFAULT_CACHE_TIMEOUT):
     :param files: Iterable of files
     :param timeout: Timeout in seconds to cache list, use None for no
                     timeout
-    :returns: None
+    :returns: True or False if save succeeded
     """
 
-    save(key, files, timeout=timeout)
+    return save(key, files, timeout=timeout)
