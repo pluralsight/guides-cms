@@ -140,6 +140,10 @@
             $("#article-title").html($("#title").val() || 'Untitled');
             enableDisableSaveButton();
         });
+        $("#title").blur(function() {
+            $("#article-title").html($("#title").val() || 'Untitled');
+            enableDisableSaveButton();
+        });
         $("#stacks").change(function() {
             var stacks = $('#stacks').val();
             $("#article-stack").html(stacks ? 'Related to <i>' + stacks + '</i>' : 'no stack defined yet');
