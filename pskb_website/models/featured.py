@@ -18,7 +18,13 @@ from .. import PUBLISHED
 from .. import cache
 from . import get_available_articles
 
-KEY = 'FEATURED_TITLE'
+# Use ':' to help distinguish it from other things that could be in the cache.
+# This is a bit of a hack but no need to create an entirely new redis database
+# just for a single key, requires more setup from users.
+CACHE_KEY = 'FEATURED_TITLE:'
+
+# This is different than CACHE_KEY for backwards-compatible reasons only.
+ENV_KEY = 'FEATURED_TITLE'
 
 
 def allow_set_featured_article():
@@ -39,7 +45,7 @@ def set_featured_article(title):
     """
 
     # None for timeout b/c this should never expire
-    cache.save(KEY, title, timeout=None)
+    cache.save(CACHE_KEY, title, timeout=None)
 
 
 def get_featured_article(articles=None):
@@ -53,10 +59,10 @@ def get_featured_article(articles=None):
 
     featured = None
     if allow_set_featured_article():
-        featured = cache.get(KEY)
+        featured = cache.get(CACHE_KEY)
 
     if featured is None:
-        featured = os.environ.get(KEY)
+        featured = os.environ.get(ENV_KEY)
 
     if featured is None:
         return None
