@@ -248,3 +248,85 @@ function show_slack_stats(element) {
         },
     });
 }
+
+/* Send ajax request for currently logged in user heart or un-heart guide and
+ * return new heart count after operation. */
+var toggling_heart = false;
+
+function toggleHeart(heart_element, count_element, stack, title) {
+    /* Reject multiple clicks in succession */
+    if (toggling_heart) {
+        return;
+    }
+
+    toggling_heart = true;
+
+    var add_heart = !heart_element.hasClass('glyphicon-heart');
+    var current_count = parseInt(count_element.html() || 0);
+    var request_url;
+
+    var addHeartToUI = function() {
+        heart_element.toggleClass('glyphicon-heart', true);
+        heart_element.toggleClass('glyphicon-heart-empty', false);
+        count_element.html(current_count + 1);
+    };
+
+    var removeHeartFromUI = function() {
+        heart_element.toggleClass('glyphicon-heart', false);
+        heart_element.toggleClass('glyphicon-heart-empty', true);
+        var new_count = current_count - 1;
+
+        if (!new_count) {
+            new_count = '';
+        }
+
+        count_element.html(new_count);
+    };
+
+    /* Go ahead and add the heart to the UI to give the user feedback that the
+     * action was submitted. */
+    if (add_heart) {
+        request_url = '/api/add-heart/';
+        addHeartToUI();
+    } else {
+        request_url = '/api/remove-heart/';
+        removeHeartFromUI();
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: request_url,
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: {'stack': stack, 'title': title},
+        dataType: 'json',
+        cache: false,
+        complete: function(xhr, txt_status) {
+            toggling_heart = false;
+        },
+        success: function(data) {
+            /* Aesthetics only, showing 0 is kind of ugly IMO. */
+            if (data.count != 0) {
+                count_element.html(data.count);
+            } else {
+                count_element.html('');
+            }
+        },
+        error: function(response) {
+            var status = response.status;
+            var data = response.responseJSON;
+
+            console.log(status);
+
+            if (data.error) {
+                console.log(data.error);
+            }
+
+            /* Undo our overzealous update to the UI. */
+            if (add_heart) {
+                removeHeartFromUI();
+            } else {
+                addHeartToUI();
+            }
+        },
+    });
+}

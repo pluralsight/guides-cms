@@ -19,6 +19,9 @@ if we wanted to.  However, we're trying to hide the fact that we use redis so
 we could easily switch later without other layers needing changes.
 
 In addition, this layer knows how to turn arguments into cache keys.
+
+Note we use currently use the same database for caching and models.heart so we
+should be careful to never clash keys!
 """
 
 import functools

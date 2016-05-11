@@ -84,6 +84,9 @@
                 <br />
                 <h3 id="related"><small>Related to {{article.stacks|join(',')}}</small></h3>
             {% endif %}
+            <span id="heart-guide" class="glyphicon" aria-hidden="true" title="Let the community know this guide was useful">
+                <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
+            </span>
         </div><!-- article-header -->
 
         <h1 id="title" class="lead">{{article.title}}</h1>
@@ -228,6 +231,20 @@
         article.css('z-index', article_z);
     });
 
+    $('#heart-guide').toggleClass('glyphicon-heart', {{'true' if hearted else 'false'}});
+    $('#heart-guide').toggleClass('glyphicon-heart-empty', {{'false' if hearted else 'true'}});
+
+    {# Login required to heart guide so don't even bother connecting it, we'll
+       still check it on the server-side too. This just minimizes confusion for
+       users. #}
+    {% if session.github_token %}
+        $('#heart-guide').click(function() {
+            var heart_count = $('.heart-count');
+            toggleHeart($(this), heart_count, "{{article.stacks[0]}}", "{{article.title}}");
+        });
+    {% else %}
+        $('#heart-guide').prop('title', 'Login to let the community know this guide was useful');
+    {% endif %}
 
 </script>
 

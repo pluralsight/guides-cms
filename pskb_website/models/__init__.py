@@ -23,6 +23,11 @@ from .featured import allow_set_featured_article
 from .featured import set_featured_article
 from .featured import get_featured_article
 
+from .heart import add_heart
+from .heart import remove_heart
+from .heart import count_hearts
+from .heart import has_hearted
+
 from .user import find_user
 
 from .email_list import add_subscriber

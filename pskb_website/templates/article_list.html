@@ -64,6 +64,12 @@
                                                 <span class="gh-name"> @{{article.author_name|truncate(50)}} </span>
                                                 {% endif %}
                                             </p>
+
+                                            {% if article.heart_count %}
+                                            <div class="heart-info">
+                                                <span class="glyphicon glyphicon-heart" aria-hidden="true"><span class="heart-count">{{article.heart_count}}</span></span>
+                                            </div>
+                                            {% endif %}
                                         </div> <!-- teaser col -->
                         {% if loop.last %}
                                     </div> <!-- inner-row -->

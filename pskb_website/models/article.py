@@ -13,6 +13,7 @@ from flask import url_for
 from . import lib
 from . import file as file_mod
 from .user import find_user
+from .heart import count_hearts
 from .. import app
 from .. import PUBLISHED, IN_REVIEW, DRAFT, STATUSES
 from .. import cache
@@ -615,7 +616,7 @@ def save_article_meta_data(article, author_name=None, email=None, branch=None,
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
     exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', '_path',
-                     'last_updated', '_contributors')
+                     'last_updated', '_contributors', '_heart_count')
     json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
     # Nothing changed so no commit needed
@@ -942,6 +943,7 @@ class Article(object):
         self.thumbnail_url = None
         self.author_real_name = author_real_name or author_name
         self.first_commit = None
+        self._heart_count = None
 
         # Only useful if article has already been saved to github
         self.sha = sha
@@ -1009,6 +1011,20 @@ class Article(object):
         _delete_article_from_cache(self)
 
         self._publish_status = new_status
+
+    @property
+    def heart_count(self):
+        """
+        Read number of hearts for article
+
+        :returns: Number of hearts
+        """
+
+        if self._heart_count is not None:
+            return self._heart_count
+
+        self._heart_count = count_hearts(self.stacks[0], self.title)
+        return self._heart_count
 
     @property
     def published(self):

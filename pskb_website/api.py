@@ -218,3 +218,43 @@ def gh_rate_limit():
 
     return Response(response=json.dumps(remote.check_rate_limit()), status=200,
                     mimetype='application/json')
+
+
+@app.route('/api/add-heart/', methods=['POST'])
+@login_required
+def add_heart():
+    """
+    Add heart to referenced article and return new heart count as JSON
+    """
+
+    user = models.find_user()
+    if user is None:
+        data = {'error': 'Cannot heart unless logged in'}
+        return Response(response=json.dumps(data), status=401,
+                        mimetype='application/json')
+
+    count = models.add_heart(request.form['stack'], request.form['title'],
+                             user.login)
+
+    return Response(response=json.dumps({'count': count}), status=200,
+                    mimetype='application/json')
+
+
+@app.route('/api/remove-heart/', methods=['POST'])
+@login_required
+def remove_heart():
+    """
+    Remove heart to referenced article and return new heart count as JSON
+    """
+
+    user = models.find_user()
+    if user is None:
+        data = {'error': 'Cannot heart unless logged in'}
+        return Response(response=json.dumps(data), status=401,
+                        mimetype='application/json')
+
+    count = models.remove_heart(request.form['stack'], request.form['title'],
+                                user.login)
+
+    return Response(response=json.dumps({'count': count}), status=200,
+                    mimetype='application/json')

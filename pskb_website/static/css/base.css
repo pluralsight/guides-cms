@@ -346,6 +346,15 @@ a:hover.emphasize-dark  {
     word-wrap: break-word;
 }
 
+.article-teaser .glyphicon-heart {
+    font-size: 12px;
+}
+
+.article-teaser .heart-count {
+    padding-left: 5px;
+    font-size: 14px;
+}
+
 .article-teaser .article-author span.name {
     margin-right: 10px;
     margin-top: 5px;
@@ -400,10 +409,12 @@ a:hover.emphasize-dark  {
 
 #article-header {
     position: relative;
+    margin-bottom: 40px;
 }
 
 #article-header img {
     float: left;
+    margin-top: 10px;
 }
 
 #article-header h2 {
@@ -421,6 +432,30 @@ a:hover.emphasize-dark  {
     top: 0px;
     font-size: 16px;
 }
+
+#article-header span.glyphicon {
+    position: absolute;
+    top: 40px;
+    left: 50px;
+    font-size: 18px;
+}
+
+#article-header span.glyphicon:hover,
+#article-header span.glyphicon:focus {
+    cursor: pointer;
+}
+
+span.glyphicon-heart,
+span.glyphicon-heart-empty {
+    color: #fb6e20;
+}
+
+#article-header .heart-count {
+    font-size: 15px;
+    padding-left: 5px;
+    color: #777;
+}
+
 
 #title {
     clear: left;
