@@ -2,6 +2,8 @@
 Main views of PSKB app
 """
 
+import os
+
 from flask import redirect, url_for, session, request, render_template, flash, g
 
 from . import PUBLISHED, IN_REVIEW, DRAFT, STATUSES, SLACK_URL
@@ -644,6 +646,32 @@ def sync_listing(publish_status):
     tasks.synchronize_listing.delay(publish_status, user.login, user.email)
 
     flash('Queued up %s sync' % (publish_status), category='info')
+
+    return redirect(url_for('index'))
+
+
+@app.route('/feature/', methods=['POST'])
+@collaborator_required
+def set_featured_title():
+    """Form POST to update featured title"""
+
+    title = request.form['title']
+    stack = request.form['stack']
+
+    article = models.search_for_article(title, stacks=[stack], status=PUBLISHED)
+    if article is None:
+        flash('Cannot find published guide "%s" stack "%s"' % (title, stack),
+              category='error')
+
+        url = session.pop('previously_requested_page', None)
+        if url is None:
+            url = url_for('index')
+
+        return redirect(url)
+
+    os.environ['FEATURED_TITLE'] = article.title
+
+    flash('Featured guide updated', category='info')
 
     return redirect(url_for('index'))
 
