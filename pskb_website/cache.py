@@ -56,6 +56,15 @@ else:
 FILE_LISTING_ETAGS = {}
 
 
+def is_enabled():
+    """
+    Determine if cache is enabled or not
+    :returns: True or False
+    """
+
+    return redis_obj is not None
+
+
 def verify_redis_instance(func):
     """
     Decorator to verify redis instance exists and return None if missing redis
@@ -63,7 +72,7 @@ def verify_redis_instance(func):
 
     @functools.wraps(func)
     def _wrapper(*args, **kwargs):
-        if redis_obj is None:
+        if not is_enabled():
             return False
 
         return func(*args, **kwargs)
