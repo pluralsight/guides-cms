@@ -11,8 +11,9 @@ import os
 HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'GITHUB_SECRET', 'REPO_OWNER', 'REPO_NAME',
                            'REPO_OWNER_ACCESS_TOKEN', 'REDISCLOUD_URL',
-                           'REDIS_URL', 'MAILCHIMP_API_KEY',
-                           'MAILCHIMP_LIST_ID', 'MAILCHIMP_STACKS_GROUP_NAME',
+                           'REDIS_HEARTS_DB_URL', 'REDIS_URL',
+                           'MAILCHIMP_API_KEY', 'MAILCHIMP_LIST_ID',
+                           'MAILCHIMP_STACKS_GROUP_NAME',
                            'SECONDARY_REPO_OWNER', 'SECONDARY_REPO_NAME',
                            'DOMAIN', 'CELERY_BROKER_URL',
                            'CELERY_TASK_SERIALIZER', 'HOSTING_SUBDIRECTORY',
@@ -42,6 +43,11 @@ class Config(object):
 
     # For caching
     REDISCLOUD_URL = None
+
+    # For persistent hearts on guides (optional)  We'll fallback to
+    # REDISCLOUD_URL if this does not exist. Finally if REDISCLOUD_URL does not
+    # exist hearting won't be saved, but the application will still function.
+    REDIS_HEARTS_DB_URL = None
 
     # For celery
     REDIS_URL = None

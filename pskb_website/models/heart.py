@@ -7,15 +7,20 @@ from .. import utils
 
 redis_obj = None
 
+url = app.config.get('REDIS_HEARTS_DB_URL')
 
-try:
-    url = app.config['REDISCLOUD_URL']
-except KeyError:
-    app.logger.warning('No hearts will be saved, please verify REDISCLOUD_URL environment variable to enable persistent hearting of guides.')
+if not url:
+    url = app.config.get('REDISCLOUD_URL')
+    app.logger.info('Attempting to store hearts with REDISCLOUD_URL')
+else:
+    app.logger.info('Attempting to store hearts with REDIS_HEARTS_DB_URL')
+
+if not url:
+    app.logger.warning('No hearts will be saved, please set REDIS_HEARTS_DB_URL or REDISCLOUD_URL environment variable to enable persistent hearting of guides.')
 else:
     redis_obj = utils.configure_redis_from_url(url)
     if redis_obj is None:
-        app.logger.warning('No hearts will be saved, please verify REDISCLOUD_URL environment variable to enable persistent hearting of guides.')
+        app.logger.warning('No hearts will be saved, unable to configure redis')
 
 
 def _generate_key(stack, title):
