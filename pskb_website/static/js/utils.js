@@ -1,5 +1,13 @@
 "use strict";
 
+/* Render text in container_id as html from markdown and highlight the code */
+function render_article_text(container) {
+    var content_as_html = marked(container.text().trim());
+    container.html(content_as_html);
+    container.find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+    container.css('display', 'block');
+}
+
 /* Read headers from article as jquery object and put TOC in div_to_fill as
  * jquery object. */
 function populate_table_of_contents(article, div_to_fill) {

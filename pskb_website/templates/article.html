@@ -28,12 +28,21 @@
 {% endblock %}
 
 {% block css %}
+    <!-- FIXME: Do we need these anymore if we render this on our own? -->
     <link href="{{url_for('static', filename='css/vendor/editor/github.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/vendor/github.css')}}" rel="stylesheet">
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github.css') }}">
+
     {{ super() }}
 {% endblock %}
 
 {% block js %}
+    <script src="{{ url_for('static', filename='js/vendor/editor/highlight.pack.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/editor/marked.min.js') }}"></script>
+
     {{super()}}
     <script type="text/javascript">
         {% if redirect_url %}
@@ -104,7 +113,13 @@
 
         <h1 id="title" class="lead">{{article.title}}</h1>
 
-        {{article.content|safe}}
+        <p id="article_content" style="display: none;">
+            {{article.content|safe}}
+        </p>
+
+        <script type="text/javascript">
+            render_article_text($('#article_content'));
+        </script>
 
         {% if config.ENABLE_HEARTING %}
             <div id="love-it">

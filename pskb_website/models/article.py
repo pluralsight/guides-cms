@@ -270,7 +270,7 @@ def author_stats(statuses=None):
     return stats
 
 
-def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
+def read_article(path, rendered_text=False, branch=u'master', repo_path=None,
                  allow_missing=False):
     """
     Read article
@@ -295,12 +295,9 @@ def read_article(path, rendered_text=True, branch=u'master', repo_path=None,
         slash = '' if path.endswith('/') else '/'
         full_path = '%s%s%s' % (full_path, slash, ARTICLE_FILENAME)
 
-    # Only caching rendered text of articles since that's the 'front-end' of
-    # the site.
-    if rendered_text:
-        article = _read_article_from_cache(path, branch)
-        if article is not None:
-            return article
+    article = _read_article_from_cache(path, branch)
+    if article is not None:
+        return article
 
     details = remote.read_file_from_github(full_path, branch, rendered_text,
                                            allow_404=allow_missing)

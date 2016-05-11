@@ -581,12 +581,7 @@ a:hover.emphasize-dark  {
     width: 30%;
 }
 
-/* Push article text over to account for the octicon-link showing up on hover.
- * Without this the headers would appear slightly indented on entire article
- * this forces all text to left align so the octicon link can show up in the
- * padding. */
 #article p {
-    padding-left: 21px;
     overflow-wrap: break-word;
     word-wrap: break-word;
 }
