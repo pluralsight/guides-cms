@@ -134,8 +134,10 @@ def find_featured_article(articles=None):
         # FIXME: This should only fetch the most recent x number.
         articles = list(models.get_available_articles(status=PUBLISHED))
 
+    featured = featured.strip()
+
     for article in articles:
-        if article.title == featured:
+        if article.title.strip() == featured:
             return article
 
     return None
