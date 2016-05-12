@@ -84,12 +84,12 @@ def get_featured_article(articles=None):
 
     title = title.strip()
     if stack is not None:
-        stack = stack.strip()
+        stack = stack.strip().lower()
 
     for article in articles:
         # Don't allow surrounding spaces to mismatch
         if article.title.strip() == title:
-            if stack is None or article.stacks[0].strip() == stack:
+            if stack is None or article.stacks[0].strip().lower() == stack:
                 return article
 
     return None
