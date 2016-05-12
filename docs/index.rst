@@ -18,11 +18,12 @@ Contents:
    install
    testing
    github_setup
+   github_repo_layout
    deployment
    publish_workflow
    merging_changes
    github_api_usage
-   github_repo_layout
+   github_webhooks
    faq
    views
    model_api

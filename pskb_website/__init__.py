@@ -66,6 +66,7 @@ if not app.debug:
 
 import pskb_website.views
 import pskb_website.api
+import pskb_website.webhooks
 import pskb_website.filters
 
 app.jinja_env.filters['date_string'] = filters.date_string
