@@ -670,7 +670,7 @@ def set_featured_title():
 
         return redirect(url)
 
-    models.set_featured_article(article.title)
+    models.set_featured_article(article)
     flash('Featured guide updated', category='info')
 
     return redirect(url_for('index'))
