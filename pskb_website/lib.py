@@ -2,13 +2,12 @@
 Collection of functions for general use
 """
 
-import os
 from functools import wraps
 from urlparse import urlparse
 
 from flask import redirect, url_for, session, request, flash
 
-from . import PUBLISHED, STATUSES
+from . import STATUSES
 from . import app
 from . import models
 
