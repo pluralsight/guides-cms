@@ -372,8 +372,6 @@ function closeLiveMarkdownTutorial() {
     $('#btn-save, #btn-back').show();
 
     $("#btn-live-tutorial").removeClass('active');
-
-    enableDisableSaveButton();
 }
 
 function toggleLiveTutorial() {
@@ -429,12 +427,14 @@ function resizeEditor() {
 };
 
 function enableDisableSaveButton() {
+    $('#btn-save-wrapper').tooltip('destroy');
     if (! liveTutorialEnabled) {
         var title = $('input[name=title]').val();
         /* Stack can be empty as a catch-all for a guide that doesn't fit into
          * any existing category.  However, title is essential. */
         if (!title) {
             $('#btn-save').prop('disabled', true);
+            $('#btn-save-wrapper').tooltip({title: 'This article requires a title to be saved.'});
         } else {
             $('#btn-save').prop('disabled', false);
         }
