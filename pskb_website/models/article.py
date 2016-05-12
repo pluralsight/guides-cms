@@ -414,6 +414,7 @@ def save_article(title, message, new_content, author_name, email, sha,
                       stacks=stacks)
     article.publish_status = status
     article.first_commit = first_commit
+    article.content = new_content
 
     commit_sha = remote.commit_file_to_github(article.full_path, message,
                                               new_content, author_name, email,
@@ -436,9 +437,7 @@ def save_article(title, message, new_content, author_name, email, sha,
         return commit_sha
 
     _delete_article_from_cache(article)
-
-    return read_article(article.path, rendered_text=True,
-                        branch=article.branch, repo_path=repo_path)
+    return article
 
 
 def branch_article(article, message, new_content, author_name, email,
