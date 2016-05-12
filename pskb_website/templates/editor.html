@@ -140,10 +140,17 @@
             $("#article-title").html($("#title").val() || 'Untitled');
             enableDisableSaveButton();
         });
+
+        /* Make sure to enable/disable on blur event to work around a Safari
+           issue with autofill:
+           - http://stackoverflow.com/questions/11708092/detecting-browser-autofill
+           - https://github.com/pluralsight/guides-cms/pull/73
+         */
         $("#title").blur(function() {
             $("#article-title").html($("#title").val() || 'Untitled');
             enableDisableSaveButton();
         });
+
         $("#stacks").change(function() {
             var stacks = $('#stacks').val();
             $("#article-stack").html(stacks ? 'Related to <i>' + stacks + '</i>' : 'no stack defined yet');
