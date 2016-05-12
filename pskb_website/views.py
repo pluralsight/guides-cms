@@ -13,7 +13,6 @@ from . import tasks
 from . import filters
 from . import utils
 from .lib import (
-        find_featured_article,
         login_required,
         is_logged_in,
         lookup_url_redirect,
@@ -204,7 +203,7 @@ def my_drafts():
     g.drafts_active = True
     articles = models.get_articles_for_author(session['login'],
                                               status=DRAFT)
-    featured_article = find_featured_article()
+    featured_article = models.get_featured_article()
 
     return render_template('index.html', articles=articles,
                            featured_article=featured_article)
@@ -435,13 +434,17 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     # 'discussion' for every article and there's no way to delete them!
     allow_comments = not app.debug
 
+    allow_set_featured = collaborator and (
+                         models.allow_set_featured_article()) and (
+                         article.published)
+
     return render_template('article.html',
                            article=article,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
                            article_identifier=article_identifier,
                            branches=branches,
-                           collaborator=collaborator,
+                           allow_set_featured=allow_set_featured,
                            user=user,
                            publish_statuses=publish_statuses,
                            redirect_url=redirect_url,
@@ -648,6 +651,31 @@ def sync_listing(publish_status):
     return redirect(url_for('index'))
 
 
+@app.route('/feature/', methods=['POST'])
+@collaborator_required
+def set_featured_title():
+    """Form POST to update featured title"""
+
+    title = request.form['title']
+    stack = request.form['stack']
+
+    article = models.search_for_article(title, stacks=[stack], status=PUBLISHED)
+    if article is None:
+        flash('Cannot find published guide "%s" stack "%s"' % (title, stack),
+              category='error')
+
+        url = session.pop('previously_requested_page', None)
+        if url is None:
+            url = url_for('index')
+
+        return redirect(url)
+
+    models.set_featured_article(article)
+    flash('Featured guide updated', category='info')
+
+    return redirect(url_for('index'))
+
+
 @app.context_processor
 def template_globals():
     """Global variables available to all responses"""
@@ -681,7 +709,7 @@ def render_published_articles(status_code=200):
     # FIXME: This should only fetch the most recent x number.
     articles = list(models.get_available_articles(status=PUBLISHED))
 
-    featured_article = find_featured_article(articles)
+    featured_article = models.get_featured_article(articles)
     if featured_article:
         articles.remove(featured_article)
 

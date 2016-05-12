@@ -155,6 +155,17 @@
         </form>
         {% endif %}
 
+        {% if allow_set_featured %}
+            <form action="/feature/" method="POST">
+                <input name="title" type="hidden" value="{{article.title}}"/>
+                <input name="stack" type="hidden" value="{{article.stacks[0]}}"/>
+                <button type="submit" class="btn btn-success btn-xs">
+                    Set as featured guide
+                    <span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>
+                </button>
+            </form>
+        {% endif %}
+
         {% if branches %}
             <h5>Community suggestions</h5>
             <ul>

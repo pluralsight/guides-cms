@@ -79,6 +79,14 @@ described below.  Then:
 3. Change the callback URL on your github application to `http://0.0.0.0:5000/`
 4. Run `heroku local --env <file_from_step_2>`
 
+Useful Heroku add-ons
+---------------------
+
+1. `Papertrail <https://elements.heroku.com/addons/papertrail>`_
+    * Provides bigger log for debugging issues and enables easy searching
+2. `New Relic <https://elements.heroku.com/addons/newrelic>`_
+    * Excellent performance analysis tool
+
 .. _celery_on_heroku:
 
 --------------------------
@@ -108,8 +116,40 @@ Adding Redis caching on Heroku
 3. The application will automatically start caching if you used the redis cloud addon described above.  You can use a different Redis caching add-on, but you'll need to change the setup of the caching layer in `cache.py` appropriately.
 4. See docs related to `using Python with redis on Heroku <https://devcenter.heroku.com/articles/rediscloud#using-redis-from-python>`_
 
-Useful Heroku add-ons
----------------------
+Setting Featured Guide
+======================
 
-1. `Papertrail <https://elements.heroku.com/addons/papertrail>`_
-    * Provides bigger log for debugging issues and enables easy searching
+By default, the featured guide is stored in an environment variable called
+`FEATURED_GUIDE`.  This environment variable can be 1 of 2 types of values:
+
+1. JSON-ified tuple of (title, stack)
+2. String of title
+
+Version 1 is more *correct* since guides can have duplicate titles but not
+duplicate titles **and** stack.  However, it's easier to use version 2 because
+it's a simple string.  Therefore, you can use whichever suits your situation,
+if you don't think you'll have duplicate titles then version 2 is preferred.
+
+Using environment variable
+--------------------------
+
+This environment variable must be set in a way that will persist across all
+running instances of the application. You can do this with the Heroku CLI or
+admin panel, if you're running on Heroku.
+
+Using Redis
+-----------
+
+A better solution for managing the featured guide is to use Redis.  The CMS
+will automatically use a single key in the 'caching' Redis database mentioned
+above if you're using the `REDISCLOUD_URL` setup.  So, there's no need to worry
+about this if you are using the standard caching setup with `REDISCLOUD_URL`.
+
+The CMS will automatically use version 1 of the `FEATURED_GUIDE` variable when
+using Redis so you don't have to worry about duplicate titles.
+
+**You will not be able to set the featured guide via the CMS UI if you're not
+using Redis to store the featured guide.**  This is because setting an
+environment variable via the application itself is unreliable if you're running
+multiple instances of the application on multiple dynos or servers.
+
