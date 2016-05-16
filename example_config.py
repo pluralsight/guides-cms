@@ -18,7 +18,9 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'DOMAIN', 'CELERY_BROKER_URL',
                            'CELERY_TASK_SERIALIZER', 'HOSTING_SUBDIRECTORY',
                            'IGNORE_STATS_FOR', 'WEBHOOK_SECRET',
-                           'ENABLE_HEARTING')
+                           'ENABLE_HEARTING',
+                           'HACK_HANDS_BASE_URL',
+                           'HACK_HANDS_CLIENT_ID', 'HACK_HANDS_CLIENT_SECRET')
 
 
 class Config(object):
@@ -34,6 +36,11 @@ class Config(object):
     REPO_OWNER = None
     REPO_NAME = None
     REPO_OWNER_ACCESS_TOKEN = None
+
+    HACK_HANDS_BASE_URL = 'https://hackhands.com'
+    HACK_HANDS_CLIENT_ID = 'replace-me'
+    HACK_HANDS_CLIENT_SECRET = 'replace-me'
+
 
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_BROKER_URL = None

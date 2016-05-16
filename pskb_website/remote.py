@@ -27,6 +27,25 @@ github = oauth.remote_app(
     authorize_url='https://github.com/login/oauth/authorize'
 )
 
+hackhands = oauth.remote_app(
+    'hackhands',
+    consumer_key=app.config['HACK_HANDS_CLIENT_ID'],
+    consumer_secret=app.config['HACK_HANDS_CLIENT_SECRET'],
+    request_token_params={'scope': []},
+    authorize_url='https://pegasus.hackhands.com/api/o/authorize/',
+    request_token_url=None,
+    base_url=app.config.get('HACK_HANDS_BASE_URL', 'https://hackhands.com'),
+    access_token_method='POST',
+    access_token_url='/api/o/token/',
+)
+
+
+@hackhands.tokengetter
+def get_hackhands_oauth_token():
+    """Read hackhands token from session"""
+    return session.get('hackhands_token', None)
+
+
 file_details = collections.namedtuple('file_details', 'path, branch, sha, last_updated, url, text')
 
 
