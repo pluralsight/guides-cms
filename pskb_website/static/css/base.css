@@ -511,10 +511,6 @@ a:hover.emphasize-dark  {
     min-height: 300px;
 }
 
-#footer .row {
-    margin-top: 50px;
-}
-
 #footer .emphasize {
     padding: 15px;
 }
@@ -539,17 +535,20 @@ a:hover.emphasize-dark  {
     text-decoration: none;
 }
 
-#footer .contact {
-    margin-top: 25px;
-    text-align: left;
-}
-
-#footer .write-guide {
+#footer {
     text-align: center;
 }
 
+#footer img {
+    margin-bottom: 10px;
+}
+
 #footer .social-links {
-    text-align: right;
+    padding-top: 10px;
+}
+
+#footer .social-links img {
+    margin-right: 15px;
 }
 
 #article-list {
@@ -679,6 +678,15 @@ a:hover.emphasize-dark  {
     padding-bottom: 10px;
 }
 
+#footer #signup form {
+    margin-top: 0px;
+}
+
+#footer #signup .form-group {
+    margin-right: 15px;
+    width: 200px;
+}
+
 #signup .btn-primary,
 #signup .btn-primary:focus,
 #signup .btn-primary:hover,
@@ -688,9 +696,30 @@ a:hover.emphasize-dark  {
     font-size: 15px;
     padding: 4px 4px 8px 4px;
     margin-top: 4px;
-    background-color: #a5d92b;
-    border-color: #a5d92b;
+    background-color: #f96816;
+    border-color: #f96816;
     color: #ffffff;
+}
+
+#footer #signup .btn-primary {
+    width: 180px;
+    margin-left: -10px;
+}
+
+#footer #signup .btn-primary,
+#footer #signup .btn-primary:focus,
+#footer #signup .btn-primary:hover,
+#footer #signup .btn-primary:active,
+#footer #signup .btn-primary:active:hover,
+#footer #signup .btn-primary:active:focus {
+    background-color: #f96816;
+    border-color: #f96816;
+}
+
+#footer #signup #email {
+    margin-top: 5px;
+    height: 35px;
+    width: 210px;
 }
 
 .slack-signup a,
@@ -700,8 +729,8 @@ a:hover.emphasize-dark  {
 .slack-signup a:focus {
     font-size: 16px;
     padding: 10px 65px;
-    background-color: #a5d92b;
-    border-color: #a5d92b;
+    background-color: #f96816;
+    border-color: #f96816;
     color: #ffffff;
 }
 
@@ -810,6 +839,14 @@ td.login-name {
     white-space: nowrap;
 }
 
+#footer-logo-1 {
+    display: block;
+}
+
+#footer-logo-2 {
+    display: none;
+}
+
 @media(min-width:992px) {
     .article-teaser .article-author span.gh-name {
         right: 70px;
@@ -877,6 +914,14 @@ td.login-name {
 }
 
 @media(max-width:767px) {
+    #footer .form-group-sm {
+        margin: 10px auto;
+    }
+
+    #footer #signup .form-group {
+        width: auto;
+    }
+
     #title {
         font-size: 32px;
         padding-top: 20px;
@@ -930,6 +975,14 @@ td.login-name {
     #article-sidebar {
         /* Avoid sidebar overflowing at really wide resolutions */
         max-width: 200px;
+    }
+
+    #footer-logo-1 {
+        display: none;
+    }
+
+    #footer-logo-2 {
+        display: block;
     }
 }
 

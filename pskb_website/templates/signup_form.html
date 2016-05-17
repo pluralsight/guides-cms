@@ -1,27 +1,18 @@
         <div id="signup">
-            <form action="{{url_for('subscribe')}}" method="POST" id="signup-form">
+            <form action="{{url_for('subscribe')}}" method="POST" id="signup-form" class="form-inline">
                 <div class="form-group form-group-sm">
-                    <!--
-                      Override bootstrap width: auto so we don't overrun
-                      sidebar bounds.
-                    -->
-                    {{ form.email(class='form-control', style='width: 100%;', id='email', type='email', placeholder='Email') }}
-                </div>
-                <!--
-                    Override bootstrap default of display: inline-block to
-                    prevent the select box busting out of the sidebar if many
-                    stacks are selected and text grows too long for column.
-                 -->
-                <div class="form-group form-group-sm" style="display: block;">
                     {{ form.hidden_tag() }}
-                    <select id="stacks-select" name="stacks" class="form-control selectpicker dropup" data-header="Scroll for additional stacks" data-size="6" data-selected-text-format="count > 0" data-dropup-auto="false" title="Your favorite topics" multiple>
+                    {{ form.email(class='form-control', id='email', type='email', placeholder='Email address') }}
+                </div>
+                <div class="form-group form-group-sm">
+                    <select id="stacks-select" name="stacks" class="form-control selectpicker dropup" data-header="Scroll for additional stacks" data-size="6" data-selected-text-format="count > 0" data-dropup-auto="false" title="Your Favorite Topics" multiple>
                         {% for stack in form.stacks %}
                             {{ stack() }}
                         {% endfor %}
                     </select>
                 </div>
                 <div class="form-group form-group-sm">
-                    <button type="submit" class="btn btn-primary btn-xs" form="signup-form">Click to keep learning</button>
+                    <button type="submit" class="btn btn-primary btn-xs" form="signup-form">Submit</button>
                 </div>
             </form>
         </div>
