@@ -258,6 +258,10 @@ a:hover.emphasize-dark  {
     padding-bottom: 30px;
 }
 
+.cta-text {
+    color: #f96816;
+}
+
 #featured span.intro {
     font-size: 16px;
     padding-left: 10px;
