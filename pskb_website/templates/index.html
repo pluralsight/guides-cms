@@ -1,31 +1,44 @@
 {% extends "layout.html" %}
 
 {% block header %}
-    {{super()}}
+    <div id="hero">
+        {{super()}}
 
-    <div class="container">
-        <div id="featured">
-        {% if featured_article %}
-                <a href="{{featured_article|url_for_article}}">
-                    <span class="intro">Featured Guide</span>
-                    <h1 class="lead">{{featured_article.title}}</h1>
-                    <h2><small>by {{featured_article|author_name}}</small></h2>
-                </a>
-        {% else %}
-            <a href="{{url_for('faq')}}">
-                <span class="intro">Featured Guide</span>
-                <h1 class="lead">A Call for Hackers to teach.&nbsp;&nbsp;Together.</h1>
-                <h2><small>by hack.guides()</small></h2>
-            </a>
-        {% endif %}
+        <div class="container">
+            {% include "mission.html" %}
+
+            <div id="featured">
+            {% if featured_article %}
+                <div class="row">
+                    <div class="col-md-2 col-md-offset-2">
+                        <img src="{{url_for('static', filename='img/ruby-big.png')}}" width="99" height="104"/>
+                    </div>
+                    <div class="col-md-8">
+                        <a href="{{featured_article|url_for_article}}">
+                            <span class="intro">Featured Guide</span>
+                            <h1 class="lead">{{featured_article.title}}</h1>
+                            <h2><small>by {{featured_article|author_name}}</small></h2>
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="{{url_for('faq')}}">
+                            <span class="intro">Featured Guide</span>
+                            <h1 class="lead">Our Mission</h1>
+                            <h2><small>by hack.guides()</small></h2>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+            </div>
         </div>
-    </div>
-
+    </div> <!-- hero -->
 {% endblock %}
 
 {% block body %}
     {% include "article_list.html" %}
-    {% include "mission.html" %}
 {% endblock %}
 
 {% block footer %}

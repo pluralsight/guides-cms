@@ -34,14 +34,9 @@
                     <div id="navbar" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav navbar-right">
 
-                            {% if not article %}
-                            <li><a href="{{url_for('write')}}" class="emphasize">Write a Guide</a></li>
-                            {% endif %}
-
-                            <li><a href="{{url_for('index')}}">Home</a></li>
+                            <li><a href="{{url_for('faq')}}">Our Mission</a></li>
                             <li><a href="{{url_for('in_review')}}">Review</a></li>
                             <li><a href="{{url_for('contributors')}}">Contributors</a></li>
-                            <li><a href="{{url_for('faq')}}">Our Mission</a></li>
 
                             {% if session.github_token %}
                             <li role="presentation" class="dropdown">
@@ -62,5 +57,10 @@
                             {% else %}
                             <li><a href="{{url_for('login')}}">Sign in with Github</a></li>
                             {% endif %}
+
+                            {% if not article %}
+                            <li><a href="{{url_for('write')}}" class="emphasize">Write a Guide</a></li>
+                            {% endif %}
+
                         </ul>
                     </div>

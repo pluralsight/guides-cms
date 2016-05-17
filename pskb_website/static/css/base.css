@@ -32,8 +32,13 @@ body {
     background-color: #fff;
 }
 
+.navbar-inverse {
+    background-color: transparent;
+    border: none;
+}
+
 .navbar-inverse .navbar-brand {
-    background-color: #222;
+    background-color: transparent;
 }
 
 .hack-links-plus-icon {
@@ -139,13 +144,16 @@ a, a:visited, a:hover, a:focus {
 
 .emphasize {
     border: 1px solid #ffffff;
-    border-radius: 30px;
+    padding: 15px;
 }
 
 .emphasize-dark {
     border: 1px solid #000000;
-    border-radius: 30px;
-    padding: 15px 15px 15px 15px;
+    padding: 15px;
+}
+
+#navbar a.emphasize {
+    padding: 15px 35px 15px 35px;
 }
 
 #article-sidebar {
@@ -187,16 +195,33 @@ a:hover.emphasize-dark  {
     border: 1px solid #000000;
 }
 
+#hero {
+    background-image: url('/static/img/hero.png');
+    width: 100%;
+    background-size: cover;
+}
+
 #header-dark {
-    background-color: #222222;
+    background-color: #2d2d2d;
     color: #ffffff;
     padding: 15px 15px 15px 15px;
-    margin-bottom: 15px;
 }
 
 #header-dark .navbar {
-    background-color: #222222;
+    background-color: #2d2d2d;
     border: none;
+}
+
+#hero #header-dark .navbar {
+    background-color: transparent;
+}
+
+#hero #header-dark {
+    background-color: transparent;
+}
+
+#hero #header-dark #navbar {
+    background-color: transparent;
 }
 
 #header-dark #navbar a,
@@ -226,13 +251,16 @@ a:hover.emphasize-dark  {
 }
 
 #featured {
-    background-color: #222222;
-    padding-bottom: 250px;
+    background-color: #414042;
+    min-height: 200px;
+    margin-top: 130px;
+    padding-top: 30px;
+    padding-bottom: 30px;
 }
 
 #featured span.intro {
-    font-size: 12px;
-    border-bottom: 1px solid #ffffff;
+    font-size: 16px;
+    padding-left: 10px;
 }
 
 #featured a, #featured a:visited, #featured a:focus #featured a:hover {
@@ -254,11 +282,23 @@ a:hover.emphasize-dark  {
     color: #000000;
 }
 
+#hero + #body {
+    background-color: #171717;
+    color: #ffffff;
+}
+
+.body-dark {
+    background-color: #171717;
+    color: #ffffff;
+}
+
 .article-teaser {
-    background-color: #ffffff;
-    padding: 10px;
+    background-color: #2d2d2d;
     margin-right: 30px;
     margin-top: 15px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 10px;
 }
 
 .article-teaser img.thumbnail {
@@ -283,8 +323,9 @@ a:hover.emphasize-dark  {
 }
 
 .article-teaser .article-author {
-    color: #f96616;
+    color: #888888;
     font-size: 16px;
+    padding-left: 10px;
     padding-right: 10px;
     position: relative;
     overflow-wrap: break-word;
@@ -317,7 +358,6 @@ a:hover.emphasize-dark  {
     top: 0;
     left: 0;
     z-index: 1;
-    border: 1px solid #aeaeae;
 }
 
 .article-teaser .title {
@@ -336,6 +376,7 @@ a:hover.emphasize-dark  {
     height: 100px;
     overflow-wrap: break-word;
     word-wrap: break-word;
+    padding: 10px;
 }
 
 #article-header {
@@ -464,9 +505,10 @@ a:hover.emphasize-dark  {
     position: relative;
     z-index: 2;
     margin-top: 0px;
-    padding: 15px 15px 125px 15px;
-    background-color: #f96616;
-    color: #000000;
+    padding: 15px 15px 100px 15px;
+    background-color: #2d2d2d;
+    color: #ffffff;
+    min-height: 300px;
 }
 
 #footer .row {
@@ -497,10 +539,6 @@ a:hover.emphasize-dark  {
     text-decoration: none;
 }
 
-#footer .features {
-    margin-top: 10px;
-}
-
 #footer .contact {
     margin-top: 25px;
     text-align: left;
@@ -515,11 +553,16 @@ a:hover.emphasize-dark  {
 }
 
 #article-list {
-    background-color: #efefef;
-    /* Create overlap effect with padding-bottom on featured */
-    margin-top: -170px;
+    background-color: #222222;
     padding: 15px;
     min-height: 250px;
+    color: #ffffff;
+    margin-bottom: 30px;
+}
+
+#article-list .nav {
+    border-bottom: 1px solid #656466;
+    color: #888888;
 }
 
 #article-list .nav > li {
@@ -531,25 +574,48 @@ a:hover.emphasize-dark  {
     font-size: 14px;
 }
 
+/* Stack filter box */
 #article-list .form-control {
-    background-color: #efefef;
+    background-color: #222222;
 }
 
 #article-list .btn-default {
-    background-color: #efefef;
+    background-color: #222222;
     border: none;
     font-size: 14px;
     color: #696969;
     padding-top: 10px;
 }
 
+/* Help on stack filter box */
+#article-list .popover-title {
+    background-color: #222222;
+    border-bottom: 1px solid #696969;
+}
+
+#article-list .dropdown-menu {
+    background-color: #222222;
+}
+
+/* 'X' button on stack filter box */
+#article-list .dropdown-menu .close {
+    color: #ffffff;
+}
+
+#article-list .dropdown-menu li a:hover {
+    background-color: #696969;
+}
+
 #article-list .nav li a.active, #article-list .nav li a.active:visited, #article-list .nav li a.active:focus, #article-list .nav li.active:hover {
-    color: #000000;
+    color: #ffffff;
     text-decoration: underline;
+    background-color: #222222;
+    border-bottom: 5px solid #f96816;
 }
 
 #article-list .nav li a, #article-list .nav li a:visited, #article-list .nav li a:focus, #article-list .nav li:hover {
-    color: #696969;
+    color: #ffffff;
+    background-color: #222222;
 }
 
 #signup-row {
@@ -654,17 +720,23 @@ a:hover.emphasize-dark  {
 }
 
 .mission {
-    /* Necessary to make sure table of contents z-index flows behind this. */
-    position: relative;
-    z-index: 2;
     text-align: center;
-    padding-bottom: 25px;
-    background-color: #ffffff;
+    color: #ffffff;
+    font-size: 20px;
 }
 
-.mission p {
-    color: #696969;
-    font-size: 20px;
+#hero .mission {
+    background-color: transparent;
+}
+
+#hero .mission a,
+#hero .mission a:visited {
+    color: #ffffff;
+}
+
+#hero .mission a:hover,
+#hero .mission a:focus {
+    color: #f96816;
 }
 
 #share-column .emphasize {

@@ -37,8 +37,8 @@
     </head>
     <body>
 
-        <div id="{{'header-dark' if not g.header_white else 'header-white'}}" class="flash-msgs">
-            {% block header %}
+        {% block header %}
+            <div id="{{'header-white' if g.header_white else 'header-dark'}}" class="flash-msgs">
                 {% block nav %}
                     {% if not g.header_white %}
                         {% include "nav_black.html" %}
@@ -64,10 +64,8 @@
                         <p class="bg-danger">{{ message|safe }} </p>
                     {% endfor %}
                 {% endwith %}
-
-            {% endblock %}
-
-        </div><!-- header -->
+            </div>
+        {% endblock %}
 
         <div id="body">
             <div class="container">

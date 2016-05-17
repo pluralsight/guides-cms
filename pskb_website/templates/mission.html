@@ -1,12 +1,41 @@
     <div class="row mission">
-        <hr>
         <div class="col-md-12">
-            <h2>A developer community for writing guides</h2>
+            <h2 class="lead">A developer community for writing guides</h2>
+        </div>
+        <div class="col-md-5 col-md-offset-2">
             <p>
                 This is a community for collaborating on creating
                 great technical guides.  Our collective aim is by
                 working together, we can educate the world and improve
                 our knowledge.
             </p>
-        </div>
-    </div>
+            <p><small><a href="{{url_for('faq')}}">Learn more</a></small></p>
+        </div> <!-- col -->
+        <div class="col-md-5">
+                <div class="row">
+                    <div class="col-md-1">
+                        <img src="{{url_for('static', filename='img/open_source.png')}}" width="28" height="27" />
+                    </div>
+                    <div class="col-md-6">
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;<small><a href="https://github.com/pluralsight/guides-cms" target="_blank">Open Source Architecture</a></small></p>
+                    </div>
+                </div> <!-- row -->
+                <div class="row">
+                    <div class="col-md-1">
+                        <img src="{{url_for('static', filename='img/github.png')}}" width="25" height="29" />
+                    </div>
+                    <div class="col-md-6">
+                        <p><small><a href="{{repo_url}}" target="_blank">Integrates with GitHub</a></small></p>
+                    </div>
+                </div> <!-- row -->
+                <div class="row">
+                    <div class="col-md-1">
+                        <img src="{{url_for('static', filename='img/markdown.png')}}" width="34" height="27" />
+                    </div>
+                    <div class="col-md-6">
+                        <p><small><a href="https://guides.github.com/features/mastering-markdown/" target="_blank">Write using Markdown</a></small></p>
+
+                    </div>
+                </div> <!-- row -->
+        </div> <!-- col -->
+    </div> <!-- mission -->
