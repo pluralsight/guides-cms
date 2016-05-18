@@ -125,14 +125,7 @@ def github_login():
 def logout():
     """Logout page"""
 
-    session.pop('github_token', None)
-    session.pop('login', None)
-    session.pop('name', None)
-    session.pop('collaborator', None)
-    session.pop('user_image', None)
-    session.pop('hackhands_slug', None)
-    session.pop('hackhands_token', None)
-
+    session.clear()
     return redirect(url_for('index'))
 
 
