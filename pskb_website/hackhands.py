@@ -1,3 +1,5 @@
+import json
+
 from flask import redirect, url_for, session, request, render_template, flash, g
 
 from flask_oauthlib.client import OAuth
@@ -50,10 +52,7 @@ def authorized_hackhands():
     headers = {'Accept': 'application/json'}
     resp = hackhands.get('/api/users/self', token=(token,), headers=headers)
 
-    print(resp, resp.status, resp and resp.status == 200, resp.status == 200)
     if resp and resp.status == 200:
-        print(resp.data.get('slug', None))
-        print(resp.data.get('slug', 'paulocheque'))
         if resp.data.get('slug', None):
             # Attach hackhands information to the user model
             hackhands_data = {
@@ -64,12 +63,11 @@ def authorized_hackhands():
                 'is_expert': resp.data.get('is_expert', False),
             }
             user = models.find_user()
-            user.hackhands_data = hackhands_data
-            cache.save_user(user.login, models.lib.to_json(user), timeout=60 * 30)
+            save_data(user.login, hackhands_data)
 
             # Update current session
             session['hackhands_token'] = token
-            session['hackhands_slug'] = user.hackhands_data['slug']
+            session['hackhands_slug'] = hackhands_data['slug']
 
             flash('You connected your hack.hands() account successfully')
         else:
@@ -77,3 +75,13 @@ def authorized_hackhands():
     else:
         flash(u'It was not possible to read your hack.hands() account.', category='error')
     return redirect(url_for('index'))
+
+
+def save_data(username, hackhands_data):
+    data = json.dumps(hackhands_data)
+    return cache.save('hackhands-data-' + username, data, timeout=None) # persist forever
+
+
+def read_data(username):
+    hackhands_data = cache.get('hackhands-data-' + username)
+    return json.loads(hackhands_data) if hackhands_data else None

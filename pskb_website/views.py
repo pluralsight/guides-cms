@@ -12,6 +12,7 @@ from . import forms
 from . import tasks
 from . import filters
 from . import utils
+from . import hackhands
 from .lib import (
         read_article,
         login_required,
@@ -173,9 +174,10 @@ def authorized():
 
         session['collaborator'] = user.is_collaborator
 
-    if user.hackhands_data:
-        session['hackhands_slug'] = user.hackhands_data['slug']
-        session['hackhands_token'] = user.hackhands_data['token']
+    hackhands_data = hackhands.read_data(user.login)
+    if hackhands_data:
+        session['hackhands_slug'] = hackhands_data['slug']
+        session['hackhands_token'] = hackhands_data['token']
 
     url = session.pop('previously_requested_page', None)
     if url is not None:
