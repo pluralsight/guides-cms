@@ -181,29 +181,6 @@ def authorized():
     return redirect(url_for('user_profile', author_name=user.login))
 
 
-@app.route('/hackhands_login')
-def hackhands_login():
-    """hack.hands() oauth2 authorization"""
-    return remote.hackhands.authorize(callback='http://guides-dev.herokuapp.com/auth/hackhands', _external=True)
-
-
-@app.route('/auth/hackhands')
-def authorized_hackhands():
-    """Callback for hack.hands() oauth2"""
-    resp = remote.hackhands.authorized_response()
-    if resp is None:
-        flash(u'It was not possible to connect your hack.hands() account.')
-        return redirect(url_for('index'))
-
-    token = resp['access_token']
-    session['hackhands_token'] = token
-
-    headers = {'Accept': 'application/json'}
-    resp = remote.hackhands.get('/api/users/self', token=(token,), headers=headers)
-    flash('You connected your hack.hands() account successfully')
-    return redirect(url_for('index'))
-
-
 @app.route('/user/<author_name>', methods=['GET'])
 def old_profile(author_name):
     return redirect(url_for('user_profile', author_name=author_name), 301)
