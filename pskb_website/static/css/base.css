@@ -678,8 +678,6 @@ a:hover.emphasize-dark  {
 
 .btn-primary {
     font-size: 15px;
-    padding: 4px 4px 8px 4px;
-    margin-top: 4px;
     color: #ffffff;
     background-color: #f96816;
     border-color: #f96816;
@@ -698,6 +696,8 @@ a:hover.emphasize-dark  {
 #footer #signup .btn-primary {
     width: 180px;
     margin-left: -10px;
+    margin-top: 2px;
+    padding: 6px;
 }
 
 #footer #signup #email {
