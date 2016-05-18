@@ -839,6 +839,13 @@ a:hover.emphasize-dark  {
     color: #f96816;
 }
 
+#hero .mission a.cta-text,
+#hero .mission a.cta-text:visited,
+#hero .mission a.cta-text:hover,
+#hero .mission a.cta-text:focus {
+    color: #f96816;
+}
+
 /* Overrides bootstrap-markdown CSS */
 .md-preview {
     padding: 15px;
