@@ -515,26 +515,11 @@ a:hover.emphasize-dark  {
     min-height: 300px;
 }
 
-#footer .emphasize {
-    padding: 15px;
-}
-
 #footer a, #footer a:focus, #footer a:visited {
     color: #ffffff;
 }
 
 #footer a:hover {
-    color: #000000;
-    text-decoration: none;
-}
-
-#footer a.emphasize, #footer a.emphasize:focus, #footer a.emphasize:visited {
-    font-size: 18px;
-    color: #ffffff;
-}
-
-#footer a.emphasize:hover {
-    font-size: 18px;
     color: #000000;
     text-decoration: none;
 }
@@ -765,11 +750,6 @@ a:hover.emphasize-dark  {
 #hero .mission a:hover,
 #hero .mission a:focus {
     color: #f96816;
-}
-
-#share-column .emphasize {
-    border: 1px solid #f96616;
-    padding: 15px;
 }
 
 /* Overrides bootstrap-markdown CSS */
