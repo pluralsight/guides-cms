@@ -230,6 +230,12 @@ a:hover.emphasize-dark  {
     color: #ffffff;
 }
 
+#header-dark #navbar a.cta-text,
+#header-dark #navbar a.cta-text:visited,
+#header-dark #navbar a.cta-text:focus {
+    color: #f96816;
+}
+
 #header-dark #navbar .dropdown-menu a,
 #header-dark #navbar .dropdown-menu a:visited,
 #header-dark #navbar .dropdown-menu a:focus {
