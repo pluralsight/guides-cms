@@ -10,17 +10,19 @@
             <div id="featured">
             {% if featured_article %}
                 <div class="row">
-                    <div class="col-md-2 col-md-offset-2">
+                    <div class="col-xs-4 col-md-2 col-md-offset-2">
                         {% if featured_article.stack_image_url %}
                             <img src="{{featured_article.stack_image_url}}" width="99" height="104"/>
                         {% endif %}
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-xs-8">
                         <a href="{{featured_article|url_for_article}}">
                             <span class="intro">Featured Guide</span>
                             <h1 class="lead">{{featured_article.title}}</h1>
-                            <h2><small>by {{featured_article|author_name}}</small></h2>
-                            <p class="cta-text"><small>Read guide &raquo;</small></p>
+                            <div class="article-details">
+                                <p>by {{featured_article|author_name}}</p>
+                                <p class="cta-text">Read guide &raquo;</p>
+                            </div>
                         </a>
                     </div>
                 </div>
@@ -30,8 +32,10 @@
                         <a href="{{url_for('faq')}}">
                             <span class="intro">Featured Guide</span>
                             <h1 class="lead">Our Mission</h1>
-                            <h2><small>by hack.guides()</small></h2>
-                            <p class="cta-text"><small>Read more &raquo;</small></p>
+                            <div class="article-details">
+                                <p>by hack.guides()</p>
+                                <p class="cta-text">Read more &raquo;</p>
+                            </div>
                         </a>
                     </div>
                 </div>
