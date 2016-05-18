@@ -205,7 +205,7 @@ def user_profile(author_name):
         if author_name is None:
             return redirect(url_for('index'))
 
-    user = models.find_user(author_name)
+    user = models.find_user(author_name, read_hackhands_data=True)
     if not user:
         flash('Unable to find user "%s"' % (author_name), category='error')
         return redirect(url_for('index'))
@@ -450,7 +450,7 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
 
     g.header_white = True
 
-    user = models.find_user(article.author_name)
+    user = models.find_user(article.author_name, read_hackhands_data=True)
     if only_visible_by_user is not None and only_visible_by_user != user.login:
         return redirect(url_for('index'))
 

@@ -28,5 +28,11 @@
                 View more from @{{user.login}} on Github
             </a>
         </p>
+
+        {% if user.hackhands_data %}
+        <p>
+            <a href="https://hackhands.com/{{ user.hackhands_data.slug }}" class="btn btn-default">Hire me on hack.hands()</a>
+        </p>
+        {% endif %}
     </div>
 </div>
