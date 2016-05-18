@@ -19,10 +19,23 @@
                         <a href="{{featured_article|url_for_article}}">
                             <span class="intro">Featured Guide</span>
                             <h1 class="lead">{{featured_article.title}}</h1>
-                            <div class="article-details">
-                                <p>by {{featured_article|author_name}}</p>
-                                <p class="cta-text">Read guide &raquo;</p>
-                            </div>
+                            <div class="article-details row">
+                                <div class="col-sm-3">
+                                    <p>by {{featured_article|author_name}}</p>
+                                </div>
+                                {% if featured_article.heart_count %}
+                                    <div class="col-sm-4">
+                                        <p class="heart-info">
+                                            <img src="{{url_for('static', filename='img/full-heart.svg')}}", width="20" height="17" />
+                                            <span class="heart-count">{{featured_article.heart_count}}</span>
+                                        </p>
+                                    </div>
+                                {% endif %}
+
+                                <div class="col-sm-5">
+                                    <p class="cta-text">Read guide &raquo;</p>
+                                </div>
+                            </div><!-- row -->
                         </a>
                     </div>
                 </div>

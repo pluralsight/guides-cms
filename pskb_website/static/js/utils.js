@@ -261,19 +261,19 @@ function toggleHeart(heart_element, count_element, stack, title) {
 
     toggling_heart = true;
 
-    var add_heart = !heart_element.hasClass('glyphicon-heart');
+    var add_heart = !heart_element.hasClass('heart');
     var current_count = parseInt(count_element.html() || 0);
     var request_url;
 
     var addHeartToUI = function() {
-        heart_element.toggleClass('glyphicon-heart', true);
-        heart_element.toggleClass('glyphicon-heart-empty', false);
+        heart_element.toggleClass('heart', true);
+        heart_element.toggleClass('heart-empty', false);
         count_element.html(current_count + 1);
     };
 
     var removeHeartFromUI = function() {
-        heart_element.toggleClass('glyphicon-heart', false);
-        heart_element.toggleClass('glyphicon-heart-empty', true);
+        heart_element.toggleClass('heart', false);
+        heart_element.toggleClass('heart-empty', true);
         var new_count = current_count - 1;
 
         if (!new_count) {

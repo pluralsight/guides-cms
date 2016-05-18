@@ -84,7 +84,7 @@
                 <br />
                 <h3 id="related"><small>Related to {{article.stacks|join(',')}}</small></h3>
             {% endif %}
-            <span class="glyphicon heart-guide" aria-hidden="true" title="Let the community know this guide was useful">
+            <span class="heart-guide heart-info heart-empty" title="Let the community know this guide was useful">
                 <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
             </span>
         </div><!-- article-header -->
@@ -94,11 +94,11 @@
         {{article.content|safe}}
 
         <div id="love-it">
-            <h4>Love this guide? Let the community know!
-                <span class="glyphicon heart-guide" aria-hidden="true">
-                    <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
-                </span>
-            </h4>
+            <p>Love this guide? Let the community know by clicking the heart!
+            <span class="heart-guide heart">
+                <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
+            </span>
+            </p>
         </div>
 
         {# This is an extra API request so only do it for published guides. #}
@@ -239,8 +239,8 @@
         article.css('z-index', article_z);
     });
 
-    $('.heart-guide').toggleClass('glyphicon-heart', {{'true' if hearted else 'false'}});
-    $('.heart-guide').toggleClass('glyphicon-heart-empty', {{'false' if hearted else 'true'}});
+    $('.heart-guide').toggleClass('heart', {{'true' if hearted else 'false'}});
+    $('.heart-guide').toggleClass('heart-empty', {{'false' if hearted else 'true'}});
 
     {# Login required to heart guide so don't even bother connecting it, we'll
        still check it on the server-side too. This just minimizes confusion for

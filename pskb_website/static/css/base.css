@@ -346,12 +346,35 @@ a:hover.emphasize-dark  {
     word-wrap: break-word;
 }
 
-.article-teaser .glyphicon-heart {
-    font-size: 12px;
+.article-teaser .heart-info {
+    position: relative;
+    top: 28px;
+    margin-left: 10px;
 }
 
-.article-teaser .heart-count {
-    padding-left: 5px;
+.heart {
+    background-image: url('/static/img/full-heart.svg');
+    width: 19px;
+    height: 17px;
+    background-repeat: no-repeat;
+}
+
+.heart-empty {
+    background-image: url('/static/img/empty-heart.svg');
+    width: 19px;
+    height: 17px;
+    background-repeat: no-repeat;
+}
+
+.article-teaser .heart-info img {
+    position: absolute;
+    left: 10px;
+    top: 28px;
+}
+
+.article-teaser .heart-info .heart-count {
+    position: absolute;
+    left: 30px;
     font-size: 14px;
 }
 
@@ -433,11 +456,18 @@ a:hover.emphasize-dark  {
     font-size: 16px;
 }
 
-#article-header span.glyphicon {
+#article-header .heart-info {
     position: absolute;
     top: 40px;
     left: 50px;
     font-size: 18px;
+}
+
+#article-header .heart-guide .heart-count {
+    position: absolute;
+    /* width of heart icon plus a bit of space */
+    left: 30px;
+    font-size: 14px;
 }
 
 .heart-guide:hover,
@@ -445,15 +475,9 @@ a:hover.emphasize-dark  {
     cursor: pointer;
 }
 
-span.glyphicon-heart,
-span.glyphicon-heart-empty {
-    color: #fb6e20;
-}
-
 .heart-count {
     font-size: 15px;
     padding-left: 5px;
-    color: #777;
 }
 
 #title {
@@ -534,9 +558,18 @@ span.glyphicon-heart-empty {
     visibility: visible;
 }
 
+
 #love-it {
-    margin-top: 30px;
-    margin-bottom: 30px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+#love-it .heart-guide {
+    margin-left: 20px;
+}
+
+#love-it .heart-guide .heart-count {
+    margin-left: 30px;
 }
 
 #user-info {
@@ -891,7 +924,11 @@ td.login-name {
 
     #featured .article-details p.cta-text {
         color: #f96816;
-        margin-left: 50px;
+        margin-left: 100px;
+    }
+
+    #featured .article-details p.heart-info {
+        margin-left: 30px;
     }
 }
 
@@ -933,15 +970,23 @@ td.login-name {
         font-size: 14px;
     }
 
-    .article-teaser .article-author span.name {
-        float: left;
-        margin-top: 0px;
-    }
-
     .article-teaser .article-author span.gh-name {
         position: absolute;
         top: 25px;
-        left: 0px;
+        right: 55px;
+    }
+
+    .article-teaser .heart-info img {
+        position: absolute;
+        left: 10px;
+        top: -28px;
+    }
+
+    .article-teaser .heart-info .heart-count {
+        position: absolute;
+        left: 30px;
+        top: -28px;
+        font-size: 14px;
     }
 
     .article-teaser .article-author {
