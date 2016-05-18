@@ -59,9 +59,9 @@
                                                     <img src="{{url_for('static', filename='img/pluralsight_user.png')}}" alt="Pluralsight User"/>
                                                 {% endif %}
 
-                                                <span class="name"> {{article|author_name}} </span>
+                                                <span class="name"> {{article|author_name|truncate(50, True)}} </span>
                                                 {% if article.author_name != article.author_real_name %}
-                                                <span class="gh-name"> @{{article.author_name}} </span>
+                                                <span class="gh-name"> @{{article.author_name|truncate(50)}} </span>
                                                 {% endif %}
                                             </p>
                                         </div> <!-- teaser col -->
