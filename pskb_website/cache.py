@@ -22,32 +22,24 @@ In addition, this layer knows how to turn arguments into cache keys.
 """
 
 import functools
-import urlparse
 
 from . import app
+from . import utils
 
 # 8 minutes
 DEFAULT_CACHE_TIMEOUT = 8 * 60
 
-url = None
 redis_obj = None
 
 try:
-    import redis
-except ImportError:
-    app.logger.warning('No caching available, missing redis module')
+    url = app.config['REDISCLOUD_URL']
+except KeyError:
+    app.logger.warning('No caching available, please set REDISCLOUD_URL environment variable to enable caching.')
 else:
-    try:
-        url = app.config['REDISCLOUD_URL']
-    except KeyError:
-        url = None
+    redis_obj = utils.configure_redis_from_url(url)
+    if redis_obj is None:
+        app.logger.warning('No caching available, missing redis module')
 
-    if url is None:
-        app.logger.warning('No caching available, please set REDISCLOUD_URL environment variable to enable caching.')
-    else:
-        url = urlparse.urlparse(app.config['REDISCLOUD_URL'])
-        redis_obj = redis.Redis(host=url.hostname, port=url.port,
-                                password=url.password)
 
 # Local cache of etags from API requests for file listing. Saving these here
 # b/c they are small and can be kept in RAM without having to do http request
