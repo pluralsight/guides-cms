@@ -2,7 +2,10 @@ from flask import redirect, url_for, session, request, render_template, flash, g
 
 from flask_oauthlib.client import OAuth
 
+from .lib import login_required
 from . import app
+from . import models
+from . import cache
 
 
 oauth = OAuth(app)
@@ -27,12 +30,14 @@ def get_hackhands_oauth_token():
 
 
 @app.route('/hackhands_login')
+@login_required
 def hackhands_login():
     """hack.hands() oauth2 authorization"""
     return hackhands.authorize(callback='http://guides-dev.herokuapp.com/auth/hackhands', _external=True)
 
 
 @app.route('/auth/hackhands')
+@login_required
 def authorized_hackhands():
     """Callback for hack.hands() oauth2"""
     resp = hackhands.authorized_response()
@@ -41,14 +46,16 @@ def authorized_hackhands():
         return redirect(url_for('index'))
 
     token = resp['access_token']
-    session['hackhands_token'] = token
 
     headers = {'Accept': 'application/json'}
     resp = hackhands.get('/api/users/self', token=(token,), headers=headers)
 
+    print(resp, resp.status, resp and resp.status == 200, resp.status == 200)
     if resp and resp.status == 200:
+        print(resp.data.get('slug', None))
+        print(resp.data.get('slug', 'paulocheque'))
         if resp.data.get('slug', None):
-            user = models.find_user()
+            # Attach hackhands information to the user model
             hackhands_data = {
                 'id': resp.data['id'],
                 'slug': resp.data.get('slug', None),
@@ -56,6 +63,14 @@ def authorized_hackhands():
                 'is_approved_expert': resp.data.get('is_approved_expert', False),
                 'is_expert': resp.data.get('is_expert', False),
             }
+            user = models.find_user()
+            user.hackhands_data = hackhands_data
+            cache.save_user(user.login, models.lib.to_json(user), timeout=60 * 30)
+
+            # Update current session
+            session['hackhands_token'] = token
+            session['hackhands_slug'] = user.hackhands_data['slug']
+
             flash('You connected your hack.hands() account successfully')
         else:
             flash('Sorry, but you are not an approved expert in hack.hands() yet. Try connecting your account after being approved.', category='error')

@@ -125,11 +125,12 @@ def logout():
     """Logout page"""
 
     session.pop('github_token', None)
-    session.pop('hackhands_token', None)
     session.pop('login', None)
     session.pop('name', None)
     session.pop('collaborator', None)
     session.pop('user_image', None)
+    session.pop('hackhands_slug', None)
+    session.pop('hackhands_token', None)
 
     return redirect(url_for('index'))
 
@@ -171,6 +172,10 @@ def authorized():
             session['name'] = user.login
 
         session['collaborator'] = user.is_collaborator
+
+    if user.hackhands_data:
+        session['hackhands_slug'] = user.hackhands_data['slug']
+        session['hackhands_token'] = user.hackhands_data['token']
 
     url = session.pop('previously_requested_page', None)
     if url is not None:

@@ -66,6 +66,7 @@ class User(object):
         self.location = None
         self.blog = None
         self._is_collaborator = None
+        self.hackhands_data = None
 
     def __repr__(self):
         return '<login: %s>' % (self.login)
