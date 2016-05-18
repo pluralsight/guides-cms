@@ -103,8 +103,8 @@ body {
 }
 
 .navbar-inverse .hack-links:hover .external-hack-links {
-    background-color: #222;
-    border: 1px solid #111;
+    background-color: transparent;
+    border: none;
     border-top: 0;
 }
 
