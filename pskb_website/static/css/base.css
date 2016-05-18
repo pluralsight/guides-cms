@@ -383,6 +383,11 @@ a:hover.emphasize-dark  {
     padding: 10px;
 }
 
+.article-description img {
+    float: left;
+    margin-right: 10px;
+}
+
 #article-header {
     position: relative;
 }

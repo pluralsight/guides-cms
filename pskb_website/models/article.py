@@ -6,6 +6,9 @@ import collections
 import itertools
 import json
 import subprocess
+import os
+
+from flask import url_for
 
 from . import lib
 from . import file as file_mod
@@ -973,6 +976,24 @@ class Article(object):
         return '<author_name: %s title: %s status: %s>' % (self.author_name,
                                                            self.title,
                                                            self.publish_status)
+
+    @property
+    def stack_image_url(self):
+        """
+        Get path to static image for article based on stack
+
+        None will be returned for articles without a stack image
+        """
+
+        for stack in self.stacks:
+            file_path = os.path.join('img', 'stack_images', '%s.svg' % (
+                                     utils.slugify_stack(stack)))
+            static_path = os.path.join(app.static_folder, file_path)
+
+            if os.path.isfile(static_path):
+                return url_for('static', filename=file_path)
+
+        return None
 
     @property
     def publish_status(self):

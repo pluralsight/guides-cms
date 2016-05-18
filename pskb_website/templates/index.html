@@ -11,7 +11,9 @@
             {% if featured_article %}
                 <div class="row">
                     <div class="col-md-2 col-md-offset-2">
-                        <img src="{{url_for('static', filename='img/ruby-big.png')}}" width="99" height="104"/>
+                        {% if featured_article.stack_image_url %}
+                            <img src="{{featured_article.stack_image_url}}" width="99" height="104"/>
+                        {% endif %}
                     </div>
                     <div class="col-md-8">
                         <a href="{{featured_article|url_for_article}}">
