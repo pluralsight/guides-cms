@@ -800,7 +800,6 @@ a:hover.emphasize-dark  {
 #footer #signup #email {
     margin-top: 5px;
     height: 35px;
-    width: 210px;
 }
 
 .slack-signup a,
@@ -931,6 +930,11 @@ td.login-name {
 }
 
 @media(min-width:992px) {
+    #footer #signup #email {
+        /* Force bigger width when in same row as stacks box. */
+        width: 210px;
+    }
+
     .article-teaser .article-author span.gh-name {
         right: 70px;
     }
