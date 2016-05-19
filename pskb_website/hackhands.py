@@ -79,9 +79,9 @@ def authorized_hackhands():
 
 def save_data(username, hackhands_data):
     data = json.dumps(hackhands_data)
-    return cache.save('hackhands-data-' + username, data, timeout=None) # persist forever
+    return cache.save('hackhands:data:' + username, data, timeout=None) # persist forever
 
 
 def read_data(username):
-    hackhands_data = cache.get('hackhands-data-' + username)
+    hackhands_data = cache.get('hackhands:data:' + username)
     return json.loads(hackhands_data) if hackhands_data else None
