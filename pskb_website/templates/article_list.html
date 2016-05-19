@@ -32,44 +32,55 @@
                                         <div class="col-sm-3 article-teaser" data-row-id="{{loop.index0}}">
                         {% endif %}
 
-                                            {% for stack in article.stacks %}
-                                                <span class="stack" style="display: none;">{{stack}}</span>
-                                            {% endfor %}
-                                            <a href="{{article|url_for_article}}">
-                                                <span class="clickable"></span>
-                                            </a>
-                                            <div class="article-description">
-                                                {% if article.stack_image_url %}
-                                                    <img src="{{article.stack_image_url}}" width="40" height="43"/>
-                                                {% endif %}
+                                            <div class="row">
+                                                <div class="col-xs-4 col-sm-3">
+                                                    {% for stack in article.stacks %}
+                                                        <span class="stack" style="display: none;">{{stack}}</span>
+                                                    {% endfor %}
+                                                    <a href="{{article|url_for_article}}">
+                                                        <span class="clickable"></span>
+                                                    </a>
+                                                    <div class="article-description">
+                                                        {% if article.stack_image_url %}
+                                                            <img src="{{article.stack_image_url}}" width="40" height="43"/>
+                                                        {% endif %}
 
-                                                <p class='title'> {{article.title|truncate(80, True)}}</p>
+                                                    </div><!-- description -->
+                                                </div><!-- col -->
+                                                <div class="col-xs-8 col-sm-9 article-description">
+                                                    <p class='title'> {{article.title|truncate(80, True)}}</p>
 
-                                            {% if article.thumbnail_url %}
-                                                <img src="{{article.thumbnail_url}}" alt="{{article.title}}" class="thumbnail"/>
-                                            {% endif %}
+                                                    {% if article.thumbnail_url %}
+                                                        <img src="{{article.thumbnail_url}}" alt="{{article.title}}" class="thumbnail"/>
+                                                    {% endif %}
+                                                </div><!-- col -->
+                                            </div> <!-- row -->
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <hr>
+                                                </div>
                                             </div>
+                                            <div class="row">
+                                                <div class="heart-info heart col-xs-1">
+                                                    {% if article.heart_count %}
+                                                        <span class="heart-count">{{article.heart_count}}</span>
+                                                    {% endif %}
+                                                </div>
 
-                                            <hr>
+                                                <p class="col-xs-11 article-author">
+                                                    {% if article.image_url %}
+                                                        <img src="{{article.image_url}}&amp;s=100" alt="{{article.user}}"/>
+                                                    {% else %}
+                                                        <img src="{{url_for('static', filename='img/pluralsight_user.png')}}" alt="Pluralsight User"/>
+                                                    {% endif %}
 
-                                            <p class="article-author">
-                                                {% if article.image_url %}
-                                                    <img src="{{article.image_url}}&amp;s=100" alt="{{article.user}}"/>
-                                                {% else %}
-                                                    <img src="{{url_for('static', filename='img/pluralsight_user.png')}}" alt="Pluralsight User"/>
-                                                {% endif %}
+                                                    <span class="name"> {{article|author_name|truncate(50, True)}} </span>
+                                                    {% if article.author_name != article.author_real_name %}
+                                                    <span class="gh-name"> @{{article.author_name|truncate(50)}} </span>
+                                                    {% endif %}
+                                                </p>
 
-                                                <span class="name"> {{article|author_name|truncate(50, True)}} </span>
-                                                {% if article.author_name != article.author_real_name %}
-                                                <span class="gh-name"> @{{article.author_name|truncate(50)}} </span>
-                                                {% endif %}
-                                            </p>
-
-                                            {% if article.heart_count %}
-                                            <div class="heart-info heart">
-                                                <span class="heart-count">{{article.heart_count}}</span>
-                                            </div>
-                                            {% endif %}
+                                            </div> <!-- row -->
                                         </div> <!-- teaser col -->
                         {% if loop.last %}
                                     </div> <!-- inner-row -->

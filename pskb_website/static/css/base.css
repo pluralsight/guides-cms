@@ -397,7 +397,7 @@ a:hover.emphasize-dark  {
 .article-teaser .heart-info {
     position: relative;
     top: 28px;
-    margin-left: 10px;
+    margin-left: 20px;
 }
 
 .heart {
@@ -1039,7 +1039,6 @@ td.login-name {
     }
 
     .article-teaser .article-author {
-        text-align: center;
         font-size: 14px;
     }
 
@@ -1047,19 +1046,6 @@ td.login-name {
         position: absolute;
         top: 25px;
         right: 55px;
-    }
-
-    .article-teaser .heart-info img {
-        position: absolute;
-        left: 10px;
-        top: -28px;
-    }
-
-    .article-teaser .heart-info .heart-count {
-        position: absolute;
-        left: 30px;
-        top: -28px;
-        font-size: 14px;
     }
 
     .article-teaser .article-author {
@@ -1074,7 +1060,6 @@ td.login-name {
 }
 
 @media(max-width:767px) {
-
     #featured h1 {
         font-size: 36px;
     }
