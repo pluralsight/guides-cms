@@ -153,7 +153,7 @@ a, a:visited, a:hover, a:focus {
 }
 
 #navbar a.emphasize {
-    padding: 15px 35px 15px 35px;
+    padding: 9px 35px 9px 35px;
 }
 
 #article-sidebar {
@@ -181,6 +181,10 @@ a:hover.emphasize-dark  {
     padding-top: 0px;
 }
 
+#navbar a {
+    font-weight: 300;
+}
+
 #header-white .navbar {
     background-color: #ffffff;
 }
@@ -199,6 +203,10 @@ a:hover.emphasize-dark  {
     background-image: url('/static/img/hero.png');
     width: 100%;
     background-size: cover;
+}
+
+#hero h2 {
+    font-size: 48px;
 }
 
 #header-dark {
@@ -289,6 +297,7 @@ a:hover.emphasize-dark  {
 #featured span.intro {
     font-size: 16px;
     padding-left: 10px;
+    font-weight: 500;
 }
 
 #featured a, #featured a:visited, #featured a:focus #featured a:hover {
@@ -341,9 +350,7 @@ a:hover.emphasize-dark  {
 
 .article-teaser:hover {
     color: #f96816;
-    -moz-box-shadow: 1px 1px 5px #333;
-    -webkit-box-shadow: 1px 1px 5px #333;
-    box-shadow: 1px 1px 5px #333;
+    background-color: #414042;
 }
 
 .article-teaser .article-author {
@@ -417,8 +424,9 @@ a:hover.emphasize-dark  {
 }
 
 .article-teaser .title {
-    font-size: 15px;
+    font-size: 17px;
     height: 50px;
+    font-weight: 500;
 }
 
 .article-teaser hr {
@@ -606,7 +614,7 @@ a:hover.emphasize-dark  {
     position: relative;
     z-index: 2;
     margin-top: 0px;
-    padding: 15px 15px 100px 15px;
+    padding: 30px 15px 100px 15px;
     background-color: #2d2d2d;
     color: #ffffff;
     min-height: 300px;
@@ -693,9 +701,9 @@ a:hover.emphasize-dark  {
 
 #article-list .nav li a.active, #article-list .nav li a.active:visited, #article-list .nav li a.active:focus, #article-list .nav li.active:hover {
     color: #ffffff;
-    text-decoration: underline;
     background-color: #222222;
     border-bottom: 5px solid #f96816;
+    font-weight: 500;
 }
 
 #article-list .nav li a, #article-list .nav li a:visited, #article-list .nav li a:focus, #article-list .nav li:hover {
@@ -834,6 +842,24 @@ a:hover.emphasize-dark  {
     font-size: 20px;
 }
 
+.mission p {
+    text-align: left;
+}
+
+.mission .cta-text {
+    font-weight: 500;
+}
+
+.mission .feature img {
+    float: left;
+    margin-right: 10px;
+}
+
+.mission .feature p {
+    line-height: 2em;
+    float: left;
+}
+
 #hero .mission {
     background-color: transparent;
 }
@@ -939,13 +965,8 @@ td.login-name {
         right: 70px;
     }
 
-    #featured .article-details p {
-        float: left;
-    }
-
     #featured .article-details p.cta-text {
         color: #f96816;
-        margin-left: 100px;
     }
 
     #featured .article-details p.heart-info {

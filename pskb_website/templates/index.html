@@ -10,15 +10,22 @@
             <div id="featured">
             {% if featured_article %}
                 <div class="row">
-                    <div class="col-xs-4 col-md-2 col-md-offset-2">
+                    <div class="col-xs-4 col-md-2 col-md-offset-1">
                         {% if featured_article.stack_image_url %}
                             <img src="{{featured_article.stack_image_url}}" width="99" height="104"/>
                         {% endif %}
                     </div>
-                    <div class="col-xs-8">
+
+                    <!--
+                    Purposely not using all 12 columns here to force title
+                    to wrap sooner. This will prevent lots of titles from
+                    having only 1 word on second line.
+                    -->
+
+                    <div class="col-xs-8 col-md-7">
                         <a href="{{featured_article|url_for_article}}">
                             <span class="intro">Featured Guide</span>
-                            <h1 class="lead">{{featured_article.title}}</h1>
+                            <h1>{{featured_article.title}}</h1>
                             <div class="article-details row">
                                 <div class="col-sm-3">
                                     <p>by {{featured_article|author_name}}</p>
@@ -32,9 +39,11 @@
                                     </div>
                                 {% endif %}
 
-                                <div class="col-sm-5">
-                                    <p class="cta-text">Read guide &raquo;</p>
-                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <p class="cta-text">Read guide &raquo;</p>
+                                    </div>
+                                </div><!-- row -->
                             </div><!-- row -->
                         </a>
                     </div>
@@ -44,7 +53,7 @@
                     <div class="col-md-12">
                         <a href="{{url_for('faq')}}">
                             <span class="intro">Featured Guide</span>
-                            <h1 class="lead">Our Mission</h1>
+                            <h1>Our Mission</h1>
                             <div class="article-details">
                                 <p>by hack.guides()</p>
                                 <p class="cta-text">Read more &raquo;</p>
