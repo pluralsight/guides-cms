@@ -307,6 +307,8 @@ a:hover.emphasize-dark  {
     margin-top: 130px;
     padding-top: 30px;
     padding-bottom: 30px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 #featured img {
@@ -1072,6 +1074,11 @@ td.login-name {
 }
 
 @media(max-width:767px) {
+
+    #featured h1 {
+        font-size: 36px;
+    }
+
     #featured img {
         margin-left: 5px;
     }
