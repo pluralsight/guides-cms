@@ -38,6 +38,14 @@
                             <li><a href="{{url_for('in_review')}}">Review</a></li>
                             <li><a href="{{url_for('contributors')}}">Contributors</a></li>
 
+                            {% if not session.github_token %}
+                            <li><a href="{{url_for('login')}}" class="cta-text">Sign in with Github</a></li>
+                            {% endif %}
+
+                            {% if not article %}
+                            <li><a href="{{url_for('write')}}" class="emphasize">Write a Guide</a></li>
+                            {% endif %}
+
                             {% if session.github_token %}
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -53,14 +61,6 @@
                                     <li><a href="{{session.login|url_for_user}}">My Guides</a></li>
                                 </ul>
                             </li>
-
-                            {% else %}
-                            <li><a href="{{url_for('login')}}" class="cta-text">Sign in with Github</a></li>
                             {% endif %}
-
-                            {% if not article %}
-                            <li><a href="{{url_for('write')}}" class="emphasize">Write a Guide</a></li>
-                            {% endif %}
-
                         </ul>
                     </div>
