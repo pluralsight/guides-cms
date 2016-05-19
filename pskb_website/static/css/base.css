@@ -210,10 +210,14 @@ a:hover.emphasize-dark  {
 #header-dark .navbar {
     background-color: #2d2d2d;
     border: none;
+
+    /* Enough height to clear the drop-down logo menu */
+    min-height: 105px;
 }
 
 #hero #header-dark .navbar {
     background-color: transparent;
+    min-height: initial;
 }
 
 #hero #header-dark {
