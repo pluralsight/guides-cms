@@ -432,6 +432,7 @@ a:hover.emphasize-dark  {
     position: absolute;
     left: 30px;
     font-size: 14px;
+    margin-left: -5px;
 }
 
 .article-teaser .article-author span.name {
@@ -534,7 +535,6 @@ a:hover.emphasize-dark  {
 
 .heart-count {
     font-size: 15px;
-    padding-left: 5px;
 }
 
 #title {
