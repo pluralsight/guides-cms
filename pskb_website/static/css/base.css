@@ -313,6 +313,13 @@ a:hover.emphasize-dark  {
 
 #featured img {
     margin-left: 10px;
+    /* Match bootstrap setting for h1 */
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+#featured .heart-info img {
+    margin-top: 0px;
 }
 
 #featured .article-details p {
@@ -326,6 +333,7 @@ a:hover.emphasize-dark  {
 }
 
 #featured span.intro {
+    color: #ffffff;
     font-size: 16px;
     padding-left: 10px;
     font-weight: 500;
