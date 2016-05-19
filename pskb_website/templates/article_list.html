@@ -32,14 +32,14 @@
                                         <div class="col-sm-3 article-teaser" data-row-id="{{loop.index0}}">
                         {% endif %}
 
+                                            <a href="{{article|url_for_article}}">
+                                                <span class="clickable"></span>
+
                                             <div class="row">
                                                 <div class="col-xs-4">
                                                     {% for stack in article.stacks %}
                                                         <span class="stack" style="display: none;">{{stack}}</span>
                                                     {% endfor %}
-                                                    <a href="{{article|url_for_article}}">
-                                                        <span class="clickable"></span>
-                                                    </a>
                                                     <div class="article-description">
                                                         {% if article.stack_image_url %}
                                                             <img src="{{article.stack_image_url}}" width="40" height="43"/>
@@ -82,6 +82,8 @@
 
                                             </div> <!-- row -->
                                         </div> <!-- teaser col -->
+
+                                        </a><!-- clickable -->
                         {% if loop.last %}
                                     </div> <!-- inner-row -->
                                 </div> <!-- col-md-12 -->

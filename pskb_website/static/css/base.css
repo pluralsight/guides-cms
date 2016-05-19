@@ -429,6 +429,7 @@ a:hover.emphasize-dark  {
 }
 
 .article-teaser .heart-info .heart-count {
+    color: #ffffff;
     position: absolute;
     left: 30px;
     font-size: 14px;
@@ -464,6 +465,7 @@ a:hover.emphasize-dark  {
 }
 
 .article-teaser .title {
+    color: #ffffff;
     font-size: 17px;
     height: 50px;
     font-weight: 500;
