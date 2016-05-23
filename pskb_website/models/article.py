@@ -564,14 +564,22 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     return new
 
 
-def save_article_meta_data(article, author_name, email, branch=None):
+def save_article_meta_data(article, author_name=None, email=None, branch=None,
+                           update_branches=True):
     """
     :param article: Article object
-    :param author_name: Name of author who wrote article
-    :param email: Email address of author
+    :param author_name: Name of author who wrote article (optional)
+    :param email: Email address of author (optional)
     :param branch: Optional branch to save metadata, if not given
                    article.branch will be used
+    :param update_branches: Optional boolean to update the metadata branches of
+                            the article with the given branch (True) or to save
+                            article branches as-is (False)
     :returns: SHA of commit or None if commit failed
+
+    Note that author_name and email can be None if the site 'admin' is changing
+    the meta data.  However, author_name and email must both exist or both be
+    None.
     """
 
     filename = meta_data_path_for_article_path(article.full_path)
@@ -591,14 +599,15 @@ def save_article_meta_data(article, author_name, email, branch=None):
 
         orig_article = Article.from_json(details.text)
 
-        # Merge the original article metadata with the new version.  Currently
-        # the only thing that can change here is the list of branches. We only
-        # modify the list of branches when saving a branched article so we
-        # merge the two lists of branches here since removal of a branch should
-        # happen elsewhere.
-        for orig_branch in orig_article.branches:
-            if orig_branch not in article.branches:
-                article.branches.append(orig_branch)
+        if update_branches:
+            # Merge the original article metadata with the new version.
+            # Currently the only thing that can change here is the list of
+            # branches. We only modify the list of branches when saving a
+            # branched article so we merge the two lists of branches here since
+            # removal of a branch should happen elsewhere.
+            for orig_branch in orig_article.branches:
+                if orig_branch not in article.branches:
+                    article.branches.append(orig_branch)
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
@@ -702,7 +711,8 @@ def save_branched_article_meta_data(article, author_name, email,
     # Note we don't ever change metadata on the branches. This keeps the
     # metadata from showing in up in merges. We only want to deal with article
     # text for merges.
-    return save_article_meta_data(orig_article, author_name, email)
+    return save_article_meta_data(orig_article, author_name, email,
+                                  update_branches=False)
 
 
 def delete_article(article, message, name, email):
