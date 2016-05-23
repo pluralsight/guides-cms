@@ -3,12 +3,19 @@ Collection of URLs responding to Github webhooks API
 """
 
 import json
-
-from . import app
-from . import cache
-from .models.article import ARTICLE_FILENAME
+import re
 
 from flask import request, Response
+
+from . import app
+from . import DRAFT
+from . import cache
+from .lib import read_article
+from .utils import slugify_stack
+from .models import article as article_mod
+from .forms import STACK_OPTIONS
+
+STACKS_OR = '|'.join(re.escape(slugify_stack(unicode(s))) for s in STACK_OPTIONS + (article_mod.DEFAULT_STACK,))
 
 
 @app.route('/github_push', methods=['POST'])
@@ -30,6 +37,7 @@ def push_event():
         return finished
 
     branch = ref.split('/')[-1]
+    cleared = set()
 
     for commit in commits:
         mod_files = _safe_index_json(commit, 'modified',
@@ -38,9 +46,66 @@ def push_event():
             continue
 
         for path in _articles(mod_files):
+            if (path, branch) in cleared:
+                continue
+
             app.logger.debug('Invalidating path: "%s", branch: "%s" from push event',
                              path, branch)
+
             cache.delete_file(path, branch)
+            cleared.add((path, branch))
+
+    return finished
+
+
+@app.route('/github_delete', methods=['POST'])
+def delete_event():
+    """
+    Detect if a branch was deleted and we need to update the list of branches
+    on any guides
+    """
+
+    finished = Response(response='', status=200, mimetype='application/json')
+    print json.dumps(request.json, sort_keys=True, indent=4, separators=(',', ': '))
+
+    ref = _safe_index_json(request.json, 'ref', 'No ref found in delete event')
+    if ref is None:
+        return finished
+
+    ref_type = _safe_index_json(request.json, 'ref_type',
+                                'No ref_type found in delete event')
+
+    if ref_type is None or ref_type != 'branch' or ref_type == 'master':
+        return finished
+
+    branch = ref.split('/')[-1]
+
+    # There are '-' separating the components.
+    match = re.match(r'([a-zA-Z_-]+?)-(%s{1})-(.+)' % (STACKS_OR), ref)
+    if match is None:
+        app.logger.warning('Failed parsing ref from delete event, ref: %s', ref)
+        return finished
+
+    if len(match.groups()) != 3:
+        app.logger.warning('Unable to match all 3 compenents from delete event, ref: %s', ref)
+        return finished
+
+    username, stack, title = match.groups()
+
+    # Find article, arbitrarily starting at DRAFT status.
+    # NOTE we use the master branch here b/c that's where all the articles'
+    # branches are stored/deleted from.
+
+    article = read_article(stack, title, u'master', DRAFT, rendered_text=False)
+    if article is None:
+        app.logger.warning('No article found for delete event, stack: "%s", title: "%s", branch: "%s"',
+                           stack, title, branch)
+        return finished
+
+    if not article_mod.delete_branch(article, branch):
+        app.logger.warning('Failed deleting branch for delete event, stack: "%s", title: "%s", branch: "%s"',
+                           stack, title, branch)
+        return finished
 
     return finished
 
@@ -70,7 +135,7 @@ def _articles(paths):
     :param paths: List of file paths
     """
 
-    file_path = u'/%s' % (ARTICLE_FILENAME)
+    file_path = u'/%s' % (article_mod.ARTICLE_FILENAME)
 
     for path in paths:
         if path.endswith(file_path):

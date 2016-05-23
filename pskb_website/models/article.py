@@ -834,6 +834,40 @@ def change_article_stack(orig_path, orig_stack, new_stack, title, author_name,
     return new_path
 
 
+def delete_branch(article, branch_to_delete):
+    """
+    Delete branch of guide and save to github
+
+    :param article: Article object to delete branch from
+    :param branch_to_delete: Branch of guide to delete
+    :returns: True if deleted or False otherwise
+    """
+
+    for author, branch_name in article.branches:
+        if branch_name == branch_to_delete:
+            article.branches.remove([author, branch_name])
+            break
+    else:
+        app.logger.error('Unable to find branch to delete branch: "%s", stack: "%s", title:"%s"',
+                         branch_to_delete, article.stacks[0], article.title)
+        return False
+
+    # Note we don't use a author name or email here b/c we're committing this
+    # as the REPO_OWNER. We don't have access to that email address unless the
+    # REPO_OWNER happens to be cached and/or logged in recently. So, we're not
+    # even going to try.
+    commit_sha = save_article_meta_data(article, branch=u'master',
+                                        update_branches=False)
+    if commit_sha is None:
+        app.logger.error('Failed saving metadata for delete event branch: "%s", stack: "%s", title:"%s"',
+                         branch_to_delete, article.stacks[0], article.title)
+        return False
+
+    _delete_article_from_cache(article)
+
+    return True
+
+
 def _delete_article_from_cache(article):
     """
     Delete given article from cache if it exists
@@ -846,6 +880,9 @@ def _delete_article_from_cache(article):
     # The point of this function is so outside article.py there is no knowledge
     # of what the cache key is or how we cache it.
     cache.delete_file(article.path, article.branch)
+
+    for author, branch_name in article.branches:
+        cache.delete_file(article.path, branch_name)
 
 
 def _read_article_from_cache(path, branch=u'master'):
