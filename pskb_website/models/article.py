@@ -23,6 +23,7 @@ from .. import utils
 FILE_EXTENSION = '.md'
 ARTICLE_FILENAME = 'article%s' % (FILE_EXTENSION)
 ARTICLE_METADATA_FILENAME = 'details.json'
+DEFAULT_STACK = u'other'
 
 path_details = collections.namedtuple('path_details', 'repo, filename')
 
@@ -885,7 +886,7 @@ class Article(object):
 
         self.title = title
         self.author_name = author_name
-        self.stacks = stacks or [u'other']
+        self.stacks = stacks or [DEFAULT_STACK]
         self.content = content
         self.external_url = external_url
         self.filename = filename
@@ -1008,7 +1009,7 @@ class Article(object):
 
             # This field used to be optional
             elif attr == 'stacks' and not value:
-                value = [u'other']
+                value = [DEFAULT_STACK]
 
             # Backwards compatability. We used to only store a list of branch
             # names b/c branches were named after editor. Now branches are
