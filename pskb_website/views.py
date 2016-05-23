@@ -341,7 +341,7 @@ def article_view(stack, title):
     # Branches are deleted once they are accepted or rejected so show the
     # master if we can find it.
     if branch != u'master':
-        flash('Unable to find %s\'s branch, maybe their changes were accepted into the master branch below.' % (branch),
+        flash('Unable to find %s branch, maybe those changes were accepted into the master branch below.' % (branch),
               category='info')
 
         # Master is default branch so don't bother including, just for cleaner
