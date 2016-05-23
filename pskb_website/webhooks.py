@@ -2,10 +2,14 @@
 Collection of URLs responding to Github webhooks API
 """
 
+import hmac
+from hashlib import sha1
 import json
+import os
 import re
+from sys import hexversion
 
-from flask import request, Response
+from flask import request, Response, abort
 
 from . import app
 from . import DRAFT
@@ -18,12 +22,59 @@ from .forms import STACK_OPTIONS
 STACKS_OR = '|'.join(re.escape(slugify_stack(unicode(s))) for s in STACK_OPTIONS + (article_mod.DEFAULT_STACK,))
 
 
+def validate_webhook_source():
+    """
+    Validate that a webhook request came from github.com using our customized
+    secret code
+
+    This function was inspired by:
+        - https://github.com/carlos-jenkins/python-github-webhooks/blob/master/webhooks.py
+    """
+
+    secret = app.config.get('WEBHOOK_SECRET') 
+    if not secret:
+        return
+
+    # Only SHA1 is supported
+    header_signature = request.headers.get('X-Hub-Signature')
+    if header_signature is None:
+        app.logger.warning('No X-Hub-Signature header in webhook request')
+        abort(403)
+
+    sha_name, signature = header_signature.split('=')
+    if sha_name != 'sha1':
+        app.logger.warning('Incorrect header signature in webhook request: "%s"',
+                           header_signature)
+        abort(501)
+
+    # HMAC requires the key to be bytes, but data is string
+    mac = hmac.new(str(secret), msg=request.data, digestmod=sha1)
+    correct_signature = str(mac.hexdigest())
+
+    # Python prior to 2.7.7 does not have hmac.compare_digest
+    if hexversion >= 0x020707F0:
+        if not hmac.compare_digest(correct_signature, str(signature)):
+            app.logger.warning('Webhook request did not come from github, is: "%s", shb: "%s"',
+                               signature, correct_signature)
+            abort(403)
+    else:
+        # What compare_digest provides is protection against timing
+        # attacks; we can live without this protection for a web-based
+        # application
+        if not correct_signature == str(signature):
+            app.logger.warning('Webhook request did not come from github, is: "%s", shb: "%s"',
+                               signature, correct_signature)
+            abort(403)
+
+
 @app.route('/github_push', methods=['POST'])
 def push_event():
     """
     Detect if any of the pushed commits dealt with a guide and invalidate the
     cache for those guides.
     """
+
+    validate_webhook_source()
 
     finished = Response(response='', status=200, mimetype='application/json')
 
@@ -64,6 +115,8 @@ def delete_event():
     Detect if a branch was deleted and we need to update the list of branches
     on any guides
     """
+
+    validate_webhook_source()
 
     finished = Response(response='', status=200, mimetype='application/json')
     print json.dumps(request.json, sort_keys=True, indent=4, separators=(',', ': '))
