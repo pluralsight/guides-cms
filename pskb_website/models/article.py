@@ -762,9 +762,6 @@ def delete_article(article, message, name, email):
                                           name, email, article.branch):
         return False
 
-    # FIXME: Need to update the cache reference to the original article so we
-    # don't think this branch still exists in cache.
-
     return True
 
 
