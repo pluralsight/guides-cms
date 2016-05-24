@@ -99,8 +99,8 @@ def push_event():
             if (path, branch) in cleared:
                 continue
 
-            app.logger.debug('Invalidating path: "%s", branch: "%s" from push event',
-                             path, branch)
+            app.logger.info('Invalidating path: "%s", branch: "%s" from push event',
+                            path, branch)
 
             cache.delete_file(path, branch)
             cleared.add((path, branch))
@@ -158,6 +158,9 @@ def delete_event():
         app.logger.warning('Failed deleting branch for delete event, stack: "%s", title: "%s", branch: "%s"',
                            stack, title, branch)
         return finished
+
+    app.logger.info('Deleted branch for delete event, stack: "%s", title: "%s", branch: "%s"',
+                    stack, title, branch)
 
     return finished
 
