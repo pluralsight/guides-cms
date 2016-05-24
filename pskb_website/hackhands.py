@@ -12,14 +12,16 @@ from . import cache
 
 oauth = OAuth(app)
 
+base_url = app.config.get('HACK_HANDS_BASE_URL', 'https://hackhands.com')
+
 hackhands = oauth.remote_app(
     'hackhands',
     consumer_key=app.config['HACK_HANDS_CLIENT_ID'],
     consumer_secret=app.config['HACK_HANDS_CLIENT_SECRET'],
     request_token_params={'scope': []},
-    authorize_url='https://pegasus.hackhands.com/api/o/authorize/',
+    authorize_url=base_url + '/api/o/authorize/',
     request_token_url=None,
-    base_url=app.config.get('HACK_HANDS_BASE_URL', 'https://hackhands.com'),
+    base_url=base_url,
     access_token_method='POST',
     access_token_url='/api/o/token/',
 )
@@ -35,7 +37,8 @@ def get_hackhands_oauth_token():
 @login_required
 def hackhands_login():
     """hack.hands() oauth2 authorization"""
-    return hackhands.authorize(callback='http://guides-dev.herokuapp.com/auth/hackhands', _external=True)
+    callback_url = url_for('authorized_hackhands', _external=True)
+    return hackhands.authorize(callback=callback_url)
 
 
 @app.route('/auth/hackhands')
