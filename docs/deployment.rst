@@ -83,9 +83,13 @@ Useful Heroku add-ons
 ---------------------
 
 1. `Papertrail <https://elements.heroku.com/addons/papertrail>`_
-    * Provides bigger log for debugging issues and enables easy searching
+
+* Provides bigger log for debugging issues and enables easy searching
+* `Install the CLI tools <https://github.com/papertrail/papertrail-cli#readme>`_
+  for Papertrail if you prefer using the CLI over their website
+
 2. `New Relic <https://elements.heroku.com/addons/newrelic>`_
-    * Excellent performance analysis tool
+* Excellent performance analysis tool
 
 .. _celery_on_heroku:
 
