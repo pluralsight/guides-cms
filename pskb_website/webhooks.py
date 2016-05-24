@@ -5,7 +5,6 @@ Collection of URLs responding to Github webhooks API
 import hmac
 from hashlib import sha1
 import json
-import os
 import re
 from sys import hexversion
 
@@ -31,7 +30,7 @@ def validate_webhook_source():
         - https://github.com/carlos-jenkins/python-github-webhooks/blob/master/webhooks.py
     """
 
-    secret = app.config.get('WEBHOOK_SECRET') 
+    secret = app.config.get('WEBHOOK_SECRET')
     if not secret:
         return
 
@@ -165,7 +164,7 @@ def delete_event():
 
 def _safe_index_json(json_, key, warning_message):
     """
-    Safely index the given JSON object 
+    Safely index the given JSON object
 
     :param json_: JSON object
     :param key: Key to inspect in JSON object
