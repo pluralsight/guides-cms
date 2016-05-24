@@ -232,6 +232,7 @@ a:hover.emphasize-dark  {
     background-image: url('/static/img/hero.png');
     width: 100%;
     background-size: cover;
+    background-color: #2d2d2d;
 }
 
 #hero h2 {
