@@ -87,8 +87,22 @@ Useful Heroku add-ons
 * Provides bigger log for debugging issues and enables easy searching
 * `Install the CLI tools <https://github.com/papertrail/papertrail-cli#readme>`_
   for Papertrail if you prefer using the CLI over their website
+* Below are a few useful search queries:
+
+================================================= ===========================
+Description                                       Query
+================================================= ===========================
+All app output along with heroku routing requests ("app/web" OR "heroku/router")  -"newrelic"
+All output minus Heroku stats                     -"newrelic.core.agent" or -"newrelic.core.data_collector" or -"sample#memory_total" or -"sample#load_avg_1m" or -"sample#active-connections"
+Only web app output                               "app/web" -"newrelic"
+Github API rate usage                             "core remaining:"
+Heroku scheduled task output                      program:scheduler
+Exceptions from Celery tasks                      CalledProcessError
+Celery output worker                              -(dyno= OR exiting OR Booting OR Autorestarting OR State changed)
+================================================= ===========================
 
 2. `New Relic <https://elements.heroku.com/addons/newrelic>`_
+
 * Excellent performance analysis tool
 
 .. _celery_on_heroku:
@@ -134,6 +148,7 @@ duplicate titles **and** stack.  However, it's easier to use version 2 because
 it's a simple string.  Therefore, you can use whichever suits your situation,
 if you don't think you'll have duplicate titles then version 2 is preferred.
 
+--------------------------
 Using environment variable
 --------------------------
 
@@ -141,6 +156,7 @@ This environment variable must be set in a way that will persist across all
 running instances of the application. You can do this with the Heroku CLI or
 admin panel, if you're running on Heroku.
 
+-----------
 Using Redis
 -----------
 
