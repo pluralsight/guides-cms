@@ -34,7 +34,7 @@ This event is used to clean up the list of branches associated with a guide.
 1. Go to the settings area of your content repository where all of your guides
    are stored and click on 'Webhooks & services'.
 2. Click 'Add webhook'
-3. Set the `Payload URL` to `<your_domain>/github_push`
+3. Set the `Payload URL` to `<your_domain>/github_delete`
 4. The `Content type` should be `application/json`
 5. Setup your *secret* field according to `Github's instructions <https://developer.github.com/webhooks/securing/>`_ or use the same *secret* you configured for Push Events above.
 6. Only subscript to the delete event
