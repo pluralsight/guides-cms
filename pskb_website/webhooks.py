@@ -118,7 +118,6 @@ def delete_event():
     validate_webhook_source()
 
     finished = Response(response='', status=200, mimetype='application/json')
-    print json.dumps(request.json, sort_keys=True, indent=4, separators=(',', ': '))
 
     ref = _safe_index_json(request.json, 'ref', 'No ref found in delete event')
     if ref is None:
