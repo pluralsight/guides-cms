@@ -23,6 +23,7 @@ from .. import utils
 FILE_EXTENSION = '.md'
 ARTICLE_FILENAME = 'article%s' % (FILE_EXTENSION)
 ARTICLE_METADATA_FILENAME = 'details.json'
+DEFAULT_STACK = u'other'
 
 path_details = collections.namedtuple('path_details', 'repo, filename')
 
@@ -414,6 +415,7 @@ def save_article(title, message, new_content, author_name, email, sha,
                       stacks=stacks)
     article.publish_status = status
     article.first_commit = first_commit
+    article.content = new_content
 
     commit_sha = remote.commit_file_to_github(article.full_path, message,
                                               new_content, author_name, email,
@@ -436,9 +438,7 @@ def save_article(title, message, new_content, author_name, email, sha,
         return commit_sha
 
     _delete_article_from_cache(article)
-
-    return read_article(article.path, rendered_text=True,
-                        branch=article.branch, repo_path=repo_path)
+    return article
 
 
 def branch_article(article, message, new_content, author_name, email,
@@ -564,14 +564,22 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     return new
 
 
-def save_article_meta_data(article, author_name, email, branch=None):
+def save_article_meta_data(article, author_name=None, email=None, branch=None,
+                           update_branches=True):
     """
     :param article: Article object
-    :param author_name: Name of author who wrote article
-    :param email: Email address of author
+    :param author_name: Name of author who wrote article (optional)
+    :param email: Email address of author (optional)
     :param branch: Optional branch to save metadata, if not given
                    article.branch will be used
+    :param update_branches: Optional boolean to update the metadata branches of
+                            the article with the given branch (True) or to save
+                            article branches as-is (False)
     :returns: SHA of commit or None if commit failed
+
+    Note that author_name and email can be None if the site 'admin' is changing
+    the meta data.  However, author_name and email must both exist or both be
+    None.
     """
 
     filename = meta_data_path_for_article_path(article.full_path)
@@ -591,14 +599,15 @@ def save_article_meta_data(article, author_name, email, branch=None):
 
         orig_article = Article.from_json(details.text)
 
-        # Merge the original article metadata with the new version.  Currently
-        # the only thing that can change here is the list of branches. We only
-        # modify the list of branches when saving a branched article so we
-        # merge the two lists of branches here since removal of a branch should
-        # happen elsewhere.
-        for orig_branch in orig_article.branches:
-            if orig_branch not in article.branches:
-                article.branches.append(orig_branch)
+        if update_branches:
+            # Merge the original article metadata with the new version.
+            # Currently the only thing that can change here is the list of
+            # branches. We only modify the list of branches when saving a
+            # branched article so we merge the two lists of branches here since
+            # removal of a branch should happen elsewhere.
+            for orig_branch in orig_article.branches:
+                if orig_branch not in article.branches:
+                    article.branches.append(orig_branch)
 
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
@@ -702,7 +711,8 @@ def save_branched_article_meta_data(article, author_name, email,
     # Note we don't ever change metadata on the branches. This keeps the
     # metadata from showing in up in merges. We only want to deal with article
     # text for merges.
-    return save_article_meta_data(orig_article, author_name, email)
+    return save_article_meta_data(orig_article, author_name, email,
+                                  update_branches=False)
 
 
 def delete_article(article, message, name, email):
@@ -751,9 +761,6 @@ def delete_article(article, message, name, email):
     if not remote.remove_file_from_github(article.full_path, message,
                                           name, email, article.branch):
         return False
-
-    # FIXME: Need to update the cache reference to the original article so we
-    # don't think this branch still exists in cache.
 
     return True
 
@@ -824,6 +831,40 @@ def change_article_stack(orig_path, orig_stack, new_stack, title, author_name,
     return new_path
 
 
+def delete_branch(article, branch_to_delete):
+    """
+    Delete branch of guide and save to github
+
+    :param article: Article object to delete branch from
+    :param branch_to_delete: Branch of guide to delete
+    :returns: True if deleted or False otherwise
+    """
+
+    for author, branch_name in article.branches:
+        if branch_name == branch_to_delete:
+            article.branches.remove([author, branch_name])
+            break
+    else:
+        app.logger.error('Unable to find branch to delete branch: "%s", stack: "%s", title:"%s"',
+                         branch_to_delete, article.stacks[0], article.title)
+        return False
+
+    # Note we don't use a author name or email here b/c we're committing this
+    # as the REPO_OWNER. We don't have access to that email address unless the
+    # REPO_OWNER happens to be cached and/or logged in recently. So, we're not
+    # even going to try.
+    commit_sha = save_article_meta_data(article, branch=u'master',
+                                        update_branches=False)
+    if commit_sha is None:
+        app.logger.error('Failed saving metadata for delete event branch: "%s", stack: "%s", title:"%s"',
+                         branch_to_delete, article.stacks[0], article.title)
+        return False
+
+    _delete_article_from_cache(article)
+
+    return True
+
+
 def _delete_article_from_cache(article):
     """
     Delete given article from cache if it exists
@@ -836,6 +877,9 @@ def _delete_article_from_cache(article):
     # The point of this function is so outside article.py there is no knowledge
     # of what the cache key is or how we cache it.
     cache.delete_file(article.path, article.branch)
+
+    for author, branch_name in article.branches:
+        cache.delete_file(article.path, branch_name)
 
 
 def _read_article_from_cache(path, branch=u'master'):
@@ -886,7 +930,7 @@ class Article(object):
 
         self.title = title
         self.author_name = author_name
-        self.stacks = stacks or [u'other']
+        self.stacks = stacks or [DEFAULT_STACK]
         self.content = content
         self.external_url = external_url
         self.filename = filename
@@ -1009,7 +1053,7 @@ class Article(object):
 
             # This field used to be optional
             elif attr == 'stacks' and not value:
-                value = [u'other']
+                value = [DEFAULT_STACK]
 
             # Backwards compatability. We used to only store a list of branch
             # names b/c branches were named after editor. Now branches are

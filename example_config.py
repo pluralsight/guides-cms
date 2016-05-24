@@ -16,7 +16,7 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'SECONDARY_REPO_OWNER', 'SECONDARY_REPO_NAME',
                            'DOMAIN', 'CELERY_BROKER_URL',
                            'CELERY_TASK_SERIALIZER', 'HOSTING_SUBDIRECTORY',
-                           'IGNORE_STATS_FOR')
+                           'IGNORE_STATS_FOR', 'WEBHOOK_SECRET')
 
 
 class Config(object):
@@ -51,6 +51,9 @@ class Config(object):
     MAILCHIMP_STACKS_GROUP_NAME = None
 
     DOMAIN = ''
+
+    # Only needed if using github webhooks
+    WEBHOOK_SECRET = ''
 
     # Set this to something like '/guides' if your hosting this application on
     # a subdirectory with a proxy pass rule that sends all /guides/* requests

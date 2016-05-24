@@ -2,15 +2,54 @@
 Collection of functions for general use
 """
 
-import os
 from functools import wraps
 from urlparse import urlparse
 
 from flask import redirect, url_for, session, request, flash
 
-from . import PUBLISHED
+from . import STATUSES
 from . import app
 from . import models
+
+
+def read_article(stack, title, branch, status, rendered_text=True):
+    """
+    Read article by checking all possible statuses, starting with given status
+
+    :param stack: Article stack
+    :param title: Article title
+    :param branch: Article branch
+    :param status: First status to check for article
+    :returns: Article object or None if not found
+
+    This is a small wrapper around models.read_article to handle the common
+    task of reading an article's text regardless of where it is in the publish
+    status workflow. models.read_article requires the path to the publish
+    status.
+    """
+
+    # Using a list here because we specifically want to check in this order but
+    # we don't want to check a single status more than once so don't want dups
+    # either.
+    statuses_to_check = [status]
+    for possible_status in STATUSES:
+        if possible_status not in statuses_to_check:
+            statuses_to_check.append(possible_status)
+
+    article = None
+    for status in statuses_to_check:
+        path = u'%s/%s/%s' % (status, stack, title)
+
+        # allow_missing is a workaround when we're looking for an article from
+        # old /review/ URL b/c we don't know what the status is we have to
+        # check them all.  We don't want to log things as missing if we didn't
+        # know where they were and had to check all locations.
+        article = models.read_article(path, branch=branch, allow_missing=True,
+                                      rendered_text=rendered_text)
+        if article is not None:
+            break
+
+    return article
 
 
 def is_logged_in():

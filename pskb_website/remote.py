@@ -363,6 +363,10 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     :param auto_encode: Boolean to automatically encode data as utf-8
 
     :returns: SHA of commit or None for failure
+
+    Note that name and email can be None if you want to make a commit with the
+    REPO_OWNER.  However, name and email should both exist or both be None,
+    which is a requirement of the underlying Github API.
     """
 
     url = contents_url_from_path(path)
@@ -370,9 +374,13 @@ def commit_file_to_github(path, message, content, name, email, sha=None,
     if auto_encode:
         content = base64.b64encode(content.encode('utf-8'))
 
-    commit_info = {'message': message, 'content': content, 'branch': branch,
-                   'author': {'name': name, 'email': email},
-                   'committer': {'name': name, 'email': email}}
+    commit_info = {'message': message, 'content': content, 'branch': branch}
+
+    if name is not None and email is not None:
+        commit_info['author'] = {'name': name, 'email': email}
+        commit_info['committer'] = {'name': name, 'email': email}
+    elif (name is None and email is not None) or (name is not None and email is None):
+        raise ValueError('Must specify both name and email or neither')
 
     if sha:
         commit_info['sha'] = sha

@@ -118,6 +118,8 @@ Redis for background tasks
     * `heroku config:set CELERY_BROKER_URL=<REDIS_URL>`
 * We don't set `CELERY_BROKER_URL` directly equal to `REDIS_URL` so that you're free to setup Celery with whatever broker you choose.
 
+.. _redis_caching:
+
 Adding Redis caching on Heroku
 ------------------------------
 
