@@ -409,7 +409,7 @@ a:hover.emphasize-dark  {
 
 .article-teaser .heart-info {
     position: relative;
-    top: 28px;
+    top: 45px;
     margin-left: 35px;
 }
 
@@ -1090,6 +1090,10 @@ td.login-name {
 
     #featured img {
         margin-left: 5px;
+    }
+
+    .article-teaser {
+        margin-left: 0px;
     }
 
     #footer .form-group-sm {

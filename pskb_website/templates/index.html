@@ -31,7 +31,7 @@
                         <a href="{{featured_article|url_for_article}}">
                             <h1>{{featured_article.title}}</h1>
                             <div class="article-details row">
-                                <div class="col-sm-3">
+                                <div class="col-sm-6">
                                     <p>by {{featured_article|author_name}}</p>
                                 </div>
                                 {% if config.ENABLE_HEARTING and featured_article.heart_count %}
