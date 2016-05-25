@@ -997,6 +997,11 @@ td.login-name {
     white-space: nowrap;
 }
 
+.img-column {
+    /* Match padding of header elements. */
+    padding-top: 20px;
+}
+
 #footer-logo-1 {
     display: block;
 }
