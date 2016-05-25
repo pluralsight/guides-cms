@@ -208,7 +208,15 @@ var updatePreview = function() {
 
     if (! currentVTree) {
         currentVTree = newVTree;
-        previewRootDomNode = vdom.create(currentVTree);
+        try {
+            previewRootDomNode = vdom.create(currentVTree);
+        } catch(err) {
+            console.error(err);
+            previewRootDomNode = null;
+            currentVTree = null;
+            updatingPreview = false;
+            return;
+        }
         preview.appendChild(previewRootDomNode);
         $(preview).find('pre code').each(function(i, e) {
             hljs.highlightBlock(e);
@@ -218,7 +226,15 @@ var updatePreview = function() {
     var patches = vdom.diff(currentVTree, newVTree);
     var numberDiffNodes = Object.keys(patches).length - 1;
     if (numberDiffNodes > 0) {
-        previewRootDomNode = vdom.patch(previewRootDomNode, patches);
+        try {
+            previewRootDomNode = vdom.patch(previewRootDomNode, patches);
+        } catch(err) {
+            console.error(err);
+            previewRootDomNode = null;
+            currentVTree = null;
+            updatingPreview = false;
+            return;
+        }
         currentVTree = newVTree;
         highlightNewCode(patches);
         scrollPreviewAccordingToEditor();
