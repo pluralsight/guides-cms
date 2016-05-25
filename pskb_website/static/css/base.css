@@ -432,30 +432,25 @@ a:hover.emphasize-dark  {
     background-repeat: no-repeat;
 }
 
-.article-teaser .heart-info img {
-    position: absolute;
-    left: 10px;
-    top: 28px;
-}
-
 .article-teaser .heart-info .heart-count {
     color: #ffffff;
     position: absolute;
     left: 30px;
-    font-size: 14px;
+    font-size: 10px;
     margin-left: -5px;
-    top: -2px;
 }
 
 .article-teaser .article-author span.name {
     margin-right: 10px;
     margin-top: 5px;
     float: right;
+    font-size: 15px;
 }
 
 .article-teaser .article-author span.gh-name {
     position: absolute;
     top: 25px;
+    font-size: 12px;
 }
 
 .article-teaser .article-author img {
