@@ -237,6 +237,7 @@ a:hover.emphasize-dark  {
 
 #hero h2 {
     font-size: 48px;
+    margin-bottom: 15px;
 }
 
 #header-dark {
@@ -305,7 +306,7 @@ a:hover.emphasize-dark  {
 #featured {
     background-color: #414042;
     min-height: 200px;
-    margin-top: 130px;
+    margin-top: 100px;
     padding-top: 30px;
     padding-bottom: 30px;
     overflow-wrap: break-word;
@@ -323,6 +324,11 @@ a:hover.emphasize-dark  {
     margin-top: 0px;
 }
 
+#featured .article-details .heart-count {
+    position: relative;
+    top: -4px;
+}
+
 #featured .article-details p {
     font-size: 16px;
     color: #777;
@@ -336,7 +342,6 @@ a:hover.emphasize-dark  {
 #featured span.intro {
     color: #ffffff;
     font-size: 16px;
-    padding-left: 10px;
     font-weight: 500;
 }
 
@@ -396,7 +401,6 @@ a:hover.emphasize-dark  {
 .article-teaser .article-author {
     color: #888888;
     font-size: 16px;
-    padding-left: 10px;
     padding-right: 10px;
     position: relative;
     overflow-wrap: break-word;
@@ -406,7 +410,7 @@ a:hover.emphasize-dark  {
 .article-teaser .heart-info {
     position: relative;
     top: 28px;
-    margin-left: 20px;
+    margin-left: 35px;
 }
 
 .no-heart {
@@ -440,6 +444,7 @@ a:hover.emphasize-dark  {
     left: 30px;
     font-size: 14px;
     margin-left: -5px;
+    top: -2px;
 }
 
 .article-teaser .article-author span.name {
@@ -488,7 +493,7 @@ a:hover.emphasize-dark  {
     height: 100px;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    padding: 10px;
+    padding: 15px 0px 15px 15px;
 }
 
 .article-description img {
@@ -534,6 +539,7 @@ a:hover.emphasize-dark  {
     /* width of heart icon plus a bit of space */
     left: 30px;
     font-size: 14px;
+    top: -2px;
 }
 
 .heart-guide:hover,
@@ -635,6 +641,7 @@ a:hover.emphasize-dark  {
 
 #love-it .heart-guide .heart-count {
     margin-left: 30px;
+    top: -2px;
 }
 
 #user-info {
@@ -887,6 +894,7 @@ a:hover.emphasize-dark  {
     text-align: center;
     color: #ffffff;
     font-size: 20px;
+    margin-top: 20px;
 }
 
 .mission p {

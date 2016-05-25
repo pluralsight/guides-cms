@@ -36,7 +36,7 @@
                                                 <span class="clickable"></span>
 
                                             <div class="row">
-                                                <div class="col-xs-4">
+                                                <div class="col-xs-3">
                                                     {% for stack in article.stacks %}
                                                         <span class="stack" style="display: none;">{{stack}}</span>
                                                     {% endfor %}
@@ -47,8 +47,8 @@
 
                                                     </div><!-- description -->
                                                 </div><!-- col -->
-                                                <div class="col-xs-8 article-description">
-                                                    <p class='title'> {{article.title|truncate(80, True)}}</p>
+                                                <div class="col-xs-8 article-description title">
+                                                    <p> {{article.title|truncate(80, True)}}</p>
 
                                                     {% if article.thumbnail_url %}
                                                         <img src="{{article.thumbnail_url}}" alt="{{article.title}}" class="thumbnail"/>
