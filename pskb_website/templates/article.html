@@ -84,22 +84,28 @@
                 <br />
                 <h3 id="related"><small>Related to {{article.stacks|join(',')}}</small></h3>
             {% endif %}
-            <span class="heart-guide heart-info heart-empty" title="Let the community know this guide was useful">
-                <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
-            </span>
+
+            {% if config.ENABLE_HEARTING %}
+                <span class="heart-guide heart-info heart-empty" title="Let the community know this guide was useful">
+                    <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
+                </span>
+            {% endif %}
+
         </div><!-- article-header -->
 
         <h1 id="title" class="lead">{{article.title}}</h1>
 
         {{article.content|safe}}
 
-        <div id="love-it">
-            <p>Love this guide? Let the community know by clicking the heart!
-            <span class="heart-guide heart">
-                <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
-            </span>
-            </p>
-        </div>
+        {% if config.ENABLE_HEARTING %}
+            <div id="love-it">
+                <p>Love this guide? Let the community know by clicking the heart!
+                <span class="heart-guide heart">
+                    <span class="heart-count">{{article.heart_count if article.heart_count}}</span>
+                </span>
+                </p>
+            </div>
+        {% endif %}
 
         {# This is an extra API request so only do it for published guides. #}
         {% if article.published and article.contributors %}
@@ -239,19 +245,21 @@
         article.css('z-index', article_z);
     });
 
-    $('.heart-guide').toggleClass('heart', {{'true' if hearted else 'false'}});
-    $('.heart-guide').toggleClass('heart-empty', {{'false' if hearted else 'true'}});
+    {% if config.ENABLE_HEARTING %}
+        $('.heart-guide').toggleClass('heart', {{'true' if hearted else 'false'}});
+        $('.heart-guide').toggleClass('heart-empty', {{'false' if hearted else 'true'}});
 
-    {# Login required to heart guide so don't even bother connecting it, we'll
-       still check it on the server-side too. This just minimizes confusion for
-       users. #}
-    {% if session.github_token %}
-        $('.heart-guide').click(function() {
-            var heart_count = $('.heart-count');
-            toggleHeart($('.heart-guide'), heart_count, "{{article.stacks[0]}}", "{{article.title}}");
-        });
-    {% else %}
-        $('.heart-guide').prop('title', 'Login to let the community know this guide was useful');
+        {# Login required to heart guide so don't even bother connecting it, we'll
+        still check it on the server-side too. This just minimizes confusion for
+        users. #}
+        {% if session.github_token %}
+            $('.heart-guide').click(function() {
+                var heart_count = $('.heart-count');
+                toggleHeart($('.heart-guide'), heart_count, "{{article.stacks[0]}}", "{{article.title}}");
+            });
+        {% else %}
+            $('.heart-guide').prop('title', 'Login to let the community know this guide was useful');
+        {% endif %}
     {% endif %}
 
 </script>

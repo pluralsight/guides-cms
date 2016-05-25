@@ -17,7 +17,8 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'SECONDARY_REPO_OWNER', 'SECONDARY_REPO_NAME',
                            'DOMAIN', 'CELERY_BROKER_URL',
                            'CELERY_TASK_SERIALIZER', 'HOSTING_SUBDIRECTORY',
-                           'IGNORE_STATS_FOR', 'WEBHOOK_SECRET')
+                           'IGNORE_STATS_FOR', 'WEBHOOK_SECRET',
+                           'ENABLE_HEARTING')
 
 
 class Config(object):
@@ -48,6 +49,7 @@ class Config(object):
     # REDISCLOUD_URL if this does not exist. Finally if REDISCLOUD_URL does not
     # exist hearting won't be saved, but the application will still function.
     REDIS_HEARTS_DB_URL = None
+    ENABLE_HEARTING = False
 
     # For celery
     REDIS_URL = None

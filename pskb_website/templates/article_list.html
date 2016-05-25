@@ -61,10 +61,12 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="heart-info heart col-xs-1">
-                                                    {% if article.heart_count %}
+                                                {% if config.ENABLE_HEARTING and article.heart_count %}
+                                                    <div class="heart-info heart col-xs-1">
                                                         <span class="heart-count">{{article.heart_count}}</span>
-                                                    {% endif %}
+                                                {% else %}
+                                                    <div class="heart-info no-heart col-xs-1">
+                                                {% endif %}
                                                 </div>
 
                                                 <p class="col-xs-11 article-author">

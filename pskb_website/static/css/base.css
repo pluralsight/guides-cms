@@ -409,6 +409,11 @@ a:hover.emphasize-dark  {
     margin-left: 20px;
 }
 
+.no-heart {
+    width: 19px;
+    height: 17px;
+}
+
 .heart {
     background-image: url('/static/img/full-heart.svg');
     width: 19px;
