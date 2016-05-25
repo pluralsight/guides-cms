@@ -665,10 +665,9 @@ a:hover.emphasize-dark  {
     position: relative;
     z-index: 2;
     margin-top: 0px;
-    padding: 30px 15px 100px 15px;
+    padding: 30px 15px 15px 15px;
     background-color: #2d2d2d;
     color: #ffffff;
-    min-height: 300px;
 }
 
 #footer a, #footer a:focus, #footer a:visited {
