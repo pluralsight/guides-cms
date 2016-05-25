@@ -182,6 +182,8 @@ a, a:visited, a:hover, a:focus {
 }
 
 #navbar a.emphasize {
+    /* Align words with other links */
+    margin-top: 6px;
     padding: 9px 35px 9px 35px;
 }
 
