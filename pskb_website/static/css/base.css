@@ -918,11 +918,13 @@ a:hover.emphasize-dark  {
 #hero .mission a,
 #hero .mission a:visited {
     color: #ffffff;
+    text-decoration: underline;
 }
 
 #hero .mission a:hover,
 #hero .mission a:focus {
     color: #f96816;
+    text-decoration: underline;
 }
 
 #hero .mission a.cta-text,
