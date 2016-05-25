@@ -473,7 +473,7 @@ a:hover.emphasize-dark  {
 .article-teaser .title {
     color: #ffffff;
     font-size: 17px;
-    height: 50px;
+    min-height: 140px;
     font-weight: 500;
 }
 
