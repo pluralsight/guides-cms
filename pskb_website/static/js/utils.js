@@ -1,8 +1,11 @@
 "use strict";
 
 /* Render text in container_id as html from markdown and highlight the code */
-function render_article_text(container) {
-    var content_as_html = marked(container.text().trim());
+function render_article_text(textarea, container) {
+    var content = textarea.val();
+    textarea.remove();
+
+    var content_as_html = markdown2html(content);
     container.html(content_as_html);
     container.find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
     container.css('display', 'block');
@@ -197,7 +200,7 @@ function init_signup_row(scroll_pos, signup_type) {
 
         var win = $(window);
         var near_bottom = $(document).height() - (win.height() + win.scrollTop()) < 50;
-        if (win.scrollTop() > scroll_pos || near_bottom) { 
+        if (win.scrollTop() > scroll_pos || near_bottom) {
             shown = true;
 
             /* Use HTML5 local storage to avoid showing popup but once

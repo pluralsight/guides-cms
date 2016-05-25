@@ -349,7 +349,7 @@ def article_view(stack, title):
         session['previously_requested_page'] = request.url
         return redirect(url_for('login'))
 
-    article = read_article(stack, title, branch, status)
+    article = read_article(stack, title, branch, status, rendered_text=False)
     if article is not None:
         return render_article_view(request, article)
 
