@@ -80,12 +80,11 @@ renderer.link = function(href, title, text) {
 renderer.code = function(code, lang, escaped) {
     var key = this.getUniqueKey('pre' + code + lang);
     escaped = true;
-    if (lang == 'html') {
-        code = _.escape(code)
-    }
+    code = _.escape(code)
+
     if (!lang) {
         return '<pre data-id="' + key + '" key="' + key + '"><code>'
-          + (escaped ? code : escape(code, true))
+          + code
           + '\n</code></pre>';
     }
 
@@ -93,7 +92,7 @@ renderer.code = function(code, lang, escaped) {
         + this.options.langPrefix
         + escape(lang, true)
         + '">'
-        + (escaped ? code : escape(code, true))
+        + code
         + '\n</code></pre>\n';
 };
 
