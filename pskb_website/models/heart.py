@@ -11,9 +11,9 @@ url = app.config.get('REDIS_HEARTS_DB_URL')
 
 if not url:
     url = app.config.get('REDISCLOUD_URL')
-    app.logger.info('Attempting to store hearts with REDISCLOUD_URL')
+    app.logger.debug('Attempting to store hearts with REDISCLOUD_URL')
 else:
-    app.logger.info('Attempting to store hearts with REDIS_HEARTS_DB_URL')
+    app.logger.debug('Attempting to store hearts with REDIS_HEARTS_DB_URL')
 
 if not url:
     app.logger.warning('No hearts will be saved, please set REDIS_HEARTS_DB_URL or REDISCLOUD_URL environment variable to enable persistent hearting of guides.')
