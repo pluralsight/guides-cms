@@ -48,12 +48,13 @@ renderer.blockquote = function(quote) {
 
 renderer.table = function(header, body) {
     var key = this.getUniqueKey('table' + header + body);
-    return '<table data-id="' + key + '" key="' + key + '">' + '<thead>'
+
+    return '<div class="table-responsive" data-id="' + key + '" key="' + key + '"><table class="table"><thead>'
         + header
         + '</thead>'
         + '<tbody>'
         + body
-        + '</tbody></table>';
+        + '</tbody></table></div>';
 };
 
 renderer.link = function(href, title, text) {
