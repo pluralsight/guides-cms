@@ -847,6 +847,21 @@ a:hover.emphasize-dark  {
     border-color: #ff7b39;
 }
 
+.btn-info {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #f96816;
+    border: 1px solid black;
+}
+.btn-info:focus,
+.btn-info:hover,
+.btn-info:active,
+.btn-info:active:hover,
+.btn-info:active:focus {
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #000;
+    border: 1px solid black;
+}
+
 
 #footer #signup .btn-primary {
     width: 180px;
