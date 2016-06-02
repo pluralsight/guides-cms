@@ -15,6 +15,12 @@
                                     </g>
                                 </svg>
                             </a>
+                            <a class="navbar-brand" href="https://pluralsight.com">
+                                {% if g.header_white %}
+                                {% else %}
+                                <img src="{{url_for('static', filename='img/logos/by-pluralsight-white-395-78.png')}}" alt="Pluralsight" style="margin-left:16px; height:35px;">
+                                {% endif %}
+                            </a>
 
                             <div class="external-hack-links">
                                 <a class="hacksummit" href="http://hacksummit.org"><img src="{{ url_for('static', filename='img/logos/hacksummit-470x80.png') }}" alt="hack.summit()" width="200" height="43" title="hacksummit"></a>
