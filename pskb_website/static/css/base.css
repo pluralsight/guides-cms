@@ -838,6 +838,10 @@ a:hover.emphasize-dark  {
     border-color: #f96816;
 }
 
+.btn {
+    border-radius: 0;
+}
+
 .btn-primary:focus,
 .btn-primary:hover,
 .btn-primary:active,
