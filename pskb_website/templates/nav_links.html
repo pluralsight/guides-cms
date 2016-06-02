@@ -44,7 +44,7 @@
                             {% endif %}
 
                             {% if not article %}
-                            <li><a href="{{url_for('write')}}" class="emphasize">Write a Guide</a></li>
+                            <li><a href="{{url_for('write')}}" class="btn btn-write-guide">Write a Guide</a></li>
                             {% endif %}
 
                             {% if session.github_token %}
