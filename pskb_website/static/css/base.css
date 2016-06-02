@@ -851,6 +851,15 @@ a:hover.emphasize-dark  {
     border-color: #ff7b39;
 }
 
+.btn-write-guide {
+    border: 1px solid white;
+    padding-top: 9px !important;
+    margin-top: 6px !important;
+    padding-bottom: 9px !important;
+    margin-bottom: 6px !important;
+    padding-left: 35px !important;
+    padding-right: 35px !important;
+}
 
 #footer #signup .btn-primary {
     width: 180px;
