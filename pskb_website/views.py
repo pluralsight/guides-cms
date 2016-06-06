@@ -91,8 +91,8 @@ def faq():
     g.slack_url = SLACK_URL
 
     # Read and cache this for an hour, the FAQ doesn't change very frequently
-    text = models.read_file('faq.md', rendered_text=True, use_cache=True,
-                            timeout=60 * 60)
+    text = models.read_file(models.FAQ_FILENAME, rendered_text=True,
+                            use_cache=True, timeout=60 * 60)
 
     return render_template('faq.html', text=text)
 

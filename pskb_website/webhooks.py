@@ -13,6 +13,7 @@ from flask import request, Response, abort
 from . import app
 from . import DRAFT
 from . import cache
+from . import models
 from .lib import read_article
 from .utils import slugify_stack
 from .models import article as article_mod
@@ -192,5 +193,5 @@ def _articles(paths):
     file_path = u'/%s' % (article_mod.ARTICLE_FILENAME)
 
     for path in paths:
-        if path.endswith(file_path):
+        if path.endswith(file_path) or path in models.MARKDOWN_FILES:
             yield path.split(file_path)[0]
