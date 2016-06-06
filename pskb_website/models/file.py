@@ -18,6 +18,8 @@ from ..forms import STACK_OPTIONS
 
 
 FAQ_FILENAME = u'faq.md'
+CONTEST_FILENAME = u'author_contest.md'
+
 PUB_FILENAME = u'published.md'
 IN_REVIEW_FILENAME = u'in_review.md'
 DRAFT_FILENAME = u'draft.md'
@@ -25,7 +27,7 @@ DRAFT_FILENAME = u'draft.md'
 REDIRECT_FILENAME = u'redirects.md'
 
 MARKDOWN_FILES = (FAQ_FILENAME, PUB_FILENAME, IN_REVIEW_FILENAME,
-                  DRAFT_FILENAME, REDIRECT_FILENAME)
+                  DRAFT_FILENAME, REDIRECT_FILENAME, CONTEST_FILENAME)
 
 # Parse a line of markdown into 2 links and list of stacks
 TITLE_RE = re.compile(r'###\s+(?P<title>.*)\s+by\s+(?P<author_real_name>.*)')

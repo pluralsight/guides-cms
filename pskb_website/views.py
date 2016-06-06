@@ -90,11 +90,26 @@ def faq():
 
     g.slack_url = SLACK_URL
 
-    # Read and cache this for an hour, the FAQ doesn't change very frequently
+    # Read and cache this for an hour. This page won't change to often, but if
+    # it does the webhook will clear the cache for us.  There won't be any
+    # editing of this locally.
     text = models.read_file(models.FAQ_FILENAME, rendered_text=True,
                             use_cache=True, timeout=60 * 60)
 
     return render_template('faq.html', text=text)
+
+
+@app.route('/contest/')
+def contest():
+    """Contest page"""
+
+    # Read and cache this for an hour. This page won't change to often, but if
+    # it does the webhook will clear the cache for us.  There won't be any
+    # editing of this locally.
+    text = models.read_file(models.CONTEST_FILENAME, rendered_text=True,
+                            use_cache=True, timeout=60 * 60)
+
+    return render_template('contest.html', text=text)
 
 
 @app.route('/github_login')
