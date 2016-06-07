@@ -13,3 +13,20 @@
 {% endif %}
 
 {% endblock %}
+
+{% block footer %}
+
+{{super()}}
+
+<script type="text/javascript">
+function design_tables(div) {
+    var tables = $(div).find('table');
+    tables.addClass('table-striped table-bordered table-hover');
+}
+$(document).ready(function() {
+    create_responsive_tables('#article')
+    design_tables('#article')
+});
+</script>
+
+{% endblock %}
