@@ -1,12 +1,17 @@
 {% extends "layout.html" %}
 
-{% block metatags %}
+{% block open_graph %}
+    {{ super() }}
+
     <!-- FB share/like are really bad at picking up the right info without these -->
     <meta property="og:type" content="article" />
     <meta property="og:title" content="{{article.title}}" />
-    <meta property="og:site_name" content="hack.guides()" />
     <meta property="og:url" content="{{canonical_url}}" />
-    {{ super() }}
+
+    {% if article.stack_image_url %}
+        <meta property="og:image" content="{{article.stack_image_url}}" />
+    {% endif %}
+
 {% endblock %}
 
 

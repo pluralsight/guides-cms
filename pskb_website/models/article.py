@@ -993,7 +993,7 @@ class Article(object):
             static_path = os.path.join(app.static_folder, file_path)
 
             if os.path.isfile(static_path):
-                return url_for('static', filename=file_path)
+                return url_for('static', filename=file_path, _external=True)
 
         return None
 
