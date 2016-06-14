@@ -1,5 +1,24 @@
 {% extends "layout.html" %}
 
+{% block title %}
+    <title>2016 hack.guides() Tutorial Contest</title>
+{% endblock %}
+
+{% block js %}
+    {{super()}}
+    <script type="text/javascript">
+        (function () {
+            var s = document.createElement('script');
+            s.type = 'text/javascript';
+            s.async = true;
+            s.src = ('https:' == document.location.protocol ? 'https://s' : 'http://i')
+            + '.po.st/static/v4/post-widget.js#publisherKey=plv5t1o0it9b73ect06v';
+            var x = document.getElementsByTagName('script')[0];
+            x.parentNode.insertBefore(s, x);
+        })();
+    </script>
+{% endblock %}
+
 {% block header %}
     {{super()}}
 {% endblock %}
