@@ -43,6 +43,17 @@
     <div class="col-md-4 img-column">
         {% if user.avatar_url %}
             <img height="230" src="{{user.avatar_url}}&amp;s=460" width="230" />
+            <br><br>
+        {% endif %}
+
+        {% if user.login == session.login %}
+            <p>
+            {% if session.hackhands_token %}
+                <a href="https://hackhands.com/{{ session.hackhands_slug }}" target="_blank">hack.hands() account connected</a>
+            {% else %}
+                <a href="/hackhands_login" class="btn btn-default">Connect with hack.hands()</a>
+            {% endif %}
+            </p>
         {% endif %}
     </div>
 </div>
