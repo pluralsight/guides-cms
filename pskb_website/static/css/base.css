@@ -838,10 +838,6 @@ a:hover.emphasize-dark  {
     border-color: #f96816;
 }
 
-.btn {
-    border-radius: 0;
-}
-
 .btn-primary:focus,
 .btn-primary:hover,
 .btn-primary:active,
@@ -851,30 +847,6 @@ a:hover.emphasize-dark  {
     border-color: #ff7b39;
 }
 
-.btn-info {
-    background-color: rgba(255, 255, 255, 0.3);
-    color: #f96816;
-    border: 1px solid black;
-}
-.btn-info:focus,
-.btn-info:hover,
-.btn-info:active,
-.btn-info:active:hover,
-.btn-info:active:focus {
-    background-color: rgba(255, 255, 255, 0.7);
-    color: #000;
-    border: 1px solid black;
-}
-
-.btn-write-guide {
-    border: 1px solid white;
-    padding-top: 9px !important;
-    margin-top: 6px !important;
-    padding-bottom: 9px !important;
-    margin-bottom: 6px !important;
-    padding-left: 35px !important;
-    padding-right: 35px !important;
-}
 
 #footer #signup .btn-primary {
     width: 180px;
