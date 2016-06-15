@@ -61,7 +61,7 @@ def validate_webhook_source():
         # What compare_digest provides is protection against timing
         # attacks; we can live without this protection for a web-based
         # application
-        if not correct_signature == str(signature):
+        if correct_signature != str(signature):
             app.logger.warning('Webhook request did not come from github, is: "%s", shb: "%s"',
                                signature, correct_signature)
             abort(403)
