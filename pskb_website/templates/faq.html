@@ -4,12 +4,37 @@
     {{super()}}
 {% endblock %}
 
+{% block css %}
+    {{ super() }}
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github.css') }}">
+{% endblock %}
+
+{% block js %}
+    {{super()}}
+
+    <script src="{{ url_for('static', filename='js/vendor/editor/highlight.pack.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/underscore-min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/vdom/blake2s.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/editor/marked.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/marked_settings.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+{% endblock %}
+
 {% block body %}
 
 <h1 class="lead">Our Mission</h1>
 
 {% if text %}
-    <div id="article">{{ text|safe }}</div>
+    <div id="article" style="display: none;"></div>
+    <textarea id="initial_content" style="display: none;">{{ text|safe }}</textarea>
+
+    <script type="text/javascript">
+        render_article_text($('#initial_content'), $('#article'));
+    </script>
+
     <p>
         <a href="{{repo_url}}/blob/master/faq.md" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Edit FAQ on Github</a>
     </p>
