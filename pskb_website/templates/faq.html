@@ -6,10 +6,9 @@
 
 {% block css %}
     {{ super() }}
-
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css" rel="stylesheet" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/github-markdown.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github-gist.css') }}">
 {% endblock %}
 
 {% block js %}
@@ -28,7 +27,7 @@
 <h1 class="lead">Our Mission</h1>
 
 {% if text %}
-    <div id="article" style="display: none;"></div>
+    <div id="article" style="display: none;" class="markdown-body"></div>
     <textarea id="initial_content" style="display: none;">{{ text|safe }}</textarea>
 
     <script type="text/javascript">

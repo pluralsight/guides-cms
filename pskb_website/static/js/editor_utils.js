@@ -204,7 +204,7 @@ var updatePreview = function() {
     updatingPreview = true;
 
     var newHtml = markdown2html(editor.getSession().getValue());
-    newVTree = html2vtree('<div class="previewWrapper" key="previewWrapper">' + newHtml + '</div>', 'key');
+    newVTree = html2vtree('<div class="previewWrapper markdown-body" key="previewWrapper">' + newHtml + '</div>', 'key');
 
     if (! currentVTree) {
         currentVTree = newVTree;
