@@ -2,9 +2,9 @@
                         <div class="hack-links">
                             <a class="navbar-brand" href="{{url_for('index')}}">
                                 {% if g.header_white %}
-                                <img src="{{url_for('static', filename='img/logos/hackguides-470x80.png')}}" width="200" height="43" alt="hack.guides()">
+                                <img src="{{url_for('static', filename='img/logos/hackguides-black-470x80.png')}}" width="199" height="43" alt="hack.guides()">
                                 {% else %}
-                                <img src="{{url_for('static', filename='img/logos/hackguides-470x80.png')}}" width="200" height="43" alt="hack.guides()">
+                                <img src="{{url_for('static', filename='img/logos/hackguides-white-470x80.png')}}" width="199" height="43" alt="hack.guides()">
                                 {% endif %}
                             </a>
                             <a class="navbar-brand" href="#">
@@ -37,14 +37,14 @@
                             <li><a href="{{url_for('faq')}}">Our Mission</a></li>
                             <li><a href="{{url_for('in_review')}}">Review</a></li>
                             <li><a href="{{url_for('contributors')}}">Contributors</a></li>
-                            <li><a href="{{url_for('contest')}}">Authoring Contest</a></li>
+                            <li><a href="{{url_for('contest')}}">Tutorial Contest</a></li>
 
                             {% if not session.github_token %}
                             <li><a href="{{url_for('login')}}" class="cta-text">Sign in with Github</a></li>
                             {% endif %}
 
                             {% if not article %}
-                            <li><a href="{{url_for('write')}}" class="emphasize">Write a Guide</a></li>
+                            <li><a href="{{url_for('write')}}" class="btn btn-write-guide">Write a Guide</a></li>
                             {% endif %}
 
                             {% if session.github_token %}

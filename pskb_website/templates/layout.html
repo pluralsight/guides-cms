@@ -7,6 +7,18 @@
             <meta name="viewport" content="width=device-width, initial-scale=1">
         {% endblock %}
 
+        {% block open_graph %}
+            <meta property="og:site_name" content="hack.guides()" />
+            {% if not article %}
+                <meta property="og:title" content="hack.guides()" />
+                <meta property="og:url" content="{{request.url}}" />
+                <meta property="og:description" content="A developer community for writing guides" />
+                <meta property="og:image" content="{{url_for('static', filename='img/logos/hackguides-black-470x80.png', _external=True)}}" />
+                <meta property="og:image:width" content="199" />
+                <meta property="og:image:height" content="43" />
+            {% endif %}
+        {% endblock %}
+
         {% block title %}
 
         <title>hack.guides()</title>
