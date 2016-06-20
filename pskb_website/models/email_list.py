@@ -67,7 +67,9 @@ def initialize_favorite_stacks(list_id):
 
     global FAVORITE_STACKS
 
-    FAVORITE_STACKS = get_groups(list_id).keys()
+    groups = get_groups(list_id).keys()
+    if groups:
+        FAVORITE_STACKS = groups
 
 
 def get_groups(list_id):
@@ -79,10 +81,17 @@ def get_groups(list_id):
     :returns: Dictionary mapping each group name to group id
     """
 
-    if MC is None:
-        return {}
+    full_group_info = {}
 
-    result = MC.lists.interest_groupings(list_id)
+    if MC is None:
+        return full_group_info
+
+    try:
+        result = MC.lists.interest_groupings(list_id)
+    except ValueError:
+        app.logger.error('Failed getting groups from mailchimp', exc_info=True)
+        return full_group_info
+
 
     try:
         full_group_info = result[0]['groups']
