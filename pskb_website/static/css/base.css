@@ -1026,6 +1026,11 @@ td.login-name {
     display: none;
 }
 
+/* Used on published_workflow.html to center tweet/fb buttons */
+.share-button {
+    text-align: center;
+}
+
 @media(min-width:992px) {
     #footer #signup #email {
         /* Force bigger width when in same row as stacks box. */
