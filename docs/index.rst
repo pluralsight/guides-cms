@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 =================
-Hacker Guides CMS
+hack.guides() CMS
 =================
 
 Contents:
