@@ -191,6 +191,15 @@
   list-style-type: lower-alpha;
 }
 
+.markdown-body li>h1,
+.markdown-body li>h2,
+.markdown-body li>h3,
+.markdown-body li>h4,
+.markdown-body li>h5,
+.markdown-body li>h6 {
+  margin-left: 20px;
+}
+
 .markdown-body dd {
   margin-left: 0;
 }
