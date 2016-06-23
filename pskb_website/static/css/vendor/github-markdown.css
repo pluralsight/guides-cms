@@ -13,6 +13,8 @@
   font-size: 16px;
   line-height: 1.6;
   word-wrap: break-word;
+  padding: 20px;
+  padding-top: 10px;
 }
 
 .markdown-body a {
@@ -274,7 +276,12 @@
 .markdown-body .anchor {
   display: inline-block;
   padding-right: 2px;
-  margin-left: -18px;
+  margin-left: -25px;
+}
+
+.markdown-body .anchor svg {
+  width: 20px;
+  height: 20px;
 }
 
 .markdown-body .anchor:focus {

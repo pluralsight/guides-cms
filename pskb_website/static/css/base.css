@@ -355,6 +355,7 @@ a:hover.emphasize-dark  {
 
 .lead {
     font-size: 46px;
+    margin-bottom: 10px;
 }
 
 #body {
@@ -659,7 +660,7 @@ a:hover.emphasize-dark  {
     /* Necessary to make sure table of contents z-index flows behind this. */
     position: relative;
     z-index: 2;
-    margin-top: 0px;
+    margin-top: 10px;
     padding: 30px 15px 15px 15px;
     background-color: #2d2d2d;
     color: #ffffff;
@@ -1195,12 +1196,4 @@ td.login-name {
       line-height: 1.5;
       border-radius: 3px;
     }
-}
-
-.markdown-body {
-    box-sizing: border-box;
-    min-width: 200px;
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 45px;
 }

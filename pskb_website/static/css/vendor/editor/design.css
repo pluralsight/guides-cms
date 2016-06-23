@@ -206,6 +206,10 @@
     border: 1px solid black;
 }
 
+.previewWrapper {
+    padding: 10px;
+}
+
 /* Help and messages */
 
 #editor-help {
