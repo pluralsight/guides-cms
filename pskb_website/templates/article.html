@@ -7,7 +7,8 @@
     <meta property="og:type" content="article" />
     <meta property="og:title" content="{{article.title}}" />
     <meta property="og:url" content="{{canonical_url}}" />
-    <meta property="og:description" content="Guide related to {{article.stacks[0]}}" />
+    <meta property="og:description" content="Open-source guide from hack.guides() authored by {{article.author_real_name if article.author_real_name else article.author_name}}" />
+
 
     {% if article.stack_image_url and article.stack_image_url.endswith(('.png', '.jpg', '.jpeg')) %}
         <meta property="og:image" content="{{article.stack_image_url}}" />
