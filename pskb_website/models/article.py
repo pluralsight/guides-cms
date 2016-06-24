@@ -988,7 +988,7 @@ class Article(object):
         """
 
         for stack in self.stacks:
-            file_path = os.path.join('img', 'stack_images', '%s.svg' % (
+            file_path = os.path.join('img', 'stack_images', '%s.png' % (
                                      utils.slugify_stack(stack)))
             static_path = os.path.join(app.static_folder, file_path)
 
