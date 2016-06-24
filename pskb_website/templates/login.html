@@ -2,16 +2,45 @@
 
 {% block body %}
 
-<h1>Github Required</h1>
+<h1>Join the movement</h1>
 <br /><br />
-<p> <a href="{{url_for('github_login')}}" class="emphasize-dark">Login with Github</a> </p>
+
+<p class="login-button"> <a href="{{url_for('github_login')}}" class="btn-primary btn btn-lg">Login with Github</a> </p>
+
 <br />
 
-<h2>What do you do with my account?</h2>
+<h2>Why Github?</h2>
 
-<ol style="font-size: 18px;">
-    <li>Verify you are who you say you are</li>
-    <li>Read your username and email address (for adding you as a collaborator and commiting changes)</li>
+<ol>
+    <li>Most developers already have an account</li>
+    <li>Link all your contributions to your profile on the biggest social coding platform</li>
+    <li>
+        All the <a href="http://github.com/pluralsight/guides-cms">code for this CMS</a> and <a href="http://github.com/pluralsight/guides">the guides</a> are hosted on Github
+    </li>
 </ol>
+
+<h2>Why should you participate?</h2>
+
+<ol>
+    <li>Share your knowledge and best-practices with the wider developer community</li>
+    <li>Make a meaningful impact to open-source knowledge</li>
+    <li>Build thought leadership through your writing</li>
+    <li>Vote on other guides to help surface the best content to the top of the site</li>
+</ol>
+
+<h3>Our promise</h3>
+
+We're built on the power of open-source and with the goal of educating the
+world, so we promise to be good stewards of your Github account.  You can
+always disable access directly from Github if you change your mind.
+
+<br />
+<br />
+
+<p>
+    Still not convinced? No worries, read <a href="{{url_for('faq')}}">our mission</a> for
+    more information, or just enjoy reading these free guides provided by your
+    peers.
+</p>
 
 {% endblock %}

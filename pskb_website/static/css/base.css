@@ -1031,6 +1031,10 @@ td.login-name {
     text-align: center;
 }
 
+.login-button .btn-primary {
+    color: #fff;
+}
+
 @media(min-width:992px) {
     #footer #signup #email {
         /* Force bigger width when in same row as stacks box. */
