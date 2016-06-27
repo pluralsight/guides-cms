@@ -269,8 +269,18 @@ def read_file_from_github(path, branch=u'master', rendered_text=True,
         # would be wrong.  However, those URLs have been the same for years so
         # seems like a safe enough bet at this point.
         owner, repo, file_path = split_full_file_path(path)
-        url = u'https://github.com/%s/%s/blob/%s/%s' % (owner, repo, branch,
-                                                        urllib.pathname2url(file_path))
+
+        # Cannot pass unicode data to pathname2url or it can raise KeyError.
+        # Must only pass URL-safe bytes. So, something like u'\u2026' will
+        # raise a # KeyError but if we encode it to bytes, '%E2%80%A6', things
+        # work correctly.
+        # http://stackoverflow.com/questions/15115588/urllib-quote-throws-keyerror
+
+        url = u'https://github.com/%s/%s/blob/%s/%s' % (
+                owner,
+                repo,
+                branch,
+                urllib.pathname2url(file_path.encode('utf-8')))
 
         details = file_details(path, branch, None, None, url, text)
     else:
@@ -522,6 +532,16 @@ def contents_url_from_path(path):
     """
 
     owner, repo, file_path = split_full_file_path(path)
+
+    # Cannot pass unicode data to pathname2url or it can raise KeyError. Must
+    # only pass URL-safe bytes. So, something like u'\u2026' will raise a
+    # KeyError but if we encode it to bytes, '%E2%80%A6', things work
+    # correctly.
+    # http://stackoverflow.com/questions/15115588/urllib-quote-throws-keyerror
+    owner = owner.encode('utf-8')
+    repo = repo.encode('utf-8')
+    file_path = file_path.encode('utf-8')
+
     return urllib.pathname2url('repos/%s/%s/contents/%s' % (owner, repo,
                                                             file_path))
 
