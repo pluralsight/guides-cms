@@ -31,10 +31,14 @@ def read_article(stack, title, branch, status, rendered_text=True):
     # Using a list here because we specifically want to check in this order but
     # we don't want to check a single status more than once so don't want dups
     # either.
-    statuses_to_check = [status]
-    for possible_status in STATUSES:
-        if possible_status not in statuses_to_check:
-            statuses_to_check.append(possible_status)
+    if status not in STATUSES:
+        app.logger.warning(u'Ignoring invalid status: "%s"', status)
+        statuses_to_check = list(STATUSES)
+    else:
+        statuses_to_check = [status]
+        for possible_status in STATUSES:
+            if possible_status not in statuses_to_check:
+                statuses_to_check.append(possible_status)
 
     article = None
     for status in statuses_to_check:
