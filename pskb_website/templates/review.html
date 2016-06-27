@@ -7,17 +7,35 @@
             {% include "mission.html" %}
 
             <div id="featured">
-                <div class="row mission">
-                    <div class="col-md-12">
-                        <h1 class="lead">Give back.</h1>
-                        <p>
-                            You have unique expertise. Give back to the community by
-                            <a href="{{url_for('index')}}">writing a new guide</a> or editing one of the guides
-                            needing review.
-                        </p>
+                <div class="row article-details">
+                    <div class="col-xs-12 col-md-offset-3 col-md-7">
+                        <span class="intro">Guides for review</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-2 col-md-offset-1">
+                            <img src="{{url_for('static', filename='img/stack_images/other.png')}}" width="99" height="104" alt="other"/>
+                        </div>
+
+                        <div class="col-xs-12 col-md-7">
+                            <a href="{{url_for('faq')}}">
+                                <div class="article-details row">
+                                    <div class="col-sm-6">
+                                        <h1>Give back.</h1>
+                                    </div>
+                                </div><!-- row -->
+                                <div class="article-details row">
+                                    <div class="col-xs-12">
+                                        <h6>
+                                            You have unique expertise. Give back to the community by
+                                            editing one of the guides needing review.
+                                        </h6>
+                                    </div>
+                                </div><!-- row -->
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div><!-- featured -->
         </div>
     </div> <!-- hero -->
 {% endblock %}

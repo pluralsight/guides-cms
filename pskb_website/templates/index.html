@@ -53,16 +53,30 @@
                     </div>
                 </div>
             {% else %}
-                <div class="row">
-                    <div class="col-md-12">
-                        <a href="{{url_for('faq')}}">
-                            <span class="intro">Featured Guide</span>
-                            <h1>Our Mission</h1>
-                            <div class="article-details">
-                                <p>by hack.guides()</p>
-                                <p class="cta-text">Read more &raquo;</p>
-                            </div>
-                        </a>
+                <div class="row article-details">
+                    <div class="col-xs-12 col-md-offset-3 col-md-7">
+                        <span class="intro">Featured Guide</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-2 col-md-offset-1">
+                            <img src="{{url_for('static', filename='img/stack_images/other.png')}}" width="99" height="104" alt="other"/>
+                        </div>
+
+                        <div class="col-xs-12 col-md-7">
+                            <a href="{{url_for('faq')}}">
+                                <div class="article-details row">
+                                    <div class="col-sm-6">
+                                        <h1>Our Mission</h1>
+                                        <p>by hack.guides()</p>
+                                    </div>
+                                </div><!-- row -->
+                                <div class="article-details row">
+                                    <div class="col-xs-12">
+                                        <p class="cta-text">Read more &raquo;</p>
+                                    </div>
+                                </div><!-- row -->
+                            </a>
+                        </div>
                     </div>
                 </div>
             {% endif %}
