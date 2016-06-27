@@ -9,7 +9,6 @@
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   color: #333;
-  font-size: 16px;
   line-height: 1.6;
   word-wrap: break-word;
   padding: 20px;
@@ -97,11 +96,6 @@
 
 .markdown-body input {
   font: 13px/1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-}
-
-.markdown-body a {
-  color: #4078c0;
-  text-decoration: none;
 }
 
 .markdown-body a:hover,

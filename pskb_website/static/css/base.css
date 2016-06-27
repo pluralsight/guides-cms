@@ -588,7 +588,6 @@ a:hover.emphasize-dark  {
 }
 
 #article pre, #article blockquote, #article form {
-    margin-left: 21px;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
