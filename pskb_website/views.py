@@ -138,9 +138,9 @@ def authorized():
     """URL for Github auth callback"""
 
     resp = remote.github.authorized_response()
-    if resp is None:
-        flash('Access denied: reason=%s error=%s' % (
-              request.args['error'], request.args['error_description']),
+    if resp is None or resp.get('access_token') is None:
+        flash('Access denied: reason=%s error=%s resp=%s' % (
+              request.args['error'], request.args['error_description'], resp),
               category='error')
         return redirect(url_for('index'))
 
