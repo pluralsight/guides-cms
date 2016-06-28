@@ -58,10 +58,19 @@
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="{{url_for('logout')}}">Logout</a></li>
                                     <li><a href="{{session.login|url_for_user}}">My Guides</a></li>
+                                    {% if session.hackhands_token %}
+                                    <li><a href="https://hackhands.com/{{ session.hackhands_slug }}" target="_blank">hack.hands() account connected</a></li>
+                                    {% else %}
+                                    <li><a href="/hackhands_login">Connect with hack.hands()</a></li>
+                                    {% endif %}
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="{{url_for('logout')}}">Logout</a></li>
                                 </ul>
                             </li>
+
+                            {% else %}
+                            <li><a href="{{url_for('login')}}">Sign in with Github</a></li>
                             {% endif %}
                         </ul>
                     </div>

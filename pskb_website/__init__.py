@@ -68,6 +68,7 @@ import pskb_website.views
 import pskb_website.api
 import pskb_website.webhooks
 import pskb_website.filters
+import pskb_website.hackhands
 
 app.jinja_env.filters['date_string'] = filters.date_string
 app.jinja_env.filters['url_for_article'] = filters.url_for_article

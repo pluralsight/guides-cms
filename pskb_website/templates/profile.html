@@ -32,11 +32,28 @@
             See even more from {{user.name if user.name else user.login}} on
             their <a href="https://github.com/{{user.login}}" target="_blank">github profile</a>.
         </p>
+
+        {% if user.hackhands_data %}
+        <p>
+            <a href="https://hackhands.com/{{ user.hackhands_data.slug }}" class="btn btn-default">Hire me on hack.hands()</a>
+        </p>
+        {% endif %}
     </div>
 
     <div class="col-md-4 img-column">
         {% if user.avatar_url %}
             <img height="230" src="{{user.avatar_url}}&amp;s=460" width="230" />
+            <br><br>
+        {% endif %}
+
+        {% if user.login == session.login %}
+            <p>
+            {% if session.hackhands_token %}
+                <a href="https://hackhands.com/{{ session.hackhands_slug }}" target="_blank">hack.hands() account connected</a>
+            {% else %}
+                <a href="/hackhands_login" class="btn btn-default">Connect with hack.hands()</a>
+            {% endif %}
+            </p>
         {% endif %}
     </div>
 </div>

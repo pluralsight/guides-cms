@@ -154,17 +154,8 @@
             </div>
         {% endif %}
 
-        <div id="user-info" class="row">
-            <div class="col-sm-4">
-                {% if user.avatar_url %}
-                    <img src="{{user.avatar_url}}&amp;s=460" alt="{{user.author_name}}"/>
-                {% endif %}
 
-            </div>
-            <div class="col-sm-8">
-                {% include 'user_info.html' with context %}
-            </div>
-        </div> <!-- user row -->
+        {% include 'user_info.html' with context %}
 
 
         {% if allow_delete %}

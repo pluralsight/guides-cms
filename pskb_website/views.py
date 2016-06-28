@@ -12,6 +12,7 @@ from . import forms
 from . import tasks
 from . import filters
 from . import utils
+from . import hackhands
 from .lib import (
         read_article,
         login_required,
@@ -121,12 +122,7 @@ def github_login():
 def logout():
     """Logout page"""
 
-    session.pop('github_token', None)
-    session.pop('login', None)
-    session.pop('name', None)
-    session.pop('collaborator', None)
-    session.pop('user_image', None)
-
+    session.clear()
     return redirect(url_for('index'))
 
 
@@ -168,6 +164,11 @@ def authorized():
 
         session['collaborator'] = user.is_collaborator
 
+    hackhands_data = hackhands.read_data(user.login)
+    if hackhands_data:
+        session['hackhands_slug'] = hackhands_data['slug']
+        session['hackhands_token'] = hackhands_data['token']
+
     url = session.pop('previously_requested_page', None)
     if url is not None:
         return redirect(url)
@@ -194,7 +195,7 @@ def user_profile(author_name):
         if author_name is None:
             return redirect(url_for('index'))
 
-    user = models.find_user(author_name)
+    user = models.find_user(author_name, read_hackhands_data=True)
     if not user:
         flash('Unable to find user "%s"' % (author_name), category='error')
         return redirect(url_for('index'))
@@ -439,7 +440,7 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
 
     g.header_white = True
 
-    user = models.find_user(article.author_name)
+    user = models.find_user(article.author_name, read_hackhands_data=True)
     if only_visible_by_user is not None and only_visible_by_user != user.login:
         return redirect(url_for('index'))
 

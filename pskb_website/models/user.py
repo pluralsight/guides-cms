@@ -9,7 +9,7 @@ from .. import cache
 from . import lib
 
 
-def find_user(username=None):
+def find_user(username=None, read_hackhands_data=False):
     """
     Find a user object with given username
 
@@ -22,10 +22,18 @@ def find_user(username=None):
     information for users who have not authenticated the application.
     """
 
+    def update_user_hackhands_data(user):
+        from .. import hackhands
+        hackhands_data = hackhands.read_data(user.login)
+        user.hackhands_data = hackhands_data
+
     if username is not None:
         user_info = cache.read_user(username)
         if user_info is not None:
-            return User.from_json(user_info)
+            user = User.from_json(user_info)
+            if read_hackhands_data:
+                update_user_hackhands_data(user)
+            return user
 
     user_info = remote.read_user_from_github(username)
     if not user_info:
@@ -41,6 +49,9 @@ def find_user(username=None):
     user.avatar_url = user_info['avatar_url']
     user.location = user_info['location']
     user.blog = user_info['blog']
+
+    if read_hackhands_data:
+        update_user_hackhands_data(user)
 
     # User a longer timeout b/c not anticipating user's name,etc. to change
     # very often
@@ -66,6 +77,7 @@ class User(object):
         self.location = None
         self.blog = None
         self._is_collaborator = None
+        self.hackhands_data = None
 
     def __repr__(self):
         return '<login: %s>' % (self.login)

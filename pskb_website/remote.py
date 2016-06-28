@@ -27,6 +27,7 @@ github = oauth.remote_app(
     authorize_url='https://github.com/login/oauth/authorize'
 )
 
+
 file_details = collections.namedtuple('file_details', 'path, branch, sha, last_updated, url, text')
 
 
