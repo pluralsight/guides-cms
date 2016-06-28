@@ -114,10 +114,10 @@
 
         <p id="article_content" style="display: none;" class="markdown-body">
         </p>
-        <textarea id="initial_content" style="display:none;">{{ article.content|safe }}</textarea>
+        <textarea id="__initial_content__" style="display:none;">{{ article.content|safe }}</textarea>
 
         <script type="text/javascript">
-            render_article_text($('#initial_content'), $('#article_content'));
+            render_article_text($('#__initial_content__'), $('#article_content'));
         </script>
 
         {% if config.ENABLE_HEARTING %}
