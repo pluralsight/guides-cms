@@ -3,9 +3,10 @@
 {% block css %}
     {{ super() }}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css" rel="stylesheet" crossorigin="anonymous">
+
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github-gist.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/github-markdown.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/editor/design.css') }}">
 {% endblock %}
 
@@ -109,7 +110,7 @@
                 <div id="article-stack" class=""></div>
             </div>
 
-            <div id="preview"></div>
+            <div id="preview" class=""></div>
         </div>
     </div>
 </div>

@@ -1,5 +1,16 @@
 "use strict";
 
+/* Render text in container_id as html from markdown and highlight the code */
+function render_article_text(textarea, container) {
+    var content = textarea.val();
+    textarea.remove();
+
+    var content_as_html = markdown2html(content);
+    container.html(content_as_html);
+    container.find('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+    container.css('display', 'block');
+}
+
 /* Read headers from article as jquery object and put TOC in div_to_fill as
  * jquery object. */
 function populate_table_of_contents(article, div_to_fill) {
@@ -131,24 +142,6 @@ function create_toc_from_headers(headers) {
 }
 
 
-/* Turn any table tags in div into responsive tables by adding
- * bootstrap-specific markup around table */
-function create_responsive_tables(div) {
-    var tables = $(div).find('table');
-    tables.wrap('<div class="table-responsive">');
-    tables.addClass('table');
-}
-
-/* Change all external links to open in a new tab/window */
-function create_external_links(id) {
-    var links = $(id + ' a').filter(function() {
-        return this.hostname && this.hostname !== location.hostname;
-    });
-
-    links.append('&nbsp;<span class="glyphicon glyphicon-new-window" aria-hidden="true" style="font-size: 10px;"></span>');
-    links.attr("target", "_blank");
-}
-
 /* Confirm user typed DELETE in form and submit request for article deletion
  * This function works with confirm_deletion.html form.
  */
@@ -189,7 +182,7 @@ function init_signup_row(scroll_pos, signup_type) {
 
         var win = $(window);
         var near_bottom = $(document).height() - (win.height() + win.scrollTop()) < 50;
-        if (win.scrollTop() > scroll_pos || near_bottom) { 
+        if (win.scrollTop() > scroll_pos || near_bottom) {
             shown = true;
 
             /* Use HTML5 local storage to avoid showing popup but once

@@ -28,12 +28,20 @@
 {% endblock %}
 
 {% block css %}
-    <link href="{{url_for('static', filename='css/vendor/editor/github.css')}}" rel="stylesheet">
-    <link href="{{url_for('static', filename='css/vendor/github.css')}}" rel="stylesheet">
     {{ super() }}
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/github-markdown.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github-gist.css') }}">
 {% endblock %}
 
 {% block js %}
+    <script src="{{ url_for('static', filename='js/vendor/editor/highlight.pack.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/underscore-min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/vdom/blake2s.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/editor/marked.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/marked_settings.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+
     {{super()}}
     <script type="text/javascript">
         {% if redirect_url %}
@@ -104,7 +112,13 @@
 
         <h1 id="title" class="lead">{{article.title}}</h1>
 
-        {{article.content|safe}}
+        <p id="article_content" style="display: none;" class="markdown-body">
+        </p>
+        <textarea id="initial_content" style="display:none;">{{ article.content|safe }}</textarea>
+
+        <script type="text/javascript">
+            render_article_text($('#initial_content'), $('#article_content'));
+        </script>
 
         {% if config.ENABLE_HEARTING %}
             <div id="love-it">
@@ -234,13 +248,10 @@
         });
     {% endif %}
 
-    create_external_links('#article');
-
     var article = $('#article');
 
     populate_table_of_contents(article, $('#table-of-contents'));
 
-    create_responsive_tables(article);
     var article_z = article.css('z-index');
 
     $('#stacks').on('show.bs.select', function(e) {
@@ -276,7 +287,7 @@
 {% if allow_comments %}
 <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = "{{canonical_url}}"; 
+        this.page.url = "{{canonical_url}}";
         this.page.identifier = "{{article_identifier}}";
     };
     (function() { // DON'T EDIT BELOW THIS LINE

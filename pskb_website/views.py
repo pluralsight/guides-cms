@@ -90,11 +90,8 @@ def faq():
 
     g.slack_url = SLACK_URL
 
-    # Read and cache this for an hour. This page won't change to often, but if
-    # it does the webhook will clear the cache for us.  There won't be any
-    # editing of this locally.
-    text = models.read_file(models.FAQ_FILENAME, rendered_text=True,
-                            use_cache=True, timeout=60 * 60)
+    # Read and cache this for an hour, the FAQ doesn't change very frequently
+    text = models.read_file('faq.md', rendered_text=False, use_cache=True, timeout=60 * 60)
 
     return render_template('faq.html', text=text)
 
@@ -349,7 +346,7 @@ def article_view(stack, title):
         session['previously_requested_page'] = request.url
         return redirect(url_for('login'))
 
-    article = read_article(stack, title, branch, status)
+    article = read_article(stack, title, branch, status, rendered_text=False)
     if article is not None:
         return render_article_view(request, article)
 

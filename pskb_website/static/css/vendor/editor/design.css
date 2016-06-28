@@ -190,7 +190,6 @@
 
 #preview {
     font-family: "Gotham SSm A","Gotham SSm B","Helvetica Neue",Helvetica,Roboto,"Segoe UI",Arial,freesans,sans-serif;
-    padding: 5px 15px;
     background-color: #fff;
     overflow: auto;
     max-height: 100%;
@@ -205,6 +204,10 @@
 #preview td, #preview th {
     padding: 5px;
     border: 1px solid black;
+}
+
+.previewWrapper {
+    padding: 10px;
 }
 
 /* Help and messages */
