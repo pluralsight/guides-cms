@@ -12,18 +12,19 @@
 
 {% block js %}
     {{ super() }}
+    <!-- base -->
     <script src="{{ url_for('static', filename='js/vendor/editor/highlight.pack.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/editor/dropzone.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
-
     <script src="{{ url_for('static', filename='js/vendor/underscore-min.js') }}"></script>
+    <script src="{{ url_for('static', filename='ace/ace.js') }}"></script>
+    <!-- marked -->
     <script src="{{ url_for('static', filename='js/vendor/vdom/virtual-dom.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/vdom/vdom-parser-standalone.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/vdom/blake2s.min.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='ace/ace.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/editor/marked.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/marked_settings.js') }}"></script>
+    <!-- page -->
     <script src="{{ url_for('static', filename='js/editor_utils.js') }}"></script>
 {% endblock %}
 
