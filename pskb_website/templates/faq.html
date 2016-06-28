@@ -30,7 +30,7 @@
 
 {% if text %}
     <div id="article" style="display: none;" class="markdown-body"></div>
-    <textarea id="__initial_content__" style="display: none;">{{ text|safe }}</textarea>
+    <textarea id="__initial_content__" style="display: none;">{{ text }}</textarea>
 
     <script type="text/javascript">
         render_article_text($('#__initial_content__'), $('#article'));

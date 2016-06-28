@@ -117,7 +117,7 @@
 
         <p id="article_content" style="display: none;" class="markdown-body">
         </p>
-        <textarea id="__initial_content__" style="display:none;">{{ article.content|safe }}</textarea>
+        <textarea id="__initial_content__" style="display:none;">{{ article.content }}</textarea>
 
         <script type="text/javascript">
             render_article_text($('#__initial_content__'), $('#article_content'));
