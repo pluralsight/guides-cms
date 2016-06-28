@@ -103,7 +103,7 @@ marked.setOptions({
     tables: true,
     breaks: false,
     pedantic: false,
-    sanitize: false,
+    sanitize: false, // false: supports real html (Useful to include embed videos)
     smartLists: true,
     smartypants: false,
     // Slow performance because the virtual dom, lets highlight later
