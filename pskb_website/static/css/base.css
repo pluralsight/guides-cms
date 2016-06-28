@@ -361,6 +361,7 @@ a:hover.emphasize-dark  {
 #body {
     background-color: #ffffff;
     color: #000000;
+    padding-bottom: 15px;
 }
 
 #hero + #body {
@@ -659,7 +660,6 @@ a:hover.emphasize-dark  {
     /* Necessary to make sure table of contents z-index flows behind this. */
     position: relative;
     z-index: 2;
-    margin-top: 10px;
     padding: 30px 15px 15px 15px;
     background-color: #2d2d2d;
     color: #ffffff;
