@@ -103,7 +103,7 @@ def contest():
     # Read and cache this for an hour. This page won't change to often, but if
     # it does the webhook will clear the cache for us.  There won't be any
     # editing of this locally.
-    text = models.read_file(models.CONTEST_FILENAME, rendered_text=True,
+    text = models.read_file(models.CONTEST_FILENAME, rendered_text=False,
                             use_cache=True, timeout=60 * 60)
 
     return render_template('contest.html', text=text)

@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "markdown_page.html" %}
 
 {% block title %}
     <title>2016 hack.guides() Tutorial Contest</title>
@@ -19,16 +19,17 @@
     </script>
 {% endblock %}
 
-{% block header %}
-    {{super()}}
-{% endblock %}
-
 {% block body %}
 
 <h1 class="lead">hack.guides() 2016 Tutorial Contest</h1>
 
 {% if text %}
-    <div id="article">{{ text|safe }}</div>
+    <div id="article" style="display: none;" class="markdown-body"></div>
+    <textarea id="__initial_content__" style="display: none;">{{ text }}</textarea>
+
+    <script type="text/javascript">
+        render_article_text($('#__initial_content__'), $('#article'));
+    </script>
 {% endif %}
 
 {% endblock %}
