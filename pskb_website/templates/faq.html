@@ -7,18 +7,20 @@
 {% block css %}
     {{ super() }}
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/github-markdown.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/hljs_github-gist.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/github-markdown.css') }}">
 {% endblock %}
 
 {% block js %}
     {{super()}}
-
+    <!-- base -->
     <script src="{{ url_for('static', filename='js/vendor/editor/highlight.pack.js') }}"></script>
+    <!-- marked -->
     <script src="{{ url_for('static', filename='js/vendor/underscore-min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/vdom/blake2s.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/editor/marked.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/marked_settings.js') }}"></script>
+    <!-- page -->
     <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
 {% endblock %}
 
@@ -28,10 +30,10 @@
 
 {% if text %}
     <div id="article" style="display: none;" class="markdown-body"></div>
-    <textarea id="initial_content" style="display: none;">{{ text|safe }}</textarea>
+    <textarea id="__initial_content__" style="display: none;">{{ text }}</textarea>
 
     <script type="text/javascript">
-        render_article_text($('#initial_content'), $('#article'));
+        render_article_text($('#__initial_content__'), $('#article'));
     </script>
 
     <p>
