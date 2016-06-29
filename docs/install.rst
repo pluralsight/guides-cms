@@ -47,11 +47,13 @@ Setup environment variables
         * CELERY_BROKER_URL - URL of Redis (or another broker) for handling background jobs (see :ref:`instructions for Celery on heroku <celery_on_heroku>` for help).
         * DOMAIN - Base URL where your site will be running. This can be the URL of your Heroku deployment or localhost like `127.0.0.1:5000` or `0.0.0.0:5000`.
 
---------------------------------
-Run locally with Flask webserver
---------------------------------
+.. _first_time_setup:
 
-1. Run `python run.py`
+----------------
+First-time Setup
+----------------
+
+1. Run `python run.py` or `make run_flask` if you have Make installed
 2. Browse to `http://127.0.0.1:5000/login/`
 3. Login with your github account and authorize your newly created application
     * **Login with the account you set as the REPO_OWNER**
@@ -62,6 +64,25 @@ Run locally with Flask webserver
 Now you can :ref:`test things from the CLI <wo_browser>` if that's more your speed. However, there's one more step to setting up the ability to publish articles.  This requires :ref:`running a celery process for background jobs <celery_setup>`.
 
 You can try creating a guide once you have celery running locally or your `CELERY_BROKER_URL` configured to a running Redis server.
+
+Note now you *can* use this local server and :ref:`expose it to the Internet
+through a secure tunnel <local_deployment>` if you want!
+
+.. _running_locally:
+
+--------------------------------
+Run locally with Flask webserver
+--------------------------------
+
+1. Follow the :ref:`first-time setup instructions <first_time_setup>`
+2.  Run `python run.py` or `make run_flask` and use `Ctrl-C` to stop the server.
+
+-----------------------------------
+Run locally with Gunicorn webserver
+-----------------------------------
+
+1. Follow the :ref:`first-time setup instructions <first_time_setup>`
+2. Run `make run_gunicorn`
 
 .. _celery_setup:
 

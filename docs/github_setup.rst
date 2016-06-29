@@ -15,6 +15,8 @@ Create a repository for guides
 First you'll need a new repository for all your content.  This can be an empty
 repository at this point.
 
+.. _github_registration:
+
 --------------------------------
 Registering a Github Application
 --------------------------------

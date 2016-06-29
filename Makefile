@@ -46,3 +46,9 @@ prod_logs:
 
 prod_logs_app:
 	heroku logs -t --app pskb-prod --source app
+
+run_flask:
+	python run.py
+
+run_gunicorn:
+	export APP_SETTINGS=config.DevelopmentConfig && gunicorn -w 6 -k gevent --worker-connections 512 --max-requests 1000 pskb_website:app -b 127.0.0.1:5000

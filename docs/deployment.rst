@@ -136,6 +136,30 @@ Adding Redis caching on Heroku
 3. The application will automatically start caching if you used the redis cloud addon described above.  You can use a different Redis caching add-on, but you'll need to change the setup of the caching layer in `cache.py` appropriately.
 4. See docs related to `using Python with redis on Heroku <https://devcenter.heroku.com/articles/rediscloud#using-redis-from-python>`_
 
+.. _local_deployment:
+
+Deploying with local instance
+=============================
+
+**Using this deployment method is only recommended for testing. However, often
+times we've noticed this method is effective for testing locally and can be
+faster than using `localhost` with your Github API callbacks.**
+
+You can also 'deploy' the application running simply on `localhost` and expose
+your `localhost` port through a secure tunnel using `ngrok <https://ngrok.com>`_.  Ngrok is recommended directly by Github for `testing Github webhooks <https://developer.github.com/webhooks/configuring/>`_.  It's
+also useful if you have everything running locally and want to get quick
+feedback from testers, etc. without having to setup Heroku or another hosting
+machine.
+
+1. Download `ngrok <https://ngrok.com>`_
+2. Run locally using :ref:`one of the available methods <running_locally>`
+3. Run ngrok and take note of the unique *Forwarding* URL
+4. Set this base URL in your Github application as described in the
+   :ref:`Github setup <github_registration>`
+
+Now anyone can go to the ngrok URL and they'll get a secure tunnel to your
+local machine for testing!
+
 Setting Featured Guide
 ======================
 
