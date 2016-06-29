@@ -40,9 +40,12 @@ try:
 except KeyError:
     app.logger.warning('No caching available, please set REDISCLOUD_URL environment variable to enable caching.')
 else:
-    redis_obj = utils.configure_redis_from_url(url)
-    if redis_obj is None:
-        app.logger.warning('No caching available, missing redis module')
+    if not url:
+        app.logger.warning('No caching available, empty REDISCLOUD_URL')
+    else:
+        redis_obj = utils.configure_redis_from_url(url)
+        if redis_obj is None:
+            app.logger.warning('No caching available, missing redis module')
 
 
 # Local cache of etags from API requests for file listing. Saving these here
