@@ -54,7 +54,8 @@ def add_subscriber(email, stacks):
                                            update_existing=True,
                                            replace_interests=True)
     except Exception as err:
-        app.logger.error('Failed adding subscriber: %s', err)
+        app.logger.error('Failed adding subscriber: %s (list: "%s", email: "%s", stacks: "%s", groups: "%s")',
+                         err, LIST_ID, email, stacks, groups)
         return None
 
     return subscriber_id
@@ -89,7 +90,9 @@ def get_groups(list_id):
     try:
         result = MC.lists.interest_groupings(list_id)
     except ValueError:
-        app.logger.error('Failed getting groups from mailchimp', exc_info=True)
+        app.logger.error('Failed getting groups from mailchimp (list: "%s")',
+                         list_id,
+                         exc_info=True)
         return full_group_info
 
 
