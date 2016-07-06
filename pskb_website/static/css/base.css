@@ -1013,6 +1013,10 @@ td.login-name {
     padding-top: 20px;
 }
 
+.bio-text {
+    font-size: 20px;
+}
+
 #footer-logo-1 {
     display: block;
 }

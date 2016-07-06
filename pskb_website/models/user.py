@@ -42,6 +42,12 @@ def find_user(username=None):
     user.location = user_info['location']
     user.blog = user_info['blog']
 
+    # Github has added and removed support for bio so be careful
+    try:
+        user.bio = user_info['bio']
+    except KeyError:
+        pass
+
     # User a longer timeout b/c not anticipating user's name,etc. to change
     # very often
     cache.save_user(user.login, lib.to_json(user), timeout=60 * 30)
@@ -63,6 +69,7 @@ class User(object):
         self.login = login
         self.email = None
         self.avatar_url = None
+        self.bio = None
         self.location = None
         self.blog = None
         self._is_collaborator = None

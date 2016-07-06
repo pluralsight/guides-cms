@@ -1,6 +1,8 @@
 <h4>{{user.name}}</h4>
 
-{% if user.location and user.blog %}
+{% if user.bio %}
+    <p>{{user.bio}}</p>
+{% elif user.location and user.blog %}
     <p>
         {{user.name}} lives in {{user.location}} and also writes at
         {{user.blog|urlize(target="_blank")}}.
