@@ -1,0 +1,11 @@
+{% for article in articles %}
+    {% if loop.index0 == 0 %}
+        <ul>
+    {% endif %}
+
+    <li><a href="{{article|url_for_article}}">{{article.title}}</a></li>
+
+    {% if loop.last %}
+        </ul>
+    {% endif %}
+{% endfor %}
