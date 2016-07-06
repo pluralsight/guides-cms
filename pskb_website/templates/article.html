@@ -147,7 +147,9 @@
 
             </div>
             <div class="col-sm-8">
+                <h4>{{user.name}}</h4>
                 {% include 'user_info.html' with context %}
+                <p>Read more guides by {{user.name}} on their <a href="{{url_for('user_profile', author_name=article.author_name)}}">profile</a>.</p>
             </div>
         </div> <!-- user row -->
 
