@@ -623,9 +623,18 @@ a:hover.emphasize-dark  {
 }
 
 
+#last-updated {
+    margin-top: 35px;
+}
+
 #love-it {
     font-size: 18px;
     font-weight: 500;
+    margin: 15px 0px;
+}
+
+#love-it p {
+    padding-left: 0px;
 }
 
 #love-it .heart-guide {
