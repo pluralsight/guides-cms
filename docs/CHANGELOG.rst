@@ -3,6 +3,52 @@ CHANGELOG
 =========
 
 --------------------
+version .6 - 7/7/16
+--------------------
+
+New Features
+------------
+
+- Revamped design to be more colorful with stack images for every guide, etc. 
+- `Added ability to heart guides <https://github.com/pluralsight/guides-cms/commit/c2cb70be200bcac851f24bd5e0390e5d70fda1d5>`_
+    - Requires use of redis and use of `ENABLE_HEARTING` and `REDIS_HEARTS_DB_URL` environment variables
+- `Support for Github Bio on profile and article pages <https://github.com/pluralsight/guides-cms/pull/104>`_
+- `Improved support for Facebook Open Graph tags on homepage and article <https://github.com/pluralsight/guides-cms/pull/95>`_
+- `Improved layout of review page and home page when there is no featured guide
+  <https://github.com/pluralsight/guides-cms/commit/65fff27f34a3cb787298e65cb1ecd2ee604da3f9>`_
+- `New stack images <https://github.com/pluralsight/guides-cms/pull/89>`_
+    - Thanks `@eh3rrera <https://github.com/eh3rrera>`_!
+- `Use Github webhooks to keep list of branches and cache up to date <https://github.com/pluralsight/guides-cms/pull/79>`_
+    - Requires use of `WEBHOOK_SECRET` environment variable
+- New page highlighting tutorial contest
+- `Properly escape all code on article pages, not just HTML <https://github.com/pluralsight/guides-cms/pull/85/commits>`_
+
+Bug Fixes
+---------
+
+- `Fix exception when running with empty REDISCLOUD_URL env variable <https://github.com/pluralsight/guides-cms/commit/10f9cf081c6652e29c37c1b5e326794fe21b7c8c>`_
+- `Fix html escaping issues on article page <https://github.com/pluralsight/guides-cms/pull/103>`_
+- `Shorten long author names to prevent from breaking out of design boxes <https://github.com/pluralsight/guides-cms/commit/535da3548cabe0d87d66af034a718c20af669dc2>`_
+- `KeyError exception on some invalid page URLs <https://github.com/pluralsight/guides-cms/commit/d32b677652e0c6306daad2914b11ed853019863f>`_
+- `Ignore invalid statuses when reading article <https://github.com/pluralsight/guides-cms/commit/0a86098d63e9fedc7d61282b2b3b195b3fcaf10d>`_
+- `Error when handling failed github authentication request <https://github.com/pluralsight/guides-cms/commit/066518c8fabe10d038af7fa166293d4c56018301>`_
+- `Bug with removing a branch when it being added again <https://github.com/pluralsight/guides-cms/commit/7aa34565d775519d2315e67e6ccdd70b0d889c72>`_
+- `Problem unpredictable featured guide when two guides have the same title <https://github.com/pluralsight/guides-cms/commit/e6beae19d78a767a8cde384da61337c28ed70ff8>`_
+
+Changes
+-------
+
+- `Add CTA to article list when filtering returns no results <https://github.com/pluralsight/guides-cms/commit/6ec72ce056b4d063e3251a16343ddc5eb0de03a1>`_
+- `Guides are now grouped by publish status on profile page <https://github.com/pluralsight/guides-cms/pull/105/commits/64210b755ce1a367cfc911be4f055dac99c58964>`_
+- `All markdown is rendered on front-end with Javascript instead of using
+  Github API <https://github.com/pluralsight/guides-cms/pull/86>`_
+- `Changed copy on login page to be more informative <https://github.com/pluralsight/guides-cms/commit/1cd4f69d0a3d42d75888062b20dd6b88d3de2278>`_
+- `New logo highlighting our sponsor, Pluralsight <https://github.com/pluralsight/guides-cms/pull/87>`_
+- `Store featured guide with redis <https://github.com/pluralsight/guides-cms/commit/e6beae19d78a767a8cde384da61337c28ed70ff8>`_
+- `Remove case-insensitive comparison for featured guide environment variable
+  <https://github.com/pluralsight/guides-cms/commit/ce8f0a053729fc6103263a928cbc7c57e93b76c1>`_
+
+--------------------
 version .5 - 5/9/16
 --------------------
 
