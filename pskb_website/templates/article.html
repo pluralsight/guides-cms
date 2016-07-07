@@ -111,7 +111,9 @@
         </script>
 
         {% if updated_on %}
-            <p><em>Guide last updated on: &nbsp;&nbsp;</em><strong>{{updated_on}}</strong></p>
+            <div id="last-updated">
+                <em>Guide last updated on: </em><strong>{{updated_on}}</strong>
+            </div>
         {% endif %}
 
         {% if config.ENABLE_HEARTING %}
