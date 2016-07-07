@@ -25,6 +25,7 @@ function populate_table_of_contents(article, div_to_fill) {
 
 function filter() {
     var stacks = document.getElementById("stacks");
+    var no_guides = $('#no-guides');
     var selected_stacks = [];
 
     for (var ii=0; ii < stacks.length; ii++) {
@@ -50,6 +51,12 @@ function filter() {
     });
 
     shuffle_items_in_grid(items_to_show);
+
+    if (!items_to_show.length) {
+        no_guides.css('display', 'block');
+    } else {
+        no_guides.css('display', 'none');
+    }
 }
 
 

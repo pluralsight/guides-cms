@@ -1030,6 +1030,11 @@ td.login-name {
     text-align: center;
 }
 
+#no-guides {
+    text-align: center;
+    font-size: 18px;
+}
+
 .login-button .btn-primary {
     color: #fff;
 }
