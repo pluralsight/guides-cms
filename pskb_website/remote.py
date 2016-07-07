@@ -725,6 +725,26 @@ def merge_branch(repo_path, base, head, message):
     return False
 
 
+def commit(sha):
+    """
+    Get commit info for given SHA
+
+    :param sha: SHA of commit to read data for
+    :returns: Raw commit object from API
+    """
+
+    url = u'/repos/%s/commits/%s' % (default_repo_path(), sha)
+
+    app.logger.debug('GET: %s sha: %s', url, sha)
+
+    resp = github.get(url)
+    if resp.status != 200:
+        log_error('Failed reading commit from github', url, resp)
+        return {}
+
+    return resp.data
+
+
 def commits(path, branch=u'master'):
     """
     Get list of commit objects from API for a given path

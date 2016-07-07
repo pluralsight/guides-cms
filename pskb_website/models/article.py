@@ -646,7 +646,8 @@ def save_article_meta_data(article, author_name=None, email=None, branch=None,
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
     exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', '_path',
-                     '_last_updated', '_contributors', '_heart_count')
+                     '_last_updated', '_creation_date', '_contributors',
+                     '_heart_count')
     json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
     # Nothing changed so no commit needed
@@ -969,6 +970,7 @@ class Article(object):
         self.external_url = external_url
         self.filename = filename
         self.image_url = image_url
+        self._creation_date = None
         self._last_updated = None
         self.thumbnail_url = None
         self.author_real_name = author_real_name or author_name
@@ -1067,6 +1069,29 @@ class Article(object):
     @property
     def published(self):
         return self.publish_status == PUBLISHED
+
+    @property
+    def creation_date(self):
+        """
+        Get string representing creation time of the article text, not metadata
+
+        :returns: String in UTC +00 representing creation time or None for
+                  error
+        """
+
+        if self._creation_date is not None:
+            return self._creation_date
+
+        if self.first_commit is None:
+            return None
+
+        commit = remote.commit(self.first_commit)
+
+        try:
+            return commit['commit']['author']['date']
+        except KeyError:
+            app.logger.error('Failed parsing commit response: %s', commit)
+            return None
 
     @property
     def last_updated(self):
