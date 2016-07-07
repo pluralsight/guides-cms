@@ -362,9 +362,9 @@ def read_article(path, rendered_text=False, branch=u'master', repo_path=None,
             if article.published:
                 article._read_contributors_from_api(remove_ignored_users=True)
 
-            # Force update of last_updated property from API so we can cache
-            # the value
+            # Force update of some properies from API so we can cache values
             article._read_last_updated_from_api()
+            article._read_creation_date_from_api()
 
             # Note we cache the ENTIRE article here. This is different than
             # what we serialize when saving the guide to github!  We want to
@@ -1082,16 +1082,24 @@ class Article(object):
         if self._creation_date is not None:
             return self._creation_date
 
+        self._read_creation_date_from_api()
+        return self._creation_date
+
+    def _read_creation_date_from_api(self):
+        """
+        Set string representing creation time of the article text, not metadata
+        """
+
         if self.first_commit is None:
-            return None
+            self._creation_date = None
+            return
 
         commit = remote.commit(self.first_commit)
 
         try:
-            return commit['commit']['author']['date']
+            self._creation_date = commit['commit']['author']['date']
         except KeyError:
             app.logger.error('Failed parsing commit response: %s', commit)
-            return None
 
     @property
     def last_updated(self):
