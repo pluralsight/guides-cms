@@ -1155,6 +1155,9 @@ class Article(object):
             elif attr == 'publish_status':
                 attr = '_publish_status'
 
+            elif attr == 'last_updated':
+                attr = '_last_updated'
+
             # This field used to be optional
             elif attr == 'stacks' and not value:
                 value = [DEFAULT_STACK]
