@@ -205,7 +205,20 @@ def user_profile(author_name):
     else:
         articles = models.get_public_articles_for_author(user.login)
 
-    return render_template('profile.html', user=user, articles=articles)
+    published = []
+    in_review = []
+    draft = []
+
+    for status, group in models.group_articles_by_status(articles):
+        if status == PUBLISHED:
+            published = list(group)
+        elif status == IN_REVIEW:
+            in_review = list(group)
+        elif status == DRAFT:
+            draft = list(group)
+
+    return render_template('profile.html', user=user, published=published,
+                           in_review=in_review, draft=draft)
 
 
 @app.route('/my-drafts/')

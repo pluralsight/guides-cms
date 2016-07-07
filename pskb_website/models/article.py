@@ -225,6 +225,32 @@ def get_public_articles_for_author(author_name):
             yield article
 
 
+def group_articles_by_status(articles):
+    """
+    Group articles by publish status
+
+    :param articles: Iterable of Article objects
+    :returns: Iterable like itertools.groupby with a key as the publish_status
+              and a list of articles for that status
+    """
+
+    def status_key(a):
+        if a.publish_status == PUBLISHED:
+            cnt = 1
+        elif a.publish_status == IN_REVIEW:
+            cnt = 2
+        elif a.publish_status == DRAFT:
+            cnt = 3
+        else:
+            cnt = 4
+
+        return cnt
+
+    sorted_by_status = sorted(articles, key=status_key)
+
+    return itertools.groupby(sorted_by_status, key=lambda a: a.publish_status)
+
+
 def author_stats(statuses=None):
     """
     Get number of articles for each author

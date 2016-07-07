@@ -12,26 +12,35 @@
 
 <div class="row">
     <div class="col-md-8">
-        <h2>{{user.name}}</h2>
+        <h1>{{user.name}}</h1>
         <div class="user-profile">
             {% include 'user_info.html' with context %}
         </div>
 
-        <h2>Guides</h2>
+        {% if published %}
+            <h2>Published Guides</h2>
+            {% with articles=published %}
+                {% include 'simple_article_list.html' %}
+            {% endwith %}
+        {% endif %}
 
-        {% for article in articles %}
-            {% if loop.index0 == 0 %}
-                <ul>
-            {% endif %}
+        {% if in_review %}
+            <h3>In-Review Guides</h3>
+            {% with articles=in_review %}
+                {% include 'simple_article_list.html' %}
+            {% endwith %}
+        {% endif %}
 
-            <li><a href="{{article|url_for_article}}">{{article.title}}</a></li>
+        {% if draft %}
+            <h4>Draft Guides</h4>
+            {% with articles=draft %}
+                {% include 'simple_article_list.html' %}
+            {% endwith %}
+        {% endif %}
 
-            {% if loop.last %}
-                </ul>
-            {% endif %}
-        {% else %}
+        {% if not published and not in_review and not draft %}
             <p>No guides yet!</p>
-        {% endfor %}
+        {% endif %}
 
     </div>
 
