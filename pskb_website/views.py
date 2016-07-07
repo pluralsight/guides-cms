@@ -488,8 +488,11 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     if login is not None:
         hearted = models.has_hearted(article.stacks[0], article.title, login)
 
+    updated_on = utils.datetime_from_utc_string(article.last_updated).strftime('%x')
+
     return render_template('article.html',
                            article=article,
+                           updated_on=updated_on,
                            hearted=hearted,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,

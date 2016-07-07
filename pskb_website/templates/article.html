@@ -110,6 +110,10 @@
             render_article_text($('#__initial_content__'), $('#article_content'));
         </script>
 
+        {% if updated_on %}
+            <p><em>Guide last updated on: &nbsp;&nbsp;</em><strong>{{updated_on}}</strong></p>
+        {% endif %}
+
         {% if config.ENABLE_HEARTING %}
             <div id="love-it">
                 <p>Love this guide? Let the community know by clicking the heart!
