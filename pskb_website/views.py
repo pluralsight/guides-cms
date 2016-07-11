@@ -442,6 +442,12 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
         # 301 redirects so need to share with the old url to keep the counts.
         redirect_url = u'%s/review/%s' % (app.config['DOMAIN'],
                                           article_identifier)
+    else:
+        # Use full domain for redirect_url b/c this controls the po.st social
+        # sharing numbers.  We want these numbers to stick with the domain
+        # we're running on so counts go with us.
+        redirect_url = filters.url_for_article(article,
+                                               base_url=app.config['DOMAIN'])
 
     # Filter out the current branch from the list of branches
     branches = [b for b in article.branches if b != article.branch]
