@@ -37,8 +37,7 @@ def url_for_edit(article, **kwargs):
     return url_for(u'write', title=title, stack=stack, **kwargs)
 
 
-def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master',
-                    **kwargs):
+def url_for_article(article, base_url=None, branch=u'master', **kwargs):
     """
     Get URL for article object
 
@@ -63,14 +62,14 @@ def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master',
     title = utils.slugify(article.title)
     stack = utils.slugify_stack(article.stacks[0])
 
-    url = u'%s%s' % (base_url,
-                     url_for(u'article_view', title=title, stack=stack,
-                             **kwargs))
+    url = url_for(u'article_view', title=title, stack=stack, **kwargs)
+
+    if base_url is not None:
+        url = u'%s%s' % (base_url, url)
 
     if article.publish_status != PUBLISHED:
         query_str_arg = '&' if '?' in url else '?'
         url = u'%s%sstatus=%s' % (url, query_str_arg, article.publish_status)
-
 
     if branch != u'master':
         query_str_arg = '&' if '?' in url else '?'
@@ -81,7 +80,7 @@ def url_for_article(article, base_url=app.config['DOMAIN'], branch=u'master',
     return url
 
 
-def url_for_user(user, base_url=app.config['DOMAIN']):
+def url_for_user(user, base_url=None):
     """
     Get URL for user object
 
@@ -101,7 +100,11 @@ def url_for_user(user, base_url=app.config['DOMAIN']):
     except AttributeError:
         username = user
 
-    return u'%s%s' % (base_url, url_for('user_profile', author_name=username))
+    url = url_for('user_profile', author_name=username)
+    if base_url is not None:
+        url = u'%s%s' % (base_url, url)
+
+    return url
 
 
 def author_name(article):

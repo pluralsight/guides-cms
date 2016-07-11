@@ -609,11 +609,13 @@ def change_publish_status():
 
     article.publish_status = publish_status
 
-    author_url = filters.url_for_user(article.author_name)
+    author_url = filters.url_for_user(article.author_name,
+                                      base_url=app.config['DOMAIN'])
 
     # Create this link AFTER changing the status b/c the URL will have the
     # status in it if the article is not published yet.
-    article_url = filters.url_for_article(article)
+    article_url = filters.url_for_article(article,
+                                          base_url=app.config['DOMAIN'])
 
     tasks.update_listing.delay(article_url,
                                article.title,

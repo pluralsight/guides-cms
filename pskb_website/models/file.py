@@ -381,8 +381,11 @@ def sync_file_listing(all_articles, status, committer_name, committer_email,
     curr_titles = set()
 
     for article in all_articles:
-        article_url = filters.url_for_article(article)
-        author_url = filters.url_for_user(article.author_name)
+        article_url = filters.url_for_article(article,
+                                              base_url=app.config['DOMAIN'])
+        author_url = filters.url_for_user(article.author_name,
+                                          base_url=app.config['DOMAIN'])
+
         name = article.author_real_name or article.author_name
         curr_titles.add(article.title)
 

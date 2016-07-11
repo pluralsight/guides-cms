@@ -136,8 +136,9 @@ def api_save():
     if article.branch == u'master':
         # Use these filter wrappers so we get absolute URL instead of relative
         # URL to this specific site.
-        url = filters.url_for_article(article)
-        author_url = filters.url_for_user(article.author_name)
+        url = filters.url_for_article(article, base_url=app.config['DOMAIN'])
+        author_url = filters.url_for_user(article.author_name,
+                                          base_url=app.config['DOMAIN'])
 
         tasks.update_listing.delay(url,
                                    article.title,
