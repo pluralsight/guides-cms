@@ -31,8 +31,7 @@ def add_subscriber(email, stacks):
     :returns: Subscriber ID or None if subscriber was not added
     """
 
-    if not FAVORITE_STACKS:
-        initialize_favorite_stacks(LIST_ID)
+    initialize_favorite_stacks(LIST_ID)
 
     # Weed out any stacks that are not already in mailchimp list groups
     groups = []
@@ -55,7 +54,7 @@ def add_subscriber(email, stacks):
                                            replace_interests=True)
     except Exception as err:
         app.logger.error('Failed adding subscriber: %s (list: "%s", email: "%s", stacks: "%s", groups: "%s")',
-                         err, LIST_ID, email, stacks, groups)
+                         err, LIST_ID, email, stacks, groups, exc_info=True)
         return None
 
     return subscriber_id
@@ -67,6 +66,9 @@ def initialize_favorite_stacks(list_id):
     """
 
     global FAVORITE_STACKS
+
+    if FAVORITE_STACKS:
+        return
 
     groups = get_groups(list_id).keys()
     if groups:
