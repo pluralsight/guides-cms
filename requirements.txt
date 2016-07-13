@@ -1,7 +1,8 @@
 gunicorn==19.3.0
 gevent==1.0.2
 redis==2.10.5
-mailchimp==2.0.9
+# Small fork to add error handling for extra information around JSON errors
+-e git+https://bitbucket.org/durden/mailchimp-api-python.git#egg=mailchimp
 Flask==0.10.1
 Flask-OAuthlib==0.9.1
 WTForms==2.1
