@@ -348,6 +348,10 @@ def article_view(stack, title):
 
     branch = request.args.get('branch', u'master')
 
+    # User came from a heart attempt and logged in
+    if request.args.get('hearted', False) and is_logged_in():
+        models.add_heart(stack, title, session.get('login'))
+
     # Search all status so an article's canonical URL can always stay the same
     # regardless of the status, i.e we use the status argument as a hint on
     # which file listing to use first but we always search the others until we
@@ -358,6 +362,11 @@ def article_view(stack, title):
     if status == DRAFT and not is_logged_in():
         session['previously_requested_page'] = request.url
         return redirect(url_for('login'))
+
+    # Save this so if user tries to heart guide we'll redirect them back to
+    # guide when they login
+    elif not is_logged_in():
+        session['previously_requested_page'] = '%s?hearted=1' % (request.url)
 
     article = read_article(stack, title, branch, status, rendered_text=False)
     if article is not None:

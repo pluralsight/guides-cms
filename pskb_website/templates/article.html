@@ -72,6 +72,11 @@
         </div>
 
     </div>
+
+    {% if not session.github_token %}
+        {% include 'login_modal.html' %}
+    {% endif %}
+
     <div id="article" class="col-md-10 col-md-offset-2">
         {% if recently_saved %}
             {% include 'publish_workflow.html' with context %}
@@ -265,7 +270,11 @@
                 toggleHeart($('.heart-guide'), heart_count, "{{article.stacks[0]}}", "{{article.title}}");
             });
         {% else %}
+
             $('.heart-guide').prop('title', 'Login to let the community know this guide was useful');
+            $('.heart-guide').click(function() {
+                $('#login-modal').modal();
+            });
         {% endif %}
     {% endif %}
 
