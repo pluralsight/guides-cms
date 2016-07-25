@@ -180,6 +180,8 @@ def read_redirects(branch=u'master'):
     # This should be a pretty low volume file so cache it for an hour.
     text = read_file(REDIRECT_FILENAME, rendered_text=False, branch=branch,
                      use_cache=True, timeout=60 * 60)
+    if not text:
+        return redirects
 
     for line in text.splitlines():
         if line.startswith('#'):

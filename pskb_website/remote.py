@@ -348,7 +348,7 @@ def file_details_from_github(path, branch=u'master', allow_404=False):
                        encoding='utf-8')
         last_updated = resp._resp.headers.get('Last-Modified')
     else:
-        if resp.status == 404 and not allow_404:
+        if resp.status != 404 or (resp.status == 404 and not allow_404):
             app.logger.warning('Failed reading file details at "%s", status: %d, branch: %s, data: %s',
                                url, resp.status, branch, resp.data)
 
