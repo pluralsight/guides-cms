@@ -8,12 +8,11 @@ import json
 import subprocess
 import os
 
-from flask import url_for
-
 from . import lib
 from . import file as file_mod
 from .user import find_user
 from .heart import count_hearts
+from .. import url_for_domain
 from .. import app
 from .. import PUBLISHED, IN_REVIEW, DRAFT, STATUSES
 from .. import cache
@@ -1008,6 +1007,10 @@ class Article(object):
         Get path to static image for article based on stack
 
         None will be returned for articles without a stack image
+
+        A full path including the domain is included in the URL so this
+        property is suitable for using where places require a full link such as
+        FB open graph meta tags.
         """
 
         for stack in self.stacks:
@@ -1016,7 +1019,11 @@ class Article(object):
             static_path = os.path.join(app.static_folder, file_path)
 
             if os.path.isfile(static_path):
-                return url_for('static', filename=file_path, _external=True)
+                # Using _external=True even though it's redundant for our
+                # wrapper unless DOMAIN is set.
+                return url_for_domain('static', filename=file_path,
+                                      base_url=app.config['DOMAIN'],
+                                      _external=True)
 
         return None
 

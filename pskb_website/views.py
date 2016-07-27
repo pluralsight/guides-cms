@@ -12,6 +12,7 @@ from . import forms
 from . import tasks
 from . import filters
 from . import utils
+from . import url_for_domain
 from .lib import (
         read_article,
         login_required,
@@ -113,7 +114,12 @@ def contest():
 def github_login():
     """Callback for github oauth"""
 
-    return remote.github.authorize(callback=url_for('authorized', _external=True))
+    # Using _external=True even though it's redundant for our wrapper unless
+    # DOMAIN is set.
+    url = url_for_domain('authorized', _external=True,
+                         base_url=app.config['DOMAIN'])
+    app.logger.error('url = %s', url)
+    return remote.github.authorize(callback=url)
 
 
 @app.route('/logout')

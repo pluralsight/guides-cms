@@ -5,7 +5,7 @@ Configure Flask app instance
 import logging
 import os
 
-from flask import Flask
+from flask import Flask, url_for
 
 # Possible publish statuses
 DRAFT = u'draft'
@@ -62,6 +62,33 @@ if not app.debug:
         '%(asctime)s %(levelname)s [in %(pathname)s:%(lineno)d]: %(message)s '))
 
     app.logger.addHandler(handler)
+
+
+def url_for_domain(*args, **kwargs):
+    """
+    Wrapper for flask.url_for to allow for an external URL with a domain.  The
+    point of this is to workaround the fact that setting
+    app.config['SERVER_NAME'] creates external URLs for EVERY call to url_for.
+
+    This function adds one extra kwarg called 'base_url'.  Using base_url with
+    override the behavior of _external=True otherwise this function is a
+    pass-through to flask.url_for().
+    """
+
+    base_url = kwargs.pop('base_url', None)
+    if '_external' in kwargs and base_url is not None:
+        kwargs.pop('_external')
+
+    url = url_for(*args, **kwargs)
+    if base_url is not None:
+        url = u'%s%s' % (base_url, url)
+
+    return url
+
+
+@app.context_processor
+def context_processor():
+    return dict(url_for_domain=url_for_domain)
 
 
 import pskb_website.views
