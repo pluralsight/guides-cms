@@ -76,7 +76,7 @@ def url_for_domain(*args, **kwargs):
     """
 
     base_url = kwargs.pop('base_url', None)
-    if '_external' in kwargs and base_url is not None:
+    if '_external' in kwargs and base_url:
         kwargs.pop('_external')
 
     url = url_for(*args, **kwargs)
