@@ -118,7 +118,6 @@ def github_login():
     # DOMAIN is set.
     url = url_for_domain('authorized', _external=True,
                          base_url=app.config['DOMAIN'])
-    app.logger.error('url = %s', url)
     return remote.github.authorize(callback=url)
 
 
