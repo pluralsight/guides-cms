@@ -64,9 +64,17 @@ def contribution_stats():
         # Assuming last entry is the current week to avoid having to calculate
         # timesteps, etc.
         this_week = user['weeks'][-1]
+        if this_week is None:
+            app.logger.warning('Weeks contribution info is None: %s', user)
+            continue
 
-        stats.append({'avatar_url': user['author']['avatar_url'],
-                      'login': user['author']['login'],
+        author = user['author']
+        if author is None:
+            app.logger.warning('Author contribution info is None: %s', user)
+            continue
+
+        stats.append({'avatar_url': author['avatar_url'],
+                      'login': author['login'],
                       'total': user['total'],
                       'weekly_commits': this_week['c'],
                       'weekly_additions': this_week['a'],
