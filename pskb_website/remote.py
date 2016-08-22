@@ -772,11 +772,14 @@ def file_contributors(path, branch=u'master'):
         return (author_name, commit[key]['login'])
 
     for commit in resp.data:
-        if not commit:
-            continue
+        # Check author/committer first b/c we've seen issues in github API
+        # where these can actually be None, like this commit:
+        # https://github.com/pluralsight/guides/commit/44cd2072df8994fea2cee9de6ffb6c174b57bf03
+        if commit['author']:
+            contribs['authors'].add(_extract_data_from_commit(commit, 'author'))
 
-        contribs['authors'].add(_extract_data_from_commit(commit, 'author'))
-        contribs['committers'].add(_extract_data_from_commit(commit, 'committer'))
+        if commit['committer']:
+            contribs['committers'].add(_extract_data_from_commit(commit, 'committer'))
 
     return contribs
 
