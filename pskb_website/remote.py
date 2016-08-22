@@ -772,6 +772,9 @@ def file_contributors(path, branch=u'master'):
         return (author_name, commit[key]['login'])
 
     for commit in resp.data:
+        if not commit:
+            continue
+
         contribs['authors'].add(_extract_data_from_commit(commit, 'author'))
         contribs['committers'].add(_extract_data_from_commit(commit, 'committer'))
 
