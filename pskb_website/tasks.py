@@ -61,7 +61,10 @@ def update_listing(*args, **kwargs):
     """
 
     with app.test_request_context():
-        file_mod.update_article_listing(*args, **kwargs)
+        success = file_mod.update_article_listing(*args, **kwargs)
+        if not success:
+            app.logger.error(u'Failed updating article listing, args: "%s", kwargs: "%s"',
+                             args, kwargs)
 
 
 @celery.task()
@@ -76,7 +79,10 @@ def remove_from_listing(*args, **kwargs):
     """
 
     with app.test_request_context():
-        file_mod.remove_article_from_listing(*args, **kwargs)
+        success = file_mod.remove_article_from_listing(*args, **kwargs)
+        if not success:
+            app.logger.error(u'Failed removing article from listing, args: "%s", kwargs: "%s"',
+                             args, kwargs)
 
 
 @celery.task()
@@ -94,8 +100,11 @@ def synchronize_listing(status, committer_name, committer_email):
 
     with app.test_request_context():
         articles = get_available_articles_from_api(status)
-        file_mod.sync_file_listing(articles, status, committer_name,
-                                   committer_email)
+        success = file_mod.sync_file_listing(articles, status, committer_name,
+                                             committer_email)
+        if not success:
+            app.logger.error(u'Failed syncing article listing, status: "%s", committer_name: "%s", committer_email: "%s"',
+                             status, committer_name, committer_email)
 
 
 def change_publish_metadata(path, new_status):
