@@ -1135,7 +1135,7 @@ td.login-name {
 
     #title {
         font-size: 32px;
-        padding-top: 20px;
+        padding-top: 40px;
     }
 
     .lead {
@@ -1203,5 +1203,11 @@ td.login-name {
       font-size: 12px;
       line-height: 1.5;
       border-radius: 3px;
+    }
+}
+
+@media(max-width:375px) {
+    #article-header .heart-info {
+        top: 60px;
     }
 }
