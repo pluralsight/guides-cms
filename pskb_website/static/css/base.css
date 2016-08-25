@@ -1148,6 +1148,10 @@ td.login-name {
         padding-left: 20px;
     }
 
+    .markdown-body h1 {
+        font-size: 32px;
+    }
+
     .markdown-body h2 {
         font-size: 27px;
     }
