@@ -72,7 +72,7 @@ def verify_redis_instance(func):
     @functools.wraps(func)
     def _wrapper(*args, **kwargs):
         if not is_enabled():
-            return False
+            return None
 
         return func(*args, **kwargs)
 
