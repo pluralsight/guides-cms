@@ -8,11 +8,12 @@ import json
 import subprocess
 import os
 
+from flask import url_for
+
 from . import lib
 from . import file as file_mod
 from .user import find_user
 from .heart import count_hearts
-from .. import url_for_domain
 from .. import app
 from .. import PUBLISHED, IN_REVIEW, DRAFT, STATUSES
 from .. import cache
@@ -1019,11 +1020,7 @@ class Article(object):
             static_path = os.path.join(app.static_folder, file_path)
 
             if os.path.isfile(static_path):
-                # Using _external=True even though it's redundant for our
-                # wrapper unless DOMAIN is set.
-                return url_for_domain('static', filename=file_path,
-                                      base_url=app.config['DOMAIN'],
-                                      _external=True)
+                return url_for('static', filename=file_path, _external=True)
 
         return None
 
