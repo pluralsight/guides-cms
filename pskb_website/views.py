@@ -32,7 +32,7 @@ def index():
     return render_published_articles()
 
 
-@app.route('/login/')
+@app.route('/login')
 def login():
     """Login page"""
 
@@ -47,7 +47,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/contributors/')
+@app.route('/contributors')
 def contributors():
     """Contributors page"""
 
@@ -85,7 +85,7 @@ def contributors():
                            ignore_users=ignore_users)
 
 
-@app.route('/faq/')
+@app.route('/faq')
 def faq():
     """FAQ page"""
 
@@ -99,7 +99,7 @@ def faq():
 
 # This isn't used now, but leaving it around since we'll likely have another
 # contest in the future since the first one was so successful.
-@app.route('/contest/')
+@app.route('/contest')
 def contest():
     """Contest page"""
 
@@ -228,7 +228,7 @@ def user_profile(author_name):
                            in_review=in_review, draft=draft)
 
 
-@app.route('/my-drafts/')
+@app.route('/my-drafts')
 @login_required
 def my_drafts():
     """Users drafts"""
@@ -243,7 +243,7 @@ def my_drafts():
 
 
 @app.route('/write/<stack>/<title>', methods=['GET'])
-@app.route('/write/', defaults={'stack': None, 'title': None}, methods=['GET'])
+@app.route('/write', defaults={'stack': None, 'title': None}, methods=['GET'])
 @login_required
 def write(stack, title):
     """Editor page"""
@@ -278,7 +278,7 @@ def write(stack, title):
                            username=session['login'])
 
 
-@app.route('/partner/import/')
+@app.route('/partner/import')
 @login_required
 def partner_import():
     """Special 'hidden' URL to import articles to secondary repo"""
@@ -295,7 +295,7 @@ def partner_import():
                            secondary_repo=secondary_repo)
 
 
-@app.route('/in-review/', methods=['GET'])
+@app.route('/in-review', methods=['GET'])
 def in_review():
     """In review page"""
 
@@ -507,7 +507,7 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
 
 
 @app.route('/partner/<path:article_path>', methods=['GET'])
-@app.route('/partner/', defaults={'article_path': None}, methods=['GET'])
+@app.route('/partner', defaults={'article_path': None}, methods=['GET'])
 def partner(article_path):
     """
     URL for articles from hackhands blog -- these articles are not
@@ -546,7 +546,7 @@ def partner(article_path):
                            disclaimer=True)
 
 
-@app.route('/delete/', methods=['POST'])
+@app.route('/delete', methods=['POST'])
 @login_required
 def delete():
     """Delete POST page"""
@@ -581,7 +581,7 @@ def delete():
     return redirect(url_for('index'))
 
 
-@app.route('/publish/', methods=['POST'])
+@app.route('/publish', methods=['POST'])
 @login_required
 def change_publish_status():
     """Publish or unpublish article via POST"""
@@ -658,7 +658,7 @@ def change_publish_status():
     return redirect(filters.url_for_article(article, saved=1))
 
 
-@app.route('/subscribe/', methods=['POST'])
+@app.route('/subscribe', methods=['POST'])
 def subscribe():
     """Subscribe POST page"""
 
@@ -706,7 +706,7 @@ def sync_listing(publish_status):
     return redirect(url_for('index'))
 
 
-@app.route('/feature/', methods=['POST'])
+@app.route('/feature', methods=['POST'])
 @collaborator_required
 def set_featured_title():
     """Form POST to update featured title"""
