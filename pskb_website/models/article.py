@@ -1008,9 +1008,6 @@ class Article(object):
         Get path to static image for article based on stack
 
         None will be returned for articles without a stack image
-
-        A full path including the domain is included in the URL so this
-        property is suitable for using where places require a full link such as
         FB open graph meta tags.
         """
 
@@ -1020,9 +1017,24 @@ class Article(object):
             static_path = os.path.join(app.static_folder, file_path)
 
             if os.path.isfile(static_path):
-                return url_for('static', filename=file_path, _external=True)
+                return url_for('static', filename=file_path)
 
         return None
+
+    @property
+    def open_graph_image_url(self):
+        """Get full URL suitable for open graph meta tags"""
+
+        url = self.stack_image_url
+        if url is None:
+            return None
+
+        if app.config['DOMAIN']:
+            # Cannot use os.path.join b/c url could have leading / which causes
+            # os.path.join to disregard other arguments
+            return app.config['DOMAIN'] + url
+
+        return url
 
     @property
     def publish_status(self):
