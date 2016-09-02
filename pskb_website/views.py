@@ -97,6 +97,8 @@ def faq():
     return render_template('faq.html', text=text)
 
 
+# This isn't used now, but leaving it around since we'll likely have another
+# contest in the future since the first one was so successful.
 @app.route('/contest/')
 def contest():
     """Contest page"""

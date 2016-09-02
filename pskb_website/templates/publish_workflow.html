@@ -23,18 +23,29 @@
     {% if article.branch == 'master' %}
     <h1 id="thanks">Thanks for posting your new guide!</h1>
 
+    <h2 id="whats-next">What's next</h2>
     <p>
-        Hoorah! Your guide is now in-review for 2016 Tutorial Contest. We
-        want you to win, and here’s a tip: share your tutorial on social media
-        and with the developer community to get feedback on your guide.
+        The guide is now in <strong>in-review</strong> status, which means it
+        will show up on our
+        <a href="{{url_for('in_review')}}">Review page</a> within a few
+        minutes.
     </p>
+    <p>
+        Our community editors will start helping get your guide ready for
+        publishing.  Feel free to ask editors questions on our
+        <a href="{{g.slack_url}}">Slack channel</a> or
+        <a href="mailto: prateek-gupta@pluralsight.com">contact us directly</a>.
+        You can keep editing your guide and check the
+        <a href="{{g.repo_url}}">guides Github repo</a> for more help.
+    </p>
+
+    <p>In the meantime, try sharing your guide to help recruit editors!</p>
 
     <div class="row">
         <div class="col-sm-12 share-button">
             <a class="twitter-share-button"
                 href="https://twitter.com/intent/tweet?hashtags={{article.stacks[0]}}&text={{['Help review ',
-                '"', article.title|truncate(40), '" ',
-                'for hack.guides() contest ']|join|urlencode|truncate(110)}}"
+                '"', article.title|truncate(40), '"']|join|urlencode|truncate(110)}}"
                 data-size="large"
                 data-url="{{canonical_url}}"
                 data-via="pluralsight">
@@ -57,21 +68,6 @@
         </div>
     </div>
 
-    <h2 id="whats-next">What's next</h2>
-    <p>
-        The guide is now in <strong>in-review</strong> status, which means it
-        will show up on our
-        <a href="{{url_for('in_review')}}">Review page</a> within a few
-        minutes.
-    </p>
-    <p>
-        Our community editors will start helping get your guide ready for
-        publishing.  Feel free to ask editors questions on our
-        <a href="{{g.slack_url}}">Slack channel</a> or
-        <a href="mailto: prateek-gupta@pluralsight.com">contact us directly</a>.
-        You can keep editing your guide and check the
-        <a href="{{g.repo_url}}">guides Github repo</a> for more help.
-    </p>
     {% else %}
     {% include 'editor_workflow.html' %}
     {% endif %}
