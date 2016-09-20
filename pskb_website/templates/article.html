@@ -20,7 +20,8 @@
 
 {% block title %}
     {% if article and article.title %}
-        <title>{{article.title}} | hack.guides()</title>
+        {# Adding (Example) as SEO results show 35% increased click-through #}
+        <title>{{article.title}} (Example) | hack.guides()</title>
     {% else %}
         {{super}}
     {% endif %}
