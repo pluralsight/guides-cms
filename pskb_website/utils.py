@@ -2,6 +2,7 @@
 Generic functions for global use
 """
 
+from datetime import datetime
 import re
 from unicodedata import normalize
 import urlparse
@@ -60,3 +61,14 @@ def configure_redis_from_url(url):
         app.logger.error('Failed creating redis instance: err: %s', err)
         app.logger.debug('Trace:', exc_info=True)
         return None
+
+
+def datetime_from_utc_string(utc_time):
+    """
+    Parse UTC +00 string into datetime object
+
+    :returns: Datetime object
+    """
+
+    # Note we're assuming UTC offset 0 ('Z') as the format!
+    return datetime.strptime(utc_time, "%Y-%m-%dT%H:%M:%SZ")

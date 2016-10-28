@@ -2,6 +2,9 @@
 Main views of PSKB app
 """
 
+import os
+from datetime import datetime
+
 from flask import redirect, url_for, session, request, render_template, flash, g
 
 from . import PUBLISHED, IN_REVIEW, DRAFT, STATUSES, SLACK_URL
@@ -490,8 +493,12 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     if login is not None:
         hearted = models.has_hearted(article.stacks[0], article.title, login)
 
+    updated_on = utils.datetime_from_utc_string(article.last_updated).strftime('%x')
+
     return render_template('article.html',
                            article=article,
+                           updated_on=updated_on,
+                           tutorial_contestant=is_tutorial_contestant(article),
                            hearted=hearted,
                            allow_delete=allow_delete,
                            canonical_url=canonical_url,
@@ -790,3 +797,29 @@ def missing_article(requested_url=None, stack=None, title=None, branch=None):
 
     flash('We could not find that guide. Give these fresh ones a try.')
     return render_published_articles(status_code=404)
+
+
+def is_tutorial_contestant(article):
+    """
+    Determine if article is part of current tutorial contest
+    """
+
+    # These are not in app.config because they are considered to be temporary
+    # since the contests have a limited running time.
+
+    try:
+        start_date = datetime.strptime(os.environ['CONTEST_START'], '%Y-%m-%d')
+    except KeyError:
+        return False
+
+    try:
+        end_date = datetime.strptime(os.environ['CONTEST_END'], '%Y-%m-%d')
+    except KeyError:
+        return False
+
+    try:
+        creation_date = utils.datetime_from_utc_string(article.creation_date)
+    except TypeError:
+        return False
+
+    return creation_date >= start_date and creation_date <= end_date

@@ -352,7 +352,6 @@ def read_article(path, rendered_text=False, branch=u'master', repo_path=None,
         article.filename = path_info.filename
         article.repo_path = path_info.repo
         article.branch = branch
-        article.last_updated = details.last_updated
 
         # We don't have a ton of cache space so reserve it for more
         # high-traffic data like the rendered view of the articles.
@@ -364,6 +363,15 @@ def read_article(path, rendered_text=False, branch=u'master', repo_path=None,
             if article.published:
                 article._read_contributors_from_api(remove_ignored_users=True)
 
+            # Force update of some properies from API so we can cache values
+            article._read_last_updated_from_api()
+            article._read_creation_date_from_api()
+
+            # Note we cache the ENTIRE article here. This is different than
+            # what we serialize when saving the guide to github!  We want to
+            # cache ALL the info but some misc. information isn't needed when
+            # we save to github b/c we can re-read from API.  Cache purpose is
+            # to save API calls!
             cache.save_file(article.path, article.branch, lib.to_json(article))
     else:
         # We cannot properly show an article without metadata.
@@ -639,7 +647,8 @@ def save_article_meta_data(article, author_name=None, email=None, branch=None,
     # Don't need to serialize everything, just the important stuff that's not
     # stored in the path and article.
     exclude_attrs = ('content', 'external_url', 'sha', 'repo_path', '_path',
-                     'last_updated', '_contributors', '_heart_count')
+                     '_last_updated', '_creation_date', '_contributors',
+                     '_heart_count')
     json_content = lib.to_json(article, exclude_attrs=exclude_attrs)
 
     # Nothing changed so no commit needed
@@ -962,7 +971,8 @@ class Article(object):
         self.external_url = external_url
         self.filename = filename
         self.image_url = image_url
-        self.last_updated = None
+        self._creation_date = None
+        self._last_updated = None
         self.thumbnail_url = None
         self.author_real_name = author_real_name or author_name
         self.first_commit = None
@@ -1070,6 +1080,66 @@ class Article(object):
         return self.publish_status == PUBLISHED
 
     @property
+    def creation_date(self):
+        """
+        Get string representing creation time of the article text, not metadata
+
+        :returns: String in UTC +00 representing creation time or None for
+                  error
+        """
+
+        if self._creation_date is not None:
+            return self._creation_date
+
+        self._read_creation_date_from_api()
+        return self._creation_date
+
+    def _read_creation_date_from_api(self):
+        """
+        Set string representing creation time of the article text, not metadata
+        """
+
+        if self.first_commit is None:
+            self._creation_date = None
+            return
+
+        commit = remote.commit(self.first_commit)
+
+        try:
+            self._creation_date = commit['commit']['author']['date']
+        except KeyError:
+            app.logger.error('Failed parsing commit response: %s', commit)
+
+    @property
+    def last_updated(self):
+        """
+        Get string representing last updated time of the article text,
+        not metadata
+
+        :returns: String in UTC +00 representing last updated time
+        """
+
+        # Minimal form of caching.  This could lead to the data being slightly
+        # out-of-date, but this is not a critical piece of information so
+        # saving it locally to reduce number of requests.
+        if self._last_updated is not None:
+            return self._last_updated
+
+        self._read_last_updated_from_api()
+        return self._last_updated
+
+    def _read_last_updated_from_api(self):
+        """Force read of last updated date from API"""
+
+        commits = remote.commits('%s/%s' % (self.path, self.filename),
+                                 branch=self.branch)
+
+        if not commits:
+            self._last_updated = None
+        else:
+            self._last_updated = commits[0]['commit']['author']['date']
+
+    @property
     def contributors(self):
         """
         List of tuples representing any 'author' i.e user who has contributed
@@ -1126,6 +1196,9 @@ class Article(object):
             # Another rename so we could use a property
             elif attr == 'publish_status':
                 attr = '_publish_status'
+
+            elif attr == 'last_updated':
+                attr = '_last_updated'
 
             # This field used to be optional
             elif attr == 'stacks' and not value:

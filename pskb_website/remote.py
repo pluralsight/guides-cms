@@ -725,14 +725,58 @@ def merge_branch(repo_path, base, head, message):
     return False
 
 
-def file_contributors(path, branch=u'master'):
+def commit(sha):
+    """
+    Get commit info for given SHA
+
+    :param sha: SHA of commit to read data for
+    :returns: Raw commit object from API
+    """
+
+    url = u'/repos/%s/commits/%s' % (default_repo_path(), sha)
+
+    app.logger.debug('GET: %s sha: %s', url, sha)
+
+    resp = github.get(url)
+    if resp.status != 200:
+        log_error('Failed reading commit from github', url, resp)
+        return {}
+
+    return resp.data
+
+
+def commits(path, branch=u'master'):
+    """
+    Get list of commit objects from API for a given path
+
+    :param path: Short-path to file (<dir>/.../<filename>) i.e. without repo
+                 and owner
+    :param branch: Name of branch to read contributors for
+    :returns: Raw data from commits endpoint
+    """
+
+    url = u'/repos/%s/commits' % (default_repo_path())
+
+    app.logger.debug('GET: %s path: %s, branch: %s', url, path, branch)
+
+    resp = github.get(url, data={'path': path, 'branch': branch})
+    if resp.status != 200:
+        log_error('Failed reading commits from github', url, resp)
+
+    return resp.data
+
+
+def file_contributors(path, branch=u'master', commit_list=None):
     """
     Get dictionary of User objects representing authors and committers to a
     file
 
     :param path: Short-path to file (<dir>/.../<filename>) i.e. without repo
                  and owner
-    :param base: Name of branch to read contributors for
+    :param branch: Name of branch to read contributors for
+    :param commit_list: Optional list of commit objects from API. If no commits
+                        are provided they will be retrieved via API otherwise
+                        contributors will be organized from given commits
     :returns: Dictionary of the following form::
 
         {'authors': set([(name, login), (name, login), ...]),
@@ -743,14 +787,9 @@ def file_contributors(path, branch=u'master'):
     """
 
     contribs = {'authors': set(), 'committers': set()}
-    url = u'/repos/%s/commits' % (default_repo_path())
 
-    app.logger.debug('GET: %s path: %s, branch: %s', url, path, branch)
-
-    resp = github.get(url, data={'path': path, 'branch': branch})
-    if resp.status != 200:
-        log_error('Failed reading commits from github', url, resp)
-        return contribs
+    if commit_list is None:
+        commit_list = commits(path, branch=branch)
 
     def _extract_data_from_commit(commit, key):
         login = commit[key]['login']
