@@ -446,6 +446,15 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
 
     article_identifier = article.first_commit
     redirect_url = None
+
+    # We use SOCIAL_DOMAIN instead of DOMAIN because we po.st doesn't support
+    # 301s and we changed domains and setup 301 redirects so we want to keep
+    # those old counts around.  So, just redirect everyone to the old domain
+    # to keep counts and let 301 send it to new location.
+    share_domain = app.config.get('SOCIAL_DOMAIN', None)
+    if share_domain is None:
+        share_domain = app.config.get('DOMAIN', '')
+
     if article_identifier is None:
         # Backwards compatability for disqus comments. We didn't track the
         # first commit before version .2 and all disqus comments used the
@@ -456,14 +465,12 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
 
         # Hack to save our old social shares. The po.st service doesn't handle
         # 301 redirects so need to share with the old url to keep the counts.
-        redirect_url = u'%s/review/%s' % (app.config['DOMAIN'],
-                                          article_identifier)
+        redirect_url = u'%s/review/%s' % (share_domain, article_identifier)
     else:
         # Use full domain for redirect_url b/c this controls the po.st social
         # sharing numbers.  We want these numbers to stick with the domain
         # we're running on so counts go with us.
-        redirect_url = filters.url_for_article(article,
-                                               base_url=app.config['DOMAIN'])
+        redirect_url = filters.url_for_article(article, base_url=share_domain)
 
     # Filter out the current branch from the list of branches
     branches = [b for b in article.branches if b != article.branch]

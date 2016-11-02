@@ -15,7 +15,7 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'MAILCHIMP_API_KEY', 'MAILCHIMP_LIST_ID',
                            'MAILCHIMP_STACKS_GROUP_NAME',
                            'SECONDARY_REPO_OWNER', 'SECONDARY_REPO_NAME',
-                           'DOMAIN', 'CELERY_BROKER_URL',
+                           'DOMAIN', 'SOCIAL_DOMAIN', 'CELERY_BROKER_URL',
                            'CELERY_TASK_SERIALIZER', 'IGNORE_STATS_FOR',
                            'WEBHOOK_SECRET', 'ENABLE_HEARTING')
 
@@ -57,7 +57,11 @@ class Config(object):
     MAILCHIMP_LIST_ID = None
     MAILCHIMP_STACKS_GROUP_NAME = None
 
+    # Domain site is hosted on
     DOMAIN = ''
+
+    # Domain for po.st social sharing to keep counts pre-domain moves
+    SOCIAL_DOMAIN = ''
 
     # Only needed if using github webhooks
     WEBHOOK_SECRET = ''
