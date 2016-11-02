@@ -452,8 +452,8 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
     # those old counts around.  So, just redirect everyone to the old domain
     # to keep counts and let 301 send it to new location.
     share_domain = app.config.get('SOCIAL_DOMAIN', None)
-    if share_domain is None:
-        share_domain = app.config.get('DOMAIN', '')
+    if not share_domain:
+        share_domain = app.config['DOMAIN']
 
     if article_identifier is None:
         # Backwards compatability for disqus comments. We didn't track the
