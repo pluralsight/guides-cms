@@ -117,9 +117,6 @@ def get(key):
     :returns: Value saved or None if not found or error
     """
 
-    if redis_obj is None:
-        return None
-
     try:
         return redis_obj.get(key)
     except Exception:
