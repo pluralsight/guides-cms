@@ -280,12 +280,12 @@ def write(stack, title):
         if article.stacks:
             selected_stack = article.stacks[0]
 
-    # Must use https we don't allow site to be served on http, but don't use
-    # https in local testing
-    if not app.debug:
-        api_url = url_for('api_save', _scheme="https", _external=True)
-    else:
-        api_url = url_for('api_save')
+    api_url = url_for('api_save')
+
+    # Similar to _external=True but using the environment, not headers
+    # Must use full domain b/c this is API request and we use https in
+    # production
+    api_url = '%s/%s' % (app.config['DOMAIN'], api_url)
 
     return render_template('editor.html',
                            api_url=api_url,
