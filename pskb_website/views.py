@@ -92,12 +92,7 @@ def faq():
 
     g.slack_url = SLACK_URL
 
-    api_url = url_for('slack_stats')
-
-    # Similar to _external=True but using the environment, not headers
-    # Must use full domain b/c this is API request and we use https in
-    # production
-    api_url = '%s/%s' % (app.config['DOMAIN'], api_url)
+    api_url = url_for_domain('slack_stats')
 
     # Read and cache this for an hour, the FAQ doesn't change very frequently
     text = models.read_file('faq.md', rendered_text=False, use_cache=True,
@@ -271,7 +266,6 @@ def write(stack, title):
                                    stacks=forms.STACK_OPTIONS,
                                    selected_stack=selected_stack), 404
 
-
         if article.sha is None:
             article.sha = ''
 
@@ -280,12 +274,7 @@ def write(stack, title):
         if article.stacks:
             selected_stack = article.stacks[0]
 
-    api_url = url_for('api_save')
-
-    # Similar to _external=True but using the environment, not headers
-    # Must use full domain b/c this is API request and we use https in
-    # production
-    api_url = '%s/%s' % (app.config['DOMAIN'], api_url)
+    api_url = url_for_domain('api_save')
 
     return render_template('editor.html',
                            api_url=api_url,
@@ -852,3 +841,24 @@ def get_social_redirect_url(article, share_domain):
     article_path_parts = url_components(redirect_url)[1:]
     article_path_parts.insert(0, share_domain)
     return u'/'.join(article_path_parts)
+
+
+def url_for_domain(url_name):
+    """
+    Get url for domain from environment
+    """
+
+    url = url_for(url_name)
+
+    domain = app.config['DOMAIN']
+
+    parsed_domain = urlparse.urlparse(domain)
+    parsed_url = urlparse.urlparse(url)
+
+    # Strip redundant part off if we're hosting on subfolder
+    if parsed_url.path.startswith(parsed_domain.path):
+        api_url = '%s/%s' % (domain, parsed_url.path[len(parsed_domain.path):])
+    else:
+        api_url = '%s/%s' % (domain, api_url)
+
+    return api_url
