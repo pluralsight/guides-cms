@@ -42,7 +42,7 @@
                 </a>
 
                 <div id="btn-save-wrapper" class="tooltip-wrapper disabled" data-placement="bottom">
-                    <button id="btn-save" onclick="save('{{url_for("api_save")}}', '{{article.sha}}', '{{article.path}}', '{{secondary_repo}}', '{{'' if not article.first_commit else article.first_commit}}')" class="btn btn-primary btn-save btn-autosize" disabled>Save</button>
+                    <button id="btn-save" onclick="save('{{api_url}}', '{{article.sha}}', '{{article.path}}', '{{secondary_repo}}', '{{'' if not article.first_commit else article.first_commit}}')" class="btn btn-primary btn-save btn-autosize" disabled>Save</button>
                 </div>
 
                 <button id="btn-back" onclick="back()" class="btn btn-danger btn-back btn-autosize">Back</button>

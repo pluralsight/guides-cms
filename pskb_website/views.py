@@ -272,7 +272,15 @@ def write(stack, title):
         if article.stacks:
             selected_stack = article.stacks[0]
 
+    # Must use https we don't allow site to be served on http, but don't use
+    # https in local testing
+    if not app.debug:
+        api_url = url_for('api_save', _scheme="https", _external=True)
+    else:
+        api_url = url_for('api_save')
+
     return render_template('editor.html',
+                           api_url=api_url,
                            article=article,
                            stacks=forms.STACK_OPTIONS,
                            selected_stack=selected_stack,
