@@ -92,10 +92,18 @@ def faq():
 
     g.slack_url = SLACK_URL
 
-    # Read and cache this for an hour, the FAQ doesn't change very frequently
-    text = models.read_file('faq.md', rendered_text=False, use_cache=True, timeout=60 * 60)
+    api_url = url_for('slack_stats')
 
-    return render_template('faq.html', text=text)
+    # Similar to _external=True but using the environment, not headers
+    # Must use full domain b/c this is API request and we use https in
+    # production
+    api_url = '%s/%s' % (app.config['DOMAIN'], api_url)
+
+    # Read and cache this for an hour, the FAQ doesn't change very frequently
+    text = models.read_file('faq.md', rendered_text=False, use_cache=True,
+                            timeout=60 * 60)
+
+    return render_template('faq.html', api_url=api_url, text=text)
 
 
 # This isn't used now, but leaving it around since we'll likely have another

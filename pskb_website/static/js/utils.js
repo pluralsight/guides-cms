@@ -228,10 +228,10 @@ function init_signup_row(scroll_pos, signup_type) {
 
 
 /* Update given element with slack stats asychronously */
-function show_slack_stats(element) {
+function show_slack_stats(api_url, element) {
     $.ajax({
         type: 'GET',
-        url: '/api/slack_stats/',
+        url: api_url,
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         dataType: 'json',
         cache: false,
