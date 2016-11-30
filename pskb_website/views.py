@@ -92,7 +92,7 @@ def faq():
 
     g.slack_url = SLACK_URL
 
-    api_url = url_for_domain('slack_stats')
+    api_url = url_for_domain(url_for('slack_stats'))
 
     # Read and cache this for an hour, the FAQ doesn't change very frequently
     text = models.read_file('faq.md', rendered_text=False, use_cache=True,
@@ -274,7 +274,7 @@ def write(stack, title):
         if article.stacks:
             selected_stack = article.stacks[0]
 
-    api_url = url_for_domain('api_save')
+    api_url = url_for_domain(url_for('api_save'))
 
     return render_template('editor.html',
                            api_url=api_url,
@@ -821,36 +821,21 @@ def get_social_redirect_url(article, share_domain):
     if share_domain.endswith('/'):
         share_domain = share_domain[:-1]
 
+    redirect_url = filters.url_for_article(article)
+
     # Use full domain for redirect_url b/c this controls the po.st social
     # sharing numbers.  We want these numbers to stick with the domain
     # we're running on so counts go with us.
-    redirect_url = filters.url_for_article(article, base_url=share_domain)
-
-    # Hack for when we're hosted on a subfolder which wasn't the case
-    # before.  We need to maintain social shares so we only want to include
-    # a subfolder if th share_domain had it.  The subfolder gets added
-    # automatically by url_for_article if that's where the request came in.
-
-    base_url_parts = url_components(share_domain)
-    if len(base_url_parts) >= 1:
-        # Caller is requesting a subfolder so leave it as-is
-        return redirect_url
-
-    # Strip the leading subfolder off since caller didn't ask for it explicitly
-    # in the share_domain.
-    article_path_parts = url_components(redirect_url)[1:]
-    article_path_parts.insert(0, share_domain)
-    return u'/'.join(article_path_parts)
+    return url_for_domain(redirect_url, domain=share_domain)
 
 
-def url_for_domain(url_name):
+def url_for_domain(url, domain=None):
     """
     Get url for domain from environment
     """
 
-    url = url_for(url_name)
-
-    domain = app.config['DOMAIN']
+    if domain is None:
+        domain = app.config['DOMAIN']
 
     parsed_domain = urlparse.urlparse(domain)
     parsed_url = urlparse.urlparse(url)
