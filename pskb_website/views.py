@@ -835,4 +835,5 @@ def get_social_redirect_url(article, share_domain):
     # Strip the leading subfolder off since caller didn't ask for it explicitly
     # in the share_domain.
     article_path_parts = url_components(redirect_url)[1:]
+    article_path_parts.insert(0, share_domain)
     return u'/'.join(article_path_parts)
