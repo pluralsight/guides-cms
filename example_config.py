@@ -17,7 +17,8 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'SECONDARY_REPO_OWNER', 'SECONDARY_REPO_NAME',
                            'DOMAIN', 'SOCIAL_DOMAIN', 'CELERY_BROKER_URL',
                            'CELERY_TASK_SERIALIZER', 'IGNORE_STATS_FOR',
-                           'WEBHOOK_SECRET', 'ENABLE_HEARTING')
+                           'WEBHOOK_SECRET', 'ENABLE_HEARTING',
+                           'GITHUB_CALLBACK_URL')
 
 
 class Config(object):
@@ -65,6 +66,9 @@ class Config(object):
 
     # Only needed if using github webhooks
     WEBHOOK_SECRET = ''
+
+    # Defaults to url_for('authorized') but can override with this variable
+    GITHUB_CALLBACK_URL = ''
 
     # CSV string of user login names to ignore stats for.  This is useful if
     # you want to ignore the repo owner. You can easily add to this list.

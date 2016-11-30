@@ -118,10 +118,13 @@ def contest():
 def github_login():
     """Callback for github oauth"""
 
-    # Using _external=True even though it's redundant for our wrapper unless
-    # DOMAIN is set.
-    url = url_for_domain('authorized', _external=True,
-                         base_url=app.config['DOMAIN'])
+    url = app.config.get('GITHUB_CALLBACK_URL', '')
+    if not url:
+        # Using _external=True even though it's redundant for our wrapper
+        # unless DOMAIN is set.
+        url = url_for_domain('authorized', _external=True,
+                             base_url=app.config['DOMAIN'])
+
     return remote.github.authorize(callback=url)
 
 
