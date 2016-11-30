@@ -2,6 +2,8 @@
 Main views of PSKB app
 """
 
+import urlparse
+
 from flask import redirect, url_for, session, request, render_template, flash, g
 
 from . import PUBLISHED, IN_REVIEW, DRAFT, STATUSES, SLACK_URL
@@ -467,10 +469,7 @@ def render_article_view(request_obj, article, only_visible_by_user=None):
         # 301 redirects so need to share with the old url to keep the counts.
         redirect_url = u'%s/review/%s' % (share_domain, article_identifier)
     else:
-        # Use full domain for redirect_url b/c this controls the po.st social
-        # sharing numbers.  We want these numbers to stick with the domain
-        # we're running on so counts go with us.
-        redirect_url = filters.url_for_article(article, base_url=share_domain)
+        redirect_url = get_social_redirect_url(article, share_domain)
 
     # Filter out the current branch from the list of branches
     branches = [b for b in article.branches if b != article.branch]
@@ -797,3 +796,43 @@ def missing_article(requested_url=None, stack=None, title=None, branch=None):
 
     flash('We could not find that guide. Give these fresh ones a try.')
     return render_published_articles(status_code=404)
+
+
+def url_components(url):
+    """
+    Get URL path components as a list (leading slash is removed!)
+    """
+
+    parsed = urlparse.urlparse(url)
+    return [p for p in parsed.path.split('/') if p]
+
+
+def get_social_redirect_url(article, share_domain):
+    """
+    Get social redirect url for po.st to enable all counts to follow us
+    regardless of where we're hosted.
+    """
+
+    # Strip of trailing / to avoid having two slashes together in resulting url
+    if share_domain.endswith('/'):
+        share_domain = share_domain[:-1]
+
+    # Use full domain for redirect_url b/c this controls the po.st social
+    # sharing numbers.  We want these numbers to stick with the domain
+    # we're running on so counts go with us.
+    redirect_url = filters.url_for_article(article, base_url=share_domain)
+
+    # Hack for when we're hosted on a subfolder which wasn't the case
+    # before.  We need to maintain social shares so we only want to include
+    # a subfolder if th share_domain had it.  The subfolder gets added
+    # automatically by url_for_article if that's where the request came in.
+
+    base_url_parts = url_components(share_domain)
+    if base_url_parts > 1:
+        # Caller is requesting a subfolder so leave it as-is
+        return redirect_url
+
+    # Strip the leading subfolder off since caller didn't ask for it explicitly
+    # in the share_domain.
+    article_path_parts = url_components(redirect_url)[1:]
+    return u'/'.join(article_path_parts)
