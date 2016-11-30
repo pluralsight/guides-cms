@@ -14,7 +14,6 @@ from . import forms
 from . import tasks
 from . import filters
 from . import utils
-from . import url_for_domain
 from .lib import (
         read_article,
         login_required,
@@ -120,10 +119,7 @@ def github_login():
 
     url = app.config.get('GITHUB_CALLBACK_URL', '')
     if not url:
-        # Using _external=True even though it's redundant for our wrapper
-        # unless DOMAIN is set.
-        url = url_for_domain('authorized', _external=True,
-                             base_url=app.config['DOMAIN'])
+        url = url_for('authorized', _external=True)
 
     return remote.github.authorize(callback=url)
 
