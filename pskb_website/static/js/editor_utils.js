@@ -463,7 +463,7 @@ var addModalMessage = function(message) {
     $('#modal-error').modal()
 };
 
-function save(sha, path, secondary_repo, first_commit) {
+function save(endpoint_url, sha, path, secondary_repo, first_commit) {
     var data = {
         'title': $('input[name=title]').val(),
         'original_stack': $('input[name=original_stack]').val(),
@@ -478,7 +478,7 @@ function save(sha, path, secondary_repo, first_commit) {
     }
     $.ajax({
         type: 'POST',
-        url: '/api/save/',
+        url: endpoint_url,
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: data,
         dataType: 'json',
