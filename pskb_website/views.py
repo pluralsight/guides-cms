@@ -828,7 +828,7 @@ def get_social_redirect_url(article, share_domain):
     # automatically by url_for_article if that's where the request came in.
 
     base_url_parts = url_components(share_domain)
-    if len(base_url_parts) > 1:
+    if len(base_url_parts) >= 1:
         # Caller is requesting a subfolder so leave it as-is
         return redirect_url
 
