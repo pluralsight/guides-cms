@@ -826,7 +826,23 @@ def get_social_redirect_url(article, share_domain):
     # Use full domain for redirect_url b/c this controls the po.st social
     # sharing numbers.  We want these numbers to stick with the domain
     # we're running on so counts go with us.
-    return url_for_domain(redirect_url, domain=share_domain)
+    url = url_for_domain(redirect_url, domain=share_domain)
+
+    # Strip off the subfolder if it exists so we always use the exact same
+    # share url for saving counts.
+    subfolder = app.config.get('SUBFOLDER', None)
+    if not subfolder:
+        return url
+
+    p = urlparse.urlparse(url)
+
+    if not p.path.startswith(subfolder):
+        return url
+
+    new_path = p.path.replace('%s' % (subfolder), '', 1)
+    new_url = urlparse.ParseResult(p.scheme, p.netloc, new_path, p.params,
+                                   p.query, p.fragment)
+    return new_url.geturl()
 
 
 def url_for_domain(url, domain=None):
@@ -834,16 +850,14 @@ def url_for_domain(url, domain=None):
     Get url for domain from environment
     """
 
-    if domain is None:
+    if not domain:
         domain = app.config['DOMAIN']
 
-    parsed_domain = urlparse.urlparse(domain)
-    parsed_url = urlparse.urlparse(url)
+    if domain:
+        slash = '/'
+        if domain.endswith('/') or url.startswith('/'):
+            slash = ''
 
-    # Strip redundant part off if we're hosting on subfolder
-    if parsed_url.path.startswith(parsed_domain.path):
-        api_url = '%s/%s' % (domain, parsed_url.path[len(parsed_domain.path):])
-    else:
-        api_url = '%s/%s' % (domain, api_url)
+        url = '%s%s%s' % (domain, slash, url)
 
-    return api_url
+    return url

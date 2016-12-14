@@ -61,6 +61,11 @@ class Config(object):
     # Domain site is hosted on
     DOMAIN = ''
 
+    # Optional subfolder site is hosted on
+    # The site can be hosted on a root domain and subfolder at the same time
+    # Example: '/guides'
+    SUBFOLDER = ''
+
     # Domain for po.st social sharing to keep counts pre-domain moves
     SOCIAL_DOMAIN = ''
 
