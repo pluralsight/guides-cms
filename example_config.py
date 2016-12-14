@@ -18,7 +18,7 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'DOMAIN', 'SOCIAL_DOMAIN', 'CELERY_BROKER_URL',
                            'CELERY_TASK_SERIALIZER', 'IGNORE_STATS_FOR',
                            'WEBHOOK_SECRET', 'ENABLE_HEARTING',
-                           'GITHUB_CALLBACK_URL')
+                           'GITHUB_CALLBACK_URL', 'SUBFOLDER')
 
 
 class Config(object):
