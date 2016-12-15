@@ -268,7 +268,7 @@
         {% if session.github_token %}
             $('.heart-guide').click(function() {
                 var heart_count = $('.heart-count');
-                toggleHeart($('.heart-guide'), heart_count, "{{article.stacks[0]|safe}}", "{{article.title|safe}}");
+                toggleHeart($('.heart-guide'), heart_count, "{{article.stacks[0]|safe}}", "{{article.title|safe}}", "{{url_for('add_heart')}}", "{{url_for('remove_heart')}}");
             });
         {% else %}
 

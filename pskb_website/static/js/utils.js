@@ -253,7 +253,8 @@ function show_slack_stats(api_url, element) {
  * return new heart count after operation. */
 var toggling_heart = false;
 
-function toggleHeart(heart_element, count_element, stack, title) {
+function toggleHeart(heart_element, count_element, stack, title, add_heart_url,
+                     remove_heart_url) {
     /* Reject multiple clicks in succession */
     if (toggling_heart) {
         return;
@@ -286,10 +287,10 @@ function toggleHeart(heart_element, count_element, stack, title) {
     /* Go ahead and add the heart to the UI to give the user feedback that the
      * action was submitted. */
     if (add_heart) {
-        request_url = '/api/add-heart/';
+        request_url = add_heart_url;
         addHeartToUI();
     } else {
-        request_url = '/api/remove-heart/';
+        request_url = remove_heart_url;
         removeHeartFromUI();
     }
 
