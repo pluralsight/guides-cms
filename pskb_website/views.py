@@ -239,10 +239,7 @@ def my_drafts():
     g.drafts_active = True
     articles = models.get_articles_for_author(session['login'],
                                               status=DRAFT)
-    featured_article = models.get_featured_article()
-
-    return render_template('index.html', articles=articles,
-                           featured_article=featured_article)
+    return render_template('drafts.html', articles=articles)
 
 
 @app.route('/write/<stack>/<title>', methods=['GET'])

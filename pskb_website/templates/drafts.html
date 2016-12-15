@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block header %}
+    <div id="hero">
+        {{super()}}
+
+        <div class="container">
+            {% include "mission.html" %}
+        </div><!-- container -->
+    </div> <!-- hero -->
+{% endblock %}
+
+{% block body %}
+    {% include "article_list.html" %}
+{% endblock %}
