@@ -827,9 +827,15 @@ def get_social_redirect_url(article, share_domain):
     # sharing numbers.  We want these numbers to stick with the domain
     # we're running on so counts go with us.
     url = url_for_domain(redirect_url, domain=share_domain)
+    return strip_subfolder(url)
 
-    # Strip off the subfolder if it exists so we always use the exact same
-    # share url for saving counts.
+
+def strip_subfolder(url):
+    """
+    Strip off the subfolder if it exists so we always use the exact same
+    share url for saving counts.
+    """
+
     subfolder = app.config.get('SUBFOLDER', None)
     if not subfolder:
         return url
