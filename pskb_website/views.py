@@ -91,8 +91,7 @@ def faq():
     """FAQ page"""
 
     g.slack_url = SLACK_URL
-
-    api_url = url_for_domain(url_for('slack_stats'))
+    api_url = url_for('slack_stats')
 
     # Read and cache this for an hour, the FAQ doesn't change very frequently
     text = models.read_file('faq.md', rendered_text=False, use_cache=True,
@@ -274,7 +273,7 @@ def write(stack, title):
         if article.stacks:
             selected_stack = article.stacks[0]
 
-    api_url = url_for_domain(url_for('api_save'))
+    api_url = url_for('api_save')
 
     return render_template('editor.html',
                            api_url=api_url,
