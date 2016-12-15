@@ -18,7 +18,7 @@ from . import remote
 from .lib import login_required
 
 
-@app.route('/api/save/', methods=['POST'])
+@app.route('/api/save', methods=['POST'])
 @login_required
 def api_save():
     """
@@ -163,7 +163,7 @@ def api_save():
                     mimetype='application/json')
 
 
-@app.route('/img_upload/', methods=['POST'])
+@app.route('/img_upload', methods=['POST'])
 @login_required
 def img_upload():
     """Image upload POST page"""
@@ -194,7 +194,7 @@ def img_upload():
                     mimetype='application/json')
 
 
-@app.route('/api/slack_stats/', methods=['GET'])
+@app.route('/api/slack_stats', methods=['GET'])
 def slack_stats():
     """
     Screen-scrape slack signup app since it's dynamic with node.js and grabs
@@ -221,7 +221,7 @@ def gh_rate_limit():
                     mimetype='application/json')
 
 
-@app.route('/api/add-heart/', methods=['POST'])
+@app.route('/api/add-heart', methods=['POST'])
 @login_required
 def add_heart():
     """
@@ -241,7 +241,7 @@ def add_heart():
                     mimetype='application/json')
 
 
-@app.route('/api/remove-heart/', methods=['POST'])
+@app.route('/api/remove-heart', methods=['POST'])
 @login_required
 def remove_heart():
     """
