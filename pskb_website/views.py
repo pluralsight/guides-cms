@@ -4,7 +4,7 @@ Main views of PSKB app
 
 import urlparse
 
-from flask import redirect, url_for, session, request, render_template, flash, g
+from flask import redirect, url_for, session, request, render_template, flash, g, Response
 
 from . import PUBLISHED, IN_REVIEW, DRAFT, STATUSES, SLACK_URL
 from . import app
@@ -14,6 +14,7 @@ from . import forms
 from . import tasks
 from . import filters
 from . import utils
+from . import sitemap
 from .lib import (
         read_article,
         login_required,
@@ -31,6 +32,13 @@ def index():
         return redirect(url_for('login'))
 
     return render_published_articles()
+
+
+@app.route('/sitemap.xml')
+def get_sitemap():
+    """sitemap"""
+
+    return Response(sitemap.get_xml(), mimetype='text/xml')
 
 
 @app.route('/login')
