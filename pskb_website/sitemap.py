@@ -19,7 +19,7 @@ def get_xml():
     guides = itertools.chain(file_mod.published_articles(),
                              file_mod.in_review_articles())
 
-    for guide in xml_for_guides(guides, depth=1):
+    for guide in xml_for_guides(guides):
         items.append(guide)
 
     items.append('</urlset>')
@@ -27,20 +27,13 @@ def get_xml():
     return '\n'.join(items)
 
 
-def xml_for_guides(guides, depth):
+def xml_for_guides(guides):
     """
     Iterator through XML strings for each guide
 
     :param guides: List of file_mod.file_listing_item items
-    :param depth: Number of XML depth to apply to guides for 'pretty'
-                  formatting
     """
 
-    # Could use xml.etree and then pretty formatting, but xml is so simple just
-    # easier to make it text
-    url_depth = '\t' * depth
-    loc_depth = '\t' * (depth + 1)
-
     for guide in guides:
-        yield '%s<url>\n%s<loc>%s</loc>\n%s</url>' % (url_depth, loc_depth,
-                                                      guide.url, url_depth)
+        yield '<url><loc>%s</loc><changefreq>daily</changefreq></url>' % (
+               guide.url)
