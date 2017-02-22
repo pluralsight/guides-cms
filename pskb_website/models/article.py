@@ -354,16 +354,12 @@ def read_article(path, rendered_text=False, branch=u'master', repo_path=None,
         article.branch = branch
         article.last_updated = details.last_updated
 
-        # We don't have a ton of cache space so reserve it for more
-        # high-traffic data like the rendered view of the articles.
-        if rendered_text:
-            # Force read of contributors and only cache it for published
-            # guides. Again, trying to save on cache space, and we're not too
-            # concerned with the list of contributors until a guide is
-            # published.
-            if article.published:
-                article._read_contributors_from_api(remove_ignored_users=True)
-
+        # Force read of contributors and only cache it for published
+        # guides. Again, trying to save on cache space, and we're not too
+        # concerned with the list of contributors until a guide is
+        # published.
+        if article.published:
+            article._read_contributors_from_api(remove_ignored_users=True)
             cache.save_file(article.path, article.branch, lib.to_json(article))
     else:
         # We cannot properly show an article without metadata.
