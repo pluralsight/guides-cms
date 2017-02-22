@@ -12,6 +12,7 @@ from flask import request, Response, abort
 
 from . import app
 from . import DRAFT
+from . import PUBLISHED
 from . import cache
 from . import models
 from .lib import read_article
@@ -105,6 +106,21 @@ def push_event():
 
             cache.delete_file(path, branch)
             cleared.add((path, branch))
+
+            tokens = path.split('/')
+            try:
+                status = tokens[0]
+                stack = tokens[1]
+                title = tokens[2]
+            except IndexError:
+                app.logger.warning('Failing parsing %s to re-cache after push event', path)
+                continue
+
+            # Force a read to cache guide again but only for published guides
+            # to save on space
+            if status == PUBLISHED:
+                article = read_article(stack, title, branch, status,
+                                       rendered_text=False)
 
     return finished
 

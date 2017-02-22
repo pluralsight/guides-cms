@@ -31,6 +31,9 @@ DEFAULT_STACK = u'other'
 
 path_details = collections.namedtuple('path_details', 'repo, filename')
 
+# 2 hours
+ARTICLE_CACHE_TIMEOUT = 2 * 60 * 60
+
 
 def get_available_articles(status=None, repo_path=None):
     """
@@ -297,7 +300,7 @@ def author_stats(statuses=None):
 
 
 def read_article(path, rendered_text=False, branch=u'master', repo_path=None,
-                 allow_missing=False):
+                 allow_missing=False, cache_timeout=ARTICLE_CACHE_TIMEOUT):
     """
     Read article
 
@@ -307,6 +310,7 @@ def read_article(path, rendered_text=False, branch=u'master', repo_path=None,
     :param repo_path: Optional repo path to read from (<owner>/<name>)
     :param allow_missing: False to log warning for missing or True to allow it
                           i.e.  when you're just seeing if an article exists
+    :param cache_timeout: Number of seconds to keep guide in cache if cached
 
     :returns: Article object
     """
@@ -360,7 +364,8 @@ def read_article(path, rendered_text=False, branch=u'master', repo_path=None,
         # published.
         if article.published:
             article._read_contributors_from_api(remove_ignored_users=True)
-            cache.save_file(article.path, article.branch, lib.to_json(article))
+            cache.save_file(article.path, article.branch, lib.to_json(article),
+                            timeout=cache_timeout)
     else:
         # We cannot properly show an article without metadata.
         article = None
