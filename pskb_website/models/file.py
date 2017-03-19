@@ -20,6 +20,8 @@ from ..forms import STACK_OPTIONS
 FAQ_FILENAME = u'faq.md'
 CONTEST_FILENAME = u'author_contest.md'
 
+CONTEST_CATEGORIES_FILENAME = u'contest_categories.md'
+
 PUB_FILENAME = u'published.md'
 IN_REVIEW_FILENAME = u'in_review.md'
 DRAFT_FILENAME = u'draft.md'
@@ -204,6 +206,23 @@ def read_redirects(branch=u'master'):
         redirects[old] = new
 
     return redirects
+
+
+def read_contest_categories():
+    """
+    Read contest categories
+
+    :returns: List of categories
+    """
+
+    # Low-volume so cache it for an hour
+    text = read_file(CONTEST_CATEGORIES_FILENAME, rendered_text=False,
+                     timeout=60 * 60)
+
+    if not text:
+        return []
+
+    return [line.strip() for line in text.split('\n')]
 
 
 def update_article_listing(article_url, title, author_url, author_name,

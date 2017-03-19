@@ -21,6 +21,7 @@ Contents:
    github_repo_layout
    deployment
    publish_workflow
+   contests
    merging_changes
    github_api_usage
    github_webhooks

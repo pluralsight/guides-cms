@@ -463,7 +463,7 @@ var addModalMessage = function(message) {
     $('#modal-error').modal()
 };
 
-function save(endpoint_url, sha, path, secondary_repo, first_commit) {
+function save(endpoint_url, sha, path, secondary_repo, first_commit, contest_categories) {
     var data = {
         'title': $('input[name=title]').val(),
         'original_stack': $('input[name=original_stack]').val(),
@@ -471,7 +471,8 @@ function save(endpoint_url, sha, path, secondary_repo, first_commit) {
         'content': editor.getSession().getValue(),
         'sha': sha,
         'path': path,
-        'first_commit': first_commit
+        'first_commit': first_commit,
+        'contest_categories': $('#contest_categories').val()
     }
     if (secondary_repo) {
         data['secondary_repo'] = 1;

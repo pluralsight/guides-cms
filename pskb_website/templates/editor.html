@@ -84,6 +84,15 @@
                         <option value="{{ stack }}" {{"selected" if selected_stack and selected_stack == stack}}>{{ stack }}</option>
                     {% endfor %}
                 </select>
+
+                {% if contest_categories %}
+                    <select multiple="multiple" id="contest_categories" name="contest_categories" class="selectpicker" data-width="100%" data-size="6" data-dropup-auto="false" data-header="Scroll for additional categories" data-title="Contest categories" data-toggle="tooltip" data-placement="bottom" title="Pick a category to enter your tutorial">
+                        {% for cat in contest_categories %}
+                            <option value="{{ cat }}" {{"selected" if cat in article.contest_categories}}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+
             </div>
 
             <div id="editor-wrapper">

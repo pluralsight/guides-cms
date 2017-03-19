@@ -18,7 +18,7 @@ HEROKU_ENV_REQUIREMENTS = ('HEROKU', 'SECRET_KEY', 'GITHUB_CLIENT_ID',
                            'DOMAIN', 'SOCIAL_DOMAIN', 'CELERY_BROKER_URL',
                            'CELERY_TASK_SERIALIZER', 'IGNORE_STATS_FOR',
                            'WEBHOOK_SECRET', 'ENABLE_HEARTING',
-                           'GITHUB_CALLBACK_URL', 'SUBFOLDER')
+                           'GITHUB_CALLBACK_URL', 'SUBFOLDER', 'CONTEST_NAME')
 
 
 class Config(object):
@@ -80,6 +80,10 @@ class Config(object):
     IGNORE_STATS_FOR = ''
     if REPO_OWNER is not None:
         IGNORE_STATS_FOR = ','.join([REPO_OWNER])
+
+    # Unset CONTEST_NAME or to '' if not running a contest
+    # Categories will be pulled from models.file.CONTEST_CATEGORIES_FILENAME
+    CONTEST_NAME = ''
 
 
 class DevelopmentConfig(Config):

@@ -47,6 +47,12 @@ def api_save():
     orig_stack = request.form['original_stack']
     first_commit = request.form['first_commit']
 
+    contest_categories = []
+    if 'contest_categories[]' in request.form:
+        contest_categories = request.form.getlist('contest_categories[]')
+
+    contest_name = app.config.get('CONTEST_NAME', '')
+
     if not content.strip() or not title.strip():
         data = {'error': 'Must enter title and body of guide'}
         return Response(response=json.dumps(data), status=400, mimetype='application/json')
@@ -108,7 +114,9 @@ def api_save():
                                             stacks=stacks,
                                             repo_path=repo_path,
                                             author_real_name=user.name,
-                                            first_commit=first_commit)
+                                            first_commit=first_commit,
+                                            contest_categories=contest_categories,
+                                            contest_name=contest_name)
 
     if not article:
         # Was this a new guide or update?

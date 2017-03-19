@@ -18,6 +18,7 @@ from .article import author_stats
 
 from .file import read_file
 from .file import read_redirects
+from .file import read_contest_categories
 from .file import update_article_listing
 from .file import FAQ_FILENAME, CONTEST_FILENAME, MARKDOWN_FILES
 

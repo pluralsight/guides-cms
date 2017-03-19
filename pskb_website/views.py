@@ -280,10 +280,15 @@ def write(stack, title):
 
     api_url = url_for('api_save')
 
+    contest_categories = []
+    if app.config['CONTEST_NAME']:
+        contest_categories = models.read_contest_categories()
+
     return render_template('editor.html',
                            api_url=api_url,
                            article=article,
                            stacks=forms.STACK_OPTIONS,
+                           contest_categories=contest_categories,
                            selected_stack=selected_stack,
                            username=session['login'])
 

@@ -409,7 +409,8 @@ def read_article_from_metadata(file_details):
 def save_article(title, message, new_content, author_name, email, sha,
                  branch=u'master', image_url=None, repo_path=None,
                  author_real_name=None, stacks=None, status=DRAFT,
-                 first_commit=None):
+                 first_commit=None, contest_categories=None,
+                 contest_name=None):
     """
     Create or save new (original) article, not branched article
 
@@ -429,6 +430,8 @@ def save_article(title, message, new_content, author_name, email, sha,
     :param stacks: Optional list of stacks to associate with article
     :param status: PUBLISHED, IN_REVIEW, or DRAFT
     :param first_commit: Optional first commit of article if it already exists
+    :param contest_categories: Optional list of contest categories
+    :param contest_name: Optional name of contest this article is for
 
     :returns: Article object updated or saved or None for failure
 
@@ -444,6 +447,8 @@ def save_article(title, message, new_content, author_name, email, sha,
     article.publish_status = status
     article.first_commit = first_commit
     article.content = new_content
+    article.contest_categories = contest_categories or []
+    article.contest_name = contest_name or ''
 
     commit_sha = remote.commit_file_to_github(article.full_path, message,
                                               new_content, author_name, email,
@@ -540,7 +545,8 @@ def branch_article(article, message, new_content, author_name, email,
 def branch_or_save_article(title, path, message, content, author_name, email,
                            sha, image_url, repo_path=None,
                            author_real_name=None, stacks=None,
-                           first_commit=None):
+                           first_commit=None, contest_categories=None,
+                           contest_name=None):
     """
     Save article as original or as a branch depending on if given author is
     the same as original article (if it already exists)
@@ -561,6 +567,8 @@ def branch_or_save_article(title, path, message, content, author_name, email,
     :param stacks: Optional list of stacks to associate with article (this
                    argument is ignored if article is branched)
     :param first_commit: SHA of first commit to save with article
+    :param contest_categories: Optional list of contest categories
+    :param contest_name: Optional name of contest this article is for
 
     :returns: Article object updated, saved, or branched
     """
@@ -587,7 +595,9 @@ def branch_or_save_article(title, path, message, content, author_name, email,
                            sha, image_url=image_url, repo_path=repo_path,
                            author_real_name=author_real_name,
                            stacks=stacks, status=status,
-                           first_commit=first_commit)
+                           first_commit=first_commit,
+                           contest_categories=contest_categories,
+                           contest_name=contest_name)
 
     return new
 
@@ -969,6 +979,12 @@ class Article(object):
         self.first_commit = None
         self._heart_count = None
 
+        # Tutorial contest-only attributes.  Some articles will have these in
+        # their serialized JSON format and others won't if they are created
+        # outside of a contest
+        self.contest_name = None
+        self.contest_categories = []
+
         # Only useful if article has already been saved to github
         self.sha = sha
 
@@ -1113,8 +1129,8 @@ class Article(object):
         author_name = dict_.pop('author_name', None)
 
         article = Article(title, author_name)
-        for attr, value in dict_.iteritems():
 
+        for attr, value in dict_.iteritems():
             # Backwards-compatability, this field was renamed
             if attr == 'published':
                 attr = '_publish_status'
