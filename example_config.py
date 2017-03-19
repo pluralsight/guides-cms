@@ -3,8 +3,6 @@ File to easily switch between configurations between production and
 development, etc.
 """
 
-import os
-
 
 # You must set each of these in your heroku environment with the heroku
 # config:set command. See README.md for more information.
