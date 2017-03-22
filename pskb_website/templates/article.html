@@ -83,6 +83,15 @@
             {% include 'publish_workflow.html' with context %}
         {% endif %}
 
+        {% if article.contest_name == config.CONTEST_NAME %}
+            <p class="bg-info">
+                This guide is participating in the {{article.contest_name}}
+                contest in the
+                <strong>{{article.contest_categories|english_csv}}</strong>
+                categories so be sure to give it a heart if you enjoyed it!
+            </p>
+        {% endif %}
+
         <div id="article-header">
             {% if article.image_url %}
                 <img id="article-img" src="{{article.image_url}}&amp;s=126" width="40" height="40" style="border-radius: 22px;" alt="{{article.author_name}}"/>

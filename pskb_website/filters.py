@@ -22,6 +22,24 @@ def date_string(dt, fmt_str):
     return dt.strftime(fmt_str)
 
 
+def english_csv(list_):
+    csv = ''
+    num_items = len(list_)
+
+    # yes += is slow but we don't have a lot of items so don't worry about it
+    for idx, item in enumerate(list_):
+        if idx == 1 and num_items == 2:
+            csv += ' and %s' % (item)
+        elif idx == num_items - 1 and num_items > 2:
+            csv += ', and %s' % (item)
+        elif idx <= num_items - 1 and idx > 0:
+            csv += ', %s' % (item)
+        else:
+            csv += item
+
+    return csv
+
+
 def url_for_edit(article, **kwargs):
     """
     Get URL to edit article

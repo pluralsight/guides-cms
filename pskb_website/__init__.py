@@ -74,6 +74,7 @@ app.jinja_env.filters['url_for_article'] = filters.url_for_article
 app.jinja_env.filters['url_for_user'] = filters.url_for_user
 app.jinja_env.filters['url_for_edit'] = filters.url_for_edit
 app.jinja_env.filters['author_name'] = filters.author_name
+app.jinja_env.filters['english_csv'] = filters.english_csv
 
 
 # Allow us to host the app on subdomain as well as a subfolder.
