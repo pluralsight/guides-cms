@@ -64,13 +64,25 @@ def api_save():
         # changed.  We need to wait for the file move so we can maintain the
         # history of the article through the move.
         if path and orig_stack and stacks[0] != orig_stack:
+            article = models.read_article(path)
+            if not article:
+                data = {'error': 'Unable to find guide'}
+                return Response(response=json.dumps(data), status=404,
+                                mimetype='application/json')
+
+            if article.author_name != user.login:
+                data = {'error': 'Only original authors can change the stacks'}
+                return Response(response=json.dumps(data), status=401,
+                                mimetype='application/json')
+
             new_path = models.change_article_stack(path, orig_stack, stacks[0],
                                                    title, user.login,
                                                    user.email)
 
             if new_path is None:
-                flash('Failed changing guide stack', category='error')
-                # FIXME? return an error?
+                data = {'error': 'Failed changing guide stack'}
+                return Response(response=json.dumps(data), status=500,
+                                mimetype='application/json')
             else:
                 path = new_path
 
