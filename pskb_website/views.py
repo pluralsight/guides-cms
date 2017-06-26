@@ -755,6 +755,9 @@ def all_authors():
 
     for login in guide_stats:
         user = models.find_user(username=login)
+        if not user or not user.email:
+            continue
+
         contact_info[login] = user.email
 
     return render_template('all_authors.html', guide_stats=guide_stats,
