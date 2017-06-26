@@ -32,6 +32,7 @@ def find_user(username=None):
         return None
 
     user = User(user_info['name'], user_info['login'])
+    user.email = user_info['email']
 
     # Request is for logged in user only
     if username is None:

@@ -414,7 +414,7 @@ def render_article_list_view(status):
 
     articles = models.get_available_articles(status=status)
     return render_template('review.html', articles=articles,
-                            stacks=forms.STACK_OPTIONS)
+                           stacks=forms.STACK_OPTIONS)
 
 
 def render_article_view(request_obj, article, only_visible_by_user=None):
@@ -743,6 +743,22 @@ def set_featured_title():
     flash('Featured guide updated', category='info')
 
     return redirect(url_for('index'))
+
+
+@app.route('/all_authors', methods=['GET'])
+@collaborator_required
+def all_authors():
+    """Get listing of all authors who've contributed a guide"""
+
+    guide_stats = models.author_stats(statuses=STATUSES)
+    contact_info = {}
+
+    for login in guide_stats:
+        user = models.find_user(username=login)
+        contact_info[login] = user.email
+
+    return render_template('all_authors.html', guide_stats=guide_stats,
+                           contact_info=contact_info)
 
 
 @app.context_processor
