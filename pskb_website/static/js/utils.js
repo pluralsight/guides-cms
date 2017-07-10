@@ -171,6 +171,25 @@ function confirm_delete(action_url) {
     form.submit();
 }
 
+
+function confirm_accept_cla(login_url, action_url) {
+    var accept = document.getElementById("accept");
+
+    if (!accept.checked) {
+        window.location = login_url;
+        return;
+    }
+
+    var form = document.createElement("form");
+    form.action = action_url;
+    form.method = "POST";
+
+    var accept = document.getElementById('accept');
+    form.appendChild(accept.cloneNode());
+    form.submit();
+}
+
+
 function supports_html5_storage() {
     try {
         return 'localStorage' in window && window['localStorage'] !== null;

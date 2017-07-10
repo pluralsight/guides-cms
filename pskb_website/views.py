@@ -123,9 +123,13 @@ def contest():
     return render_template('contest.html', text=text)
 
 
-@app.route('/github_login')
+@app.route('/github_login', methods=['POST'])
 def github_login():
     """Callback for github oauth"""
+
+    accept = request.form['accept']
+    if accept != '1':
+        return redirect(url_for('login'))
 
     url = app.config.get('GITHUB_CALLBACK_URL', '')
     if not url:
@@ -185,6 +189,9 @@ def authorized():
             session['name'] = user.login
 
         session['collaborator'] = user.is_collaborator
+
+        if user.email:
+            models.update_contributor_info(user.login, user.email)
 
     url = session.pop('previously_requested_page', None)
     if url is not None:
@@ -755,8 +762,13 @@ def all_authors():
 
     for login in guide_stats:
         user = models.find_user(username=login)
-        if not user or not user.email:
+        if not user:
             continue
+
+        if not user.email:
+            user.email = models.get_contributor_info(login)
+            if not user.email:
+                continue
 
         contact_info[login] = user.email
 

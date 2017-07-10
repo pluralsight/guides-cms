@@ -3,16 +3,42 @@
 {% block body %}
 
 <h1>Join the movement</h1>
+
 <br /><br />
+
+<p class="login-button">
+    <button type="button" class="btn-primary btn btn-lg" data-toggle="modal" data-target="#accept-confirmation">
+        Login with Github
+    </button>
+</p>
 
 {% include 'why_login.html' %}
 
 <br /><br />
 
-<p>
-    Still not convinced? No worries, read <a href="{{url_for('faq')}}">our mission</a> for
-    more information, or just enjoy reading these free guides provided by your
-    peers.
-</p>
+<div class="modal fade" id="accept-confirmation" tabindex="-1" role="dialog" aria-labelledby="acceptForm">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myModalTitle">
+            Pluralsight Individual Contributor License Agreement
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group form-group-sm">
+            {% include 'cla.html' %}
+            <input type="checkbox" name="accept" value="1" id="accept">
+                Accept Agreement
+            </input>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" onclick="confirm_accept_cla('{{url_for('login')}}', '{{url_for('github_login')}}')">Contribute</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

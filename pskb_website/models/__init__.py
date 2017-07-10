@@ -32,6 +32,9 @@ from .heart import has_hearted
 
 from .user import find_user
 
+from .contributors import update_info as update_contributor_info
+from .contributors import get_info as get_contributor_info
+
 from .email_list import add_subscriber
 
 from .image import save_image
