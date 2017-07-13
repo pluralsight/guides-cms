@@ -168,6 +168,10 @@ function confirm_delete(action_url) {
 
     var branch = document.getElementById('article-branch');
     form.appendChild(branch.cloneNode());
+
+    /* Chrome requires you put the form into the DOM. */
+    document.body.appendChild(form);
+
     form.submit();
 }
 
@@ -186,6 +190,10 @@ function confirm_accept_cla(login_url, action_url) {
 
     var accept = document.getElementById('accept');
     form.appendChild(accept.cloneNode());
+
+    /* Chrome requires you put the form into the DOM. */
+    document.body.appendChild(form);
+
     form.submit();
 }
 
