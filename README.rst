@@ -1,3 +1,5 @@
+**This repository is no longer used or maintained.**
+
 =============
 hack.guides()
 =============
